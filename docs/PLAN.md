@@ -41,11 +41,11 @@ Dans le navigateur, on ouvre le chapelet du jour et on le récite du signe de cr
 
 ### Critères d'acceptation
 
-- [ ] Le déroulé correspond exactement au PRD : signe de croix, Credo, Notre Père, 3 Je vous salue Marie, Gloire au Père, 5 dizaines, fin.
-- [ ] La série proposée suit le jour de la semaine (test pour chacun des 7 jours).
-- [ ] Un parcours Playwright récite un chapelet complet : chaque toucher avance d'exactement une prière, et un glissement recule d'une prière.
-- [ ] Les textes des prières (Notre Père 2017, Je vous salue Marie, Gloire au Père, Symbole des Apôtres, signe de croix) sont validés par le porteur du projet et figés par le test d'empreinte.
-- [ ] Le rendu respecte `docs/DESIGN.md` (parchemin, Baumans, Cormorant SC, Literata, perles).
+- [x] Le déroulé correspond exactement au PRD : signe de croix, Credo, Notre Père, 3 Je vous salue Marie, Gloire au Père, 5 dizaines, fin.
+- [x] La série proposée suit le jour de la semaine (test pour chacun des 7 jours).
+- [x] Un parcours Playwright récite un chapelet complet : chaque toucher avance d'exactement une prière, et un glissement recule d'une prière.
+- [x] Les textes des prières (Notre Père 2017, Je vous salue Marie, Gloire au Père, Symbole des Apôtres, signe de croix) sont validés par le porteur du projet et figés par le test d'empreinte.
+- [x] Le rendu respecte `docs/DESIGN.md` (parchemin, Baumans, Cormorant SC, Literata, perles).
 
 ## Bloquée par
 

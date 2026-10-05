@@ -12,7 +12,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commandes
 
-Pas encore de code. La pile est décidée dans `docs/PLAN.md` : TypeScript + React + Vite, Capacitor Android, Vitest, Playwright. Complète cette section (dev, build, tests, lancer un seul test, construire et installer l'APK) dès la mise en place du projet en phase 1.
+Pile : TypeScript + React + Vite, Vitest, Playwright (Capacitor Android arrive en phase 2 : compléter alors avec la construction et l'installation de l'APK).
+
+- `npm run dev` : serveur de développement (http://localhost:5173).
+- `npm run build` : vérification TypeScript puis construction dans `dist/`.
+- `npm test` : tests unitaires Vitest. Un seul fichier : `npx vitest run src/chapelet/deroule.test.ts` ; un seul test : ajouter `-t "nom du test"`.
+- `npm run test:e2e` : parcours Playwright (construit l'app et la sert sur le port 4173, émulation Pixel 7). Un seul test : `npx playwright test -g "glisser"`.
+- `npm run lint` : oxlint.
+
+## Organisation du code
+
+- `src/recueil/` : textes sacrés figés (prières, mystères) et leur test d'empreinte.
+- `src/chapelet/` : définition déclarative du chapelet, déroulé, série du jour, gestes, dessin.
+- `src/ecrans/` : un écran par route ; routes déclarées dans `src/main.tsx`.
+- `src/styles/jetons.css` : jetons de `docs/DESIGN.md` et polices auto-hébergées (paquets `@fontsource`).
+- `e2e/` : parcours Playwright, un par phase au moins.
 
 ## Travailler avec le porteur du projet
 

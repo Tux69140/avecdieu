@@ -1,0 +1,109 @@
+.chapelet {
+  min-height: 100dvh;
+  max-width: calc(34em + 2 * var(--gouttiere));
+  margin: 0 auto;
+  padding: var(--esp-md) var(--gouttiere) var(--esp-2xl);
+  /* Le navigateur garde le défilement vertical, l'app reçoit les glissements horizontaux. */
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: pointer;
+}
+
+.chapelet-entete {
+  text-align: center;
+  margin-bottom: var(--esp-sm);
+}
+
+.chapelet-entete h1 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 1.1;
+  margin: var(--esp-xs) 0 0;
+}
+
+.priere,
+.fin {
+  margin-top: var(--esp-md);
+  padding-top: var(--esp-md);
+  border-top: 1px solid var(--filet);
+  animation: fondu 0.22s ease-out;
+}
+
+@keyframes fondu {
+  from {
+    opacity: 0;
+  }
+}
+
+.mystere {
+  margin: 0 0 var(--esp-sm);
+}
+
+.mystere .etiquette {
+  display: block;
+}
+
+.mystere-titre {
+  display: block;
+  font-family: var(--display);
+  font-size: 22px;
+  line-height: 1.2;
+}
+
+.priere-tete {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--esp-md);
+}
+
+.priere-tete h2,
+.fin h2 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 28px;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.compteur {
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 20px;
+  letter-spacing: 0.06em;
+  color: var(--sepia);
+  font-variant-numeric: tabular-nums lining-nums;
+  white-space: nowrap;
+}
+
+.priere-texte {
+  margin: var(--esp-sm) 0 0;
+}
+
+/* Une ligne par vers ; les lignes trop longues retombent en retrait. */
+.priere-texte span {
+  display: block;
+  padding-left: 1em;
+  text-indent: -1em;
+}
+
+.consigne {
+  margin: var(--esp-xl) 0 0;
+  text-align: center;
+  font-size: 16px;
+  font-style: italic;
+  color: var(--sepia);
+}
+
+.fin {
+  text-align: center;
+  cursor: default;
+}
+
+.fin-texte {
+  margin: var(--esp-xs) 0 var(--esp-lg);
+  font-style: italic;
+  color: var(--sepia);
+}

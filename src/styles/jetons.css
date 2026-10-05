@@ -1,0 +1,134 @@
+/* Jetons de design : voir docs/DESIGN.md. */
+@import '@fontsource/baumans/400.css';
+@import '@fontsource/cormorant-sc/500.css';
+@import '@fontsource/cormorant-sc/600.css';
+@import '@fontsource-variable/literata/opsz.css';
+@import '@fontsource-variable/literata/opsz-italic.css';
+
+:root {
+  --parchemin: #ebe0cb;
+  --velin: #f6efe2;
+  --filet: #d6c7ab;
+  --encre: #2b2118;
+  --sepia: #6b5a48;
+  --sepia-pale: #a39280;
+  --rubrique: #9e2a1f;
+  --or: #b08a3e;
+  --or-fonce: #8a6a2a;
+  --soleil: #d9a441;
+  --halo: rgba(217, 164, 65, 0.28);
+  --succes: #4e6b3a;
+  --attention: #9a6a12;
+  --erreur: #7a3b1e;
+  --info: #3e5c76;
+  --grain-opacite: 0.07;
+
+  --display: 'Baumans', Georgia, sans-serif;
+  --sc: 'Cormorant SC', Georgia, serif;
+  --texte: 'Literata Variable', Georgia, serif;
+
+  --r-sm: 2px;
+  --r-md: 4px;
+  --r-lg: 8px;
+
+  --esp-2xs: 2px;
+  --esp-xs: 4px;
+  --esp-sm: 8px;
+  --esp-md: 16px;
+  --esp-lg: 24px;
+  --esp-xl: 32px;
+  --esp-2xl: 48px;
+  --esp-3xl: 64px;
+
+  --taille-texte: 18px;
+  --gouttiere: 24px;
+
+  color-scheme: light;
+}
+
+@media (max-width: 420px) {
+  :root {
+    --gouttiere: 16px;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  min-height: 100dvh;
+  background: var(--parchemin);
+  color: var(--encre);
+  font-family: var(--texte);
+  font-size: var(--taille-texte);
+  line-height: 1.65;
+  font-optical-sizing: auto;
+  font-synthesis: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Grain de papier très léger. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: var(--grain-opacite);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .35 0 0 0 0 .25 0 0 0 0 .12 0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+.etiquette {
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  color: var(--rubrique);
+  margin: 0;
+}
+
+.btn {
+  font-family: var(--texte);
+  font-weight: 500;
+  font-size: 17px;
+  min-height: 48px;
+  border-radius: var(--r-md);
+  padding: 10px 20px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition:
+    background-color 0.2s ease-out,
+    color 0.2s ease-out,
+    border-color 0.2s ease-out;
+}
+
+.btn-secondaire {
+  background: transparent;
+  color: var(--encre);
+  border-color: var(--or);
+}
+
+.btn-secondaire:hover,
+.btn-secondaire:focus-visible {
+  background: var(--halo);
+}
+
+:focus-visible {
+  outline: 2px solid var(--or);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
