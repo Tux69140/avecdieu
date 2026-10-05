@@ -9,7 +9,7 @@ export default defineConfig({
     ...devices['Pixel 7'],
   },
   webServer: {
-    command: 'npm run build && npx vite preview --port 4173 --strictPort',
+    command: 'pnpm build && pnpm vite preview --port 4173 --strictPort',
     url: 'http://localhost:4173',
     reuseExistingServer: !process.env.CI,
   },

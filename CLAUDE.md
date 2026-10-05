@@ -12,13 +12,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commandes
 
-Pile : TypeScript + React + Vite, Vitest, Playwright (Capacitor Android arrive en phase 2 : compléter alors avec la construction et l'installation de l'APK).
+Pile : TypeScript + React + Vite, Vitest, Playwright (Capacitor Android arrive en phase 2 : compléter alors avec la construction et l'installation de l'APK). Gestionnaire de paquets : **pnpm**, jamais npm ni npx (`pnpm add`, `pnpm exec`).
 
-- `npm run dev` : serveur de développement (http://localhost:5173).
-- `npm run build` : vérification TypeScript puis construction dans `dist/`.
-- `npm test` : tests unitaires Vitest. Un seul fichier : `npx vitest run src/chapelet/deroule.test.ts` ; un seul test : ajouter `-t "nom du test"`.
-- `npm run test:e2e` : parcours Playwright (construit l'app et la sert sur le port 4173, émulation Pixel 7). Un seul test : `npx playwright test -g "glisser"`.
-- `npm run lint` : oxlint.
+- `pnpm dev` : serveur de développement (http://localhost:5173).
+- `pnpm build` : vérification TypeScript puis construction dans `dist/`.
+- `pnpm test` : tests unitaires Vitest. Un seul fichier : `pnpm exec vitest run src/chapelet/deroule.test.ts` ; un seul test : ajouter `-t "nom du test"`.
+- `pnpm test:e2e` : parcours Playwright (construit l'app et la sert sur le port 4173, émulation Pixel 7). Un seul test : `pnpm exec playwright test -g "glisser"`.
+- `pnpm lint` : oxlint.
 
 ## Organisation du code
 
