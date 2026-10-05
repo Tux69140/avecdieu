@@ -23,11 +23,14 @@ const ECART_MEDAILLE = 1.4
 
 const LARGEUR = 300
 const MARGE = 10
-const BOUCLE = { cx: LARGEUR / 2, cy: MARGE + 62, rx: LARGEUR / 2 - MARGE, ry: 62 }
+const BOUCLE = { cx: LARGEUR / 2, cy: MARGE + 56, rx: LARGEUR / 2 - MARGE, ry: 56 }
+// Le pendentif est plus serré que la boucle pour tenir à l'intérieur.
+const PAS_PENDENTIF = 8.6
 
-// Le chapelet dessiné : une boucle elliptique fermée sur la médaille, et le
-// pendentif qui descend jusqu'à la croix. Le pendentif porte les grains
-// jusqu'au premier de la première dizaine, la boucle porte le reste.
+// Le chapelet dessiné : une boucle elliptique, très aplatie, fermée sur la
+// médaille, et le pendentif ramené à l'intérieur de la boucle, de la médaille
+// jusqu'à la croix, pour limiter la hauteur sur les petits écrans. Le pendentif
+// porte les grains jusqu'au premier de la première dizaine, la boucle le reste.
 export function disposer({ pas, grains }: Deroule): Plan {
   const debutBoucle = pas.find((p) => p.dizaine === 1)!.grain + 1
   const pendentif = grains.slice(0, debutBoucle)
@@ -47,19 +50,18 @@ export function disposer({ pas, grains }: Deroule): Plan {
   })
 
   const medaille = { x: BOUCLE.cx, y: BOUCLE.cy + BOUCLE.ry }
-  // Le pendentif descend de la médaille ; ses grains sont dans l'ordre inverse.
+  // Le pendentif monte de la médaille vers le centre ; ses grains sont dans l'ordre inverse.
   curseur = ECART_MEDAILLE
   const pointsPendentif = [...pendentif].reverse().map((type) => {
     const centre = curseur + ENCOMBREMENT[type] / 2
     curseur += ENCOMBREMENT[type]
-    return { type, x: medaille.x, y: medaille.y + centre * echelle, r: RAYON[type] }
+    return { type, x: medaille.x, y: medaille.y - centre * PAS_PENDENTIF, r: RAYON[type] }
   })
   pointsPendentif.reverse()
 
-  const croix = pointsPendentif[0]
   return {
     largeur: LARGEUR,
-    hauteur: Math.ceil(croix.y + croix.r + MARGE / 2),
+    hauteur: Math.ceil(medaille.y + RAYON.gros + MARGE / 2),
     points: [...pointsPendentif, ...pointsBoucle],
     medaille,
     boucle: BOUCLE,

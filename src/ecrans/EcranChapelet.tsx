@@ -30,7 +30,7 @@ export function EcranChapelet() {
 
 function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisie: boolean }) {
   const [index, setIndex] = useState(0)
-  const debutGeste = useRef<{ id: number; x: number; y: number } | null>(null)
+  const debutGeste = useRef<{ id: number; x: number; y: number; surBouton: boolean } | null>(null)
   const nombre = DEROULE.pas.length
   const termine = index === nombre
 
@@ -47,15 +47,16 @@ function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisi
   }, [nombre])
 
   const appui = (e: PointerEvent) => {
-    if (!e.isPrimary || e.button !== 0 || estInteractif(e.target)) return
-    debutGeste.current = { id: e.pointerId, x: e.clientX, y: e.clientY }
+    if (!e.isPrimary || e.button !== 0) return
+    debutGeste.current = { id: e.pointerId, x: e.clientX, y: e.clientY, surBouton: estInteractif(e.target) }
   }
   const relachement = (e: PointerEvent) => {
     const debut = debutGeste.current
     debutGeste.current = null
     if (!debut || debut.id !== e.pointerId) return
     const geste = classerGeste({ dx: e.clientX - debut.x, dy: e.clientY - debut.y })
-    if (geste === 'avancer') setIndex((i) => avancer(i, nombre))
+    // Un toucher sur un bouton appartient au bouton ; un glissement, lui, recule partout.
+    if (geste === 'avancer' && !debut.surBouton) setIndex((i) => avancer(i, nombre))
     else if (geste === 'reculer') setIndex(reculer)
   }
 

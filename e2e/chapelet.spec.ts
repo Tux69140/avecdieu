@@ -38,10 +38,9 @@ async function toucher(page: Page) {
 }
 
 // Glissement au doigt, de vrais événements tactiles.
-async function glisser(page: Page, dx: number) {
-  const { width, height } = page.viewportSize()!
+async function glisser(page: Page, dx: number, y = page.viewportSize()!.height / 2) {
+  const { width } = page.viewportSize()!
   const cdp = await page.context().newCDPSession(page)
-  const y = height / 2
   const x0 = width / 2 - dx / 2
   const point = (x: number) => [{ x, y }]
   await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: point(x0) })
@@ -117,6 +116,14 @@ test('glisser depuis l’écran de fin revient au dernier Gloire au Père', asyn
   for (let i = 0; i < DEROULE.length; i++) await toucher(page)
   await expect(page.getByRole('heading', { level: 2 })).toHaveText('Chapelet terminé')
   await glisser(page, 160)
+  await verifierPas(page, DEROULE.at(-1)!, DEROULE.length - 1)
+})
+
+test('glisser en partant du bouton Recommencer revient aussi en arrière', async ({ page }) => {
+  await page.goto('/chapelet')
+  for (let i = 0; i < DEROULE.length; i++) await toucher(page)
+  const bouton = (await page.getByRole('button', { name: 'Recommencer' }).boundingBox())!
+  await glisser(page, 160, bouton.y + bouton.height / 2)
   await verifierPas(page, DEROULE.at(-1)!, DEROULE.length - 1)
 })
 
