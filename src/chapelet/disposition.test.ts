@@ -31,17 +31,18 @@ describe('disposition du chapelet dessiné', () => {
     }
   })
 
-  it('ramène le pendentif à l’intérieur de la boucle, la croix en haut', () => {
+  it('fait pendre le pendentif à l’intérieur de la boucle, de la médaille en haut à la croix en bas', () => {
     const { cx, cy, rx, ry } = plan.boucle
+    expect(plan.medaille.y).toBeCloseTo(cy - ry)
     const finPendentif = deroule.pas.find((p) => p.dizaine === 1)!.grain
     const pendentif = plan.points.slice(0, finPendentif + 1)
     for (const p of pendentif) {
       expect(((p.x - cx) / rx) ** 2 + ((p.y - cy) / ry) ** 2).toBeLessThan(1)
       expect(p.x).toBeCloseTo(plan.medaille.x)
-      expect(p.y).toBeLessThan(plan.medaille.y)
+      expect(p.y).toBeGreaterThan(plan.medaille.y)
     }
     const croix = plan.points[0]
-    expect(Math.min(...pendentif.map((p) => p.y))).toBe(croix.y)
+    expect(Math.max(...pendentif.map((p) => p.y))).toBe(croix.y)
   })
 
   it('tient dans un cadre au moins deux fois plus large que haut', () => {

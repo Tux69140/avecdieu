@@ -28,8 +28,8 @@ const BOUCLE = { cx: LARGEUR / 2, cy: MARGE + 56, rx: LARGEUR / 2 - MARGE, ry: 5
 const PAS_PENDENTIF = 8.6
 
 // Le chapelet dessiné : une boucle elliptique, très aplatie, fermée sur la
-// médaille, et le pendentif ramené à l'intérieur de la boucle, de la médaille
-// jusqu'à la croix, pour limiter la hauteur sur les petits écrans. Le pendentif
+// médaille en haut, et le pendentif qui pend à l'intérieur de la boucle, de la
+// médaille jusqu'à la croix, pour limiter la hauteur sur les petits écrans. Le pendentif
 // porte les grains jusqu'au premier de la première dizaine, la boucle le reste.
 export function disposer({ pas, grains }: Deroule): Plan {
   const debutBoucle = pas.find((p) => p.dizaine === 1)!.grain + 1
@@ -40,7 +40,7 @@ export function disposer({ pas, grains }: Deroule): Plan {
   const ellipse = echantillonnerEllipse()
   const echelle = ellipse.longueur / unites
 
-  // La boucle part de la médaille (en bas) et tourne vers la droite.
+  // La boucle part de la médaille (en haut) et tourne vers la droite.
   let curseur = ECART_MEDAILLE
   const pointsBoucle = boucle.map((type) => {
     const centre = curseur + ENCOMBREMENT[type] / 2
@@ -49,33 +49,33 @@ export function disposer({ pas, grains }: Deroule): Plan {
     return { type, x, y, r: RAYON[type] }
   })
 
-  const medaille = { x: BOUCLE.cx, y: BOUCLE.cy + BOUCLE.ry }
-  // Le pendentif monte de la médaille vers le centre ; ses grains sont dans l'ordre inverse.
+  const medaille = { x: BOUCLE.cx, y: BOUCLE.cy - BOUCLE.ry }
+  // Le pendentif pend de la médaille vers le bas ; ses grains sont dans l'ordre inverse.
   curseur = ECART_MEDAILLE
   const pointsPendentif = [...pendentif].reverse().map((type) => {
     const centre = curseur + ENCOMBREMENT[type] / 2
     curseur += ENCOMBREMENT[type]
-    return { type, x: medaille.x, y: medaille.y - centre * PAS_PENDENTIF, r: RAYON[type] }
+    return { type, x: medaille.x, y: medaille.y + centre * PAS_PENDENTIF, r: RAYON[type] }
   })
   pointsPendentif.reverse()
 
   return {
     largeur: LARGEUR,
-    hauteur: Math.ceil(medaille.y + RAYON.gros + MARGE / 2),
+    hauteur: Math.ceil(BOUCLE.cy + BOUCLE.ry + RAYON.gros + MARGE / 2),
     points: [...pointsPendentif, ...pointsBoucle],
     medaille,
     boucle: BOUCLE,
   }
 }
 
-// Ellipse paramétrée par la longueur d'arc, en partant du bas et en tournant
-// dans le sens inverse des aiguilles d'une montre à l'écran.
+// Ellipse paramétrée par la longueur d'arc, en partant du haut et en tournant
+// dans le sens des aiguilles d'une montre à l'écran.
 function echantillonnerEllipse() {
   const n = 2000
   const pts: { x: number; y: number; l: number }[] = []
   let l = 0
   for (let i = 0; i <= n; i++) {
-    const t = Math.PI / 2 - (i / n) * 2 * Math.PI
+    const t = -Math.PI / 2 + (i / n) * 2 * Math.PI
     const x = BOUCLE.cx + BOUCLE.rx * Math.cos(t)
     const y = BOUCLE.cy + BOUCLE.ry * Math.sin(t)
     if (i > 0) l += Math.hypot(x - pts[i - 1].x, y - pts[i - 1].y)
