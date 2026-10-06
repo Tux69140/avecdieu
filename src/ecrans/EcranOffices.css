@@ -1,0 +1,60 @@
+.offices {
+  max-width: calc(34em + 2 * var(--gouttiere));
+  margin: 0 auto;
+  padding: var(--esp-sm) var(--gouttiere) var(--esp-3xl);
+}
+
+.offices-entete {
+  margin: var(--esp-sm) 0 var(--esp-lg);
+  text-align: center;
+}
+
+.offices-date {
+  margin: 0;
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: 0.06em;
+  color: var(--sepia);
+}
+
+.offices-entete h1 {
+  margin: var(--esp-xs) 0 0;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 34px;
+  line-height: 1.1;
+}
+
+/* Même liste que le menu : une ligne par office, filets fins, flèche d'or. */
+.offices-liste {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--filet);
+}
+
+.offices-liste li {
+  border-bottom: 1px solid var(--filet);
+}
+
+.offices-liste a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 56px;
+  font-size: 22px;
+  color: var(--encre);
+  text-decoration: none;
+}
+
+.offices-liste a::after {
+  content: '›';
+  font-size: 26px;
+  line-height: 1;
+  color: var(--or-fonce);
+}
+
+.offices-liste a:active {
+  background: var(--halo);
+}

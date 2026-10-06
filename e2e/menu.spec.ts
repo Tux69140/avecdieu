@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 import { preparer } from './outils.ts'
 
-// Le menu ☰ du seuil : chapelet, offices à venir, réglages, à propos.
+// Le menu ☰ du seuil : chapelet, offices, réglages, à propos.
 
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(new Date(2026, 9, 5, 10, 0))
@@ -14,13 +14,10 @@ test.beforeEach(async ({ page }) => {
 const seuil = (page: import('@playwright/test').Page) =>
   expect(page.getByRole('button', { name: 'Commencer le chapelet' })).toBeVisible()
 
-test('présente le chapelet, les offices à venir, les réglages et « À propos »', async ({
-  page,
-}) => {
+test('présente le chapelet, les offices, les réglages et « À propos »', async ({ page }) => {
   const menu = page.getByRole('navigation', { name: 'Menu' })
   await expect(menu.getByRole('button', { name: 'Chapelet' })).toBeVisible()
-  await expect(menu.getByText('Offices')).toContainText('à venir')
-  await expect(menu.getByRole('link', { name: 'Offices' })).toHaveCount(0)
+  await expect(menu.getByRole('link', { name: 'Offices' })).toBeVisible()
   await expect(menu.getByRole('link', { name: 'Réglages' })).toBeVisible()
   await expect(menu.getByRole('link', { name: 'À propos' })).toBeVisible()
 })

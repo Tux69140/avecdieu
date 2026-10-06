@@ -22,8 +22,10 @@ export function EcranMenu() {
               Chapelet
             </button>
           </li>
-          <li className="menu-a-venir" aria-disabled="true">
-            Offices <span>à venir</span>
+          <li>
+            <Link to="/offices" replace>
+              Offices
+            </Link>
           </li>
         </ul>
         <ul className="menu-liste">

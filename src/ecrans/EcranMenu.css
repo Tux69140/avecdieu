@@ -80,18 +80,3 @@
 .menu-liste button:active {
   background: var(--halo);
 }
-
-/* Une fonction annoncée, pas encore là : ni lien ni flèche. */
-.menu-a-venir {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  min-height: 56px;
-  font-size: 18px;
-  color: var(--sepia);
-}
-
-.menu-a-venir span {
-  font-size: 15px;
-  font-style: italic;
-}

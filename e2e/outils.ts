@@ -1,4 +1,5 @@
 import { expect, type Page } from '@playwright/test'
+import { existsSync, readFileSync } from 'node:fs'
 
 // Gestes et ouvertures partagés par les parcours.
 
@@ -29,6 +30,27 @@ export interface Reglages {
   plusieurs?: boolean
   affichage?: 'complet' | 'compact'
   vibrations?: boolean
+  accents?: boolean
+}
+
+// Les parcours ne dépendent pas du réseau : l'AELF est remplacée par ses
+// réponses enregistrées (src/aelf/exemples/), et un office absent répond 404
+// comme l'AELF. Rend la liste des adresses demandées.
+export async function servirAelf(page: Page) {
+  const demandes: string[] = []
+  await page.route('https://api.aelf.org/**', (route) => {
+    const url = route.request().url()
+    demandes.push(url)
+    const [office, date] = new URL(url).pathname.split('/').slice(2, 4)
+    const fichier = `src/aelf/exemples/${office}-${date}.json`
+    if (!existsSync(fichier)) return route.fulfill({ status: 404, body: 'introuvable' })
+    return route.fulfill({
+      contentType: 'application/json',
+      headers: { 'access-control-allow-origin': '*' },
+      body: readFileSync(fichier, 'utf8'),
+    })
+  })
+  return demandes
 }
 
 interface Ouverture {

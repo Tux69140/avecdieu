@@ -39,6 +39,13 @@
   --erreur: #7a3b1e;
   --info: #3e5c76;
   --grain-opacite: 0.07;
+  /* Couleurs liturgiques : en pastilles seulement, identiques jour et nuit. */
+  --liturgique-blanc: #f4efe4;
+  --liturgique-vert: #3e6a3f;
+  --liturgique-violet: #5a3e7a;
+  --liturgique-rouge: #b8231b;
+  --liturgique-rose: #d58f9c;
+  --liturgique-noir: #23201c;
 
   --display: 'Baumans', Georgia, sans-serif;
   --sc: 'Cormorant SC', Georgia, serif;

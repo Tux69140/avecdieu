@@ -20,8 +20,7 @@ const BASCULES: [Bascule, string, string?][] = [
   ],
 ]
 
-// Les réglages, retenus sur le téléphone et repris au chapelet suivant. Les
-// offices y ajouteront les leurs.
+// Les réglages, retenus sur le téléphone : ceux du chapelet, puis ceux des offices.
 export function EcranReglages() {
   const [reglages, setReglages] = useState(lireReglages)
   const retour = useRetour()
@@ -63,6 +62,16 @@ export function EcranReglages() {
             />
           </div>
         )}
+      </section>
+
+      <section className="reglages-section" aria-labelledby="reglages-offices">
+        <h2 id="reglages-offices">Offices</h2>
+        <Interrupteur
+          libelle="Accents de psalmodie"
+          aide="Souligne les syllabes accentuées des psaumes et cantiques."
+          actif={reglages.accents}
+          onBasculer={(accents) => modifier({ accents })}
+        />
       </section>
     </main>
   )

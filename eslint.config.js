@@ -16,6 +16,15 @@ export default tseslint.config(
     rules: {
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      // Aucun HTML brut n'atteint l'écran : la frontière AELF ne rend que du texte.
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "JSXAttribute[name.name='dangerouslySetInnerHTML']",
+          message:
+            'Interdit : afficher du texte, jamais du HTML brut (voir src/aelf/fragments.ts).',
+        },
+      ],
     },
   },
   {

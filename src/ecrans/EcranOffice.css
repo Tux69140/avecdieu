@@ -1,0 +1,56 @@
+/* Un office : une seule colonne de lecture, marges de livre. */
+.office {
+  max-width: calc(34em + 2 * var(--gouttiere));
+  margin: 0 auto;
+  padding: var(--esp-sm) var(--gouttiere) var(--esp-3xl);
+}
+
+.office-entete {
+  margin: var(--esp-sm) 0 var(--esp-xl);
+  text-align: center;
+}
+
+.office-date {
+  margin: 0;
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: 0.06em;
+  color: var(--sepia);
+}
+
+.office-entete h1 {
+  margin: var(--esp-xs) 0 0;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+.office-chargement {
+  text-align: center;
+  font-style: italic;
+  color: var(--sepia);
+}
+
+/* Avis d'erreur : filet brun brique à gauche, jamais le rouge des rubriques. */
+.office-erreur {
+  padding: var(--esp-md);
+  border-left: 3px solid var(--erreur);
+  background: var(--velin);
+}
+
+.office-erreur p {
+  margin: 0 0 var(--esp-sm);
+  line-height: 1.5;
+}
+
+.office-erreur .office-erreur-titre {
+  font-weight: 600;
+  color: var(--erreur);
+}
+
+.office-erreur .btn {
+  margin-top: var(--esp-sm);
+}

@@ -1,6 +1,6 @@
 import { AxeBuilder } from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
-import { avancer, commencer, preparer } from './outils.ts'
+import { avancer, commencer, preparer, servirAelf } from './outils.ts'
 
 // Contrôle automatique d'accessibilité (contrastes, titres, libellés ARIA) :
 // échoue sur toute violation grave ou critique. Le clavier et le lecteur
@@ -94,6 +94,31 @@ test('menu', async ({ page }) => {
   await preparer(page)
   await page.goto('/menu')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Avec Dieu')
+  expect(await violationsGraves(page)).toEqual([])
+})
+
+test('offices du jour', async ({ page }) => {
+  await preparer(page)
+  await page.goto('/offices')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Offices du jour')
+  expect(await violationsGraves(page)).toEqual([])
+})
+
+for (const office of ['laudes', 'lectures', 'complies']) {
+  test(`office : ${office}`, async ({ page }) => {
+    await servirAelf(page)
+    await preparer(page)
+    await page.goto(`/office/${office}/2026-10-06`)
+    await expect(page.getByTestId('office')).toBeVisible()
+    expect(await violationsGraves(page)).toEqual([])
+  })
+}
+
+test('office injoignable', async ({ page }) => {
+  await page.route('https://api.aelf.org/**', (route) => route.abort())
+  await preparer(page)
+  await page.goto('/office/laudes/2026-10-06')
+  await expect(page.getByRole('alert')).toBeVisible()
   expect(await violationsGraves(page)).toEqual([])
 })
 

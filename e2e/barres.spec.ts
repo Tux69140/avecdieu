@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test'
 import { readFileSync } from 'node:fs'
-import { commencer, preparer, suivant } from './outils.ts'
+import { commencer, preparer, servirAelf, suivant } from './outils.ts'
 
 // Sur le téléphone, l'app s'étend sous les barres d'Android (état en haut,
 // navigation en bas), transparentes. Capacitor donne leur hauteur dans les
@@ -74,11 +74,16 @@ for (const [nom, chemin] of [
   ['menu', '/menu'],
   ['réglages', '/reglages'],
   ['à propos', '/a-propos'],
+  ['offices du jour', '/offices'],
+  ['office', '/office/lectures/2026-10-06'],
 ]) {
   test(`${nom} : rien sous les barres d’Android`, async ({ page }) => {
+    await servirAelf(page)
     await preparer(page)
     await page.goto(chemin)
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+    // Un office n'a sa longueur qu'une fois chargé.
+    await expect(page.getByRole('status')).toHaveCount(0)
     await verifierBarres(page)
   })
 }

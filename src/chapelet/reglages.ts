@@ -3,7 +3,8 @@ import { ecrire, lire, lireObjet } from './stockage'
 
 export type Affichage = 'complet' | 'compact'
 
-// Un seul enregistrement pour tous les réglages du chapelet.
+// Un seul enregistrement pour tous les réglages, ceux du chapelet et ceux des
+// offices.
 export interface Reglages {
   annonce: boolean
   oMonJesus: boolean
@@ -12,6 +13,8 @@ export interface Reglages {
   plusieurs: boolean
   affichage: Affichage
   vibrations: boolean
+  // Offices : syllabes accentuées de la psalmodie soulignées.
+  accents: boolean
 }
 
 // Ceux du PRD.
@@ -22,7 +25,17 @@ export const REGLAGES_PAR_DEFAUT: Reglages = {
   plusieurs: false,
   affichage: 'complet',
   vibrations: true,
+  accents: true,
 }
+
+const BASCULES = [
+  'annonce',
+  'oMonJesus',
+  'salveRegina',
+  'plusieurs',
+  'vibrations',
+  'accents',
+] as const
 
 const CLE = 'avec-dieu.reglages'
 // Avant les réglages (phase 3), seul l'affichage était retenu, sous sa propre clé.
@@ -35,7 +48,7 @@ const estAffichage = (valeur: unknown): valeur is Affichage =>
 export function lireReglages(): Reglages {
   const enregistres = lireObjet(CLE)
   const reglages = { ...REGLAGES_PAR_DEFAUT }
-  for (const cle of ['annonce', 'oMonJesus', 'salveRegina', 'plusieurs', 'vibrations'] as const) {
+  for (const cle of BASCULES) {
     const valeur = enregistres[cle]
     if (typeof valeur === 'boolean') reglages[cle] = valeur
   }

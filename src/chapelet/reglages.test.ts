@@ -15,8 +15,14 @@ describe('réglages du chapelet', () => {
       plusieurs: false,
       affichage: 'complet',
       vibrations: true,
+      accents: true,
     })
     expect(REGLAGES_PAR_DEFAUT).toEqual(lireReglages())
+  })
+
+  it('retiennent les accents de psalmodie masqués', () => {
+    modifierReglages({ accents: false })
+    expect(lireReglages().accents).toBe(false)
   })
 
   it('retiennent chaque changement sans toucher aux autres', () => {

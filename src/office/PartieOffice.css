@@ -1,0 +1,75 @@
+/* Une partie de l'office : son libellé en rubrique, puis le texte. */
+.partie .partie-libelle {
+  margin-bottom: var(--esp-sm);
+  line-height: 1.3;
+}
+
+/* La référence suit le libellé, en petites capitales sans interlettrage forcé. */
+.partie-precision {
+  letter-spacing: 0.04em;
+}
+
+.partie-titre {
+  margin: 0 0 var(--esp-sm);
+  font-style: italic;
+  color: var(--sepia);
+  line-height: 1.45;
+}
+
+.partie-source {
+  margin: var(--esp-sm) 0 0;
+  font-size: 15px;
+  color: var(--sepia);
+  text-align: right;
+}
+
+.office-strophe {
+  margin: 0 0 var(--esp-md);
+}
+
+/* Couper les mots aide la prose à 360 px, mais défigure un vers ou un nom. */
+.partie[data-mise='prose'] .office-strophe {
+  hyphens: auto;
+}
+
+.office-strophe:last-of-type {
+  margin-bottom: 0;
+}
+
+.office-ligne {
+  display: block;
+  text-wrap: pretty;
+}
+
+/* Un vers de psaume ou d'hymne : s'il se coupe, la suite est en retrait. */
+.partie[data-mise='vers'] .office-ligne {
+  padding-left: 1.2em;
+  text-indent: -1.2em;
+  text-wrap: wrap;
+}
+
+.partie[data-mise='prose'] .office-ligne + .office-ligne {
+  margin-top: var(--esp-sm);
+}
+
+/* Repères de la psalmodie et du chant, en rouge rubrique (DESIGN.md). */
+.office-verset {
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 0;
+  vertical-align: 0.6em;
+  margin-right: 3px;
+  color: var(--rubrique);
+  font-variant-numeric: lining-nums;
+}
+
+.office-signe {
+  color: var(--rubrique);
+  font-weight: 500;
+}
+
+.office[data-accents='oui'] .office-accent {
+  text-decoration: underline 1px var(--rubrique);
+  text-underline-offset: 3px;
+}

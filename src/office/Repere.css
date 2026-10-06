@@ -1,0 +1,41 @@
+.repere {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-sm);
+  margin: var(--esp-lg) 0;
+}
+
+.repere::before,
+.repere::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid var(--filet);
+}
+
+/* Une pastille cerclée de sépia pâle, comme dans le design. */
+.repere-perle {
+  width: 9px;
+  height: 9px;
+  border-radius: 9999px;
+  border: 1px solid var(--sepia-pale);
+  background: var(--or);
+}
+
+.repere-perle[data-couleur='blanc'] {
+  background: var(--liturgique-blanc);
+}
+.repere-perle[data-couleur='vert'] {
+  background: var(--liturgique-vert);
+}
+.repere-perle[data-couleur='violet'] {
+  background: var(--liturgique-violet);
+}
+.repere-perle[data-couleur='rouge'] {
+  background: var(--liturgique-rouge);
+}
+.repere-perle[data-couleur='rose'] {
+  background: var(--liturgique-rose);
+}
+.repere-perle[data-couleur='noir'] {
+  background: var(--liturgique-noir);
+}
