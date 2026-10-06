@@ -85,11 +85,12 @@ Au début de chaque dizaine, un écran d'annonce présente le titre, le fruit, l
 
 ### Critères d'acceptation
 
-- [ ] Les 20 mystères (titre, fruit, référence, passage dans la traduction liturgique AELF) sont validés par le porteur du projet et figés.
-- [ ] Les passages sont dans un recueil séparé, remplaçable par une autre traduction sans toucher au code.
-- [ ] Un parcours Playwright vérifie qu'un toucher hors de la grosse perle n'avance pas l'écran d'annonce, et qu'un toucher sur la perle l'avance.
-- [ ] Le basculement entre mode complet et mode compact fonctionne, et le lien « Lire le passage » déplie le passage.
-- [ ] Les 4 séries s'ouvrent depuis le choix de série.
+- [x] Les 20 mystères (titre, fruit, référence, passage dans la traduction liturgique AELF) sont validés par le porteur du projet et figés (trois passages par mystère, qui tournent toutes les 6 lectures : choix du porteur du projet, 2026-10-06).
+- [x] Les passages sont dans un recueil séparé, remplaçable par une autre traduction sans toucher au code.
+- [x] Un parcours Playwright vérifie qu'un toucher hors de la grosse perle n'avance pas l'écran d'annonce, et qu'un toucher sur la perle l'avance.
+- [x] Le basculement entre mode complet et mode compact fonctionne, et le lien « Lire le passage » déplie le passage.
+- [x] Les 4 séries s'ouvrent depuis le choix de série (le seuil du chapelet, avant le signe de croix).
+- [x] Validée sur le Xiaomi et le Samsung par le porteur du projet (2026-10-06).
 
 ## Bloquée par
 
