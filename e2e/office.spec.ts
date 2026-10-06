@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
-import { preparer, servirAelf } from './outils.ts'
+import { espionner, journal, preparer, servirAelf } from './outils.ts'
 
 // Phase 5 : les sept offices du jour, lus d'un trait tels que l'AELF les
 // fournit, repères liturgiques en rouge rubrique.
@@ -154,6 +154,19 @@ test('un office que l’AELF ne propose pas : le dire, sans « Réessayer »', a
   await expect(alerte).toContainText('L’AELF ne propose pas cet office pour ce jour.')
   await expect(alerte).not.toContainText('ne répond pas')
   await expect(page.getByRole('button', { name: 'Réessayer' })).toHaveCount(0)
+})
+
+test('l’écran reste allumé pendant la lecture et redevient libre au retour', async ({ page }) => {
+  await espionner(page)
+  await servirAelf(page)
+  await preparer(page)
+  await page.goto('/offices')
+  await page.getByRole('link', { name: 'Complies' }).click()
+  await expect(titres(page).first()).toHaveText('Introduction')
+  await expect.poll(() => journal(page)).toEqual(['écran allumé'])
+  await page.getByRole('button', { name: /Retour/ }).click()
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Offices du jour')
+  await expect.poll(() => journal(page)).toEqual(['écran allumé', 'écran libre'])
 })
 
 test('une adresse d’office inconnue mène à la liste du jour', async ({ page }) => {

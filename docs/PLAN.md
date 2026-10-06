@@ -131,10 +131,10 @@ On ouvre n'importe lequel des 7 offices du jour, récupéré auprès de l'AELF (
 
 ### Critères d'acceptation
 
-- [ ] Les 7 offices du jour s'affichent depuis l'API AELF, sur le navigateur et sur l'APK.
-- [ ] La transformation du HTML AELF en `Office` est testée sur des réponses AELF réelles enregistrées (au moins une par office), et aucun HTML non assaini n'atteint l'écran.
-- [ ] Les repères (versets, V/ et R/, astérisques, accents) apparaissent en rouge rubrique, et les accents se masquent par réglage.
-- [ ] Si l'API est injoignable, un message clair s'affiche au lieu d'un écran vide.
+- [x] Les 7 offices du jour s'affichent depuis l'API AELF, sur le navigateur et sur l'APK.
+- [x] La transformation du HTML AELF en `Office` est testée sur des réponses AELF réelles enregistrées (au moins une par office), et aucun HTML non assaini n'atteint l'écran.
+- [x] Les repères (versets, V/ et R/, astérisques, accents) apparaissent en rouge rubrique, et les accents se masquent par réglage.
+- [x] Si l'API est injoignable, un message clair s'affiche au lieu d'un écran vide.
 
 ## Bloquée par
 

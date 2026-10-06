@@ -9,6 +9,7 @@ import { dateLisible, estDate } from '../office/dates'
 import { estNomOffice, NOMS_OFFICES, type NomOffice } from '../office/modele'
 import { PartieOffice } from '../office/PartieOffice'
 import { Repere } from '../office/Repere'
+import { garderEcranAllume } from '../telephone/retours'
 import './EcranOffice.css'
 
 // Un office lu d'un trait, tel que l'AELF le fournit (phase 5) : la
@@ -30,6 +31,8 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
   const [{ accents }] = useState(lireReglages)
   const retour = useRetour()
   const { fin, cachee } = useSuiteCachee()
+  // Comme au chapelet : le téléphone ne se verrouille pas en pleine lecture.
+  useEffect(() => garderEcranAllume(), [])
 
   useEffect(() => {
     const abandon = new AbortController()
