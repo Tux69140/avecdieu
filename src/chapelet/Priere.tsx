@@ -26,7 +26,7 @@ interface Props {
 // Une prière du chapelet. En mode compact, seuls son nom et le compteur
 // s'affichent ; le texte de la prière et le passage du mystère se déplient à
 // la demande, sous les liens qui ne bougent pas. Les liens sont des boutons : les toucher n'avance pas. Sans
-// annonce, seul le titre du mystère reste (choix du porteur du projet).
+// annonce, rien du mystère : des prières vocales seules (choix du porteur du projet).
 export function Priere(props: Props) {
   const { pas, serie, compact, plusieurs, annonce, passageDeplie, onBasculerPassage } = props
   const [voirPriere, setVoirPriere] = useState(false)
@@ -37,7 +37,7 @@ export function Priere(props: Props) {
   const ouvreLaDizaine = compact && annonce && dizaine !== undefined && pas.priere === 'notre-pere'
   return (
     <section className="priere" data-testid="priere" aria-live="polite">
-      {dizaine !== undefined && (
+      {annonce && dizaine !== undefined && (
         <p className="mystere" data-testid="mystere">
           <span className="etiquette">{ORDINAUX[dizaine - 1]} mystère</span>{' '}
           <span className="mystere-titre">{SERIES[serie].mysteres[dizaine - 1]}</span>

@@ -7,6 +7,7 @@ import android.os.VibrationAttributes;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.os.VibratorManager;
+import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
@@ -39,6 +40,16 @@ public class Vibreur extends Plugin {
             vibrerTresAncien(vibreur, duree);
         }
         call.resolve();
+    }
+
+    // Les tablettes n'ont souvent pas de vibreur (Galaxy Tab A9+ du porteur du
+    // projet) : l'app masque alors le réglage des vibrations.
+    @PluginMethod
+    public void peutVibrer(PluginCall call) {
+        Vibrator vibreur = vibreur();
+        JSObject reponse = new JSObject();
+        reponse.put("oui", vibreur != null && vibreur.hasVibrator());
+        call.resolve(reponse);
     }
 
     @SuppressWarnings("deprecation")

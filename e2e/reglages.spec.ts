@@ -118,22 +118,26 @@ test.describe('déroulé selon les réglages', () => {
     await expect(page.getByRole('heading', { level: 2 })).toHaveText('Chapelet terminé')
   })
 
-  test('sans annonce, ni écran d’annonce ni fruit : le titre du mystère reste', async ({
-    page,
-  }) => {
+  // Prières vocales seules : rien du mystère (choix du porteur du projet, 2026-10-06).
+  test('sans annonce, ni écran d’annonce, ni mystère, ni fruit', async ({ page }) => {
     await commencer(page, '/chapelet', { reglages: { annonce: false } })
     await avancer(page, 7)
     await expect(page.getByTestId('annonce')).toHaveCount(0)
     await expect(titrePriere(page)).toHaveText('Notre Père')
-    await expect(page.getByTestId('mystere')).toHaveText('Premier mystère L’Annonciation')
-    await expect(page.getByText(/Fruit/)).toHaveCount(0)
+    await expect(page.getByTestId('compteur')).toHaveCount(0)
+    await avancer(page, 1)
+    await expect(page.getByTestId('compteur')).toHaveText('1 / 10')
+    await expect(page.getByTestId('mystere')).toHaveCount(0)
+    await expect(page.getByText(/mystère|Fruit/)).toHaveCount(0)
   })
 
-  test('sans annonce, en compact, ni fruit ni « Afficher la Lecture »', async ({ page }) => {
+  test('sans annonce, en compact, ni mystère, ni fruit, ni « Afficher la Lecture »', async ({
+    page,
+  }) => {
     await commencer(page, '/chapelet', { reglages: { annonce: false, affichage: 'compact' } })
     await avancer(page, 7)
     await expect(titrePriere(page)).toHaveText('Notre Père')
-    await expect(page.getByTestId('mystere')).toHaveText('Premier mystère L’Annonciation')
+    await expect(page.getByTestId('mystere')).toHaveCount(0)
     await expect(page.getByText(/Fruit/)).toHaveCount(0)
     await expect(page.getByRole('button', { name: 'Voir la prière' })).toBeVisible()
     await expect(page.getByRole('button', { name: 'Afficher la Lecture' })).toHaveCount(0)
@@ -198,6 +202,18 @@ test.describe('prier à plusieurs', () => {
 })
 
 test.describe('vibrations', () => {
+  test('sur un appareil sans vibreur (tablette), le réglage n’apparaît pas', async ({ page }) => {
+    await page.addInitScript(() => Reflect.deleteProperty(Navigator.prototype, 'vibrate'))
+    await preparer(page)
+    await page.goto('/chapelet')
+    await expect(page.getByRole('button', { name: 'Commencer le chapelet' })).toBeVisible()
+    await expect(page.getByRole('radio', { name: 'Compact' })).toBeVisible()
+    await expect(reglage(page, 'Vibrations')).toHaveCount(0)
+    await page.goto('/reglages')
+    await expect(reglage(page, 'Prier à plusieurs')).toBeVisible()
+    await expect(reglage(page, 'Vibrations')).toHaveCount(0)
+  })
+
   test('se coupent depuis le seuil, puis se rétablissent', async ({ page }) => {
     await espionner(page)
     await preparer(page)
@@ -279,7 +295,8 @@ test.describe('reprise d’un chapelet interrompu', () => {
     await avancer(page, AVE_3_4)
     await page.goBack()
     await ouvrirReglages(page)
-    await reglage(page, 'Annonce des mystères').click()
+    // Sans « Ô mon Jésus », les deux premières dizaines ont une prière de moins.
+    await reglage(page, /Ô mon Jésus/).click()
     await page.getByRole('button', { name: /Retour au chapelet/ }).click()
     await page.getByRole('button', { name: 'Reprendre à la 3e dizaine' }).click()
     await verifierAve34(page)

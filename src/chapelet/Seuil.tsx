@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import { IndiceSuite } from '../composants/IndiceSuite'
 import { Interrupteur } from '../composants/Interrupteur'
 import { useSuiteCachee } from '../composants/suiteCachee'
+import { usePeutVibrer } from '../telephone/retours'
 import { SERIES, type SerieId } from '../recueil/mysteres'
 import { ChoixAffichage } from './ChoixAffichage'
 import { AIDE_VIBRATIONS } from './libelles'
@@ -26,6 +27,8 @@ interface Props {
 // vibrations). Les habitudes qu'on règle une fois sont dans les réglages.
 export function Seuil({ serie, duJour, date, enCours, onCommencer, onRecommencer }: Props) {
   const [reglages, setReglages] = useState(lireReglages)
+  // Sans vibreur (tablette), le réglage n'a pas lieu d'être.
+  const vibreur = usePeutVibrer()
   const { fin, cachee } = useSuiteCachee()
   const jour = date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
   const autres = (Object.keys(SERIES) as SerieId[]).filter((s) => s !== serie)
@@ -86,14 +89,16 @@ export function Seuil({ serie, duJour, date, enCours, onCommencer, onRecommencer
         />
       </section>
 
-      <div className="seuil-section">
-        <Interrupteur
-          libelle="Vibrations"
-          aide={AIDE_VIBRATIONS}
-          actif={reglages.vibrations}
-          onBasculer={(vibrations) => modifier({ vibrations })}
-        />
-      </div>
+      {vibreur && (
+        <div className="seuil-section">
+          <Interrupteur
+            libelle="Vibrations"
+            aide={AIDE_VIBRATIONS}
+            actif={reglages.vibrations}
+            onBasculer={(vibrations) => modifier({ vibrations })}
+          />
+        </div>
+      )}
 
       <div ref={fin} className="fin-ecran" />
       <IndiceSuite visible={cachee} />

@@ -4,6 +4,7 @@ import { AIDE_VIBRATIONS } from '../chapelet/libelles'
 import { lireReglages, modifierReglages, type Reglages } from '../chapelet/reglages'
 import { Interrupteur } from '../composants/Interrupteur'
 import { useRetour } from '../composants/retour'
+import { usePeutVibrer } from '../telephone/retours'
 import './EcranReglages.css'
 
 type Bascule = 'annonce' | 'oMonJesus' | 'salveRegina' | 'plusieurs'
@@ -24,6 +25,8 @@ const BASCULES: [Bascule, string, string?][] = [
 export function EcranReglages() {
   const [reglages, setReglages] = useState(lireReglages)
   const retour = useRetour()
+  // Sans vibreur (tablette), le réglage n'a pas lieu d'être.
+  const vibreur = usePeutVibrer()
   const modifier = (changement: Partial<Reglages>) => setReglages(modifierReglages(changement))
 
   return (
@@ -50,14 +53,16 @@ export function EcranReglages() {
           affichage={reglages.affichage}
           onChoisir={(affichage) => modifier({ affichage })}
         />
-        <div className="reglages-vibrations">
-          <Interrupteur
-            libelle="Vibrations"
-            aide={AIDE_VIBRATIONS}
-            actif={reglages.vibrations}
-            onBasculer={(vibrations) => modifier({ vibrations })}
-          />
-        </div>
+        {vibreur && (
+          <div className="reglages-vibrations">
+            <Interrupteur
+              libelle="Vibrations"
+              aide={AIDE_VIBRATIONS}
+              actif={reglages.vibrations}
+              onBasculer={(vibrations) => modifier({ vibrations })}
+            />
+          </div>
+        )}
       </section>
     </main>
   )
