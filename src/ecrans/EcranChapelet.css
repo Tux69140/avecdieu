@@ -146,10 +146,14 @@
   margin-top: var(--esp-md);
 }
 
+/* Deux colonnes égales : changer « Voir » en « Masquer » ne déplace rien. */
 .liens-compacts {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0 var(--esp-md);
-  margin-top: var(--esp-sm);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  margin-top: var(--esp-xs);
+}
+
+.liens-compacts .lien-discret {
+  padding: var(--esp-xs);
+  text-wrap: balance;
 }

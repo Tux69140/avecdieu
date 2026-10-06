@@ -4,12 +4,6 @@
   padding: var(--esp-sm) var(--gouttiere) var(--esp-3xl);
 }
 
-.reglages-retour {
-  margin-left: calc(-1 * var(--esp-sm));
-  text-decoration: none;
-  color: var(--sepia);
-}
-
 .reglages h1 {
   margin: var(--esp-xs) 0 0;
   font-family: var(--display);

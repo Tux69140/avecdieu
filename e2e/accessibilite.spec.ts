@@ -89,3 +89,17 @@ test('prier à plusieurs, V/ et R/', async ({ page }) => {
   await expect(page.getByTestId('marque-R')).toBeVisible()
   expect(await violationsGraves(page)).toEqual([])
 })
+
+test('menu', async ({ page }) => {
+  await preparer(page)
+  await page.goto('/menu')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Avec Dieu')
+  expect(await violationsGraves(page)).toEqual([])
+})
+
+test('à propos', async ({ page }) => {
+  await preparer(page)
+  await page.goto('/a-propos')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Avec Dieu')
+  expect(await violationsGraves(page)).toEqual([])
+})

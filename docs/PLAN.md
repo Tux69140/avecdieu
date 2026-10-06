@@ -11,7 +11,7 @@ Décisions durables qui s'appliquent à toutes les phases :
   - `/` : accueil « Aujourd'hui » ; `/jour/AAAA-MM-JJ` : accueil d'un autre jour
   - `/office/<office>/<AAAA-MM-JJ>` : avec `<office>` ∈ `lectures | laudes | tierce | sexte | none | vepres | complies` (mêmes noms que l'API AELF)
   - `/chapelet` : chapelet du jour ; `/chapelet/<série>` : avec `<série>` ∈ `joyeux | lumineux | douloureux | glorieux`
-  - `/reglages`
+  - `/reglages` ; `/menu` (ouvert par ☰ depuis le seuil) ; `/a-propos`
   - Les notifications de rappel ouvrent directement ces routes.
 - **Modèles clés** :
   - `JourLiturgique` : date, zone, temps liturgique, semaine, fête, rang, couleur(s)
@@ -104,7 +104,7 @@ Au début de chaque dizaine, un écran d'annonce présente le titre, le fruit, l
 
 ### Ce qu'on livre
 
-Un premier écran de réglages pour le chapelet : annonce des mystères (oui ou non), « Ô mon Jésus » et Salve Regina en option (activés par défaut), affichage (texte complet ou compact), vibrations (oui ou non, pour la discrétion à l'église), prier à plusieurs (V/ et R/ marquent la part de celui qui mène et la réponse des autres). Les choix du moment (affichage, vibrations) sont aussi sur le seuil, qui mène à l'écran des réglages. Un chapelet interrompu par un appel ou un changement d'app reprend au grain exact s'il est rouvert le jour même. Passé minuit, il est abandonné.
+Un premier écran de réglages pour le chapelet : annonce des mystères (oui ou non), « Ô mon Jésus » et Salve Regina en option (activés par défaut), affichage (texte complet ou compact), vibrations (oui ou non, pour la discrétion à l'église), prier à plusieurs (V/ et R/ marquent la part de celui qui mène et la réponse des autres). Les choix du moment (affichage, vibrations) sont aussi sur le seuil. Un menu ☰ en haut du seuil mène au chapelet, aux réglages et à « À propos » (version, sources des textes), et annonce les offices à venir. Un chapelet interrompu par un appel ou un changement d'app reprend au grain exact s'il est rouvert le jour même. Passé minuit, il est abandonné.
 
 ### Critères d'acceptation
 

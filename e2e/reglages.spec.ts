@@ -20,15 +20,23 @@ const dizaine = (d: number) => 7 + (d - 1) * 14
 const titrePriere = (page: Page) => page.getByTestId('priere').getByRole('heading', { level: 2 })
 const reglage = (page: Page, nom: string | RegExp) => page.getByRole('switch', { name: nom })
 
+// Les réglages s'ouvrent par le menu ☰ du seuil.
+async function ouvrirReglages(page: Page) {
+  await page.getByRole('link', { name: 'Menu' }).click()
+  await page.getByRole('link', { name: 'Réglages' }).click()
+}
+
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(LUNDI)
 })
 
 test.describe('écran des réglages', () => {
-  test('s’ouvre depuis le seuil, montre les réglages par défaut, et y ramène', async ({ page }) => {
+  test('s’ouvre par le menu du seuil, montre les réglages par défaut, et ramène au seuil', async ({
+    page,
+  }) => {
     await preparer(page)
     await page.goto('/chapelet')
-    await page.getByRole('link', { name: 'Tous les réglages' }).click()
+    await ouvrirReglages(page)
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Réglages')
     await expect(reglage(page, 'Annonce des mystères')).toHaveAttribute('aria-checked', 'true')
     await expect(reglage(page, /Ô mon Jésus/)).toHaveAttribute('aria-checked', 'true')
@@ -250,7 +258,7 @@ test.describe('reprise d’un chapelet interrompu', () => {
     await commencer(page)
     await avancer(page, AVE_3_4)
     await page.goBack()
-    await page.getByRole('link', { name: 'Tous les réglages' }).click()
+    await ouvrirReglages(page)
     await reglage(page, 'Annonce des mystères').click()
     await page.getByRole('button', { name: /Retour au chapelet/ }).click()
     await page.getByRole('button', { name: 'Reprendre à la 3e dizaine' }).click()

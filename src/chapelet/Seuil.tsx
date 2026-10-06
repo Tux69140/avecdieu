@@ -33,6 +33,11 @@ export function Seuil({ serie, duJour, date, enCours, onCommencer, onRecommencer
 
   return (
     <main className="seuil">
+      <Link className="bouton-menu" to="/menu" aria-label="Menu">
+        <svg viewBox="0 0 20 20" aria-hidden="true">
+          <path d="M3 5h14M3 10h14M3 15h14" />
+        </svg>
+      </Link>
       <header className="seuil-entete">
         <p className="etiquette">
           {serie === duJour ? `Chapelet du jour · ${jour}` : `Chapelet · ${jour}`}
@@ -90,9 +95,6 @@ export function Seuil({ serie, duJour, date, enCours, onCommencer, onRecommencer
         />
       </div>
 
-      <Link className="seuil-reglages" to="/reglages">
-        Tous les réglages
-      </Link>
       <div ref={fin} className="fin-ecran" />
       <IndiceSuite visible={cachee} />
     </main>

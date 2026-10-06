@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
 import { ChoixAffichage } from '../chapelet/ChoixAffichage'
 import { AIDE_VIBRATIONS } from '../chapelet/libelles'
 import { lireReglages, modifierReglages, type Reglages } from '../chapelet/reglages'
 import { Interrupteur } from '../composants/Interrupteur'
+import { useRetour } from '../composants/retour'
 import './EcranReglages.css'
 
 type Bascule = 'annonce' | 'oMonJesus' | 'salveRegina' | 'plusieurs'
@@ -23,18 +23,12 @@ const BASCULES: [Bascule, string, string?][] = [
 // offices y ajouteront les leurs.
 export function EcranReglages() {
   const [reglages, setReglages] = useState(lireReglages)
-  const naviguer = useNavigate()
+  const retour = useRetour()
   const modifier = (changement: Partial<Reglages>) => setReglages(modifierReglages(changement))
-  // Revenir d'où l'on vient ; ouvert directement, l'écran mène au chapelet.
-  const retour = () => {
-    const idx = (window.history.state as { idx?: number } | null)?.idx ?? 0
-    if (idx > 0) naviguer(-1)
-    else naviguer('/chapelet', { replace: true })
-  }
 
   return (
     <main className="reglages">
-      <button className="reglages-retour lien-discret" type="button" onClick={retour}>
+      <button className="retour lien-discret" type="button" onClick={retour}>
         ‹ Retour au chapelet
       </button>
       <h1>Réglages</h1>

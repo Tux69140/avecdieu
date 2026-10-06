@@ -1,0 +1,38 @@
+.a-propos {
+  max-width: calc(34em + 2 * var(--gouttiere));
+  margin: 0 auto;
+  padding: var(--esp-sm) var(--gouttiere) var(--esp-3xl);
+}
+
+.a-propos h1 {
+  margin: var(--esp-xs) 0 0;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 34px;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.a-propos-version {
+  margin: var(--esp-xs) 0 var(--esp-lg);
+  text-align: center;
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: 0.06em;
+  color: var(--sepia);
+}
+
+.a-propos p {
+  margin: 0 0 var(--esp-sm);
+  line-height: 1.5;
+}
+
+.a-propos h2 {
+  margin: var(--esp-xl) 0 var(--esp-sm);
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: 0.06em;
+  color: var(--sepia);
+}

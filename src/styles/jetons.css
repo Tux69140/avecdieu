@@ -162,6 +162,13 @@ body::before {
   }
 }
 
+/* Retour en haut d'un écran secondaire, aligné sur la gouttière. */
+.retour {
+  margin-left: calc(-1 * var(--esp-sm));
+  text-decoration: none;
+  color: var(--sepia);
+}
+
 /* Lien discret : une action secondaire, soulignée d'or. */
 .lien-discret {
   min-height: 48px;

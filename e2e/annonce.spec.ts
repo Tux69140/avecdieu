@@ -143,6 +143,8 @@ test.describe('mode compact', () => {
 test('en compact, les liens restent sous le titre quand la prière ou le passage se déplient', async ({
   page,
 }) => {
+  // Le plus petit téléphone visé : les libellés longs y passeraient à la ligne.
+  await page.setViewportSize({ width: 360, height: 760 })
   await commencer(page, '/chapelet', { affichage: 'compact' })
   for (let i = 0; i < 8; i++) await toucher(page)
   await expect(page.getByTestId('compteur')).toHaveText('1 / 10')
@@ -150,7 +152,8 @@ test('en compact, les liens restent sous le titre quand la prière ou le passage
     await expect.poll(() => page.evaluate(() => document.getAnimations().length)).toBe(0)
     const boite = (await page.getByRole('button', { name: nom }).boundingBox())!
     // Position dans la page, que l'écran ait défilé ou non.
-    return Math.round(boite.y + (await page.evaluate(() => window.scrollY)))
+    const y = Math.round(boite.y + (await page.evaluate(() => window.scrollY)))
+    return `${Math.round(boite.x)},${y}`
   }
   const priere = /^(Voir|Masquer) la prière$/
   const passage = /^(Afficher|Masquer) la Lecture$/
