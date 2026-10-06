@@ -1,0 +1,17 @@
+# Gitleaks : règles par défaut, plus les secrets propres à une app Android.
+
+title = "Avec Dieu"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "android-keystore"
+description = "Clé de signature Android dans le dépôt (elle doit rester hors dépôt)"
+path = '''\.(jks|keystore)$'''
+
+[[rules]]
+id = "keystore-password"
+description = "Mot de passe de clé de signature en clair"
+regex = '''(?i)(storePassword|keyPassword|store_password|key_password)\s*[=:]\s*['"]?[^\s'"]{4,}'''
+keywords = ["storepassword", "keypassword", "store_password", "key_password"]

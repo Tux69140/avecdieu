@@ -36,7 +36,11 @@ describe('déroulé du chapelet marial', () => {
   })
 
   it('compte les répétitions : 1 à 3 à l’ouverture, 1 à 10 dans la dizaine', () => {
-    expect(deroule.pas.slice(3, 6).map((p) => `${p.rang}/${p.total}`)).toEqual(['1/3', '2/3', '3/3'])
+    expect(deroule.pas.slice(3, 6).map((p) => `${p.rang}/${p.total}`)).toEqual([
+      '1/3',
+      '2/3',
+      '3/3',
+    ])
     const aves = deroule.pas.filter((p) => p.dizaine === 2 && p.priere === AVE)
     expect(aves.map((p) => p.rang)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
     expect(aves.every((p) => p.total === 10)).toBe(true)
@@ -55,7 +59,11 @@ describe('déroulé du chapelet marial', () => {
     expect(compte('gros')).toBe(6)
     expect(compte('croix')).toBe(1)
     expect(compte('noeud')).toBe(6)
-    expect(deroule.pas.filter((p) => p.priere === 'gloire-au-pere').every((p) => deroule.grains[p.grain] === 'noeud')).toBe(true)
+    expect(
+      deroule.pas
+        .filter((p) => p.priere === 'gloire-au-pere')
+        .every((p) => deroule.grains[p.grain] === 'noeud'),
+    ).toBe(true)
   })
 
   it('avance d’un grain à la fois, sans en sauter', () => {

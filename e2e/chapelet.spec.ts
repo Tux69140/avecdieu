@@ -22,7 +22,11 @@ const DEROULE: Attendu[] = [
     const mystere = `${ORDINAUX[d]} mystère ${titre}`
     return [
       { priere: 'Notre Père', mystere },
-      ...Array.from({ length: 10 }, (_, n) => ({ priere: AVE, compteur: `${n + 1} / 10`, mystere })),
+      ...Array.from({ length: 10 }, (_, n) => ({
+        priere: AVE,
+        compteur: `${n + 1} / 10`,
+        mystere,
+      })),
       { priere: 'Gloire au Père', mystere },
     ]
   }),
@@ -45,14 +49,19 @@ async function glisser(page: Page, dx: number, y = page.viewportSize()!.height /
   const point = (x: number) => [{ x, y }]
   await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: point(x0) })
   for (let i = 1; i <= 8; i++) {
-    await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: point(x0 + (dx * i) / 8) })
+    await cdp.send('Input.dispatchTouchEvent', {
+      type: 'touchMove',
+      touchPoints: point(x0 + (dx * i) / 8),
+    })
   }
   await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
 }
 
 async function verifierPas(page: Page, attendu: Attendu, index: number) {
   const ecran = page.getByTestId('priere')
-  await expect(ecran.getByRole('heading', { level: 2 }), `prière n° ${index + 1}`).toHaveText(attendu.priere)
+  await expect(ecran.getByRole('heading', { level: 2 }), `prière n° ${index + 1}`).toHaveText(
+    attendu.priere,
+  )
   if (attendu.compteur) await expect(page.getByTestId('compteur')).toHaveText(attendu.compteur)
   else await expect(page.getByTestId('compteur')).toHaveCount(0)
   if (attendu.mystere) await expect(page.getByTestId('mystere')).toHaveText(attendu.mystere)
@@ -76,7 +85,9 @@ test('réciter un chapelet complet, toucher par toucher, sans quitter l’app', 
   for (const [i, attendu] of DEROULE.entries()) {
     await verifierPas(page, attendu, i)
     // Le grain mis en évidence avance avec la prière, jamais de plus d'un grain.
-    const grain = Number(await page.getByTestId('chapelet-dessine').getAttribute('data-grain-courant'))
+    const grain = Number(
+      await page.getByTestId('chapelet-dessine').getAttribute('data-grain-courant'),
+    )
     expect(grain - grainPrecedent).toBeLessThanOrEqual(1)
     expect(grain).toBeGreaterThanOrEqual(grainPrecedent)
     grainPrecedent = grain
@@ -90,7 +101,9 @@ test('réciter un chapelet complet, toucher par toucher, sans quitter l’app', 
   expect(requetesExternes).toEqual([])
 })
 
-test('glisser revient d’une prière en arrière, dans un sens comme dans l’autre', async ({ page }) => {
+test('glisser revient d’une prière en arrière, dans un sens comme dans l’autre', async ({
+  page,
+}) => {
   await page.goto('/chapelet')
   for (let i = 0; i < 5; i++) await toucher(page)
   await verifierPas(page, DEROULE[5], 5)
@@ -176,7 +189,9 @@ test('une série choisie par l’adresse remplace celle du jour', async ({ page 
   await page.goto('/chapelet/lumineux')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mystères lumineux')
   for (let i = 0; i < 7; i++) await toucher(page)
-  await expect(page.getByTestId('mystere')).toHaveText('Premier mystère Le Baptême de Jésus au Jourdain')
+  await expect(page.getByTestId('mystere')).toHaveText(
+    'Premier mystère Le Baptême de Jésus au Jourdain',
+  )
 })
 
 test('l’accueil mène au chapelet en attendant la phase 8', async ({ page }) => {

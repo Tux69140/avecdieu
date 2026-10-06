@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Dernière barrière avant GitHub : toute la suite de tests. Il n'y a pas
+# d'intégration continue ; rien ne part sans tests unitaires et parcours verts.
+set -e
+
+echo "=== pre-push : tests unitaires (Vitest) ==="
+pnpm test
+
+echo "=== pre-push : parcours (Playwright) ==="
+pnpm test:e2e

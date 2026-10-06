@@ -18,14 +18,18 @@ const TOUCHES_AVANCER = new Set([' ', 'Enter', 'ArrowRight', 'ArrowDown', 'PageD
 const TOUCHES_RECULER = new Set(['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'])
 
 const estSerie = (valeur: string): valeur is SerieId => valeur in SERIES
-const estInteractif = (cible: EventTarget) => cible instanceof Element && cible.closest('button, a') !== null
+const estInteractif = (cible: EventTarget) =>
+  cible instanceof Element && cible.closest('button, a') !== null
 
 export function EcranChapelet() {
   const { serie: serieChoisie } = useParams()
   const [aujourdhui] = useState(() => new Date())
-  if (serieChoisie !== undefined && !estSerie(serieChoisie)) return <Navigate to="/chapelet" replace />
+  if (serieChoisie !== undefined && !estSerie(serieChoisie))
+    return <Navigate to="/chapelet" replace />
   const serie = serieChoisie ?? serieDuJour(aujourdhui)
-  return <Chapelet key={serie} serie={serie} date={aujourdhui} choisie={serieChoisie !== undefined} />
+  return (
+    <Chapelet key={serie} serie={serie} date={aujourdhui} choisie={serieChoisie !== undefined} />
+  )
 }
 
 function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisie: boolean }) {
@@ -48,7 +52,12 @@ function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisi
 
   const appui = (e: PointerEvent) => {
     if (!e.isPrimary || e.button !== 0) return
-    debutGeste.current = { id: e.pointerId, x: e.clientX, y: e.clientY, surBouton: estInteractif(e.target) }
+    debutGeste.current = {
+      id: e.pointerId,
+      x: e.clientX,
+      y: e.clientY,
+      surBouton: estInteractif(e.target),
+    }
   }
   const relachement = (e: PointerEvent) => {
     const debut = debutGeste.current
@@ -73,14 +82,15 @@ function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisi
         <h1>{SERIES[serie].titre}</h1>
       </header>
 
-      <ChapeletDessine plan={PLAN} grainCourant={termine ? PLAN.points.length : DEROULE.pas[index].grain} />
+      <ChapeletDessine
+        plan={PLAN}
+        grainCourant={termine ? PLAN.points.length : DEROULE.pas[index].grain}
+      />
 
       {termine ? (
         <section className="fin" data-testid="priere">
           <h2>Chapelet terminé</h2>
-          <p className="fin-texte">
-            {SERIES[serie].titre} · cinq dizaines
-          </p>
+          <p className="fin-texte">{SERIES[serie].titre} · cinq dizaines</p>
           <button className="btn btn-secondaire" type="button" onClick={() => setIndex(0)}>
             Recommencer
           </button>
@@ -89,7 +99,9 @@ function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisi
         <Priere key={index} pas={DEROULE.pas[index]} serie={serie} />
       )}
 
-      {index === 0 && <p className="consigne">Touchez l’écran pour avancer, glissez pour revenir.</p>}
+      {index === 0 && (
+        <p className="consigne">Touchez l’écran pour avancer, glissez pour revenir.</p>
+      )}
     </main>
   )
 }

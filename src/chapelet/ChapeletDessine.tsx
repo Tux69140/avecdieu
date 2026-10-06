@@ -26,7 +26,11 @@ export function ChapeletDessine({ plan, grainCourant }: Props) {
       <line className="fil" x1={medaille.x} y1={medaille.y} x2={croix.x} y2={croix.y} />
       <ellipse className="medaille" cx={medaille.x} cy={medaille.y} rx={5} ry={6.5} />
       {points.map((point, i) => (
-        <Grain key={i} point={point} etat={i < grainCourant ? 'passe' : i === grainCourant ? 'courant' : 'a-venir'} />
+        <Grain
+          key={i}
+          point={point}
+          etat={i < grainCourant ? 'passe' : i === grainCourant ? 'courant' : 'a-venir'}
+        />
       ))}
     </svg>
   )

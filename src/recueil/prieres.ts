@@ -4,11 +4,7 @@
 // Chaque ligne est un vers ; une ligne vide ('') sépare deux strophes.
 
 export type PriereId =
-  | 'signe-de-croix'
-  | 'credo'
-  | 'notre-pere'
-  | 'je-vous-salue-marie'
-  | 'gloire-au-pere'
+  'signe-de-croix' | 'credo' | 'notre-pere' | 'je-vous-salue-marie' | 'gloire-au-pere'
 
 export interface Priere {
   titre: string
@@ -18,12 +14,7 @@ export interface Priere {
 export const PRIERES: Record<PriereId, Priere> = {
   'signe-de-croix': {
     titre: 'Signe de croix',
-    lignes: [
-      'Au nom du Père,',
-      'et du Fils,',
-      'et du Saint-Esprit.',
-      'Amen.',
-    ],
+    lignes: ['Au nom du Père,', 'et du Fils,', 'et du Saint-Esprit.', 'Amen.'],
   },
   credo: {
     titre: 'Je crois en Dieu',

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Barrière de chaque commit : style, longueur des fichiers, types, secrets.
+# Rapide (quelques secondes) : les tests complets attendent la poussée.
+set -e
+
+echo "=== pre-commit : lint (ESLint, Prettier, longueurs, types) ==="
+pnpm lint
+
+echo "=== pre-commit : secrets (gitleaks) ==="
+if command -v gitleaks &>/dev/null; then
+  gitleaks git --pre-commit --staged --no-banner -v
+else
+  echo "⚠ gitleaks non installé : recherche de secrets ignorée"
+fi

@@ -1,0 +1,9 @@
+dist
+android
+node_modules
+test-results
+playwright-report
+pnpm-lock.yaml
+docs/**
+.claude/**
+*.md

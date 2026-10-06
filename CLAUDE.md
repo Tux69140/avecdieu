@@ -17,8 +17,19 @@ Pile : TypeScript + React + Vite, Vitest, Playwright (Capacitor Android arrive e
 - `pnpm dev` : serveur de développement (http://localhost:5173).
 - `pnpm build` : vérification TypeScript puis construction dans `dist/`.
 - `pnpm test` : tests unitaires Vitest. Un seul fichier : `pnpm exec vitest run src/chapelet/deroule.test.ts` ; un seul test : ajouter `-t "nom du test"`.
-- `pnpm test:e2e` : parcours Playwright (construit l'app et la sert sur le port 4173, émulation Pixel 7). Un seul test : `pnpm exec playwright test -g "glisser"`.
-- `pnpm lint` : oxlint.
+- `pnpm test:e2e` : parcours Playwright, dont l'accessibilité (construit l'app et la sert sur le port 4173, émulation Pixel 7). Un seul test : `pnpm exec playwright test -g "glisser"`.
+- `pnpm lint` : ESLint, Prettier, longueur des fichiers (500 lignes au plus, tests exceptés) et types. `pnpm lint:fix` corrige le style.
+
+Crochets git dans `.githooks/` (activés par `pnpm install`) : `pnpm lint` et gitleaks à chaque commit, `pnpm test` et `pnpm test:e2e` à chaque poussée. Ne jamais les contourner.
+
+## Règles (chargées automatiquement)
+
+Les règles détaillées vivent dans `.claude/rules/` :
+
+- `conventions.md` : 500 lignes par fichier, découpage par responsabilité, langue (métier en français), nommage, architecture, commits.
+- `tests.md` : matrice de tests, barrière de qualité, pièges connus.
+- `rythme-de-travail.md` : validation avant, captures pendant, tests ciblés, poussées par lot.
+- `securite.md` : rien ne quitte le téléphone, HTML AELF assaini, secrets et clé Android hors dépôt.
 
 ## Organisation du code
 
@@ -27,6 +38,17 @@ Pile : TypeScript + React + Vite, Vitest, Playwright (Capacitor Android arrive e
 - `src/ecrans/` : un écran par route ; routes déclarées dans `src/main.tsx`.
 - `src/styles/jetons.css` : jetons de `docs/DESIGN.md` et polices auto-hébergées (paquets `@fontsource`).
 - `e2e/` : parcours Playwright, un par phase au moins.
+- `scripts/` : contrôles lancés par les commandes ci-dessus.
+
+## Comment répondre au porteur du projet (règle non négociable)
+
+Il lui faut ce qui change pour lui et ce qu'il doit décider, rien d'autre :
+
+1. **Dix lignes par défaut.** Le détail ne vient que s'il le demande.
+2. **Pas de chemins de fichiers, de noms de fonctions ni de commandes** dans le corps de la réponse, sauf s'il doit taper la commande lui-même ou si le nom sert à une décision qu'il prend.
+3. **Dire l'effet, pas la mécanique** : « le chapelet reprend où tu l'avais laissé », pas « l'état est persisté en IndexedDB ».
+4. **Pas de récit du chemin parcouru** : seul compte l'état d'arrivée, et ce qui a échoué s'il doit en tenir compte.
+5. **Une question à la fois, puis attendre.** Ne jamais enchaîner sur une décision qui lui revient.
 
 ## Travailler avec le porteur du projet
 
