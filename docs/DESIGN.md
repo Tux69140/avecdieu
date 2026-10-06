@@ -70,3 +70,7 @@
 | 2026-10-05 | Aucune police sans empattements pour le texte | Le texte des prières est l'objet même d'un bréviaire ; Literata est dessinée pour la lecture longue sur écran |
 | 2026-10-06 | Perles du chapelet en relief | Choix du porteur du projet parmi trois dessins : plus vivant que le dessin plat, sans ornement ajouté (ni chaînette, ni médaille gravée) |
 | 2026-10-06 | Gloire au Père : halo rosé sur le fil | Choix du porteur du projet : aucune perle n'apparaît, le halo rosé distingue clairement le Gloire au Père des perles |
+| 2026-10-06 | Seuil du chapelet avant le signe de croix | Choix du porteur du projet : les cinq mystères et « Commencer le chapelet », puis les autres séries et l'affichage ; les choix se font avant la prière, jamais pendant |
+| 2026-10-06 | Signal « Plus bas » sur tout écran plus long que le téléphone | Demande du porteur du projet : rien ne doit rester ignoré sous la ligne de flottaison ; texte et chevron sur une seule ligne |
+| 2026-10-06 | Aide aux gestes au début du chapelet | Validée par le porteur du projet : fenêtre par-dessus le signe de croix, avec « Ne plus afficher » |
+| 2026-10-06 | Mode compact : liens « Voir la prière » et « Lire le passage » | Validés par le porteur du projet : en compact, l'annonce se fait sur le Notre Père, sans écran à part |

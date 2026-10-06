@@ -8,6 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `docs/PRD.md` : quoi et pourquoi (50 user stories, critères de succès, hors périmètre).
 - `docs/PLAN.md` : décisions d'architecture durables (routes, modèles, stockage, frontière AELF), puis les phases. On avance phase par phase. Une phase est terminée quand ses critères d'acceptation sont cochés et que son parcours Playwright est vert.
+- `docs/PRODUCT.md` : synthèse stratégique (utilisateurs, personnalité, principes) pour les travaux de design.
 - `docs/DESIGN.md` : jetons, polices, composants. `docs/design-preview.html` en est l'aperçu jetable, ignoré par git.
 
 ## Commandes
@@ -35,8 +36,9 @@ Les règles détaillées vivent dans `.claude/rules/` :
 
 ## Organisation du code
 
-- `src/recueil/` : textes sacrés figés (prières, mystères) et leur test d'empreinte.
-- `src/chapelet/` : définition déclarative du chapelet, déroulé, série du jour, gestes, dessin.
+- `src/recueil/` : textes sacrés figés (prières, mystères, fruits, passages par traduction dans `passages-aelf/`) et leur test d'empreinte.
+- `src/chapelet/` : définition déclarative du chapelet, déroulé, série du jour, gestes, dessin, seuil, annonce, rotation des passages et mémoire locale (lectures, affichage, aide).
+- `src/composants/` : composants partagés entre écrans (signal « Plus bas »).
 - `src/ecrans/` : un écran par route ; routes déclarées dans `src/main.tsx`.
 - `src/telephone/` : ce qui passe par les greffons Capacitor (vibrations, écran allumé) ; dans le navigateur, ils retombent sur les API web, espionnées par `e2e/telephone.spec.ts`.
 - `android/` : projet Android généré par Capacitor puis retouché (icône, démarrage, signature, sauvegarde Google coupée) ; empreinte de la clé épinglée dans `android/empreinte-cle.txt`.
