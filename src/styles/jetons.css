@@ -17,6 +17,13 @@
   --or-fonce: #8a6a2a;
   --soleil: #d9a441;
   --halo: rgba(217, 164, 65, 0.28);
+  /* Relief des perles du chapelet : reflet et ombre de chaque matière. */
+  --or-reflet: #e9cf8e;
+  --soleil-reflet: #fbe6a6;
+  --soleil-ombre: #a9781f;
+  --nacre-reflet: #fffdf7;
+  --nacre: #f3eadb;
+  --nacre-ombre: #d9c9a8;
   --succes: #4e6b3a;
   --attention: #9a6a12;
   --erreur: #7a3b1e;

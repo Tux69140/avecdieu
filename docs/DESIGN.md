@@ -13,7 +13,7 @@
 - **Mood** : un objet de prière qu'on ouvre, calme et chaleureux ; une voix d'aujourd'hui (les titres) posée sur une voix séculaire (les rubriques et le texte).
 - **Signatures** :
   - **Rubriques rouges** : tout ce qui est *indication* est en rouge, comme dans un missel — V/ et R/, libellés « Antienne », numéros de versets, astérisques de médiante, lettrines, et les ajouts de l'app (antienne répétée, Gloire au Père), signalés par un filet rouge à gauche et la mention « Ajouté selon les rubriques ». Le rouge n'est jamais utilisé pour les erreurs.
-  - **La perle** comme motif unique : offices sur le cadran, grains du chapelet, grosse perle (bouton d'avancée de l'annonce du mystère), fil de perles pour la progression. Perle passée = or plein ; à venir = cercle or ; en cours = soleil avec halo ; office du moment sur le cadran = cercle rouge avec halo.
+  - **La perle** comme motif unique : offices sur le cadran, grains du chapelet, grosse perle (bouton d'avancée de l'annonce du mystère), fil de perles pour la progression. Perle passée = or plein ; à venir = cercle or ; en cours = soleil avec halo ; sur le chapelet dessiné, les perles sont en relief (or poli, nacre cerclée d'or, soleil), éclairées en haut à gauche ; office du moment sur le cadran = cercle rouge avec halo.
   - **Le cadran solaire** de l'accueil : arc elliptique ouvert vers le bas ; en mode heures fixes, les heures se répartissent linéairement de 6 h (gauche) à 22 h (droite), midi légèrement à gauche du sommet ; en mode solaire, l'arc va du lever au coucher. Repères « 6 h · midi · 18 h · 21 h » en petites capitales à l'extérieur de l'arc. Soleil doré à rayons à l'heure actuelle, lune en croissant après le coucher. Date, fête et pastille liturgique centrées sous l'arc.
 - **Références** : maquette du cadran fournie par le porteur du projet ; aperçu `docs/design-preview.html`.
 
@@ -68,3 +68,4 @@
 | 2026-10-05 | Titres en Baumans au lieu de Cormorant Garamond | Choix du porteur du projet : style décalé assumé ; les rubriques restent en Cormorant SC et le texte en Literata pour garder la voix liturgique |
 | 2026-10-05 | Parchemin jour assombri `#F6EFE2` → `#EBE0CB` | Demande du porteur du projet ; le vélin passe à `#F6EFE2` pour garder les cartes plus claires que le fond |
 | 2026-10-05 | Aucune police sans empattements pour le texte | Le texte des prières est l'objet même d'un bréviaire ; Literata est dessinée pour la lecture longue sur écran |
+| 2026-10-06 | Perles du chapelet en relief | Choix du porteur du projet parmi trois dessins : plus vivant que le dessin plat, sans ornement ajouté (ni chaînette, ni médaille gravée) |

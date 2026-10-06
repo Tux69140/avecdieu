@@ -8,13 +8,13 @@
 
 .chapelet-dessine .fil {
   fill: none;
-  stroke: var(--or);
-  stroke-width: 1;
-  opacity: 0.45;
+  stroke: var(--or-fonce);
+  stroke-width: 1.2;
+  opacity: 0.55;
 }
 
 .chapelet-dessine .medaille {
-  fill: var(--or);
+  fill: url(#perle-or);
 }
 
 .chapelet-dessine .grain {
@@ -24,17 +24,17 @@
 }
 
 .chapelet-dessine .grain-passe {
-  fill: var(--or);
+  fill: url(#perle-or);
 }
 
 .chapelet-dessine .grain-a-venir {
-  fill: var(--parchemin);
+  fill: url(#perle-nacre);
   stroke: var(--or);
-  stroke-width: 1.5;
+  stroke-width: 0.8;
 }
 
 .chapelet-dessine .grain-courant {
-  fill: var(--soleil);
+  fill: url(#perle-soleil);
 }
 
 .chapelet-dessine .halo {

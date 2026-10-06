@@ -7,9 +7,9 @@ interface Props {
   grainCourant: number
 }
 
-// Le chapelet dessiné : grains passés en or plein, grain en cours en soleil
-// avec halo, grains à venir en cercle or. Les nœuds du fil ne se voient que
-// lorsqu'on y est.
+// Le chapelet dessiné : grains passés en or, grain en cours en soleil avec
+// halo, grains à venir en nacre cerclée d'or, tous en relief. Les nœuds du fil
+// ne se voient que lorsqu'on y est.
 export function ChapeletDessine({ plan, grainCourant }: Props) {
   const { boucle, medaille, points, largeur, hauteur } = plan
   const croix = points[0]
@@ -22,6 +22,16 @@ export function ChapeletDessine({ plan, grainCourant }: Props) {
       role="img"
       aria-label="Chapelet"
     >
+      <defs>
+        <Relief id="perle-or" reflet="--or-reflet" teinte="--or" ombre="--or-fonce" />
+        <Relief id="perle-nacre" reflet="--nacre-reflet" teinte="--nacre" ombre="--nacre-ombre" />
+        <Relief
+          id="perle-soleil"
+          reflet="--soleil-reflet"
+          teinte="--soleil"
+          ombre="--soleil-ombre"
+        />
+      </defs>
       <ellipse className="fil" cx={boucle.cx} cy={boucle.cy} rx={boucle.rx} ry={boucle.ry} />
       <line className="fil" x1={medaille.x} y1={medaille.y} x2={croix.x} y2={croix.y} />
       <ellipse className="medaille" cx={medaille.x} cy={medaille.y} rx={5} ry={6.5} />
@@ -33,6 +43,23 @@ export function ChapeletDessine({ plan, grainCourant }: Props) {
         />
       ))}
     </svg>
+  )
+}
+
+// Une perle bombée : lumière en haut à gauche, ombre sur le bord opposé.
+// Un seul chapelet par écran, donc des identifiants fixes.
+function Relief({
+  id,
+  reflet,
+  teinte,
+  ombre,
+}: Record<'id' | 'reflet' | 'teinte' | 'ombre', string>) {
+  return (
+    <radialGradient id={id} cx="35%" cy="30%" r="75%">
+      <stop offset="0" style={{ stopColor: `var(${reflet})` }} />
+      <stop offset="0.5" style={{ stopColor: `var(${teinte})` }} />
+      <stop offset="1" style={{ stopColor: `var(${ombre})` }} />
+    </radialGradient>
   )
 }
 
