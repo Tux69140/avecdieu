@@ -2,12 +2,12 @@ import { useState } from 'react'
 import { Marque } from '../composants/Marque'
 import { FRUITS, SERIES, type SerieId } from '../recueil/mysteres'
 import type { Passage } from '../recueil/passages'
-import { PRIERES, type PriereId } from '../recueil/prieres'
+import { PRIERES, RUBRIQUE_ENSEMBLE, type PriereId } from '../recueil/prieres'
 import type { Pas } from './deroule'
 import { ORDINAUX } from './libelles'
 import { PassageBiblique } from './PassageBiblique'
 import { insecables } from './typographie'
-import { strophes } from './versets'
+import { ditEnsemble, strophes } from './versets'
 
 interface Props {
   pas: Pas & { priere: PriereId }
@@ -69,6 +69,11 @@ export function Priere(props: Props) {
       )}
       {(!compact || voirPriere) && (
         <div className="priere-texte">
+          {ditEnsemble(priere, plusieurs) && (
+            <p className="rubrique-ensemble" data-testid="rubrique-ensemble">
+              {RUBRIQUE_ENSEMBLE}
+            </p>
+          )}
           {strophes(priere, plusieurs).map((vers, i) => (
             <p key={i} className="strophe" data-testid="strophe">
               {vers.map(({ texte, marque }, j) => (

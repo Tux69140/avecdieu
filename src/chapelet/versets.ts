@@ -10,6 +10,13 @@ export interface Vers {
 
 const PREFIXE = /^([VR])\/ /
 
+// À plusieurs, une prière sans réponse se dit ensemble : la rubrique « Tous »
+// l'annonce (validée par le porteur du projet). Pour le Salve Regina, elle
+// vaut jusqu'au verset, qui garde ses ℣. et ℟.
+export function ditEnsemble({ reponse }: Priere, plusieurs: boolean): boolean {
+  return plusieurs && reponse === undefined
+}
+
 // Les strophes d'une prière, prêtes à afficher. Dans le recueil, une ligne vide
 // sépare deux strophes et « V/ » ou « R/ » ouvre un verset. À plusieurs, la
 // réponse ouvre sa propre strophe, pour que chacun voie où commence sa part.

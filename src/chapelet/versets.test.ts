@@ -1,6 +1,19 @@
 import { describe, expect, it } from 'vitest'
 import { PRIERES } from '../recueil/prieres'
-import { strophes } from './versets'
+import { ditEnsemble, strophes } from './versets'
+
+describe('prières dites ensemble, à plusieurs', () => {
+  it('le signe de croix, le Credo, le « Ô mon Jésus » et le Salve Regina', () => {
+    const ensemble = Object.values(PRIERES)
+      .filter((p) => ditEnsemble(p, true))
+      .map((p) => p.titre)
+    expect(ensemble).toEqual(['Signe de croix', 'Je crois en Dieu', 'Ô mon Jésus', 'Salve Regina'])
+  })
+
+  it('seul, aucune', () => {
+    expect(Object.values(PRIERES).filter((p) => ditEnsemble(p, false))).toEqual([])
+  })
+})
 
 const marques = (s: ReturnType<typeof strophes>) =>
   s.flat().flatMap((v) => (v.marque ? [`${v.marque} ${v.texte}`] : []))

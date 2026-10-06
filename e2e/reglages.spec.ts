@@ -165,8 +165,28 @@ test.describe('prier à plusieurs', () => {
     )
   })
 
-  test('seul, aucune marque, sauf le verset du Salve Regina', async ({ page }) => {
+  test('« Tous » annonce les prières dites ensemble, jusqu’au verset du Salve Regina', async ({
+    page,
+  }) => {
+    await commencer(page, '/chapelet', { reglages: { plusieurs: true } })
+    const tous = page.getByTestId('rubrique-ensemble')
+    await expect(tous).toHaveText('Tous')
+    await avancer(page, 1)
+    await expect(titrePriere(page)).toHaveText('Je crois en Dieu')
+    await expect(tous).toHaveText('Tous')
+    await avancer(page, 1)
+    await expect(titrePriere(page)).toHaveText('Notre Père')
+    await expect(tous).toHaveCount(0)
+    await avancer(page, dizaine(6) - 2)
+    await expect(titrePriere(page)).toHaveText('Salve Regina')
+    // La rubrique ouvre le texte, avant la première strophe.
+    await expect(page.locator('.priere-texte > :first-child')).toHaveText('Tous')
+    await expect(page.getByTestId('marque-V')).toHaveCount(1)
+  })
+
+  test('seul, ni rubrique ni marque, sauf le verset du Salve Regina', async ({ page }) => {
     await commencer(page)
+    await expect(page.getByTestId('rubrique-ensemble')).toHaveCount(0)
     await avancer(page, 3)
     await expect(titrePriere(page)).toHaveText('Je vous salue Marie')
     await expect(page.getByTestId('marque-V')).toHaveCount(0)
