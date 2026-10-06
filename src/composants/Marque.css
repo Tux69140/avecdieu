@@ -1,36 +1,18 @@
+/* Les deux signes de FreeSerif (choix du porteur du projet), réduits à ces
+   seuls caractères ; le point retombe sur la police du texte. Licence GNU GPL
+   avec exception pour les polices : l'inclure dans l'app est permis. */
+@font-face {
+  font-family: 'Signes liturgiques';
+  src: url('../styles/polices/signes-liturgiques.woff2') format('woff2');
+  unicode-range: U+211F, U+2123;
+  font-display: block;
+}
+
 /* Doublé pour l’emporter sur la règle des vers, un par ligne. */
 .marque.marque {
   display: inline;
   margin-right: 0.25em;
-  font-family: var(--texte);
+  font-family: 'Signes liturgiques', var(--texte);
   color: var(--rubrique);
   white-space: nowrap;
-}
-
-.marque .marque-lettre {
-  position: relative;
-  display: inline-block;
-}
-
-/* Le trait qui barre la lettre : sur le jambage droit du V, sur la queue du R. */
-.marque-lettre::after {
-  content: '';
-  position: absolute;
-  height: 0.06em;
-  background: currentColor;
-  transform-origin: left center;
-}
-
-.marque-v .marque-lettre::after {
-  left: 0.42em;
-  top: 0.82em;
-  width: 0.5em;
-  transform: rotate(-38deg);
-}
-
-.marque-r .marque-lettre::after {
-  left: 0.38em;
-  top: 1.02em;
-  width: 0.5em;
-  transform: rotate(-38deg);
 }
