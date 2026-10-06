@@ -28,14 +28,15 @@ test('ouvrir les laudes depuis le menu et les lire d’un trait', async ({ page 
 
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Offices du jour')
   await expect(page.getByText('mardi 6 octobre')).toBeVisible()
+  // Chaque office avec son heure par défaut ; l'office des lectures n'en a pas.
   await expect(page.getByRole('listitem')).toHaveText([
     'Office des lectures',
-    'Laudes',
-    'Tierce',
-    'Sexte',
-    'None',
-    'Vêpres',
-    'Complies',
+    '7 h Laudes',
+    '9 h Tierce',
+    '12 h Sexte',
+    '15 h None',
+    '18 h 30 Vêpres',
+    '21 h 30 Complies',
   ])
 
   await page.getByRole('link', { name: 'Laudes' }).click()

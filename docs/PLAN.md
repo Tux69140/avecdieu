@@ -157,6 +157,8 @@ L'office affiché est complet :
 
 Chaque ajout est discrètement signalé (filet rouge et mention « Ajouté selon les rubriques »).
 
+Avec « Prier à plusieurs », le Gloire au Père (après l'introduction et après chaque psaume) porte la rubrique « Tous », comme au chapelet (décision du porteur du projet, 2026-10-06).
+
 ### Critères d'acceptation
 
 - [ ] Les règles de rubriques et les conclusions d'oraison sont rédigées dans un recueil lisible, validées par le porteur du projet et figées.
