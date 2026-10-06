@@ -1,5 +1,5 @@
 .chapelet {
-  min-height: 100dvh;
+  min-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
   max-width: calc(34em + 2 * var(--gouttiere));
   margin: 0 auto;
   padding: var(--esp-md) var(--gouttiere) var(--esp-2xl);

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Mode sombre du téléphone : le grain d'or sur fond nuit (validé le 2026-10-06). -->
+<resources>
+    <color name="ic_launcher_background">#2B2118</color>
+    <color name="icone_grain">#D9A441</color>
+</resources>

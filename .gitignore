@@ -27,3 +27,6 @@ docs/design-preview.html
 # Tests
 test-results
 playwright-report
+
+# APK fabriqué (scripts/fabriquer-apk.sh)
+dist-apk

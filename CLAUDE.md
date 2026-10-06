@@ -12,13 +12,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commandes
 
-Pile : TypeScript + React + Vite, Vitest, Playwright (Capacitor Android arrive en phase 2 : compléter alors avec la construction et l'installation de l'APK). Gestionnaire de paquets : **pnpm**, jamais npm ni npx (`pnpm add`, `pnpm exec`).
+Pile : TypeScript + React + Vite, Vitest, Playwright, Capacitor 8 pour l'APK Android (`android/`, versionné). Gestionnaire de paquets : **pnpm**, jamais npm ni npx (`pnpm add`, `pnpm exec`).
 
 - `pnpm dev` : serveur de développement (http://localhost:5173).
 - `pnpm build` : vérification TypeScript puis construction dans `dist/`.
 - `pnpm test` : tests unitaires Vitest. Un seul fichier : `pnpm exec vitest run src/chapelet/deroule.test.ts` ; un seul test : ajouter `-t "nom du test"`.
 - `pnpm test:e2e` : parcours Playwright, dont l'accessibilité (construit l'app et la sert sur le port 4173, émulation Pixel 7). Un seul test : `pnpm exec playwright test -g "glisser"`.
 - `pnpm lint` : ESLint, Prettier, longueur des fichiers (500 lignes au plus, tests exceptés) et types. `pnpm lint:fix` corrige le style.
+- `pnpm apk` : APK signé dans `dist-apk/` (demande le mot de passe de la clé : c'est le porteur du projet qui le lance). `pnpm apk:installer` : installe sur les téléphones branchés en USB. Procédure complète, clé comprise : `docs/APK.md`. Pour vérifier que le projet Android compile sans la clé : `cd android && ./gradlew assembleDebug` (JDK 21 dans `~/.local/share/android-jdk-21`, SDK dans `~/Android/Sdk`).
+- Après une modification de `capacitor.config.ts` ou d'un greffon : `pnpm exec cap sync android`.
 
 Crochets git dans `.githooks/` (activés par `pnpm install`) : `pnpm lint` et gitleaks à chaque commit, `pnpm test` et `pnpm test:e2e` à chaque poussée. Ne jamais les contourner.
 
@@ -36,6 +38,8 @@ Les règles détaillées vivent dans `.claude/rules/` :
 - `src/recueil/` : textes sacrés figés (prières, mystères) et leur test d'empreinte.
 - `src/chapelet/` : définition déclarative du chapelet, déroulé, série du jour, gestes, dessin.
 - `src/ecrans/` : un écran par route ; routes déclarées dans `src/main.tsx`.
+- `src/telephone/` : ce qui passe par les greffons Capacitor (vibrations, écran allumé) ; dans le navigateur, ils retombent sur les API web, espionnées par `e2e/telephone.spec.ts`.
+- `android/` : projet Android généré par Capacitor puis retouché (icône, démarrage, signature, sauvegarde Google coupée) ; empreinte de la clé épinglée dans `android/empreinte-cle.txt`.
 - `src/styles/jetons.css` : jetons de `docs/DESIGN.md` et polices auto-hébergées (paquets `@fontsource`).
 - `e2e/` : parcours Playwright, un par phase au moins.
 - `scripts/` : contrôles lancés par les commandes ci-dessus.

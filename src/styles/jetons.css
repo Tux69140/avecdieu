@@ -63,6 +63,9 @@ body {
 
 body {
   min-height: 100dvh;
+  /* Sur le téléphone, l'app s'étend sous les barres d'Android : on s'en écarte. */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
+    env(safe-area-inset-left);
   background: var(--parchemin);
   color: var(--encre);
   font-family: var(--texte);

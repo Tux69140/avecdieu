@@ -6,8 +6,10 @@ import { derouler, type Pas } from '../chapelet/deroule'
 import { disposer } from '../chapelet/disposition'
 import { avancer, classerGeste, reculer } from '../chapelet/navigation'
 import { serieDuJour } from '../chapelet/serieDuJour'
+import { vibrationEntre } from '../chapelet/vibration'
 import { SERIES, type SerieId } from '../recueil/mysteres'
 import { PRIERES } from '../recueil/prieres'
+import { garderEcranAllume, vibrer } from '../telephone/retours'
 import './EcranChapelet.css'
 
 const DEROULE = derouler(CHAPELET_MARIAL)
@@ -37,6 +39,16 @@ function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisi
   const debutGeste = useRef<{ id: number; x: number; y: number; surBouton: boolean } | null>(null)
   const nombre = DEROULE.pas.length
   const termine = index === nombre
+  const indexPrecedent = useRef(index)
+
+  useEffect(() => {
+    const vibration = vibrationEntre(DEROULE, indexPrecedent.current, index)
+    indexPrecedent.current = index
+    if (vibration) vibrer(vibration)
+  }, [index])
+
+  // L'écran reste allumé du signe de croix à la fin du chapelet.
+  useEffect(() => (termine ? undefined : garderEcranAllume()), [termine])
 
   useEffect(() => {
     const auClavier = (e: KeyboardEvent) => {
