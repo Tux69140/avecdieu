@@ -146,7 +146,8 @@ const examen = () =>
   ])
 
 // R8 : la fin de l'office, sauf aux complies, qui gardent la bénédiction de
-// l'AELF, et sauf quand l'AELF joint son propre envoi à l'oraison.
+// l'AELF, et sauf quand l'AELF joint son propre envoi à l'oraison (octave de
+// Pâques, Pentecôte).
 function fin(nom: NomOffice): Partie | undefined {
   if (nom === 'complies') return undefined
   if (nom === 'laudes' || nom === 'vepres')
