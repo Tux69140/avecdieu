@@ -1,5 +1,5 @@
 import { KeepAwake } from '@capacitor-community/keep-awake'
-import { Haptics } from '@capacitor/haptics'
+import { registerPlugin } from '@capacitor/core'
 import type { Vibration } from '../chapelet/vibration'
 
 // Ce que le téléphone fait sentir ou maintient pendant la prière. Dans l'APK,
@@ -11,8 +11,18 @@ import type { Vibration } from '../chapelet/vibration'
 // En millisecondes ; la marquée doit se distinguer sans regarder l'écran.
 export const DUREES: Record<Vibration, number> = { courte: 40, marquee: 250 }
 
+// Greffon propre à l'app (android/…/Vibreur.java) : il vibre même quand la
+// vibration au toucher est coupée dans les réglages d'Android.
+const Vibreur = registerPlugin<{ vibrer(options: { duree: number }): Promise<void> }>('Vibreur', {
+  web: {
+    vibrer: async ({ duree }: { duree: number }) => {
+      navigator.vibrate?.([duree])
+    },
+  },
+})
+
 export function vibrer(vibration: Vibration) {
-  Haptics.vibrate({ duration: DUREES[vibration] }).catch(() => {})
+  Vibreur.vibrer({ duree: DUREES[vibration] }).catch(() => {})
 }
 
 // Les demandes passent l'une après l'autre : une libération qui doublerait

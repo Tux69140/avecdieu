@@ -1,0 +1,2 @@
+# SHA-256 du certificat de la clé de signature Android (public, pas un secret).
+94085a0c37096bd4862cb1670b71816cb198363e0a46a87222bc7088b37920a1
