@@ -114,7 +114,7 @@ test.describe('mode compact', () => {
     await expect(page.getByTestId('compteur')).toHaveText('1 / 10')
   })
 
-  test('« Voir la prière » et « Lire le passage » déplient sans faire avancer', async ({
+  test('« Voir la prière » et « Afficher la Lecture » déplient sans faire avancer', async ({
     page,
   }) => {
     await commencer(page, '/chapelet', { affichage: 'compact' })
@@ -123,7 +123,7 @@ test.describe('mode compact', () => {
 
     await page.getByRole('button', { name: 'Voir la prière' }).tap()
     await expect(page.getByTestId('strophe').first()).toContainText('Je vous salue, Marie')
-    await page.getByRole('button', { name: 'Lire le passage' }).tap()
+    await page.getByRole('button', { name: 'Afficher la Lecture' }).tap()
     await expect(page.getByTestId('passage')).toContainText('Lc 1, 26-38')
     await expect(page.getByTestId('compteur')).toHaveText('1 / 10')
 
@@ -135,7 +135,7 @@ test.describe('mode compact', () => {
     await expect(page.getByTestId('compteur')).toHaveText('2 / 10')
     await expect(page.getByTestId('strophe')).toHaveCount(0)
     await expect(page.getByTestId('passage')).toBeVisible()
-    await page.getByRole('button', { name: 'Masquer le passage' }).tap()
+    await page.getByRole('button', { name: 'Masquer la Lecture' }).tap()
     await expect(page.getByTestId('passage')).toHaveCount(0)
   })
 })
@@ -153,11 +153,11 @@ test('en compact, les liens restent sous le titre quand la prière ou le passage
     return Math.round(boite.y + (await page.evaluate(() => window.scrollY)))
   }
   const priere = /^(Voir|Masquer) la prière$/
-  const passage = /^(Lire|Masquer) le passage$/
+  const passage = /^(Afficher|Masquer) la Lecture$/
   const avant = [await position(priere), await position(passage)]
   await page.getByRole('button', { name: 'Voir la prière' }).tap()
   expect([await position(priere), await position(passage)]).toEqual(avant)
-  await page.getByRole('button', { name: 'Lire le passage' }).tap()
+  await page.getByRole('button', { name: 'Afficher la Lecture' }).tap()
   expect([await position(priere), await position(passage)]).toEqual(avant)
 })
 

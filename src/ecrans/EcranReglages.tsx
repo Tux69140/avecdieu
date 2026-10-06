@@ -9,7 +9,7 @@ import './EcranReglages.css'
 type Bascule = 'annonce' | 'oMonJesus' | 'salveRegina' | 'plusieurs'
 
 const BASCULES: [Bascule, string, string?][] = [
-  ['annonce', 'Annonce des mystères', 'Titre, fruit et passage avant chaque dizaine.'],
+  ['annonce', 'Annonce des mystères', 'Titre, fruit et Lecture avant chaque dizaine.'],
   ['oMonJesus', '« Ô mon Jésus » après chaque dizaine'],
   ['salveRegina', 'Salve Regina à la fin'],
   [
