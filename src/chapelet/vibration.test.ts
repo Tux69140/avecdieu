@@ -5,9 +5,8 @@ import { vibrationEntre } from './vibration'
 
 const DEROULE = derouler(CHAPELET_MARIAL)
 const FIN = DEROULE.pas.length
-// Index du Notre Père qui ouvre la dizaine d (1 à 5).
-const ouverture = (d: number) =>
-  DEROULE.pas.findIndex((p) => p.dizaine === d && p.priere === 'notre-pere')
+// Index de la première étape de la dizaine d (1 à 5) : l'annonce du mystère.
+const ouverture = (d: number) => DEROULE.pas.findIndex((p) => p.dizaine === d)
 
 describe('vibrationEntre', () => {
   it('une vibration courte à chaque prière suivante dans une même partie', () => {
@@ -16,13 +15,21 @@ describe('vibrationEntre', () => {
     expect(vibrationEntre(DEROULE, ouverture(3) + 5, ouverture(3) + 6)).toBe('courte')
   })
 
-  it('une vibration marquée à l’entrée de chaque dizaine, sur son Notre Père', () => {
+  it('une vibration marquée à l’entrée de chaque dizaine, sur l’annonce du mystère', () => {
     for (let d = 1; d <= 5; d++) {
+      expect(DEROULE.pas[ouverture(d)].priere).toBe('annonce')
       expect(DEROULE.pas[ouverture(d) - 1].priere).toBe('gloire-au-pere')
       expect(vibrationEntre(DEROULE, ouverture(d) - 1, ouverture(d)), `dizaine ${d}`).toBe(
         'marquee',
       )
     }
+  })
+
+  it('sans annonce à part, la vibration marquée tombe sur le Notre Père', () => {
+    const compact = derouler(CHAPELET_MARIAL, { annonce: false })
+    const notrePere = compact.pas.findIndex((p) => p.dizaine === 2)
+    expect(compact.pas[notrePere].priere).toBe('notre-pere')
+    expect(vibrationEntre(compact, notrePere - 1, notrePere)).toBe('marquee')
   })
 
   it('une vibration marquée quand la dernière dizaine s’achève sur l’écran de fin', () => {

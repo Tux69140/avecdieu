@@ -1,5 +1,6 @@
 import { AxeBuilder } from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
+import { commencer, preparer, suivant } from './outils.ts'
 
 // Contrôle automatique d'accessibilité (contrastes, titres, libellés ARIA) :
 // échoue sur toute violation grave ou critique. Le clavier et le lecteur
@@ -14,27 +15,59 @@ async function violationsGraves(page: Page) {
 }
 
 async function avancer(page: Page, fois: number) {
-  for (let i = 0; i < fois; i++) await page.keyboard.press('Space')
+  for (let i = 0; i < fois; i++) await suivant(page)
 }
 
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(new Date(2026, 9, 5, 10, 0))
+})
+
+test('seuil du chapelet', async ({ page }) => {
+  await preparer(page)
   await page.goto('/chapelet')
-  await expect(page.getByRole('heading', { level: 2 })).toHaveText('Signe de croix')
+  await expect(page.getByRole('button', { name: 'Commencer le chapelet' })).toBeVisible()
+  expect(await violationsGraves(page)).toEqual([])
+})
+
+test('aide aux gestes', async ({ page }) => {
+  await preparer(page, { aide: true })
+  await page.goto('/chapelet')
+  await page.getByRole('button', { name: 'Commencer le chapelet' }).click()
+  await expect(page.getByRole('dialog', { name: 'Prier avec l’app' })).toBeVisible()
+  expect(await violationsGraves(page)).toEqual([])
 })
 
 test('écran du chapelet, au signe de croix', async ({ page }) => {
+  await commencer(page)
+  expect(await violationsGraves(page)).toEqual([])
+})
+
+test('annonce d’un mystère', async ({ page }) => {
+  await commencer(page)
+  await avancer(page, 7)
+  await expect(page.getByTestId('annonce')).toBeVisible()
   expect(await violationsGraves(page)).toEqual([])
 })
 
 test('écran du chapelet, pendant une dizaine', async ({ page }) => {
+  await commencer(page)
   await avancer(page, 10)
   await expect(page.getByTestId('mystere')).toBeVisible()
   expect(await violationsGraves(page)).toEqual([])
 })
 
+test('mode compact, prière et passage dépliés', async ({ page }) => {
+  await commencer(page, '/chapelet', { affichage: 'compact' })
+  await avancer(page, 8)
+  await page.getByRole('button', { name: 'Voir la prière' }).click()
+  await page.getByRole('button', { name: 'Lire le passage' }).click()
+  await expect(page.getByTestId('passage')).toBeVisible()
+  expect(await violationsGraves(page)).toEqual([])
+})
+
 test('écran de fin du chapelet', async ({ page }) => {
-  await avancer(page, 67)
+  await commencer(page)
+  await avancer(page, 72)
   await expect(page.getByRole('heading', { level: 2 })).toHaveText('Chapelet terminé')
   expect(await violationsGraves(page)).toEqual([])
 })

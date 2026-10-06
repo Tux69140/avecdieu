@@ -1,69 +1,114 @@
-import { useEffect, useRef, useState, type PointerEvent } from 'react'
-import { Navigate, useParams } from 'react-router'
+import { useEffect, useMemo, useRef, useState, type PointerEvent } from 'react'
+import { Navigate, useLocation, useNavigate, useParams } from 'react-router'
+import { AideGestes } from '../chapelet/AideGestes'
+import { Annonce } from '../chapelet/Annonce'
 import { ChapeletDessine } from '../chapelet/ChapeletDessine'
 import { CHAPELET_MARIAL } from '../chapelet/definition'
 import { derouler, type Pas } from '../chapelet/deroule'
 import { disposer } from '../chapelet/disposition'
+import { aideAMontrer, compterLecture, lireAffichage, lireLectures } from '../chapelet/memoire'
 import { avancer, classerGeste, reculer } from '../chapelet/navigation'
+import { Priere } from '../chapelet/Priere'
+import { dizaineCommencee, rangDuPassage } from '../chapelet/rotation'
+import { Seuil } from '../chapelet/Seuil'
 import { serieDuJour } from '../chapelet/serieDuJour'
 import { vibrationEntre } from '../chapelet/vibration'
+import { IndiceSuite } from '../composants/IndiceSuite'
+import { useSuiteCachee } from '../composants/suiteCachee'
 import { SERIES, type SerieId } from '../recueil/mysteres'
-import { PRIERES } from '../recueil/prieres'
+import { PASSAGES } from '../recueil/passages'
+import type { PriereId } from '../recueil/prieres'
 import { garderEcranAllume, vibrer } from '../telephone/retours'
 import './EcranChapelet.css'
-
-const DEROULE = derouler(CHAPELET_MARIAL)
-const PLAN = disposer(DEROULE)
-const ORDINAUX = ['Premier', 'Deuxième', 'Troisième', 'Quatrième', 'Cinquième']
 
 const TOUCHES_AVANCER = new Set([' ', 'Enter', 'ArrowRight', 'ArrowDown', 'PageDown'])
 const TOUCHES_RECULER = new Set(['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'])
 
 const estSerie = (valeur: string): valeur is SerieId => valeur in SERIES
 const estInteractif = (cible: EventTarget) =>
-  cible instanceof Element && cible.closest('button, a') !== null
+  cible instanceof Element && cible.closest('button, a, input, label, dialog') !== null
+const estPriere = (pas: Pas): pas is Pas & { priere: PriereId } => pas.priere !== 'annonce'
 
+// Le chapelet s'ouvre sur son seuil ; « Commencer » ajoute une entrée à
+// l'historique, si bien que le retour d'Android y ramène.
 export function EcranChapelet() {
   const { serie: serieChoisie } = useParams()
+  const { pathname, state } = useLocation()
+  const naviguer = useNavigate()
   const [aujourdhui] = useState(() => new Date())
   if (serieChoisie !== undefined && !estSerie(serieChoisie))
     return <Navigate to="/chapelet" replace />
-  const serie = serieChoisie ?? serieDuJour(aujourdhui)
-  return (
-    <Chapelet key={serie} serie={serie} date={aujourdhui} choisie={serieChoisie !== undefined} />
-  )
+  const duJour = serieDuJour(aujourdhui)
+  const serie = serieChoisie ?? duJour
+  const prier = (state as { prier?: boolean } | null)?.prier === true
+  if (!prier)
+    return (
+      <Seuil
+        key={serie}
+        serie={serie}
+        duJour={duJour}
+        date={aujourdhui}
+        onCommencer={() => naviguer(pathname, { state: { prier: true } })}
+      />
+    )
+  return <Chapelet key={serie} serie={serie} date={aujourdhui} choisie={serie !== duJour} />
 }
 
 function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisie: boolean }) {
+  const [compact] = useState(() => lireAffichage() === 'compact')
+  const deroule = useMemo(() => derouler(CHAPELET_MARIAL, { annonce: !compact }), [compact])
+  const plan = useMemo(() => disposer(deroule), [deroule])
+  // Le passage de chaque mystère est choisi une fois pour tout le chapelet.
+  const [passages] = useState(() =>
+    PASSAGES[serie].map(
+      (liste, i) => liste[rangDuPassage(lireLectures(serie, i + 1), liste.length)],
+    ),
+  )
   const [index, setIndex] = useState(0)
+  const [aideOuverte, setAideOuverte] = useState(aideAMontrer)
+  const [passageDeplie, setPassageDeplie] = useState<number | null>(null)
   const debutGeste = useRef<{ id: number; x: number; y: number; surBouton: boolean } | null>(null)
-  const nombre = DEROULE.pas.length
-  const termine = index === nombre
   const indexPrecedent = useRef(index)
+  const dizainesLues = useRef(new Set<number>())
+  const { fin, cachee } = useSuiteCachee()
+
+  const nombre = deroule.pas.length
+  const termine = index === nombre
+  const pas = termine ? undefined : deroule.pas[index]
+  // L'annonce ne s'avance que par la grosse perle.
+  const surAnnonce = pas?.priere === 'annonce'
 
   useEffect(() => {
-    const vibration = vibrationEntre(DEROULE, indexPrecedent.current, index)
+    const avant = indexPrecedent.current
     indexPrecedent.current = index
+    const vibration = vibrationEntre(deroule, avant, index)
     if (vibration) vibrer(vibration)
-  }, [index])
+    // Chaque dizaine commencée compte une lecture de son mystère, une fois par chapelet.
+    const dizaine = dizaineCommencee(deroule, avant, index)
+    if (dizaine !== null && !dizainesLues.current.has(dizaine)) {
+      dizainesLues.current.add(dizaine)
+      compterLecture(serie, dizaine)
+    }
+  }, [index, deroule, serie])
 
   // L'écran reste allumé du signe de croix à la fin du chapelet.
   useEffect(() => (termine ? undefined : garderEcranAllume()), [termine])
 
   useEffect(() => {
     const auClavier = (e: KeyboardEvent) => {
-      if (e.target instanceof Element && estInteractif(e.target)) return
-      if (TOUCHES_AVANCER.has(e.key)) setIndex((i) => avancer(i, nombre))
-      else if (TOUCHES_RECULER.has(e.key)) setIndex(reculer)
+      if (aideOuverte || (e.target instanceof Element && estInteractif(e.target))) return
+      if (TOUCHES_AVANCER.has(e.key)) {
+        if (!surAnnonce) setIndex((i) => avancer(i, nombre))
+      } else if (TOUCHES_RECULER.has(e.key)) setIndex(reculer)
       else return
       e.preventDefault()
     }
     window.addEventListener('keydown', auClavier)
     return () => window.removeEventListener('keydown', auClavier)
-  }, [nombre])
+  }, [nombre, surAnnonce, aideOuverte])
 
   const appui = (e: PointerEvent) => {
-    if (!e.isPrimary || e.button !== 0) return
+    if (aideOuverte || !e.isPrimary || e.button !== 0) return
     debutGeste.current = {
       id: e.pointerId,
       x: e.clientX,
@@ -74,10 +119,10 @@ function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisi
   const relachement = (e: PointerEvent) => {
     const debut = debutGeste.current
     debutGeste.current = null
-    if (!debut || debut.id !== e.pointerId) return
+    if (aideOuverte || !debut || debut.id !== e.pointerId) return
     const geste = classerGeste({ dx: e.clientX - debut.x, dy: e.clientY - debut.y })
     // Un toucher sur un bouton appartient au bouton ; un glissement, lui, recule partout.
-    if (geste === 'avancer' && !debut.surBouton) setIndex((i) => avancer(i, nombre))
+    if (geste === 'avancer' && !debut.surBouton && !surAnnonce) setIndex((i) => avancer(i, nombre))
     else if (geste === 'reculer') setIndex(reculer)
   }
 
@@ -90,16 +135,13 @@ function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisi
       onPointerCancel={() => (debutGeste.current = null)}
     >
       <header className="chapelet-entete">
-        <p className="etiquette">{choisie ? 'Chapelet' : `Chapelet du jour · ${jour}`}</p>
+        <p className="etiquette">{choisie ? `Chapelet · ${jour}` : `Chapelet du jour · ${jour}`}</p>
         <h1>{SERIES[serie].titre}</h1>
       </header>
 
-      <ChapeletDessine
-        plan={PLAN}
-        grainCourant={termine ? PLAN.points.length : DEROULE.pas[index].grain}
-      />
+      <ChapeletDessine plan={plan} grainCourant={pas ? pas.grain : plan.points.length} />
 
-      {termine ? (
+      {!pas ? (
         <section className="fin" data-testid="priere">
           <h2>Chapelet terminé</h2>
           <p className="fin-texte">{SERIES[serie].titre} · cinq dizaines</p>
@@ -107,56 +149,34 @@ function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisi
             Recommencer
           </button>
         </section>
+      ) : estPriere(pas) ? (
+        <Priere
+          key={index}
+          pas={pas}
+          serie={serie}
+          compact={compact}
+          passage={pas.dizaine ? passages[pas.dizaine - 1] : undefined}
+          passageDeplie={passageDeplie === pas.dizaine}
+          onBasculerPassage={() =>
+            setPassageDeplie((d) => (d === pas.dizaine ? null : (pas.dizaine ?? null)))
+          }
+        />
       ) : (
-        <Priere key={index} pas={DEROULE.pas[index]} serie={serie} />
+        <Annonce
+          key={index}
+          serie={serie}
+          dizaine={pas.dizaine!}
+          passage={passages[pas.dizaine! - 1]}
+          onCommencer={() => setIndex((i) => avancer(i, nombre))}
+        />
       )}
 
       {index === 0 && (
         <p className="consigne">Touchez l’écran pour avancer, glissez pour revenir.</p>
       )}
+      <div ref={fin} className="fin-ecran" />
+      <IndiceSuite visible={cachee && !surAnnonce} />
+      {aideOuverte && <AideGestes onFermer={() => setAideOuverte(false)} />}
     </main>
-  )
-}
-
-// Dans le recueil, une ligne vide sépare deux strophes.
-function strophes(lignes: string[]): string[][] {
-  return lignes.reduce<string[][]>(
-    (groupes, ligne) => {
-      if (ligne === '') groupes.push([])
-      else groupes.at(-1)!.push(ligne)
-      return groupes
-    },
-    [[]],
-  )
-}
-
-function Priere({ pas, serie }: { pas: Pas; serie: SerieId }) {
-  const priere = PRIERES[pas.priere]
-  return (
-    <section className="priere" data-testid="priere" aria-live="polite">
-      {pas.dizaine !== undefined && (
-        <p className="mystere" data-testid="mystere">
-          <span className="etiquette">{ORDINAUX[pas.dizaine - 1]} mystère</span>{' '}
-          <span className="mystere-titre">{SERIES[serie].mysteres[pas.dizaine - 1]}</span>
-        </p>
-      )}
-      <div className="priere-tete">
-        <h2>{priere.titre}</h2>
-        {pas.total > 1 && (
-          <span className="compteur" data-testid="compteur">
-            {pas.rang} / {pas.total}
-          </span>
-        )}
-      </div>
-      <div className="priere-texte">
-        {strophes(priere.lignes).map((vers, i) => (
-          <p key={i} className="strophe" data-testid="strophe">
-            {vers.map((ligne, j) => (
-              <span key={j}>{ligne}</span>
-            ))}
-          </p>
-        ))}
-      </div>
-    </section>
   )
 }

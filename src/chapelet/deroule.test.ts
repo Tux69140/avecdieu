@@ -6,7 +6,7 @@ const deroule = derouler(CHAPELET_MARIAL)
 const prieres = deroule.pas.map((p) => p.priere)
 
 const AVE = 'je-vous-salue-marie'
-const dizaine = ['notre-pere', ...Array(10).fill(AVE), 'gloire-au-pere']
+const dizaine = ['annonce', 'notre-pere', ...Array(10).fill(AVE), 'gloire-au-pere']
 
 describe('déroulé du chapelet marial', () => {
   it('suit exactement le PRD : ouverture puis 5 dizaines', () => {
@@ -29,8 +29,8 @@ describe('déroulé du chapelet marial', () => {
   it('numérote les dizaines de 1 à 5, et l’ouverture n’en a pas', () => {
     expect(deroule.pas.slice(0, 7).every((p) => p.dizaine === undefined)).toBe(true)
     for (let d = 1; d <= 5; d++) {
-      const debut = 7 + (d - 1) * 12
-      const pasDizaine = deroule.pas.slice(debut, debut + 12)
+      const debut = 7 + (d - 1) * 13
+      const pasDizaine = deroule.pas.slice(debut, debut + 13)
       expect(pasDizaine.every((p) => p.dizaine === d)).toBe(true)
     }
   })
@@ -64,6 +64,26 @@ describe('déroulé du chapelet marial', () => {
         .filter((p) => p.priere === 'gloire-au-pere')
         .every((p) => deroule.grains[p.grain] === 'noeud'),
     ).toBe(true)
+  })
+
+  it('annonce chaque mystère sur le gros grain de son Notre Père', () => {
+    const annonces = deroule.pas.filter((p) => p.priere === 'annonce')
+    expect(annonces.map((p) => p.dizaine)).toEqual([1, 2, 3, 4, 5])
+    for (const annonce of annonces) {
+      const notrePere = deroule.pas[deroule.pas.indexOf(annonce) + 1]
+      expect(notrePere.priere).toBe('notre-pere')
+      expect(notrePere.grain).toBe(annonce.grain)
+      expect(deroule.grains[annonce.grain]).toBe('gros')
+    }
+  })
+
+  it('sans annonce à part (mode compact), le Notre Père ouvre la dizaine, sur les mêmes grains', () => {
+    const sansAnnonce = derouler(CHAPELET_MARIAL, { annonce: false })
+    expect(sansAnnonce.pas.map((p) => p.priere)).toEqual(prieres.filter((p) => p !== 'annonce'))
+    expect(sansAnnonce.grains).toEqual(deroule.grains)
+    const grainDe = (d: number, liste: typeof deroule) =>
+      liste.pas.find((p) => p.dizaine === d && p.priere === 'notre-pere')!.grain
+    for (let d = 1; d <= 5; d++) expect(grainDe(d, sansAnnonce)).toBe(grainDe(d, deroule))
   })
 
   it('avance d’un grain à la fois, sans en sauter', () => {

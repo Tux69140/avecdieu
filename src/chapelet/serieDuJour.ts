@@ -14,3 +14,14 @@ const SERIE_PAR_JOUR: SerieId[] = [
 export function serieDuJour(date: Date): SerieId {
   return SERIE_PAR_JOUR[date.getDay()]
 }
+
+const JOURS = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi']
+
+// « Le lundi et le samedi » : les jours où la série revient, du lundi au dimanche.
+export function joursDeLaSerie(serie: SerieId): string {
+  const jours = [1, 2, 3, 4, 5, 6, 0]
+    .filter((jour) => SERIE_PAR_JOUR[jour] === serie)
+    .map((jour) => `le ${JOURS[jour]}`)
+  const phrase = jours.join(' et ')
+  return phrase.charAt(0).toUpperCase() + phrase.slice(1)
+}

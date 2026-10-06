@@ -4,8 +4,12 @@ import type { PriereId } from '../recueil/prieres'
 // ou un nœud du fil entre deux grains (le Gloire au Père se dit sur le fil).
 export type TypeGrain = 'croix' | 'gros' | 'petit' | 'noeud'
 
+// Ce qui se dit ou se médite à une étape : une prière du recueil, ou l'annonce
+// du mystère de la dizaine (titre, fruit, passage).
+export type Moment = PriereId | 'annonce'
+
 export interface Etape {
-  priere: PriereId
+  priere: Moment
   grain: TypeGrain
   // Chaque répétition occupe son propre grain.
   repetitions?: number
@@ -29,8 +33,10 @@ export const CHAPELET_MARIAL: DefinitionChapelet = {
     { priere: 'je-vous-salue-marie', grain: 'petit', repetitions: 3 },
     { priere: 'gloire-au-pere', grain: 'noeud' },
   ],
+  // L'annonce se fait sur le gros grain, juste avant le Notre Père.
   dizaine: [
-    { priere: 'notre-pere', grain: 'gros' },
+    { priere: 'annonce', grain: 'gros' },
+    { priere: 'notre-pere', grain: 'gros', memeGrain: true },
     { priere: 'je-vous-salue-marie', grain: 'petit', repetitions: 10 },
     { priere: 'gloire-au-pere', grain: 'noeud' },
   ],

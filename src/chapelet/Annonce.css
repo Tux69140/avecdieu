@@ -1,0 +1,96 @@
+.annonce {
+  margin-top: var(--esp-md);
+  padding-top: var(--esp-md);
+  border-top: 1px solid var(--filet);
+  text-align: center;
+  cursor: default;
+  animation: fondu 0.22s ease-out;
+}
+
+.annonce-titre {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 28px;
+  line-height: 1.15;
+  margin: var(--esp-xs) 0 0;
+  text-wrap: balance;
+}
+
+.fruit {
+  margin-top: var(--esp-sm);
+}
+
+.fruit p {
+  margin: 0;
+  font-style: italic;
+}
+
+.fruit-libelle {
+  font-family: var(--sc);
+  font-style: normal;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  color: var(--sepia);
+  margin-right: var(--esp-xs);
+}
+
+.fruit .fruit-tradition {
+  margin-top: var(--esp-2xs);
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--sepia);
+  text-wrap: balance;
+}
+
+/* La place de la grosse perle, qui reste au bas de l'écran. */
+.fin-annonce {
+  height: 170px;
+}
+
+.grosse-perle-zone {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--esp-lg) var(--gouttiere) calc(var(--esp-md) + env(safe-area-inset-bottom));
+  /* Fondu court au-dessus, puis fond plein : « Plus bas » ne chevauche jamais le texte. */
+  background: linear-gradient(to bottom, transparent, var(--parchemin) var(--esp-lg));
+}
+
+.grosse-perle-zone .indice-suite {
+  min-height: 32px;
+  margin-bottom: var(--esp-xs);
+}
+
+.grosse-perle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  background: radial-gradient(
+    circle at 35% 30%,
+    var(--soleil-reflet),
+    var(--soleil) 45%,
+    var(--soleil-ombre)
+  );
+  box-shadow:
+    0 0 0 10px var(--halo),
+    0 3px 6px var(--ombre-perle);
+  transition: transform 0.1s ease-out;
+}
+
+.grosse-perle:active {
+  transform: scale(0.94);
+}
+
+.grosse-perle-legende {
+  margin-top: var(--esp-sm);
+  font-size: 15px;
+  font-style: italic;
+  color: var(--sepia);
+}

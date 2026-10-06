@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
+import { commencer, suivant, toucher } from './outils.ts'
 
 // Le navigateur de test ne vibre pas et n'a pas d'écran à garder allumé : on
 // remplace navigator.vibrate et navigator.wakeLock par des espions, que les
@@ -36,30 +37,22 @@ async function espionner(page: Page) {
 
 const journal = (page: Page) => page.evaluate(() => window.__journal)
 
-async function toucher(page: Page) {
-  const { width, height } = page.viewportSize()!
-  await page.touchscreen.tap(width / 2, (height * 2) / 3)
-}
-
 const LUNDI = new Date(2026, 9, 5, 10, 0)
-// Ouverture (7 prières), puis 5 dizaines de 12 prières, puis l'écran de fin.
+// Ouverture (7 prières), puis 5 dizaines (l'annonce et 12 prières), puis l'écran de fin.
 const OUVERTURE = 7
-const DIZAINE = 12
+const DIZAINE = 13
 const PRIERES = OUVERTURE + 5 * DIZAINE
 
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(LUNDI)
   await espionner(page)
-  await page.goto('/chapelet')
-  await expect(page.getByTestId('priere').getByRole('heading', { level: 2 })).toHaveText(
-    'Signe de croix',
-  )
+  await commencer(page)
 })
 
-test('chaque prière vibre court, chaque nouvelle dizaine et la fin vibrent fort', async ({
+test('chaque prière vibre court, chaque annonce de mystère et la fin vibrent fort', async ({
   page,
 }) => {
-  for (let i = 0; i < PRIERES; i++) await toucher(page)
+  for (let i = 0; i < PRIERES; i++) await suivant(page)
   await expect(page.getByRole('heading', { level: 2 })).toHaveText('Chapelet terminé')
 
   const vibrations = (await journal(page)).filter((e) => e.startsWith('vibre'))
@@ -89,7 +82,7 @@ test('revenir en arrière vibre court', async ({ page }) => {
 test('l’écran reste allumé pendant le chapelet et redevient libre à la fin', async ({ page }) => {
   await expect.poll(() => journal(page)).toEqual(['écran allumé'])
 
-  for (let i = 0; i < PRIERES; i++) await toucher(page)
+  for (let i = 0; i < PRIERES; i++) await suivant(page)
   await expect(page.getByRole('heading', { level: 2 })).toHaveText('Chapelet terminé')
   await expect.poll(() => journal(page).then((j) => j.at(-1))).toBe('écran libre')
 

@@ -1,0 +1,90 @@
+.aide-gestes {
+  width: calc(100% - 2 * var(--gouttiere));
+  max-width: 26em;
+  max-height: calc(100dvh - 2 * var(--esp-md));
+  padding: var(--esp-lg) var(--esp-lg) var(--esp-md);
+  border: 1px solid var(--filet);
+  border-radius: var(--r-lg);
+  background: var(--velin);
+  color: var(--encre);
+  cursor: default;
+}
+
+.aide-gestes::backdrop {
+  background: var(--voile);
+}
+
+.aide-gestes h2 {
+  margin: 0 0 var(--esp-md);
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1.15;
+  text-align: center;
+}
+
+.aide-gestes ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--esp-md);
+}
+
+.aide-gestes li {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: var(--esp-md);
+  align-items: center;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.aide-gestes strong {
+  font-weight: 600;
+}
+
+.aide-gestes svg {
+  width: 40px;
+  height: 40px;
+  fill: none;
+  stroke: var(--or-fonce);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.aide-gestes .plein {
+  fill: var(--or);
+  stroke: none;
+}
+
+.aide-gestes .soleil {
+  fill: var(--soleil);
+  stroke: var(--soleil-ombre);
+  stroke-width: 1;
+}
+
+.ne-plus {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-sm);
+  min-height: 48px;
+  margin-top: var(--esp-md);
+  font-size: 16px;
+  color: var(--sepia);
+  cursor: pointer;
+}
+
+.ne-plus input {
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  accent-color: var(--or-fonce);
+}
+
+.aide-gestes .btn-principal {
+  display: block;
+  width: 100%;
+  margin-top: var(--esp-xs);
+}

@@ -133,3 +133,37 @@
   font-style: italic;
   color: var(--sepia);
 }
+
+/* Mode compact : le fruit sous le mystère, et deux liens discrets sous la prière. */
+.fruit-compact {
+  margin: calc(-1 * var(--esp-xs)) 0 var(--esp-xs);
+  font-size: 16px;
+  font-style: italic;
+  color: var(--sepia);
+}
+
+.priere-tete-compacte {
+  margin-top: var(--esp-md);
+}
+
+.liens-compacts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 var(--esp-md);
+  margin-top: var(--esp-sm);
+}
+
+.lien-discret {
+  min-height: 48px;
+  padding: var(--esp-sm);
+  border: none;
+  background: none;
+  font-family: var(--texte);
+  font-size: 16px;
+  color: var(--encre);
+  text-decoration: underline;
+  text-decoration-color: var(--or);
+  text-underline-offset: 4px;
+  cursor: pointer;
+}

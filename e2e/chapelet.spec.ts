@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
+import { commencer, glisser, suivant, toucher } from './outils.ts'
 
 const AVE = 'Je vous salue Marie'
 const ORDINAUX = ['Premier', 'Deuxième', 'Troisième', 'Quatrième', 'Cinquième']
@@ -10,8 +11,11 @@ const JOYEUX = [
   'Le Recouvrement de Jésus au Temple',
 ]
 
-// Le déroulé attendu, écrit indépendamment du code : [prière, compteur, mystère].
-type Attendu = { priere: string; compteur?: string; mystere?: string }
+// Le déroulé attendu, écrit indépendamment du code : [prière, compteur, mystère],
+// ou l'annonce d'un mystère (son titre).
+type Attendu =
+  | { annonce: string; priere?: undefined; compteur?: undefined; mystere?: undefined }
+  | { priere: string; compteur?: string; mystere?: string; annonce?: undefined }
 const DEROULE: Attendu[] = [
   { priere: 'Signe de croix' },
   { priere: 'Je crois en Dieu' },
@@ -21,6 +25,7 @@ const DEROULE: Attendu[] = [
   ...JOYEUX.flatMap((titre, d) => {
     const mystere = `${ORDINAUX[d]} mystère ${titre}`
     return [
+      { annonce: titre },
       { priere: 'Notre Père', mystere },
       ...Array.from({ length: 10 }, (_, n) => ({
         priere: AVE,
@@ -35,29 +40,14 @@ const DEROULE: Attendu[] = [
 // Un lundi : mystères joyeux.
 const LUNDI = new Date(2026, 9, 5, 10, 0)
 
-async function toucher(page: Page) {
-  // Un toucher n'importe où : ici, au tiers bas de l'écran.
-  const { width, height } = page.viewportSize()!
-  await page.touchscreen.tap(width / 2, (height * 2) / 3)
-}
-
-// Glissement au doigt, de vrais événements tactiles.
-async function glisser(page: Page, dx: number, y = page.viewportSize()!.height / 2) {
-  const { width } = page.viewportSize()!
-  const cdp = await page.context().newCDPSession(page)
-  const x0 = width / 2 - dx / 2
-  const point = (x: number) => [{ x, y }]
-  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: point(x0) })
-  for (let i = 1; i <= 8; i++) {
-    await cdp.send('Input.dispatchTouchEvent', {
-      type: 'touchMove',
-      touchPoints: point(x0 + (dx * i) / 8),
-    })
-  }
-  await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
-}
-
 async function verifierPas(page: Page, attendu: Attendu, index: number) {
+  if (attendu.annonce !== undefined) {
+    await expect(
+      page.getByTestId('annonce').getByRole('heading', { level: 2 }),
+      `étape n° ${index + 1}`,
+    ).toHaveText(attendu.annonce)
+    return
+  }
   const ecran = page.getByTestId('priere')
   await expect(ecran.getByRole('heading', { level: 2 }), `prière n° ${index + 1}`).toHaveText(
     attendu.priere,
@@ -78,7 +68,7 @@ test('réciter un chapelet complet, toucher par toucher, sans quitter l’app', 
     if (!r.url().startsWith('http://localhost:4173/')) requetesExternes.push(r.url())
   })
 
-  await page.goto('/chapelet')
+  await commencer(page)
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mystères joyeux')
 
   let grainPrecedent = -1
@@ -91,7 +81,12 @@ test('réciter un chapelet complet, toucher par toucher, sans quitter l’app', 
     expect(grain - grainPrecedent).toBeLessThanOrEqual(1)
     expect(grain).toBeGreaterThanOrEqual(grainPrecedent)
     grainPrecedent = grain
-    await toucher(page)
+    if (attendu.annonce) {
+      // L'annonce ne s'avance que par la grosse perle : un toucher ailleurs ne fait rien.
+      await toucher(page)
+      await verifierPas(page, attendu, i)
+    }
+    await suivant(page)
   }
 
   await expect(page.getByRole('heading', { level: 2 })).toHaveText('Chapelet terminé')
@@ -104,7 +99,7 @@ test('réciter un chapelet complet, toucher par toucher, sans quitter l’app', 
 test('glisser revient d’une prière en arrière, dans un sens comme dans l’autre', async ({
   page,
 }) => {
-  await page.goto('/chapelet')
+  await commencer(page)
   for (let i = 0; i < 5; i++) await toucher(page)
   await verifierPas(page, DEROULE[5], 5)
 
@@ -119,36 +114,36 @@ test('glisser revient d’une prière en arrière, dans un sens comme dans l’a
 })
 
 test('glisser au tout début ne fait rien', async ({ page }) => {
-  await page.goto('/chapelet')
+  await commencer(page)
   await glisser(page, 160)
   await verifierPas(page, DEROULE[0], 0)
 })
 
 test('glisser depuis l’écran de fin revient au dernier Gloire au Père', async ({ page }) => {
-  await page.goto('/chapelet')
-  for (let i = 0; i < DEROULE.length; i++) await toucher(page)
+  await commencer(page)
+  for (let i = 0; i < DEROULE.length; i++) await suivant(page)
   await expect(page.getByRole('heading', { level: 2 })).toHaveText('Chapelet terminé')
   await glisser(page, 160)
   await verifierPas(page, DEROULE.at(-1)!, DEROULE.length - 1)
 })
 
 test('glisser en partant du bouton Recommencer revient aussi en arrière', async ({ page }) => {
-  await page.goto('/chapelet')
-  for (let i = 0; i < DEROULE.length; i++) await toucher(page)
+  await commencer(page)
+  for (let i = 0; i < DEROULE.length; i++) await suivant(page)
   const bouton = (await page.getByRole('button', { name: 'Recommencer' }).boundingBox())!
   await glisser(page, 160, bouton.y + bouton.height / 2)
   await verifierPas(page, DEROULE.at(-1)!, DEROULE.length - 1)
 })
 
 test('le bouton Recommencer repart du signe de croix', async ({ page }) => {
-  await page.goto('/chapelet')
-  for (let i = 0; i < DEROULE.length; i++) await toucher(page)
+  await commencer(page)
+  for (let i = 0; i < DEROULE.length; i++) await suivant(page)
   await page.getByRole('button', { name: 'Recommencer' }).click()
   await verifierPas(page, DEROULE[0], 0)
 })
 
 test('le Credo s’affiche en strophes, comme dans le recueil', async ({ page }) => {
-  await page.goto('/chapelet')
+  await commencer(page)
   await toucher(page)
   await verifierPas(page, DEROULE[1], 1)
   const strophes = page.getByTestId('strophe')
@@ -157,7 +152,7 @@ test('le Credo s’affiche en strophes, comme dans le recueil', async ({ page })
 })
 
 test('le clavier fait avancer et reculer (espace, flèches)', async ({ page }) => {
-  await page.goto('/chapelet')
+  await commencer(page)
   await verifierPas(page, DEROULE[0], 0)
   await page.keyboard.press('Space')
   await page.keyboard.press('ArrowRight')
@@ -179,16 +174,20 @@ test.describe('série du jour', () => {
   for (const [jour, quantieme, titre] of jours) {
     test(`le ${jour}, ${titre.toLowerCase()}`, async ({ page }) => {
       await page.clock.setFixedTime(new Date(2026, 9, quantieme, 10, 0))
-      await page.goto('/chapelet')
+      await commencer(page)
       await expect(page.getByRole('heading', { level: 1 })).toHaveText(titre)
     })
   }
 })
 
 test('une série choisie par l’adresse remplace celle du jour', async ({ page }) => {
-  await page.goto('/chapelet/lumineux')
+  await commencer(page, '/chapelet/lumineux')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mystères lumineux')
   for (let i = 0; i < 7; i++) await toucher(page)
+  await expect(page.getByTestId('annonce').getByRole('heading', { level: 2 })).toHaveText(
+    'Le Baptême de Jésus au Jourdain',
+  )
+  await suivant(page)
   await expect(page.getByTestId('mystere')).toHaveText(
     'Premier mystère Le Baptême de Jésus au Jourdain',
   )
@@ -204,8 +203,7 @@ test('le compteur se place à droite du titre, sur sa ligne, le titre restant ce
 }) => {
   // Le plus petit téléphone visé.
   await page.setViewportSize({ width: 360, height: 760 })
-  await page.goto('/chapelet')
-  await expect(page.getByRole('heading', { level: 2 })).toHaveText('Signe de croix')
+  await commencer(page)
   for (let i = 0; i < 3; i++) await toucher(page)
   await expect(page.getByTestId('compteur')).toHaveText('1 / 3')
   await expect.poll(() => page.evaluate(() => document.getAnimations().length)).toBe(0)

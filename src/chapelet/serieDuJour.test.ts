@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { serieDuJour } from './serieDuJour'
+import { joursDeLaSerie, serieDuJour } from './serieDuJour'
 
 describe('serieDuJour', () => {
   // Semaine du lundi 5 au dimanche 11 octobre 2026.
@@ -18,5 +18,14 @@ describe('serieDuJour', () => {
   it('suit le jour local, même juste avant minuit', () => {
     expect(serieDuJour(new Date(2026, 9, 8, 23, 59))).toBe('lumineux')
     expect(serieDuJour(new Date(2026, 9, 9, 0, 1))).toBe('douloureux')
+  })
+})
+
+describe('joursDeLaSerie', () => {
+  it('dit les jours habituels de chaque série, en commençant par le lundi', () => {
+    expect(joursDeLaSerie('joyeux')).toBe('Le lundi et le samedi')
+    expect(joursDeLaSerie('douloureux')).toBe('Le mardi et le vendredi')
+    expect(joursDeLaSerie('glorieux')).toBe('Le mercredi et le dimanche')
+    expect(joursDeLaSerie('lumineux')).toBe('Le jeudi')
   })
 })
