@@ -63,11 +63,11 @@ L'app de la phase 1 est empaquetée en APK Android et installée directement sur
 
 ### Critères d'acceptation
 
-- [ ] L'APK s'installe et s'ouvre sur le Xiaomi et sur le Samsung, avec l'identifiant `fr.biovibralyon.avecdieu` et le nom « Avec Dieu ».
-- [ ] Un chapelet complet se récite sur le téléphone, en mode avion.
-- [ ] Les vibrations se ressentent à chaque grain, plus fort en fin de dizaine.
-- [ ] L'écran ne se verrouille pas pendant le chapelet, puis reprend son comportement normal en sortant.
-- [ ] La procédure pour reconstruire et réinstaller l'APK est documentée et reproductible.
+- [x] L'APK s'installe et s'ouvre sur le Xiaomi et sur le Samsung, avec l'identifiant `fr.biovibralyon.avecdieu` et le nom « Avec Dieu ».
+- [x] Un chapelet complet se récite sur le téléphone, en mode avion.
+- [x] Les vibrations se ressentent à chaque grain, plus fort en fin de dizaine (ressentie sur le Notre Père qui ouvre la dizaine suivante, et à la fin du chapelet : choix du porteur du projet, 2026-10-06).
+- [x] L'écran ne se verrouille pas pendant le chapelet, puis reprend son comportement normal en sortant.
+- [x] La procédure pour reconstruire et réinstaller l'APK est documentée et reproductible.
 
 ## Bloquée par
 
