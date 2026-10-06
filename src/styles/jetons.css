@@ -17,6 +17,8 @@
   --or-fonce: #8a6a2a;
   --soleil: #d9a441;
   --halo: rgba(217, 164, 65, 0.28);
+  /* Halo rosé du Gloire au Père sur le fil : la rubrique très diluée. */
+  --halo-fil: rgba(158, 42, 31, 0.3);
   /* Relief des perles du chapelet : reflet et ombre de chaque matière. */
   --or-reflet: #e9cf8e;
   --soleil-reflet: #fbe6a6;
