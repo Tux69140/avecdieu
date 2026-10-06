@@ -94,6 +94,18 @@ function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisi
   )
 }
 
+// Dans le recueil, une ligne vide sépare deux strophes.
+function strophes(lignes: string[]): string[][] {
+  return lignes.reduce<string[][]>(
+    (groupes, ligne) => {
+      if (ligne === '') groupes.push([])
+      else groupes.at(-1)!.push(ligne)
+      return groupes
+    },
+    [[]],
+  )
+}
+
 function Priere({ pas, serie }: { pas: Pas; serie: SerieId }) {
   const priere = PRIERES[pas.priere]
   return (
@@ -112,11 +124,15 @@ function Priere({ pas, serie }: { pas: Pas; serie: SerieId }) {
           </span>
         )}
       </div>
-      <p className="priere-texte">
-        {priere.lignes.map((ligne, i) => (
-          <span key={i}>{ligne}</span>
+      <div className="priere-texte">
+        {strophes(priere.lignes).map((vers, i) => (
+          <p key={i} className="strophe" data-testid="strophe">
+            {vers.map((ligne, j) => (
+              <span key={j}>{ligne}</span>
+            ))}
+          </p>
         ))}
-      </p>
+      </div>
     </section>
   )
 }

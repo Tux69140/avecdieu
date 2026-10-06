@@ -134,6 +134,15 @@ test('le bouton Recommencer repart du signe de croix', async ({ page }) => {
   await verifierPas(page, DEROULE[0], 0)
 })
 
+test('le Credo s’affiche en strophes, comme dans le recueil', async ({ page }) => {
+  await page.goto('/chapelet')
+  await toucher(page)
+  await verifierPas(page, DEROULE[1], 1)
+  const strophes = page.getByTestId('strophe')
+  await expect(strophes).toHaveCount(4)
+  await expect(strophes.last()).toHaveText('Amen.')
+})
+
 test('le clavier fait avancer et reculer (espace, flèches)', async ({ page }) => {
   await page.goto('/chapelet')
   await verifierPas(page, DEROULE[0], 0)

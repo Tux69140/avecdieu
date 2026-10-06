@@ -80,7 +80,15 @@
 }
 
 .priere-texte {
-  margin: var(--esp-sm) 0 0;
+  margin-top: var(--esp-sm);
+}
+
+.strophe {
+  margin: 0;
+}
+
+.strophe + .strophe {
+  margin-top: 0.9em;
 }
 
 /* Un vers par ligne, centré ; un vers trop long se coupe en deux lignes équilibrées. */
