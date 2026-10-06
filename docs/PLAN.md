@@ -153,18 +153,23 @@ L'office affiché est complet :
 - le Gloire au Père est ajouté, sauf exceptions (comme Dn 3) ;
 - le Notre Père est écrit en entier ;
 - la conclusion de l'oraison est développée ;
-- l'introduction et l'invitatoire s'adaptent au premier office du jour.
+- l'introduction et l'invitatoire s'adaptent au premier office du jour ;
+- l'office se termine par sa conclusion (« Que le Seigneur nous bénisse… » aux laudes et vêpres, « Bénissons le Seigneur » à l'office des lectures et aux petites heures) ;
+- les complies s'ouvrent, après l'introduction, sur la rubrique « Examen de conscience » suivie du « Je confesse à Dieu ».
 
-Chaque ajout est discrètement signalé (filet rouge et mention « Ajouté selon les rubriques »).
-
-Avec « Prier à plusieurs », le Gloire au Père (après l'introduction et après chaque psaume) porte la rubrique « Tous », comme au chapelet (décision du porteur du projet, 2026-10-06).
+Décisions du porteur du projet (2026-10-06) :
+- **Invitatoire** : une fois par jour, en tête du premier des deux offices ouverts ce jour-là (laudes ou office des lectures), l'autre commençant par « Dieu, viens à mon aide ». Un lien en tête de l'office permet de le déplacer à la main. Son antienne est reprise après chaque strophe du psaume.
+- **Prières courantes** (Notre Père, Gloire au Père, Je confesse à Dieu) : repliées sur leur première ligne, dépliées d'un toucher ; le réglage « Prières courantes en entier » (Réglages › Offices) les déplie toujours.
+- **Signalement des ajouts** : un filet rouge le long de l'ajout, sans aucun texte ; le réglage « Signaler les ajouts de l’app » (Réglages › Offices, actif par défaut) le retire.
+- **Textes de référence** : les textes officiels actuels (Gloire au Père de la liturgie des heures francophone, conclusions du Missel romain de 2021).
+- Avec « Prier à plusieurs », le Gloire au Père (après l'introduction et après chaque psaume) porte la rubrique « Tous », comme au chapelet.
 
 ### Critères d'acceptation
 
 - [ ] Les règles de rubriques et les conclusions d'oraison sont rédigées dans un recueil lisible, validées par le porteur du projet et figées.
 - [ ] Un jeu d'offices de référence enregistrés (chacun des 7 offices, couvrant un dimanche, une solennité, l'Avent, le Carême, le temps pascal et le temps ordinaire) produit 100 % des ajouts attendus (critère de succès 2).
 - [ ] L'introduction change selon que l'office ouvert est le premier de la journée ou non.
-- [ ] Chaque partie ajoutée porte l'indicateur « ajoutée selon les rubriques », visible à l'écran.
+- [ ] Chaque partie ajoutée porte le filet rouge des ajouts, retiré quand le réglage est coupé.
 
 ## Bloquée par
 

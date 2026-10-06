@@ -125,6 +125,8 @@ Avec Dieu accompagne la prière de toute la journée sur un téléphone Android.
 14. Toute autre langue que le français.
 15. Le choix entre plusieurs traductions des prières.
 16. L'Angélus et l'offrande du matin (décision du porteur du projet, 2026-10-06).
+17. L'office selon le Bréviaire romain de 1960 (Divinum Officium) *(à étudier en fin de développement)*.
+18. Un examen de conscience rédigé et guidé aux complies *(plus tard ; la phase 6 n'en donne que la rubrique et le « Je confesse à Dieu »)*.
 
 ## Décisions d'implémentation
 
