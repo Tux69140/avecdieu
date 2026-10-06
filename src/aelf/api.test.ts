@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { chargerOffice, ErreurAelf } from './api'
+import { chargerJour, chargerOffice, ErreurAelf } from './api'
 
 const laudes = readFileSync('src/aelf/exemples/laudes-2026-10-06.json', 'utf8')
 
@@ -48,5 +48,29 @@ describe('chargerOffice', () => {
     await expect(chargerOffice('laudes', '2026-10-06')).rejects.toBeInstanceOf(ErreurAelf)
     repondre('{"informations": {}}')
     await expect(chargerOffice('laudes', '2026-10-06')).rejects.toBeInstanceOf(ErreurAelf)
+  })
+})
+
+describe('chargerJour', () => {
+  const informations = readFileSync('src/aelf/exemples/informations-2026-10-06.json', 'utf8')
+
+  it('interroge l’AELF pour la zone France et rend le jour liturgique', async () => {
+    const espion = repondre(informations)
+    const jour = await chargerJour('2026-10-06')
+    expect(espion).toHaveBeenCalledWith(
+      'https://api.aelf.org/v1/informations/2026-10-06/france',
+      expect.anything(),
+    )
+    expect(jour.celebration).toBe('S. Bruno, prêtre')
+    expect(jour.couleurs[0]).toBe('vert')
+  })
+
+  it('échoue clairement si le réseau manque ou si la réponse n’est pas un jour', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')))
+    await expect(chargerJour('2026-10-06')).rejects.toBeInstanceOf(ErreurAelf)
+    repondre('<!DOCTYPE HTML><html></html>')
+    await expect(chargerJour('2026-10-06')).rejects.toBeInstanceOf(ErreurAelf)
+    repondre('{"informations": "rien"}')
+    await expect(chargerJour('2026-10-06')).rejects.toBeInstanceOf(ErreurAelf)
   })
 })

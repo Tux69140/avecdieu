@@ -108,6 +108,11 @@ export interface JourLiturgique {
   semaine?: string
   fete?: string
   rang?: string
+  // Les deux lignes que l'AELF affiche en tête du jour : le jour lui-même
+  // (« mardi, 27ème Semaine du Temps Ordinaire », « Tous les Saints ») puis le
+  // saint ou le rang (« S. Bruno, prêtre », « Solennité »).
+  intitule?: string
+  celebration?: string
   // La première est celle du jour ; les suivantes, celles des mémoires possibles.
   couleurs: CouleurLiturgique[]
 }

@@ -3,7 +3,7 @@
 .seuil {
   max-width: calc(34em + 2 * var(--gouttiere));
   margin: 0 auto;
-  padding: var(--esp-lg) var(--gouttiere) var(--esp-3xl);
+  padding: var(--esp-sm) var(--gouttiere) var(--esp-3xl);
 }
 
 .seuil-entete {
@@ -117,24 +117,6 @@
 .seuil-recommencer {
   margin: var(--esp-xs) 0 0;
   text-align: center;
-}
-
-/* ☰ en haut à gauche, sur sa propre ligne : l'étiquette du jour garde toute la largeur. */
-.bouton-menu {
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  margin: calc(-1 * var(--esp-md)) 0 0 calc(-1 * var(--esp-sm));
-}
-
-.bouton-menu svg {
-  width: 22px;
-  height: 22px;
-  fill: none;
-  stroke: var(--encre);
-  stroke-width: 1.8;
-  stroke-linecap: round;
 }
 
 .fin-ecran {

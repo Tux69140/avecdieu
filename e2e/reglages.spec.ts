@@ -5,6 +5,7 @@ import {
   journal,
   preparer,
   avancer,
+  servirAelf,
   toucher,
   type Reglages,
 } from './outils.ts'
@@ -20,22 +21,31 @@ const dizaine = (d: number) => 7 + (d - 1) * 14
 const titrePriere = (page: Page) => page.getByTestId('priere').getByRole('heading', { level: 2 })
 const reglage = (page: Page, nom: string | RegExp) => page.getByRole('switch', { name: nom })
 
-// Les réglages s'ouvrent par le menu ☰ du seuil.
+// Les réglages s'ouvrent par le menu ☰ de l'accueil.
 async function ouvrirReglages(page: Page) {
   await page.getByRole('link', { name: 'Menu' }).click()
   await page.getByRole('link', { name: 'Réglages' }).click()
 }
 
+// Du seuil ou de l'accueil, le chapelet par le menu.
+async function ouvrirChapelet(page: Page) {
+  await page.getByRole('link', { name: 'Menu' }).click()
+  await page.getByRole('link', { name: 'Chapelet' }).click()
+}
+
+const accueil = (page: Page) => expect(page.getByRole('link', { name: 'Menu' })).toBeVisible()
+
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(LUNDI)
+  await servirAelf(page)
 })
 
 test.describe('écran des réglages', () => {
-  test('s’ouvre par le menu du seuil, montre les réglages par défaut, et ramène au seuil', async ({
+  test('s’ouvre par le menu de l’accueil, montre les réglages par défaut, et y ramène', async ({
     page,
   }) => {
     await preparer(page)
-    await page.goto('/chapelet')
+    await page.goto('/')
     await ouvrirReglages(page)
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Réglages')
     await expect(reglage(page, 'Annonce des mystères')).toHaveAttribute('aria-checked', 'true')
@@ -48,8 +58,8 @@ test.describe('écran des réglages', () => {
     )
     await expect(reglage(page, 'Vibrations')).toHaveAttribute('aria-checked', 'true')
 
-    await page.getByRole('button', { name: /Retour au chapelet/ }).click()
-    await expect(page.getByRole('button', { name: 'Commencer le chapelet' })).toBeVisible()
+    await page.getByRole('button', { name: /Retour/ }).click()
+    await accueil(page)
   })
 
   test('chaque réglage se retient après redémarrage de l’app', async ({ page }) => {
@@ -73,7 +83,8 @@ test.describe('écran des réglages', () => {
     await expect(reglage(page, 'Vibrations')).toHaveAttribute('aria-checked', 'false')
 
     // Le seuil partage la même mémoire.
-    await page.getByRole('button', { name: /Retour au chapelet/ }).click()
+    await page.getByRole('button', { name: /Retour/ }).click()
+    await ouvrirChapelet(page)
     await expect(page.getByRole('radio', { name: 'Compact' })).toHaveAttribute(
       'aria-checked',
       'true',
@@ -246,27 +257,30 @@ test.describe('reprise d’un chapelet interrompu', () => {
     await expect(page.getByTestId('mystere')).toHaveText('3 · La Nativité')
   }
 
-  test('rouverte le jour même, l’app revient au même grain', async ({ page, context }) => {
+  test('rouverte le jour même, l’app s’ouvre sur l’accueil et le seuil reprend au même grain', async ({
+    page,
+    context,
+  }) => {
     await commencer(page)
     await avancer(page, AVE_3_4)
     await verifierAve34(page)
     const grain = await page.getByTestId('chapelet-dessine').getAttribute('data-grain-courant')
     await page.close()
 
-    // L'app relancée par Android repart de l'accueil.
+    // L'app relancée par Android s'ouvre toujours sur l'accueil (choix du
+    // porteur du projet, 2026-10-06) ; le seuil du chapelet propose la reprise.
     const relance = await context.newPage()
+    await servirAelf(relance)
     await relance.clock.setFixedTime(new Date(2026, 9, 5, 22, 30))
     await relance.goto('/')
+    await accueil(relance)
+    await ouvrirChapelet(relance)
+    await relance.getByRole('button', { name: 'Reprendre à la 3e dizaine' }).click()
     await verifierAve34(relance)
     await expect(relance.getByTestId('chapelet-dessine')).toHaveAttribute(
       'data-grain-courant',
       grain!,
     )
-
-    // Le retour mène au seuil, qui propose de reprendre ou de recommencer.
-    await relance.goBack()
-    await relance.getByRole('button', { name: 'Reprendre à la 3e dizaine' }).click()
-    await verifierAve34(relance)
     await relance.goBack()
     await relance.getByRole('button', { name: 'Recommencer du début' }).click()
     await expect(titrePriere(relance)).toHaveText('Signe de croix')
@@ -282,8 +296,10 @@ test.describe('reprise d’un chapelet interrompu', () => {
     await page.close()
 
     const lendemain = await context.newPage()
+    await servirAelf(lendemain)
     await lendemain.clock.setFixedTime(MARDI)
     await lendemain.goto('/')
+    await ouvrirChapelet(lendemain)
     await expect(lendemain.getByRole('heading', { level: 1 })).toHaveText('Mystères douloureux')
     await expect(lendemain.getByRole('button', { name: 'Commencer le chapelet' })).toBeVisible()
     await lendemain.getByRole('link', { name: /Mystères joyeux/ }).click()
@@ -294,10 +310,12 @@ test.describe('reprise d’un chapelet interrompu', () => {
     await commencer(page)
     await avancer(page, AVE_3_4)
     await page.goBack()
+    await page.getByRole('button', { name: /Retour/ }).click()
     await ouvrirReglages(page)
     // Sans « Ô mon Jésus », les deux premières dizaines ont une prière de moins.
     await reglage(page, /Ô mon Jésus/).click()
-    await page.getByRole('button', { name: /Retour au chapelet/ }).click()
+    await page.getByRole('button', { name: /Retour/ }).click()
+    await ouvrirChapelet(page)
     await page.getByRole('button', { name: 'Reprendre à la 3e dizaine' }).click()
     await verifierAve34(page)
   })

@@ -18,7 +18,7 @@ import './EcranOffice.css'
 // validées par le porteur du projet (src/recueil/office.ts).
 export function EcranOffice() {
   const { office, date } = useParams()
-  if (!estNomOffice(office) || !estDate(date)) return <Navigate to="/offices" replace />
+  if (!estNomOffice(office) || !estDate(date)) return <Navigate to="/" replace />
   return <LectureOffice key={`${office}/${date}`} nom={office} date={date} />
 }
 

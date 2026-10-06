@@ -1,0 +1,106 @@
+/* Le dessin et le bandeau partagent la même case : le bandeau se loge sous
+   l'arc, et la case grandit si son titre est long. */
+.cadran {
+  display: grid;
+  margin: 0 calc(-1 * var(--esp-sm));
+}
+
+.cadran > * {
+  grid-area: 1 / 1;
+}
+
+/* Au-dessus du bandeau, mais seules les perles retiennent le toucher. */
+.cadran-zone {
+  position: relative;
+  z-index: 1;
+  align-self: start;
+  pointer-events: none;
+}
+
+.cadran-zone svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.cadran-arc {
+  fill: none;
+  stroke: var(--or);
+  stroke-width: 1.4;
+  opacity: 0.75;
+}
+
+.cadran-trait {
+  stroke: var(--or);
+  stroke-width: 1;
+}
+
+.cadran-zone text {
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  fill: var(--sepia);
+}
+
+.cadran-halo {
+  fill: var(--halo);
+}
+
+.cadran-soleil line {
+  stroke: var(--soleil);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+.cadran-soleil circle:last-child {
+  fill: var(--soleil);
+}
+
+.cadran-lune {
+  fill: var(--sepia-pale);
+}
+
+/* Chaque perle : une cible de 48 px centrée sur l'heure de son office. */
+.cadran-perle {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 9999px;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+}
+
+.cadran-perle span {
+  width: 12px;
+  height: 12px;
+  border-radius: 9999px;
+  border: 1.5px solid var(--or);
+  background: var(--parchemin);
+}
+
+.cadran-perle[data-etat='passe'] span {
+  border-color: var(--or-fonce);
+  background: var(--or-fonce);
+}
+
+/* L'office du moment : cercle rouge avec halo (docs/DESIGN.md). */
+.cadran-perle[data-etat='moment'] span {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--rubrique);
+  box-shadow: 0 0 0 5px var(--halo);
+}
+
+.cadran-perle:active span {
+  transform: scale(0.94);
+}
+
+.cadran-centre {
+  /* Assez bas pour que la date tienne entre les deux branches de l'arc. */
+  padding: 24% 12% 0;
+  text-align: center;
+}

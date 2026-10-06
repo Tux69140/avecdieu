@@ -179,6 +179,8 @@ export function lireJour(informations: unknown): JourLiturgique {
     semaine: chaine(i.semaine),
     fete: chaine(i.fete),
     rang: chaine(i.degre) ?? chaine(i.ligne3),
+    intitule: chaine(i.ligne1),
+    celebration: chaine(i.ligne2),
     couleurs: [i.couleur, i.couleur2, i.couleur3].filter(estCouleur),
   }
 }

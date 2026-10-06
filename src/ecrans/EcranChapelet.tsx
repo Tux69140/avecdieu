@@ -32,10 +32,6 @@ const estInteractif = (cible: EventTarget) =>
   cible instanceof Element && cible.closest('button, a, input, label, dialog') !== null
 const estPriere = (pas: Pas): pas is Pas & { priere: PriereId } => pas.priere !== 'annonce'
 
-// Au lancement de l'app, un chapelet commencé le jour même rouvre directement
-// sur sa prière (choix du porteur du projet) ; ensuite, le seuil propose de le reprendre.
-let repriseAuLancement = true
-
 // Le chapelet s'ouvre sur son seuil ; « Commencer » ajoute une entrée à
 // l'historique, si bien que le retour d'Android y ramène.
 export function EcranChapelet() {
@@ -46,15 +42,6 @@ export function EcranChapelet() {
   const duJour = serieDuJour(aujourdhui)
   const prier = (state as { prier?: boolean } | null)?.prier === true
   const enCours = lireEnCours(aujourdhui)
-  const cheminDe = (serie: SerieId) => (serie === duJour ? '/chapelet' : `/chapelet/${serie}`)
-
-  useEffect(() => {
-    if (!repriseAuLancement) return
-    repriseAuLancement = false
-    if (!prier && enCours) naviguer(cheminDe(enCours.serie), { state: { prier: true } })
-    // Une seule fois, au premier affichage de l'écran depuis le lancement.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   if (serieChoisie !== undefined && !estSerie(serieChoisie))
     return <Navigate to="/chapelet" replace />

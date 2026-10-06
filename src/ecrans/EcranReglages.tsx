@@ -31,7 +31,7 @@ export function EcranReglages() {
   return (
     <main className="reglages">
       <button className="retour lien-discret" type="button" onClick={retour}>
-        ‹ Retour au chapelet
+        ‹ Retour
       </button>
       <h1>Réglages</h1>
 

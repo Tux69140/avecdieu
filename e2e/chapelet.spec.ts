@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
-import { commencer, glisser, suivant, toucher } from './outils.ts'
+import { commencer, glisser, preparer, servirAelf, suivant, toucher } from './outils.ts'
 
 const AVE = 'Je vous salue Marie'
 const JOYEUX = [
@@ -192,9 +192,16 @@ test('une série choisie par l’adresse remplace celle du jour', async ({ page 
   await expect(page.getByTestId('mystere')).toHaveText('1 · Le Baptême de Jésus au Jourdain')
 })
 
-test('l’accueil mène au chapelet en attendant la phase 8', async ({ page }) => {
+test('le chapelet s’ouvre par le menu de l’accueil, et son retour y ramène', async ({ page }) => {
+  await servirAelf(page)
+  await preparer(page)
   await page.goto('/')
+  await page.getByRole('link', { name: 'Menu' }).click()
+  await page.getByRole('link', { name: 'Chapelet' }).click()
   await expect(page).toHaveURL(/\/chapelet$/)
+  await page.getByRole('button', { name: /Retour/ }).click()
+  await expect(page).toHaveURL('/')
+  await expect(page.getByRole('link', { name: 'Menu' })).toBeVisible()
 })
 
 test('le compteur se place à droite du titre, sur sa ligne, le titre restant centré', async ({

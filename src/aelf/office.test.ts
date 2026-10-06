@@ -155,6 +155,8 @@ describe('lireJour', () => {
       semaine: '27ème Semaine du Temps Ordinaire',
       fete: 'S. Bruno, prêtre',
       rang: 'Mémoire facultative',
+      intitule: 'mardi, 27ème Semaine du Temps Ordinaire',
+      celebration: 'S. Bruno, prêtre',
       couleurs: ['vert', 'blanc'],
     })
   })

@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest'
-import { dateDuJour, dateLisible, estDate, paques, sansAlleluia } from './dates'
+import {
+  dateCourte,
+  dateDuJour,
+  dateLisible,
+  decaler,
+  enDate,
+  estDate,
+  paques,
+  sansAlleluia,
+} from './dates'
 
 describe('dates des offices', () => {
   it('donne la date du jour à l’heure du téléphone, même tard le soir', () => {
@@ -17,6 +26,21 @@ describe('dates des offices', () => {
   it('écrit la date en toutes lettres', () => {
     expect(dateLisible('2026-10-06')).toBe('mardi 6 octobre')
     expect(dateLisible('2026-11-01')).toBe('dimanche 1er novembre')
+  })
+
+  it('écrit la date en bref, pour aller d’un jour à l’autre', () => {
+    expect(dateCourte('2026-10-04')).toBe('dim. 4')
+    expect(dateCourte('2026-11-01')).toBe('dim. 1er')
+  })
+
+  it('passe au jour d’avant ou d’après, même d’un mois ou d’une année à l’autre', () => {
+    expect(decaler('2026-10-31', 1)).toBe('2026-11-01')
+    expect(decaler('2027-01-01', -1)).toBe('2026-12-31')
+    expect(decaler('2027-03-28', 1)).toBe('2027-03-29')
+  })
+
+  it('donne le jour civil à minuit, heure du téléphone', () => {
+    expect(enDate('2026-10-06')).toEqual(new Date(2026, 9, 6))
   })
 })
 

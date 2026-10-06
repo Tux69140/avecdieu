@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router'
 import { IndiceSuite } from '../composants/IndiceSuite'
 import { Interrupteur } from '../composants/Interrupteur'
+import { useRetour } from '../composants/retour'
 import { useSuiteCachee } from '../composants/suiteCachee'
 import { usePeutVibrer } from '../telephone/retours'
 import { SERIES, type SerieId } from '../recueil/mysteres'
@@ -22,11 +23,12 @@ interface Props {
   onRecommencer: () => void
 }
 
-// Le seuil du chapelet, entre le menu et le signe de croix : la série et ses
+// Le seuil du chapelet, entre l'accueil et le signe de croix : la série et ses
 // mystères, puis les choix qui se font avant de prier (autre série, affichage,
 // vibrations). Les habitudes qu'on règle une fois sont dans les réglages.
 export function Seuil({ serie, duJour, date, enCours, onCommencer, onRecommencer }: Props) {
   const [reglages, setReglages] = useState(lireReglages)
+  const retour = useRetour()
   // Sans vibreur (tablette), le réglage n'a pas lieu d'être.
   const vibreur = usePeutVibrer()
   const { fin, cachee } = useSuiteCachee()
@@ -36,11 +38,9 @@ export function Seuil({ serie, duJour, date, enCours, onCommencer, onRecommencer
 
   return (
     <main className="seuil">
-      <Link className="bouton-menu" to="/menu" aria-label="Menu">
-        <svg viewBox="0 0 20 20" aria-hidden="true">
-          <path d="M3 5h14M3 10h14M3 15h14" />
-        </svg>
-      </Link>
+      <button className="retour lien-discret" type="button" onClick={retour}>
+        ‹ Retour
+      </button>
       <header className="seuil-entete">
         <p className="etiquette">
           {serie === duJour ? `Chapelet du jour · ${jour}` : `Chapelet · ${jour}`}

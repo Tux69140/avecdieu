@@ -7,7 +7,7 @@ export function dateDuJour(maintenant = new Date()): string {
   return `${maintenant.getFullYear()}-${deux(maintenant.getMonth() + 1)}-${deux(maintenant.getDate())}`
 }
 
-const enDate = (date: string) => {
+export const enDate = (date: string) => {
   const [annee, mois, jour] = date.split('-').map(Number)
   return new Date(annee, mois - 1, jour)
 }
@@ -23,7 +23,14 @@ export function dateLisible(date: string): string {
   return FORMAT.format(enDate(date)).replace(/^(\S+) 1 /, '$1 1er ')
 }
 
-const decaler = (date: string, jours: number) => {
+const COURT = new Intl.DateTimeFormat('fr-FR', { weekday: 'short', day: 'numeric' })
+
+// « dim. 4 », « dim. 1er » : les jours voisins, sur l'accueil.
+export function dateCourte(date: string): string {
+  return COURT.format(enDate(date)).replace(/ 1$/, ' 1er')
+}
+
+export const decaler = (date: string, jours: number) => {
   const d = enDate(date)
   d.setDate(d.getDate() + jours)
   return dateDuJour(d)

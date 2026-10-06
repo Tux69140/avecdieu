@@ -14,7 +14,7 @@ test.beforeEach(async ({ page }) => {
 
 const titres = (page: Page) => page.getByTestId('office').getByRole('heading', { level: 2 })
 
-test('ouvrir les laudes depuis le menu et les lire d’un trait', async ({ page }) => {
+test('ouvrir les laudes depuis l’accueil et les lire d’un trait', async ({ page }) => {
   const demandes = await servirAelf(page)
   const externes: string[] = []
   page.on('request', (r) => {
@@ -23,24 +23,12 @@ test('ouvrir les laudes depuis le menu et les lire d’un trait', async ({ page 
       externes.push(url)
   })
   await preparer(page)
-  await page.goto('/chapelet')
-  await page.getByRole('link', { name: 'Menu' }).click()
-  await page.getByRole('link', { name: 'Offices' }).click()
-
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Offices du jour')
-  await expect(page.getByText('mardi 6 octobre')).toBeVisible()
-  // Chaque office avec son heure par défaut ; l'office des lectures n'en a pas.
-  await expect(page.getByRole('listitem')).toHaveText([
-    'Office des lectures',
-    '7 h Laudes',
-    '9 h Tierce',
-    '12 h Sexte',
-    '15 h None',
-    '18 h 30 Vêpres',
-    '21 h 30 Complies',
-  ])
-
-  await page.getByRole('link', { name: 'Laudes' }).click()
+  await page.goto('/')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mardi 6 octobre')
+  await page
+    .getByRole('list', { name: 'Offices du jour' })
+    .getByRole('link', { name: /Laudes/ })
+    .click()
   await expect(page).toHaveURL('/office/laudes/2026-10-06')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Laudes')
   await expect(titres(page)).toHaveText([
@@ -68,14 +56,16 @@ test('ouvrir les laudes depuis le menu et les lire d’un trait', async ({ page 
   await expect(reperes).toHaveCount(17)
   await expect(reperes.first().locator('.repere-perle')).toHaveAttribute('data-couleur', 'vert')
 
-  expect(demandes).toEqual(['https://api.aelf.org/v1/laudes/2026-10-06/france'])
+  expect(demandes).toEqual([
+    'https://api.aelf.org/v1/informations/2026-10-06/france',
+    'https://api.aelf.org/v1/laudes/2026-10-06/france',
+  ])
   expect(externes).toEqual([])
 
-  // Le retour ramène à la liste, puis au seuil du chapelet.
+  // Le retour ramène à l'accueil.
   await page.goBack()
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Offices du jour')
-  await page.getByRole('button', { name: /Retour/ }).click()
-  await expect(page.getByRole('button', { name: 'Commencer le chapelet' })).toBeVisible()
+  await expect(page).toHaveURL('/')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mardi 6 octobre')
 })
 
 for (const [office, nom] of [
@@ -163,19 +153,23 @@ test('l’écran reste allumé pendant la lecture et redevient libre au retour',
   await espionner(page)
   await servirAelf(page)
   await preparer(page)
-  await page.goto('/offices')
-  await page.getByRole('link', { name: 'Complies' }).click()
+  await page.goto('/')
+  await page
+    .getByRole('list', { name: 'Offices du jour' })
+    .getByRole('link', { name: /Complies/ })
+    .click()
   await expect(titres(page).first()).toHaveText('Introduction')
   await expect.poll(() => journal(page)).toEqual(['écran allumé'])
   await page.getByRole('button', { name: /Retour/ }).click()
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Offices du jour')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mardi 6 octobre')
   await expect.poll(() => journal(page)).toEqual(['écran allumé', 'écran libre'])
 })
 
-test('une adresse d’office inconnue mène à la liste du jour', async ({ page }) => {
+test('une adresse d’office inconnue mène à l’accueil', async ({ page }) => {
+  await servirAelf(page)
   await preparer(page)
   await page.goto('/office/messe/2026-10-06')
-  await expect(page).toHaveURL('/offices')
+  await expect(page).toHaveURL('/')
   await page.goto('/office/laudes/2026-13-40')
-  await expect(page).toHaveURL('/offices')
+  await expect(page).toHaveURL('/')
 })

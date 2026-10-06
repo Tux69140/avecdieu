@@ -17,6 +17,30 @@ export class ErreurAelf extends Error {
 const officeAbsent = () =>
   Object.assign(new ErreurAelf('Office absent de l’AELF'), { absent: true })
 
+// La réponse brute de l'AELF pour une ressource (un office, ou « informations »).
+async function demander(ressource: string, date: string, signal?: AbortSignal): Promise<unknown> {
+  try {
+    const http = await fetch(`${RACINE}/${ressource}/${date}/${ZONE}`, {
+      signal,
+      headers: { Accept: 'application/json' },
+    })
+    if (http.status === 404) throw officeAbsent()
+    if (!http.ok) throw new ErreurAelf(`L’AELF a répondu ${http.status}`)
+    return await http.json()
+  } catch (erreur) {
+    // Un abandon voulu (écran quitté) n'est pas une panne.
+    if (signal?.aborted) throw erreur
+    throw erreur instanceof ErreurAelf
+      ? erreur
+      : new ErreurAelf('AELF injoignable', { cause: erreur })
+  }
+}
+
+const informationsDe = (reponse: unknown): unknown =>
+  typeof reponse === 'object' && reponse !== null
+    ? (reponse as { informations?: unknown }).informations
+    : undefined
+
 export interface OfficeDuJour {
   office: Office
   jour: JourLiturgique
@@ -27,27 +51,20 @@ export async function chargerOffice(
   date: string,
   signal?: AbortSignal,
 ): Promise<OfficeDuJour> {
-  let reponse: unknown
-  try {
-    const http = await fetch(`${RACINE}/${nom}/${date}/${ZONE}`, {
-      signal,
-      headers: { Accept: 'application/json' },
-    })
-    if (http.status === 404) throw officeAbsent()
-    if (!http.ok) throw new ErreurAelf(`L’AELF a répondu ${http.status}`)
-    reponse = await http.json()
-  } catch (erreur) {
-    // Un abandon voulu (écran quitté) n'est pas une panne.
-    if (signal?.aborted) throw erreur
-    throw erreur instanceof ErreurAelf
-      ? erreur
-      : new ErreurAelf('AELF injoignable', { cause: erreur })
-  }
+  const reponse = await demander(nom, date, signal)
   try {
     const office = lireOffice(nom, date, reponse)
-    const jour = lireJour((reponse as { informations?: unknown }).informations)
+    const jour = lireJour(informationsDe(reponse))
     return { office, jour }
   } catch (erreur) {
     throw new ErreurAelf('Réponse AELF illisible', { cause: erreur })
   }
+}
+
+// Le jour liturgique seul, pour l'accueil : date, temps, fête, couleur.
+export async function chargerJour(date: string, signal?: AbortSignal): Promise<JourLiturgique> {
+  const informations = informationsDe(await demander('informations', date, signal))
+  const jour = lireJour(informations)
+  if (jour.date !== date) throw new ErreurAelf('Réponse AELF illisible')
+  return jour
 }

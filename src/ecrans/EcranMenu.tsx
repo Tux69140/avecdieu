@@ -1,12 +1,19 @@
-import { Link } from 'react-router'
+import { Link, useLocation, useNavigate } from 'react-router'
 import { useRetour } from '../composants/retour'
+import { dateDuJour } from '../office/dates'
 import './EcranMenu.css'
 
-// Le menu de l'app, ouvert par ☰ depuis le seuil. C'est une page à part
+// Le menu de l'app, ouvert par ☰ depuis l'accueil. C'est une page à part
 // entière : le retour d'Android le referme. Les écrans qu'il ouvre le
-// remplacent dans l'historique, si bien que leur retour ramène au seuil.
+// remplacent dans l'historique, si bien que leur retour ramène à l'accueil.
 export function EcranMenu() {
   const fermer = useRetour()
+  const naviguer = useNavigate()
+  const { state } = useLocation()
+  // Ouvert depuis l'accueil d'aujourd'hui, « Aujourd'hui » le referme
+  // simplement ; depuis un autre jour, il ramène à aujourd'hui.
+  const depuis = (state as { depuis?: string } | null)?.depuis
+  const aujourdhui = () => (depuis === dateDuJour() ? fermer() : naviguer('/', { replace: true }))
   return (
     <main className="menu">
       <button className="menu-fermer" type="button" aria-label="Fermer le menu" onClick={fermer}>
@@ -18,13 +25,13 @@ export function EcranMenu() {
       <nav aria-label="Menu">
         <ul className="menu-liste">
           <li>
-            <button type="button" onClick={fermer}>
-              Chapelet
+            <button type="button" onClick={aujourdhui}>
+              Aujourd’hui
             </button>
           </li>
           <li>
-            <Link to="/offices" replace>
-              Offices
+            <Link to="/chapelet" replace>
+              Chapelet
             </Link>
           </li>
         </ul>

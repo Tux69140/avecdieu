@@ -97,10 +97,26 @@ test('menu', async ({ page }) => {
   expect(await violationsGraves(page)).toEqual([])
 })
 
-test('offices du jour', async ({ page }) => {
+for (const [nom, heure, chemin] of [
+  ['accueil, le soir', 21, '/'],
+  ['accueil, le jour', 17, '/'],
+  ['accueil d’un autre jour', 10, '/jour/2027-02-17'],
+] as const) {
+  test(nom, async ({ page }) => {
+    await page.clock.setFixedTime(new Date(2026, 9, 5, heure, 0))
+    await servirAelf(page)
+    await preparer(page)
+    await page.goto(chemin)
+    await expect(page.getByTestId('bandeau').locator('.bandeau-titre')).toBeVisible()
+    expect(await violationsGraves(page)).toEqual([])
+  })
+}
+
+test('accueil sans réponse de l’AELF', async ({ page }) => {
+  await page.route('https://api.aelf.org/**', (route) => route.abort('internetdisconnected'))
   await preparer(page)
-  await page.goto('/offices')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Offices du jour')
+  await page.goto('/')
+  await expect(page.getByRole('alert')).toBeVisible()
   expect(await violationsGraves(page)).toEqual([])
 })
 

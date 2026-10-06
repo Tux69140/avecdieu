@@ -1,0 +1,217 @@
+.accueil {
+  max-width: calc(34em + 2 * var(--gouttiere));
+  margin: 0 auto;
+  padding: var(--esp-md) var(--gouttiere) var(--esp-3xl);
+}
+
+/* ☰ en haut à gauche, sur sa propre ligne. */
+.bouton-menu {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin: calc(-1 * var(--esp-sm)) 0 0 calc(-1 * var(--esp-sm));
+}
+
+.bouton-menu svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: var(--encre);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+
+/* Le jour d'avant, aujourd'hui, le jour d'après, en petites capitales. */
+.accueil-jours {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 0 var(--esp-sm);
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.06em;
+}
+
+.accueil-jours a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 var(--esp-xs);
+  color: var(--sepia);
+  text-decoration: none;
+}
+
+.accueil-jours a:first-child {
+  margin-left: calc(-1 * var(--esp-xs));
+}
+
+.accueil-jours a:last-child {
+  margin-right: calc(-1 * var(--esp-xs));
+}
+
+.accueil-aujourdhui,
+.accueil-jours a:not(:first-child, :last-child) {
+  color: var(--encre);
+}
+
+.accueil-jours a:not(:first-child, :last-child) {
+  text-decoration: underline;
+  text-decoration-color: var(--or);
+  text-underline-offset: 4px;
+}
+
+/* Le bandeau, sous l'arc : date, temps, titre, pastille. */
+.bandeau-date {
+  margin: 0;
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: 0.06em;
+  color: var(--encre);
+}
+
+.bandeau-temps {
+  margin: var(--esp-2xs) 0 0;
+  font-family: var(--sc);
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  color: var(--sepia);
+}
+
+.bandeau-titre {
+  margin: var(--esp-xs) 0 0;
+  font-family: var(--display);
+  font-size: 24px;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+/* « 27e », « 1er » : l'ordinal en exposant, comme l'écrit la typographie française. */
+.bandeau-jour sup {
+  font-size: 0.7em;
+  line-height: 0;
+}
+
+.bandeau-pastille {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-top: var(--esp-sm);
+}
+
+.bandeau-erreur {
+  margin: var(--esp-sm) 0 0;
+  font-size: 16px;
+  color: var(--erreur);
+}
+
+.bandeau-erreur .lien-discret {
+  min-height: 0;
+  padding: var(--esp-xs);
+}
+
+/* La prière du moment : un seul toucher pour prier. */
+.accueil-moment {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  margin-top: var(--esp-lg);
+  padding: var(--esp-md) var(--esp-md) var(--esp-md) 20px;
+  border: 1px solid var(--filet);
+  border-radius: var(--r-lg);
+  background: var(--velin);
+  color: var(--encre);
+  text-decoration: none;
+}
+
+.accueil-moment > span {
+  grid-column: 1;
+}
+
+.accueil-moment::after {
+  content: '›';
+  grid-column: 2;
+  grid-row: 1 / 4;
+  align-self: center;
+  padding-left: var(--esp-md);
+  font-size: 34px;
+  line-height: 1;
+  color: var(--or-fonce);
+}
+
+.accueil-moment:active {
+  background: var(--halo);
+}
+
+.accueil-moment-nom {
+  font-family: var(--display);
+  font-size: 30px;
+  line-height: 1.15;
+}
+
+.accueil-moment-heure {
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: 0.04em;
+  color: var(--sepia);
+  font-variant-numeric: lining-nums;
+}
+
+/* Les sept offices : une ligne chacun, filets fins, flèche d'or. */
+.accueil-offices {
+  list-style: none;
+  margin: var(--esp-lg) 0 0;
+  padding: 0;
+  border-top: 1px solid var(--filet);
+}
+
+.accueil-offices li {
+  border-bottom: 1px solid var(--filet);
+}
+
+.accueil-offices a {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: var(--esp-sm);
+  min-height: 56px;
+  color: var(--encre);
+  text-decoration: none;
+}
+
+.accueil-office-nom {
+  font-family: var(--display);
+  font-size: 21px;
+}
+
+.accueil-office-heure {
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.04em;
+  color: var(--sepia);
+  font-variant-numeric: lining-nums;
+}
+
+.accueil-offices a::after {
+  content: '›';
+  font-size: 26px;
+  line-height: 1;
+  color: var(--or-fonce);
+}
+
+.accueil-offices a:active {
+  background: var(--halo);
+}
+
+/* Passé : atténué, toujours ouvrable. Du moment : rouge, comme sa perle. */
+.accueil-offices [data-etat='passe'] .accueil-office-nom {
+  color: var(--sepia);
+}
+
+.accueil-offices [data-etat='moment'] .accueil-office-nom {
+  color: var(--rubrique);
+}
