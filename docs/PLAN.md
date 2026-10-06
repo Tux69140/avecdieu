@@ -199,23 +199,34 @@ Pendant la lecture d'un office, un bandeau fixe indique la partie en cours (par 
 
 ## Phase 8 : Accueil « Aujourd'hui »
 
-**User stories** : US-1, US-2, US-3, US-4, US-5, US-6, US-7
+**User stories** : US-1, US-2, US-3, US-4, US-5, US-7 (US-6 retirée)
 
 ### Ce qu'on livre
 
 L'écran d'accueil de l'app comprend :
-- le bandeau liturgique en cadran solaire (mode heures fixes, de 6 h à 22 h), avec la date, la fête, le rang et la pastille de couleur ;
+- le bandeau liturgique en cadran solaire (mode heures fixes, de 6 h à 22 h), avec la date, le temps, la fête et la pastille de couleur ;
 - le soleil à l'heure actuelle et les offices en perles, chaque perle s'ouvrant au toucher ;
 - la prière du moment mise en avant ;
 - la liste des 7 offices, les offices passés étant atténués ;
-- la carte « Chapelet du jour » ;
 - la navigation vers les jours précédents et suivants.
+
+Décisions du porteur du projet (2026-10-06) :
+- **Ouverture** : l'app s'ouvre toujours sur l'accueil, même avec un chapelet en cours ; le chapelet s'ouvre par le menu, et son seuil propose la reprise. Pas de carte « Chapelet du jour » (US-6 retirée).
+- **Menu** : le ☰ passe en haut de l'accueil ; le menu devient Aujourd'hui, Chapelet, Réglages, À propos. Le seuil du chapelet perd son ☰ au profit de « ‹ Retour » vers l'accueil. L'écran provisoire « Offices du jour » disparaît.
+- **Cadran** : arc de 6 h à 22 h, complies au bout de l'arc (la maquette l'emporte sur l'ancien PRD). Le soleil laisse place au croissant de lune entre le coucher et le lever, calculés au centre de la France pour la date du jour, sans demander de position.
+- **Prière du moment** : un office reste « du moment » pendant une heure après son heure, puis l'app passe au suivant et il devient « passé » (atténué). Les complies restent « du moment » jusqu'à minuit ; de minuit à 7 h, ce sont les laudes du nouveau jour. Tout office passé reste ouvrable d'un toucher, sur le cadran comme dans la liste.
+- **Encadré « Prière du moment »** : trois lignes, tout l'encadré se touche, chevron › à droite centré sur les trois lignes :
+  `PRIÈRE DU MOMENT` / `Vêpres` / `18 h 30 · dans 40 min` (« depuis 10 min » une fois l'heure passée, « dans 2 h 15 » au-delà d'une heure).
+- **Office des lectures** : en tête de la liste avec « à toute heure », jamais atténué, sans perle sur le cadran, jamais « du moment » ; il prendra place sur le cadran quand une heure lui sera donnée (phase 11).
+- **Bandeau** : date (`MARDI 6 OCTOBRE`), temps (`27e semaine du temps ordinaire`, omis quand le titre le dit déjà), titre (fête ou saint, sinon nom du jour : `S. Bruno, prêtre`, `28e dimanche du temps ordinaire`), puis **une seule pastille de la couleur du jour, sans aucun texte** (ni nom de couleur, ni rang). Typographie corrigée (« 27e », minuscules), mots de l'AELF inchangés, mention « semaine du psautier » retirée. Lecteur d'écran : « couleur liturgique : vert ».
+- **Autre jour** : en haut, « ‹ dim. 4 · Aujourd'hui · mar. 6 › » ; sur un autre jour, le centre devient « Revenir à aujourd'hui », les perles prennent toutes le même aspect, sans soleil ni lune, et l'encadré « Prière du moment » disparaît. Navigation jour par jour, sans calendrier.
+- **AELF injoignable** : la date seule, puis `⚠ Le jour liturgique n’a pas pu être récupéré.` en brun brique, avec un lien discret « Réessayer » ; le cadran, la prière du moment et la liste restent affichés.
 
 ### Critères d'acceptation
 
 - [ ] Le bandeau affiche les données du `JourLiturgique` (vérifié sur des réponses AELF enregistrées).
 - [ ] La position du soleil, l'état des perles et la prière du moment sont justes à plusieurs heures de la journée (tests avec une horloge simulée).
-- [ ] Un toucher sur une perle, une ligne de la liste, la prière du moment ou la carte du chapelet ouvre la bonne route.
+- [ ] Un toucher sur une perle (passée comprise), une ligne de la liste ou la prière du moment ouvre la bonne route.
 - [ ] La navigation par date change le jour affiché et met l'adresse à jour (`/jour/AAAA-MM-JJ`).
 
 ## Bloquée par

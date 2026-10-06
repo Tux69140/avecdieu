@@ -35,7 +35,7 @@ Avec Dieu accompagne la prière de toute la journée sur un téléphone Android.
 - **US-3** En tant que priant, je veux toucher une perle du cadran pour ouvrir l'office correspondant, afin de commencer à prier sans chercher.
 - **US-4** En tant que priant, je veux voir la prière du moment mise en avant avec un seul bouton, afin de prier immédiatement à l'heure voulue.
 - **US-5** En tant que priant, je veux la liste des 7 offices avec leur heure, les offices passés étant atténués mais encore accessibles, afin de rattraper un office en retard.
-- **US-6** En tant que priant, je veux une carte « Chapelet du jour » indiquant la série de mystères du jour, afin de lancer mon chapelet en un geste.
+- ~~**US-6** En tant que priant, je veux une carte « Chapelet du jour » indiquant la série de mystères du jour, afin de lancer mon chapelet en un geste.~~ *Retirée par le porteur du projet (2026-10-06) : le chapelet s'ouvre par le menu, dont le seuil propose déjà la reprise.*
 - **US-7** En tant que priant, je veux naviguer vers un autre jour, afin de préparer ou relire un office.
 - **US-8** En tant que priant sans réseau, je veux un message clair quand un jour demandé n'est pas disponible hors-ligne, avec la date jusqu'à laquelle les textes sont disponibles, afin de savoir ce que je peux prier.
 
@@ -125,8 +125,9 @@ Avec Dieu accompagne la prière de toute la journée sur un téléphone Android.
 14. Toute autre langue que le français.
 15. Le choix entre plusieurs traductions des prières.
 16. L'Angélus et l'offrande du matin (décision du porteur du projet, 2026-10-06).
-17. L'office selon le Bréviaire romain de 1960 (Divinum Officium) *(à étudier en fin de développement)*.
-18. Un examen de conscience rédigé et guidé aux complies *(plus tard ; la phase 6 n'en donne que la rubrique et le « Je confesse à Dieu »)*.
+17. Une carte « Chapelet du jour » sur l'accueil (décision du porteur du projet, 2026-10-06).
+18. L'office selon le Bréviaire romain de 1960 (Divinum Officium) *(à étudier en fin de développement)*.
+19. Un examen de conscience rédigé et guidé aux complies *(plus tard ; la phase 6 n'en donne que la rubrique et le « Je confesse à Dieu »)*.
 
 ## Décisions d'implémentation
 
@@ -197,11 +198,11 @@ Avec Dieu accompagne la prière de toute la journée sur un téléphone Android.
 
 **Accueil et apparence**
 
-- **L'accueil « Aujourd'hui » :** bandeau liturgique en cadran solaire, prière du moment, liste des 7 offices, carte « Chapelet du jour », navigation par date.
+- **L'accueil « Aujourd'hui » :** bandeau liturgique en cadran solaire, prière du moment, liste des 7 offices, navigation par date.
 - **Le cadran :**
   - en mode solaire, l'arc va du lever au coucher du soleil ;
-  - en mode fixe, il va de 6 h à 21 h ;
-  - les complies se placent sous l'horizon ;
+  - en mode fixe, il va de 6 h à 22 h ;
+  - les complies se placent au bout de l'arc, comme les autres offices ;
   - le soleil avance au fil de la journée.
 - **Le style** est celui d'un livre liturgique : fond crème comme un parchemin, tons or et brun, rubriques en rouge, titres en capitales à empattements, pastille de la couleur liturgique.
 - **Le thème nuit** s'active automatiquement selon le réglage d'Android ou après le coucher du soleil.
