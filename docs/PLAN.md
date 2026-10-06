@@ -108,12 +108,12 @@ Un premier écran de réglages pour le chapelet : annonce des mystères (oui ou 
 
 ### Critères d'acceptation
 
-- [ ] Chaque option modifie le déroulé comme prévu (un test par combinaison), et les réglages persistent après redémarrage.
-- [ ] Les vibrations se coupent et se rétablissent depuis les réglages (demande du porteur du projet, 2026-10-06).
-- [ ] Le texte du « Ô mon Jésus » et celui du Salve Regina (avec son verset) sont validés et figés.
-- [ ] « Prier à plusieurs » marque V/ et R/ sur le Notre Père, le Je vous salue Marie et le Gloire au Père, aux coupures validées par le porteur du projet (2026-10-06).
-- [ ] Un chapelet quitté puis rouvert le jour même reprend au même grain (l'app rouvre directement sur la prière ; le seuil propose « Reprendre » ou « Recommencer du début »). Rouvert le lendemain, il repart au début avec la série du nouveau jour.
-- [ ] Validée sur le Xiaomi et le Samsung par le porteur du projet.
+- [x] Chaque option modifie le déroulé comme prévu (un test par combinaison), et les réglages persistent après redémarrage.
+- [x] Les vibrations se coupent et se rétablissent depuis les réglages (demande du porteur du projet, 2026-10-06).
+- [x] Le texte du « Ô mon Jésus » et celui du Salve Regina (avec son verset) sont validés et figés.
+- [x] « Prier à plusieurs » marque V/ et R/ sur le Notre Père, le Je vous salue Marie et le Gloire au Père, aux coupures validées par le porteur du projet (2026-10-06).
+- [x] Un chapelet quitté puis rouvert le jour même reprend au même grain (l'app rouvre directement sur la prière ; le seuil propose « Reprendre » ou « Recommencer du début »). Rouvert le lendemain, il repart au début avec la série du nouveau jour.
+- [x] Validée sur le Xiaomi et le Samsung par le porteur du projet (2026-10-06).
 
 ## Bloquée par
 
