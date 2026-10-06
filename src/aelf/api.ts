@@ -7,10 +7,15 @@ const RACINE = 'https://api.aelf.org/v1'
 const ZONE = 'france'
 
 // Toute panne (réseau absent, AELF muette ou réponse illisible) devient cette
-// erreur : l'écran n'a qu'un message à afficher.
+// erreur. « absent » : l'AELF répond, mais ne propose pas cet office ce jour-là
+// (l'office des lectures du dimanche de Pâques, que remplace la Vigile pascale).
 export class ErreurAelf extends Error {
   name = 'ErreurAelf'
+  absent = false
 }
+
+const officeAbsent = () =>
+  Object.assign(new ErreurAelf('Office absent de l’AELF'), { absent: true })
 
 export interface OfficeDuJour {
   office: Office
@@ -28,6 +33,7 @@ export async function chargerOffice(
       signal,
       headers: { Accept: 'application/json' },
     })
+    if (http.status === 404) throw officeAbsent()
     if (!http.ok) throw new ErreurAelf(`L’AELF a répondu ${http.status}`)
     reponse = await http.json()
   } catch (erreur) {

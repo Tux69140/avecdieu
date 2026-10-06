@@ -145,6 +145,17 @@ test('sans réseau, un message clair et « Réessayer »', async ({ page }) => {
   await expect(titres(page).first()).toHaveText('Introduction')
 })
 
+test('un office que l’AELF ne propose pas : le dire, sans « Réessayer »', async ({ page }) => {
+  // Le dimanche de Pâques, la Vigile pascale tient lieu d'office des lectures.
+  await servirAelf(page)
+  await preparer(page)
+  await page.goto('/office/lectures/2026-04-05')
+  const alerte = page.getByRole('alert')
+  await expect(alerte).toContainText('L’AELF ne propose pas cet office pour ce jour.')
+  await expect(alerte).not.toContainText('ne répond pas')
+  await expect(page.getByRole('button', { name: 'Réessayer' })).toHaveCount(0)
+})
+
 test('une adresse d’office inconnue mène à la liste du jour', async ({ page }) => {
   await preparer(page)
   await page.goto('/office/messe/2026-10-06')

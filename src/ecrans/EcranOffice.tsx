@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from 'react'
 import { Navigate, useParams } from 'react-router'
-import { chargerOffice, type OfficeDuJour } from '../aelf/api'
+import { chargerOffice, ErreurAelf, type OfficeDuJour } from '../aelf/api'
 import { lireReglages } from '../chapelet/reglages'
 import { IndiceSuite } from '../composants/IndiceSuite'
 import { useRetour } from '../composants/retour'
@@ -19,7 +19,10 @@ export function EcranOffice() {
   return <LectureOffice key={`${office}/${date}`} nom={office} date={date} />
 }
 
-type Etat = { sorte: 'chargement' } | { sorte: 'erreur' } | { sorte: 'pret'; lu: OfficeDuJour }
+type Etat =
+  | { sorte: 'chargement' }
+  | { sorte: 'erreur'; absent: boolean }
+  | { sorte: 'pret'; lu: OfficeDuJour }
 
 function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
   const [etat, setEtat] = useState<Etat>({ sorte: 'chargement' })
@@ -32,8 +35,9 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
     const abandon = new AbortController()
     chargerOffice(nom, date, abandon.signal).then(
       (lu) => setEtat({ sorte: 'pret', lu }),
-      () => {
-        if (!abandon.signal.aborted) setEtat({ sorte: 'erreur' })
+      (erreur: unknown) => {
+        if (abandon.signal.aborted) return
+        setEtat({ sorte: 'erreur', absent: erreur instanceof ErreurAelf && erreur.absent })
       },
     )
     return () => abandon.abort()
@@ -65,10 +69,19 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
           <p className="office-erreur-titre">
             <span aria-hidden="true">⚠ </span>Impossible de récupérer l’office.
           </p>
-          <p>Le site de l’AELF ne répond pas. Vérifiez votre connexion internet, puis réessayez.</p>
-          <button className="btn btn-secondaire" type="button" onClick={reessayer}>
-            Réessayer
-          </button>
+          {etat.absent ? (
+            // Réessayer n'y changerait rien : l'AELF n'a pas ce texte.
+            <p>L’AELF ne propose pas cet office pour ce jour.</p>
+          ) : (
+            <>
+              <p>
+                Le site de l’AELF ne répond pas. Vérifiez votre connexion internet, puis réessayez.
+              </p>
+              <button className="btn btn-secondaire" type="button" onClick={reessayer}>
+                Réessayer
+              </button>
+            </>
+          )}
         </div>
       )}
 

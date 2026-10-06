@@ -32,9 +32,15 @@ describe('chargerOffice', () => {
     await expect(chargerOffice('laudes', '2026-10-06')).rejects.toBeInstanceOf(ErreurAelf)
   })
 
-  it('échoue clairement si l’AELF répond une erreur', async () => {
+  it('distingue l’office que l’AELF ne propose pas (404) d’une panne', async () => {
     repondre('<!DOCTYPE HTML><html>introuvable</html>', 404)
-    await expect(chargerOffice('lectures', '2026-04-05')).rejects.toBeInstanceOf(ErreurAelf)
+    const absent = await chargerOffice('lectures', '2026-04-05').catch((e) => e)
+    expect(absent).toBeInstanceOf(ErreurAelf)
+    expect(absent.absent).toBe(true)
+    repondre('panne', 500)
+    const panne = await chargerOffice('lectures', '2026-04-05').catch((e) => e)
+    expect(panne).toBeInstanceOf(ErreurAelf)
+    expect(panne.absent).toBe(false)
   })
 
   it('échoue clairement si la réponse n’est pas un office', async () => {
