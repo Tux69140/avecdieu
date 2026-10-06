@@ -8,6 +8,7 @@ import { derouler, type Pas } from '../chapelet/deroule'
 import { disposer } from '../chapelet/disposition'
 import { aideAMontrer, compterLecture, lireLectures } from '../chapelet/memoire'
 import { avancer, classerGeste, reculer } from '../chapelet/navigation'
+import { MystereEnCours } from '../chapelet/MystereEnCours'
 import { Priere } from '../chapelet/Priere'
 import { lireReglages, optionsDuDeroule } from '../chapelet/reglages'
 import { effacerEnCours, lireEnCours, retenirEnCours, retrouver } from '../chapelet/reprise'
@@ -176,6 +177,15 @@ function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisi
 
       <ChapeletDessine plan={plan} grainCourant={pas ? pas.grain : plan.points.length} />
 
+      {/* Sans annonce, rien du mystère : des prières vocales seules. */}
+      {pas && estPriere(pas) && pas.dizaine !== undefined && reglages.annonce && (
+        <MystereEnCours
+          serie={serie}
+          dizaine={pas.dizaine}
+          fruit={compact && pas.priere === 'notre-pere'}
+        />
+      )}
+
       {!pas ? (
         <section className="fin" data-testid="priere">
           <h2>Chapelet terminé</h2>
@@ -188,7 +198,6 @@ function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisi
         <Priere
           key={index}
           pas={pas}
-          serie={serie}
           compact={compact}
           plusieurs={reglages.plusieurs}
           annonce={reglages.annonce}

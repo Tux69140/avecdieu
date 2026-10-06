@@ -38,19 +38,26 @@
   }
 }
 
+/* Le mystère en cours, entre le chapelet dessiné et le filet de la prière :
+   petites capitales sur une ligne, le rang en rouge comme sur le seuil. */
+.mystere-en-cours {
+  margin-top: var(--esp-sm);
+  text-align: center;
+}
+
 .mystere {
-  margin: 0 0 var(--esp-sm);
+  margin: 0;
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  text-wrap: balance;
 }
 
-.mystere .etiquette {
-  display: block;
-}
-
-.mystere-titre {
-  display: block;
-  font-family: var(--display);
-  font-size: 22px;
-  line-height: 1.2;
+.mystere-rang {
+  color: var(--rubrique);
+  font-variant-numeric: lining-nums;
 }
 
 /* Titre centré, compteur à sa droite sur la même ligne (choix du porteur du
@@ -144,7 +151,7 @@
 
 /* Mode compact : le fruit sous le mystère, et deux liens discrets sous la prière. */
 .fruit-compact {
-  margin: calc(-1 * var(--esp-xs)) 0 var(--esp-xs);
+  margin: var(--esp-2xs) 0 0;
   font-size: 16px;
   font-style: italic;
   color: var(--sepia);

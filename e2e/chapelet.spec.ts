@@ -2,7 +2,6 @@ import { expect, test, type Page } from '@playwright/test'
 import { commencer, glisser, suivant, toucher } from './outils.ts'
 
 const AVE = 'Je vous salue Marie'
-const ORDINAUX = ['Premier', 'Deuxième', 'Troisième', 'Quatrième', 'Cinquième']
 const JOYEUX = [
   'L’Annonciation',
   'La Visitation',
@@ -23,7 +22,7 @@ const DEROULE: Attendu[] = [
   ...[1, 2, 3].map((n) => ({ priere: AVE, compteur: `${n} / 3` })),
   { priere: 'Gloire au Père' },
   ...JOYEUX.flatMap((titre, d) => {
-    const mystere = `${ORDINAUX[d]} mystère ${titre}`
+    const mystere = `${d + 1} · ${titre}`
     return [
       { annonce: titre },
       { priere: 'Notre Père', mystere },
@@ -190,9 +189,7 @@ test('une série choisie par l’adresse remplace celle du jour', async ({ page 
     'Le Baptême de Jésus au Jourdain',
   )
   await suivant(page)
-  await expect(page.getByTestId('mystere')).toHaveText(
-    'Premier mystère Le Baptême de Jésus au Jourdain',
-  )
+  await expect(page.getByTestId('mystere')).toHaveText('1 · Le Baptême de Jésus au Jourdain')
 })
 
 test('l’accueil mène au chapelet en attendant la phase 8', async ({ page }) => {

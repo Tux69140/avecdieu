@@ -1,21 +1,18 @@
 import { useState } from 'react'
 import { Marque } from '../composants/Marque'
-import { FRUITS, SERIES, type SerieId } from '../recueil/mysteres'
 import type { Passage } from '../recueil/passages'
 import { PRIERES, RUBRIQUE_ENSEMBLE, type PriereId } from '../recueil/prieres'
 import type { Pas } from './deroule'
-import { ORDINAUX } from './libelles'
 import { PassageBiblique } from './PassageBiblique'
 import { insecables } from './typographie'
 import { ditEnsemble, strophes } from './versets'
 
 interface Props {
   pas: Pas & { priere: PriereId }
-  serie: SerieId
   compact: boolean
   // À plusieurs : V/ et R/ marquent la part de chacun.
   plusieurs: boolean
-  // Fruit et passage du mystère, en compact, quand l'annonce est active.
+  // Passage du mystère, en compact, quand l'annonce est active.
   annonce: boolean
   // Passage de la dizaine en cours, et s'il est déplié (mode compact).
   passage?: Passage
@@ -23,29 +20,18 @@ interface Props {
   onBasculerPassage: () => void
 }
 
-// Une prière du chapelet. En mode compact, seuls son nom et le compteur
-// s'affichent ; le texte de la prière et le passage du mystère se déplient à
-// la demande, sous les liens qui ne bougent pas. Les liens sont des boutons : les toucher n'avance pas. Sans
-// annonce, rien du mystère : des prières vocales seules (choix du porteur du projet).
+// Une prière du chapelet ; le mystère en cours s'affiche au-dessus, hors de
+// cette section (MystereEnCours). En mode compact, seuls son nom et le
+// compteur s'affichent ; le texte de la prière et le passage du mystère se
+// déplient à la demande, sous les liens qui ne bougent pas. Les liens sont des
+// boutons : les toucher n'avance pas.
 export function Priere(props: Props) {
-  const { pas, serie, compact, plusieurs, annonce, passageDeplie, onBasculerPassage } = props
+  const { pas, compact, plusieurs, annonce, passageDeplie, onBasculerPassage } = props
   const [voirPriere, setVoirPriere] = useState(false)
   const priere = PRIERES[pas.priere]
-  const dizaine = pas.dizaine
   const passage = annonce ? props.passage : undefined
-  // En compact, le mystère s'annonce sur le Notre Père qui ouvre la dizaine.
-  const ouvreLaDizaine = compact && annonce && dizaine !== undefined && pas.priere === 'notre-pere'
   return (
     <section className="priere" data-testid="priere" aria-live="polite">
-      {annonce && dizaine !== undefined && (
-        <p className="mystere" data-testid="mystere">
-          <span className="etiquette">{ORDINAUX[dizaine - 1]} mystère</span>{' '}
-          <span className="mystere-titre">{SERIES[serie].mysteres[dizaine - 1]}</span>
-        </p>
-      )}
-      {ouvreLaDizaine && (
-        <p className="fruit-compact">Fruit : {FRUITS[serie][dizaine - 1].aujourdhui}</p>
-      )}
       <div className={compact ? 'priere-tete priere-tete-compacte' : 'priere-tete'}>
         <h2>{priere.titre}</h2>
         {pas.total > 1 && (

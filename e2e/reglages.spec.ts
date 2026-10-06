@@ -91,7 +91,7 @@ test.describe('déroulé selon les réglages', () => {
     await expect(titrePriere(page)).toHaveText('Gloire au Père')
     await toucher(page)
     await expect(titrePriere(page)).toHaveText('Ô mon Jésus')
-    await expect(page.getByTestId('mystere')).toHaveText('Premier mystère L’Annonciation')
+    await expect(page.getByTestId('mystere')).toHaveText('1 · L’Annonciation')
     await toucher(page)
     await expect(page.getByTestId('annonce')).toBeVisible()
 
@@ -243,7 +243,7 @@ test.describe('reprise d’un chapelet interrompu', () => {
   async function verifierAve34(page: Page) {
     await expect(titrePriere(page)).toHaveText('Je vous salue Marie')
     await expect(page.getByTestId('compteur')).toHaveText('4 / 10')
-    await expect(page.getByTestId('mystere')).toHaveText('Troisième mystère La Nativité')
+    await expect(page.getByTestId('mystere')).toHaveText('3 · La Nativité')
   }
 
   test('rouverte le jour même, l’app revient au même grain', async ({ page, context }) => {

@@ -41,7 +41,19 @@ test.describe('annonce du mystère, en texte complet', () => {
 
     await perle(page).tap()
     await expect(titrePriere(page)).toHaveText('Notre Père')
-    await expect(page.getByTestId('mystere')).toHaveText('Premier mystère L’Annonciation')
+    await expect(page.getByTestId('mystere')).toHaveText('1 · L’Annonciation')
+  })
+
+  test('le mystère se lit au-dessus du filet, séparé du titre de la prière', async ({ page }) => {
+    await commencer(page)
+    await jusquALAnnonce(page)
+    await perle(page).tap()
+    await expect(titrePriere(page)).toHaveText('Notre Père')
+    const mystere = (await page.getByTestId('mystere').boundingBox())!
+    // Le filet est le bord haut de la section de la prière.
+    const priere = (await page.getByTestId('priere').boundingBox())!
+    expect(mystere.y + mystere.height).toBeLessThanOrEqual(priere.y)
+    await expect(page.getByTestId('priere').getByTestId('mystere')).toHaveCount(0)
   })
 
   test('glisser vers le haut fait défiler le passage sans lancer la dizaine', async ({ page }) => {
@@ -108,7 +120,7 @@ test.describe('mode compact', () => {
     for (let i = 0; i < 7; i++) await toucher(page)
     await expect(page.getByTestId('annonce')).toHaveCount(0)
     await expect(titrePriere(page)).toHaveText('Notre Père')
-    await expect(page.getByTestId('mystere')).toHaveText('Premier mystère L’Annonciation')
+    await expect(page.getByTestId('mystere')).toHaveText('1 · L’Annonciation')
     await expect(page.getByText('Fruit : l’humilité')).toBeVisible()
     await toucher(page)
     await expect(page.getByTestId('compteur')).toHaveText('1 / 10')
