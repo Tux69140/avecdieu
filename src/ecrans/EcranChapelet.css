@@ -25,6 +25,7 @@
 
 .priere,
 .fin {
+  text-align: center;
   margin-top: var(--esp-md);
   padding-top: var(--esp-md);
   border-top: 1px solid var(--filet);
@@ -54,9 +55,8 @@
 
 .priere-tete {
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--esp-md);
+  flex-direction: column;
+  align-items: center;
 }
 
 .priere-tete h2,
@@ -71,7 +71,8 @@
 .compteur {
   font-family: var(--sc);
   font-weight: 600;
-  font-size: 20px;
+  font-size: 18px;
+  line-height: 1.3;
   letter-spacing: 0.06em;
   color: var(--sepia);
   font-variant-numeric: tabular-nums lining-nums;
@@ -82,11 +83,16 @@
   margin: var(--esp-sm) 0 0;
 }
 
-/* Une ligne par vers ; les lignes trop longues retombent en retrait. */
+/* Un vers par ligne, centré ; un vers trop long se coupe en deux lignes équilibrées. */
 .priere-texte span {
   display: block;
-  padding-left: 1em;
-  text-indent: -1em;
+  line-height: 1.45;
+  text-wrap: balance;
+}
+
+/* Un léger blanc entre les vers garde groupées les deux lignes d'un vers coupé. */
+.priere-texte span + span {
+  margin-top: 0.3em;
 }
 
 .consigne {
@@ -98,7 +104,6 @@
 }
 
 .fin {
-  text-align: center;
   cursor: default;
 }
 
