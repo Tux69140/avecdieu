@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router'
 import { EcranChapelet } from './ecrans/EcranChapelet'
+import { EcranReglages } from './ecrans/EcranReglages'
 import './styles/jetons.css'
 
 const routeur = createBrowserRouter([
@@ -9,6 +10,7 @@ const routeur = createBrowserRouter([
   { path: '/', element: <Navigate to="/chapelet" replace /> },
   { path: '/chapelet', element: <EcranChapelet /> },
   { path: '/chapelet/:serie', element: <EcranChapelet /> },
+  { path: '/reglages', element: <EcranReglages /> },
   { path: '*', element: <Navigate to="/" replace /> },
 ])
 

@@ -28,6 +28,15 @@ describe('ChapeletDessine', () => {
     for (let i = 0; i <= PLAN.points.length; i++) expect(perles(i), `grain ${i}`).toBe(attendu)
   })
 
+  it('pendant le Salve Regina, la médaille brille avec son halo, et n’est dessinée qu’une fois', () => {
+    const { container } = render(
+      <ChapeletDessine plan={PLAN} grainCourant={PLAN.points.length - 1} />,
+    )
+    expect(container.querySelectorAll('ellipse:not(.fil)')).toHaveLength(1)
+    expect(container.querySelector('ellipse.grain-courant')).not.toBeNull()
+    expect(container.querySelectorAll('.halo')).toHaveLength(1)
+  })
+
   it('sur une perle, la perle en cours brille avec son halo', () => {
     const perle = NOEUDS[0] + 1
     const { container } = render(<ChapeletDessine plan={PLAN} grainCourant={perle} />)

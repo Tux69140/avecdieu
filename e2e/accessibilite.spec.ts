@@ -67,7 +67,29 @@ test('mode compact, prière et passage dépliés', async ({ page }) => {
 
 test('écran de fin du chapelet', async ({ page }) => {
   await commencer(page)
-  await avancer(page, 72)
+  await avancer(page, 78)
   await expect(page.getByRole('heading', { level: 2 })).toHaveText('Chapelet terminé')
+  expect(await violationsGraves(page)).toEqual([])
+})
+
+test('écran des réglages', async ({ page }) => {
+  await preparer(page)
+  await page.goto('/reglages')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Réglages')
+  expect(await violationsGraves(page)).toEqual([])
+})
+
+test('seuil d’un chapelet en cours', async ({ page }) => {
+  await commencer(page)
+  await avancer(page, 10)
+  await page.goBack()
+  await expect(page.getByRole('button', { name: 'Recommencer du début' })).toBeVisible()
+  expect(await violationsGraves(page)).toEqual([])
+})
+
+test('prier à plusieurs, V/ et R/', async ({ page }) => {
+  await commencer(page, '/chapelet', { reglages: { plusieurs: true } })
+  await avancer(page, 3)
+  await expect(page.getByTestId('marque-R')).toBeVisible()
   expect(await violationsGraves(page)).toEqual([])
 })

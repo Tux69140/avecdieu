@@ -1,0 +1,34 @@
+.bascule {
+  display: flex;
+  border: 1px solid var(--or);
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+
+.bascule button {
+  flex: 1;
+  min-height: 48px;
+  padding: 0 var(--esp-md);
+  border: none;
+  background: transparent;
+  font-family: var(--texte);
+  font-size: 16px;
+  color: var(--encre);
+  cursor: pointer;
+}
+
+.bascule button + button {
+  border-left: 1px solid var(--or);
+}
+
+.bascule button[aria-checked='true'] {
+  background: var(--halo);
+  font-weight: 500;
+}
+
+.choix-aide {
+  margin: var(--esp-sm) 0 0;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--sepia);
+}

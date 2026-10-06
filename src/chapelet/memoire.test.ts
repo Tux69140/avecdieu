@@ -1,12 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import {
-  aideAMontrer,
-  compterLecture,
-  lireAffichage,
-  lireLectures,
-  masquerAide,
-  retenirAffichage,
-} from './memoire'
+import { aideAMontrer, compterLecture, lireLectures, masquerAide } from './memoire'
 
 beforeEach(() => {
   localStorage.clear()
@@ -32,16 +25,6 @@ describe('lectures des mystères', () => {
   })
 })
 
-describe('affichage des prières', () => {
-  it('texte complet par défaut, puis celui qu’on a choisi', () => {
-    expect(lireAffichage()).toBe('complet')
-    retenirAffichage('compact')
-    expect(lireAffichage()).toBe('compact')
-    retenirAffichage('complet')
-    expect(lireAffichage()).toBe('complet')
-  })
-})
-
 describe('aide aux gestes', () => {
   it('se montre tant qu’on n’a pas coché « Ne plus afficher »', () => {
     expect(aideAMontrer()).toBe(true)
@@ -60,8 +43,6 @@ describe('mémoire indisponible', () => {
     })
     expect(lireLectures('joyeux', 1)).toBe(0)
     expect(() => compterLecture('joyeux', 1)).not.toThrow()
-    expect(lireAffichage()).toBe('complet')
-    expect(() => retenirAffichage('compact')).not.toThrow()
     expect(aideAMontrer()).toBe(true)
     expect(() => masquerAide()).not.toThrow()
   })

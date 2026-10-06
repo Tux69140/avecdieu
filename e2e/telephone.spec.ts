@@ -1,47 +1,12 @@
-import { expect, test, type Page } from '@playwright/test'
-import { commencer, suivant, toucher } from './outils.ts'
-
-// Le navigateur de test ne vibre pas et n'a pas d'écran à garder allumé : on
-// remplace navigator.vibrate et navigator.wakeLock par des espions, que les
-// greffons Capacitor appellent hors de l'APK.
-declare global {
-  interface Window {
-    __journal: string[]
-  }
-}
-
-async function espionner(page: Page) {
-  await page.addInitScript(() => {
-    window.__journal = []
-    const journal = window.__journal
-    Object.defineProperty(navigator, 'vibrate', {
-      value: (motif: number[]) => {
-        journal.push(`vibre ${[motif].flat().join(',')}`)
-        return true
-      },
-    })
-    Object.defineProperty(navigator, 'wakeLock', {
-      value: {
-        request: async () => {
-          journal.push('écran allumé')
-          return {
-            release: async () => {
-              journal.push('écran libre')
-            },
-          }
-        },
-      },
-    })
-  })
-}
-
-const journal = (page: Page) => page.evaluate(() => window.__journal)
+import { expect, test } from '@playwright/test'
+import { commencer, espionner, journal, suivant, toucher } from './outils.ts'
 
 const LUNDI = new Date(2026, 9, 5, 10, 0)
-// Ouverture (7 prières), puis 5 dizaines (l'annonce et 12 prières), puis l'écran de fin.
+// Ouverture (7 prières), 5 dizaines (l'annonce et 13 prières), le Salve Regina, l'écran de fin.
 const OUVERTURE = 7
-const DIZAINE = 13
-const PRIERES = OUVERTURE + 5 * DIZAINE
+const DIZAINE = 14
+const SALVE = OUVERTURE + 5 * DIZAINE
+const PRIERES = SALVE + 1
 
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(LUNDI)
@@ -49,7 +14,7 @@ test.beforeEach(async ({ page }) => {
   await commencer(page)
 })
 
-test('chaque prière vibre court, chaque annonce de mystère et la fin vibrent fort', async ({
+test('chaque prière vibre court ; chaque annonce, le Salve Regina et la fin vibrent fort', async ({
   page,
 }) => {
   for (let i = 0; i < PRIERES; i++) await suivant(page)
@@ -59,11 +24,11 @@ test('chaque prière vibre court, chaque annonce de mystère et la fin vibrent f
   // La i-ième vibration marque l'arrivée sur la prière d'index i + 1.
   const attendues = Array.from({ length: PRIERES }, (_, i) => {
     const arrivee = i + 1
-    const nouvelleDizaine = arrivee >= OUVERTURE && (arrivee - OUVERTURE) % DIZAINE === 0
-    return nouvelleDizaine ? 'vibre 250' : 'vibre 40'
+    const nouvellePartie = arrivee >= OUVERTURE && (arrivee - OUVERTURE) % DIZAINE === 0
+    return nouvellePartie || arrivee === PRIERES ? 'vibre 250' : 'vibre 40'
   })
   expect(vibrations).toEqual(attendues)
-  expect(vibrations.filter((v) => v === 'vibre 250')).toHaveLength(6)
+  expect(vibrations.filter((v) => v === 'vibre 250')).toHaveLength(7)
 })
 
 test('revenir en arrière vibre court', async ({ page }) => {

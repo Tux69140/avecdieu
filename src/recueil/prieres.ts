@@ -1,14 +1,24 @@
 // Recueil des prières. Textes validés ligne par ligne par le porteur du projet,
 // puis figés par le test d'empreinte (empreinte.test.ts) : toute modification
 // demande une nouvelle validation.
-// Chaque ligne est un vers ; une ligne vide ('') sépare deux strophes.
+// Chaque ligne est un vers ; une ligne vide ('') sépare deux strophes. Une
+// ligne qui commence par « V/ » ou « R/ » est un verset ou son répons.
 
 export type PriereId =
-  'signe-de-croix' | 'credo' | 'notre-pere' | 'je-vous-salue-marie' | 'gloire-au-pere'
+  | 'signe-de-croix'
+  | 'credo'
+  | 'notre-pere'
+  | 'je-vous-salue-marie'
+  | 'gloire-au-pere'
+  | 'o-mon-jesus'
+  | 'salve-regina'
 
 export interface Priere {
   titre: string
   lignes: string[]
+  // À plusieurs, celui qui mène dit la prière jusqu'à cette ligne, les autres
+  // répondent à partir d'elle. Absent : la prière se dit ensemble.
+  reponse?: string
 }
 
 export const PRIERES: Record<PriereId, Priere> = {
@@ -61,6 +71,7 @@ export const PRIERES: Record<PriereId, Priere> = {
       '',
       'Amen.',
     ],
+    reponse: 'Donne-nous aujourd’hui notre pain de ce jour.',
   },
   'je-vous-salue-marie': {
     titre: 'Je vous salue Marie',
@@ -78,6 +89,7 @@ export const PRIERES: Record<PriereId, Priere> = {
       '',
       'Amen.',
     ],
+    reponse: 'Sainte Marie, Mère de Dieu,',
   },
   'gloire-au-pere': {
     titre: 'Gloire au Père',
@@ -88,6 +100,38 @@ export const PRIERES: Record<PriereId, Priere> = {
       'et pour les siècles des siècles.',
       '',
       'Amen.',
+    ],
+    reponse: 'comme il était au commencement,',
+  },
+  'o-mon-jesus': {
+    titre: 'Ô mon Jésus',
+    lignes: [
+      'Ô mon Jésus, pardonnez-nous nos péchés,',
+      'préservez-nous du feu de l’enfer,',
+      'et conduisez au ciel toutes les âmes,',
+      'surtout celles qui ont le plus besoin de votre miséricorde.',
+    ],
+  },
+  'salve-regina': {
+    titre: 'Salve Regina',
+    lignes: [
+      'Salut, ô Reine, Mère de miséricorde,',
+      'notre vie, notre douceur, notre espérance, salut !',
+      '',
+      'Enfants d’Ève exilés, nous crions vers vous ;',
+      'vers vous nous soupirons, gémissant et pleurant',
+      'dans cette vallée de larmes.',
+      '',
+      'Ô vous, notre avocate,',
+      'tournez vers nous vos regards miséricordieux.',
+      'Et, après cet exil, montrez-nous Jésus,',
+      'le fruit béni de vos entrailles.',
+      '',
+      'Ô clémente, ô miséricordieuse,',
+      'ô douce Vierge Marie.',
+      '',
+      'V/ Priez pour nous, sainte Mère de Dieu.',
+      'R/ Afin que nous soyons rendus dignes des promesses du Christ.',
     ],
   },
 }

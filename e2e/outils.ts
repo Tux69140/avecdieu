@@ -22,25 +22,40 @@ export async function glisser(page: Page, dx: number, y = page.viewportSize()!.h
   await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
 }
 
+export interface Reglages {
+  annonce?: boolean
+  oMonJesus?: boolean
+  salveRegina?: boolean
+  plusieurs?: boolean
+  affichage?: 'complet' | 'compact'
+  vibrations?: boolean
+}
+
 interface Ouverture {
   // L'aide aux gestes s'affiche-t-elle ? Masquée par défaut dans les parcours.
   aide?: boolean
   affichage?: 'complet' | 'compact'
+  reglages?: Reglages
   lectures?: Record<string, number>
 }
 
 // Prépare la mémoire du téléphone avant le premier chargement de la page.
-export async function preparer(page: Page, { aide = false, affichage, lectures }: Ouverture = {}) {
+export async function preparer(
+  page: Page,
+  { aide = false, affichage, reglages = {}, lectures }: Ouverture = {},
+) {
+  const tous = affichage ? { ...reglages, affichage } : reglages
   await page.addInitScript(
-    ({ aide, affichage, lectures }) => {
+    ({ aide, tous, lectures }) => {
       // Seulement au premier chargement : un rechargement garde ce que l'app a retenu.
       if (sessionStorage.getItem('parcours-prepare')) return
       sessionStorage.setItem('parcours-prepare', 'oui')
       if (!aide) localStorage.setItem('avec-dieu.aide-gestes', 'masquee')
-      if (affichage) localStorage.setItem('avec-dieu.affichage', affichage)
+      if (Object.keys(tous).length > 0)
+        localStorage.setItem('avec-dieu.reglages', JSON.stringify(tous))
       if (lectures) localStorage.setItem('avec-dieu.lectures', JSON.stringify(lectures))
     },
-    { aide, affichage, lectures },
+    { aide, tous, lectures },
   )
 }
 
@@ -60,3 +75,39 @@ export async function suivant(page: Page) {
   if (await perle.isVisible()) await perle.click()
   else await toucher(page)
 }
+
+// Le navigateur de test ne vibre pas et n'a pas d'écran à garder allumé : on
+// remplace navigator.vibrate et navigator.wakeLock par des espions, que les
+// greffons Capacitor appellent hors de l'APK.
+declare global {
+  interface Window {
+    __journal: string[]
+  }
+}
+
+export async function espionner(page: Page) {
+  await page.addInitScript(() => {
+    window.__journal = []
+    const journal = window.__journal
+    Object.defineProperty(navigator, 'vibrate', {
+      value: (motif: number[]) => {
+        journal.push(`vibre ${[motif].flat().join(',')}`)
+        return true
+      },
+    })
+    Object.defineProperty(navigator, 'wakeLock', {
+      value: {
+        request: async () => {
+          journal.push('écran allumé')
+          return {
+            release: async () => {
+              journal.push('écran libre')
+            },
+          }
+        },
+      },
+    })
+  })
+}
+
+export const journal = (page: Page) => page.evaluate(() => window.__journal)

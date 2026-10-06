@@ -6,9 +6,11 @@ import { ChapeletDessine } from '../chapelet/ChapeletDessine'
 import { CHAPELET_MARIAL } from '../chapelet/definition'
 import { derouler, type Pas } from '../chapelet/deroule'
 import { disposer } from '../chapelet/disposition'
-import { aideAMontrer, compterLecture, lireAffichage, lireLectures } from '../chapelet/memoire'
+import { aideAMontrer, compterLecture, lireLectures } from '../chapelet/memoire'
 import { avancer, classerGeste, reculer } from '../chapelet/navigation'
 import { Priere } from '../chapelet/Priere'
+import { lireReglages, optionsDuDeroule } from '../chapelet/reglages'
+import { effacerEnCours, lireEnCours, retenirEnCours, retrouver } from '../chapelet/reprise'
 import { dizaineCommencee, rangDuPassage } from '../chapelet/rotation'
 import { Seuil } from '../chapelet/Seuil'
 import { serieDuJour } from '../chapelet/serieDuJour'
@@ -29,6 +31,10 @@ const estInteractif = (cible: EventTarget) =>
   cible instanceof Element && cible.closest('button, a, input, label, dialog') !== null
 const estPriere = (pas: Pas): pas is Pas & { priere: PriereId } => pas.priere !== 'annonce'
 
+// Au lancement de l'app, un chapelet commencé le jour même rouvre directement
+// sur sa prière (choix du porteur du projet) ; ensuite, le seuil propose de le reprendre.
+let repriseAuLancement = true
+
 // Le chapelet s'ouvre sur son seuil ; « Commencer » ajoute une entrée à
 // l'historique, si bien que le retour d'Android y ramène.
 export function EcranChapelet() {
@@ -36,11 +42,23 @@ export function EcranChapelet() {
   const { pathname, state } = useLocation()
   const naviguer = useNavigate()
   const [aujourdhui] = useState(() => new Date())
+  const duJour = serieDuJour(aujourdhui)
+  const prier = (state as { prier?: boolean } | null)?.prier === true
+  const enCours = lireEnCours(aujourdhui)
+  const cheminDe = (serie: SerieId) => (serie === duJour ? '/chapelet' : `/chapelet/${serie}`)
+
+  useEffect(() => {
+    if (!repriseAuLancement) return
+    repriseAuLancement = false
+    if (!prier && enCours) naviguer(cheminDe(enCours.serie), { state: { prier: true } })
+    // Une seule fois, au premier affichage de l'écran depuis le lancement.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   if (serieChoisie !== undefined && !estSerie(serieChoisie))
     return <Navigate to="/chapelet" replace />
-  const duJour = serieDuJour(aujourdhui)
   const serie = serieChoisie ?? duJour
-  const prier = (state as { prier?: boolean } | null)?.prier === true
+  const commencer = () => naviguer(pathname, { state: { prier: true } })
   if (!prier)
     return (
       <Seuil
@@ -48,15 +66,21 @@ export function EcranChapelet() {
         serie={serie}
         duJour={duJour}
         date={aujourdhui}
-        onCommencer={() => naviguer(pathname, { state: { prier: true } })}
+        enCours={enCours?.serie === serie ? enCours : null}
+        onCommencer={commencer}
+        onRecommencer={() => {
+          effacerEnCours()
+          commencer()
+        }}
       />
     )
   return <Chapelet key={serie} serie={serie} date={aujourdhui} choisie={serie !== duJour} />
 }
 
 function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisie: boolean }) {
-  const [compact] = useState(() => lireAffichage() === 'compact')
-  const deroule = useMemo(() => derouler(CHAPELET_MARIAL, { annonce: !compact }), [compact])
+  const [reglages] = useState(lireReglages)
+  const compact = reglages.affichage === 'compact'
+  const deroule = useMemo(() => derouler(CHAPELET_MARIAL, optionsDuDeroule(reglages)), [reglages])
   const plan = useMemo(() => disposer(deroule), [deroule])
   // Le passage de chaque mystère est choisi une fois pour tout le chapelet.
   const [passages] = useState(() =>
@@ -64,7 +88,11 @@ function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisi
       (liste, i) => liste[rangDuPassage(lireLectures(serie, i + 1), liste.length)],
     ),
   )
-  const [index, setIndex] = useState(0)
+  // Reprend au grain exact un chapelet de cette série commencé aujourd'hui.
+  const [index, setIndex] = useState(() => {
+    const enCours = lireEnCours(date)
+    return enCours?.serie === serie ? retrouver(deroule, enCours) : 0
+  })
   const [aideOuverte, setAideOuverte] = useState(aideAMontrer)
   const [passageDeplie, setPassageDeplie] = useState<number | null>(null)
   const debutGeste = useRef<{ id: number; x: number; y: number; surBouton: boolean } | null>(null)
@@ -82,14 +110,20 @@ function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisi
     const avant = indexPrecedent.current
     indexPrecedent.current = index
     const vibration = vibrationEntre(deroule, avant, index)
-    if (vibration) vibrer(vibration)
+    if (vibration && reglages.vibrations) vibrer(vibration)
     // Chaque dizaine commencée compte une lecture de son mystère, une fois par chapelet.
     const dizaine = dizaineCommencee(deroule, avant, index)
     if (dizaine !== null && !dizainesLues.current.has(dizaine)) {
       dizainesLues.current.add(dizaine)
       compterLecture(serie, dizaine)
     }
-  }, [index, deroule, serie])
+  }, [index, deroule, serie, reglages])
+
+  // Retenu à chaque pas, oublié une fois le chapelet terminé.
+  useEffect(() => {
+    if (index < deroule.pas.length) retenirEnCours(date, serie, deroule.pas[index])
+    else effacerEnCours()
+  }, [index, deroule, date, serie])
 
   // L'écran reste allumé du signe de croix à la fin du chapelet.
   useEffect(() => (termine ? undefined : garderEcranAllume()), [termine])
@@ -155,6 +189,8 @@ function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisi
           pas={pas}
           serie={serie}
           compact={compact}
+          plusieurs={reglages.plusieurs}
+          annonce={reglages.annonce}
           passage={pas.dizaine ? passages[pas.dizaine - 1] : undefined}
           passageDeplie={passageDeplie === pas.dizaine}
           onBasculerPassage={() =>

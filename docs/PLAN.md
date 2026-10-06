@@ -104,14 +104,16 @@ Au début de chaque dizaine, un écran d'annonce présente le titre, le fruit, l
 
 ### Ce qu'on livre
 
-Un premier écran de réglages pour le chapelet : annonce des mystères (oui ou non), « Ô mon Jésus » et Salve Regina en option (activés par défaut), affichage (texte complet ou compact), vibrations (oui ou non, pour la discrétion à l'église). Un chapelet interrompu par un appel ou un changement d'app reprend au grain exact s'il est rouvert le jour même. Passé minuit, il est abandonné.
+Un premier écran de réglages pour le chapelet : annonce des mystères (oui ou non), « Ô mon Jésus » et Salve Regina en option (activés par défaut), affichage (texte complet ou compact), vibrations (oui ou non, pour la discrétion à l'église), prier à plusieurs (V/ et R/ marquent la part de celui qui mène et la réponse des autres). Les choix du moment (affichage, vibrations) sont aussi sur le seuil, qui mène à l'écran des réglages. Un chapelet interrompu par un appel ou un changement d'app reprend au grain exact s'il est rouvert le jour même. Passé minuit, il est abandonné.
 
 ### Critères d'acceptation
 
 - [ ] Chaque option modifie le déroulé comme prévu (un test par combinaison), et les réglages persistent après redémarrage.
 - [ ] Les vibrations se coupent et se rétablissent depuis les réglages (demande du porteur du projet, 2026-10-06).
-- [ ] Le texte du « Ô mon Jésus » et celui du Salve Regina sont validés et figés.
-- [ ] Un chapelet quitté puis rouvert le jour même reprend au même grain. Rouvert le lendemain, il repart au début avec la série du nouveau jour.
+- [ ] Le texte du « Ô mon Jésus » et celui du Salve Regina (avec son verset) sont validés et figés.
+- [ ] « Prier à plusieurs » marque V/ et R/ sur le Notre Père, le Je vous salue Marie et le Gloire au Père, aux coupures validées par le porteur du projet (2026-10-06).
+- [ ] Un chapelet quitté puis rouvert le jour même reprend au même grain (l'app rouvre directement sur la prière ; le seuil propose « Reprendre » ou « Recommencer du début »). Rouvert le lendemain, il repart au début avec la série du nouveau jour.
+- [ ] Validée sur le Xiaomi et le Samsung par le porteur du projet.
 
 ## Bloquée par
 

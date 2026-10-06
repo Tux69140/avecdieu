@@ -1,4 +1,4 @@
-import type { DefinitionChapelet, Etape, Moment, TypeGrain } from './definition'
+import type { DefinitionChapelet, Etape, Moment, OptionDeroule, TypeGrain } from './definition'
 
 // Une prière à dire, à sa place sur le chapelet.
 export interface Pas {
@@ -17,15 +17,11 @@ export interface Deroule {
   grains: TypeGrain[]
 }
 
-export interface Options {
-  // Sans annonce à part (mode compact), le mystère s'annonce sur le Notre Père.
-  annonce?: boolean
-}
+// Toutes les options sont actives par défaut. Sans annonce à part (mode
+// compact, ou annonce coupée), la dizaine s'ouvre sur le Notre Père.
+export type Options = Partial<Record<OptionDeroule, boolean>>
 
-export function derouler(
-  definition: DefinitionChapelet,
-  { annonce = true }: Options = {},
-): Deroule {
+export function derouler(definition: DefinitionChapelet, options: Options = {}): Deroule {
   const pas: Pas[] = []
   const grains: TypeGrain[] = []
 
@@ -33,7 +29,7 @@ export function derouler(
     // Une étape retirée laisse son grain à la suivante.
     let retiree = false
     for (const etape of etapes) {
-      if (etape.priere === 'annonce' && !annonce) {
+      if (etape.option && options[etape.option] === false) {
         retiree = true
         continue
       }
@@ -48,5 +44,6 @@ export function derouler(
 
   ajouter(definition.ouverture)
   for (let d = 1; d <= definition.nombreDeDizaines; d++) ajouter(definition.dizaine, d)
+  ajouter(definition.cloture)
   return { pas, grains }
 }

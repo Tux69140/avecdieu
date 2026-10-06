@@ -34,7 +34,10 @@ export function ChapeletDessine({ plan, grainCourant }: Props) {
       </defs>
       <ellipse className="fil" cx={boucle.cx} cy={boucle.cy} rx={boucle.rx} ry={boucle.ry} />
       <line className="fil" x1={medaille.x} y1={medaille.y} x2={croix.x} y2={croix.y} />
-      <ellipse className="medaille" cx={medaille.x} cy={medaille.y} rx={5} ry={6.5} />
+      {/* Quand le Salve Regina s'y dit, la médaille est un grain du déroulé. */}
+      {points.at(-1)?.type !== 'medaille' && (
+        <ellipse className="medaille" cx={medaille.x} cy={medaille.y} rx={5} ry={6.5} />
+      )}
       {points.map((point, i) => (
         <Grain
           key={i}
@@ -73,7 +76,16 @@ function Grain({ point, etat }: { point: Point; etat: 'passe' | 'courant' | 'a-v
   return (
     <g>
       {etat === 'courant' && <circle className="halo" cx={x} cy={y} r={r + 5} />}
-      {type === 'croix' ? (
+      {type === 'medaille' ? (
+        // Une médaille reste en or, sauf pendant qu'on y prie.
+        <ellipse
+          className={etat === 'courant' ? classe : 'grain medaille'}
+          cx={x}
+          cy={y}
+          rx={5}
+          ry={6.5}
+        />
+      ) : type === 'croix' ? (
         <path
           className={classe}
           d={`M${x - 1.8} ${y - 11}h3.6v6h5v3.6h-5v12.4h-3.6v-12.4h-5v-3.6h5z`}

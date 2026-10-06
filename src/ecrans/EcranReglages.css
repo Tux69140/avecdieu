@@ -1,0 +1,48 @@
+.reglages {
+  max-width: calc(34em + 2 * var(--gouttiere));
+  margin: 0 auto;
+  padding: var(--esp-sm) var(--gouttiere) var(--esp-3xl);
+}
+
+.reglages-retour {
+  margin-left: calc(-1 * var(--esp-sm));
+  text-decoration: none;
+  color: var(--sepia);
+}
+
+.reglages h1 {
+  margin: var(--esp-xs) 0 0;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 34px;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.reglages-section {
+  margin-top: var(--esp-lg);
+}
+
+.reglages-section h2,
+.reglages-section h3 {
+  margin: 0 0 var(--esp-xs);
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: 0.06em;
+  color: var(--sepia);
+}
+
+.reglages-section h3 {
+  margin-top: var(--esp-lg);
+  margin-bottom: var(--esp-sm);
+}
+
+.reglages-section h2 + .interrupteur {
+  border-top: 1px solid var(--filet);
+}
+
+.reglages-vibrations {
+  margin-top: var(--esp-lg);
+  border-top: 1px solid var(--filet);
+}

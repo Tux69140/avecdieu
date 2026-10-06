@@ -3,8 +3,8 @@ import type { Deroule } from './deroule'
 export type Vibration = 'courte' | 'marquee'
 
 // Pour prier sans regarder l'écran : chaque prière vibre court, et l'entrée
-// dans une nouvelle dizaine (ou la fin de la dernière) vibre plus fort, ce
-// qui annonce aussi le nouveau mystère.
+// dans une nouvelle partie vibre plus fort : chaque dizaine, ce qui annonce
+// aussi le nouveau mystère, puis le Salve Regina et l'écran de fin.
 export function vibrationEntre(deroule: Deroule, avant: number, apres: number): Vibration | null {
   if (avant === apres) return null
   if (apres < avant) return 'courte'

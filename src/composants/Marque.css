@@ -1,0 +1,12 @@
+.marque {
+  display: inline-block;
+  width: 1.2em;
+  height: 1.2em;
+  margin-right: 0.3em;
+  vertical-align: -0.2em;
+  fill: none;
+  stroke: var(--rubrique);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}

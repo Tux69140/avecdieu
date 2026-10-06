@@ -113,39 +113,34 @@
   color: var(--sepia);
 }
 
-.bascule {
+/* Reprendre un chapelet en cours, ou le recommencer : lien discret sous le bouton. */
+.seuil-recommencer {
+  margin: var(--esp-xs) 0 0;
+  text-align: center;
+}
+
+.seuil-reglages {
   display: flex;
-  border: 1px solid var(--or);
-  border-radius: var(--r-md);
-  overflow: hidden;
-}
-
-.bascule button {
-  flex: 1;
-  min-height: 48px;
-  padding: 0 var(--esp-md);
-  border: none;
-  background: transparent;
-  font-family: var(--texte);
-  font-size: 16px;
-  color: var(--encre);
-  cursor: pointer;
-}
-
-.bascule button + button {
-  border-left: 1px solid var(--or);
-}
-
-.bascule button[aria-checked='true'] {
-  background: var(--halo);
+  justify-content: space-between;
+  align-items: center;
+  min-height: 56px;
+  margin-top: var(--esp-lg);
+  border-top: 1px solid var(--filet);
+  border-bottom: 1px solid var(--filet);
   font-weight: 500;
+  color: var(--encre);
+  text-decoration: none;
 }
 
-.seuil-aide {
-  margin: var(--esp-sm) 0 0;
-  font-size: 15px;
-  line-height: 1.45;
-  color: var(--sepia);
+.seuil-reglages::after {
+  content: '›';
+  font-size: 26px;
+  line-height: 1;
+  color: var(--or-fonce);
+}
+
+.seuil-reglages:active {
+  background: var(--halo);
 }
 
 .fin-ecran {

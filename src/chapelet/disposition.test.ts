@@ -45,6 +45,12 @@ describe('disposition du chapelet dessiné', () => {
     expect(Math.max(...pendentif.map((p) => p.y))).toBe(croix.y)
   })
 
+  it('pose le Salve Regina sur la médaille, et sans lui le dessin reste le même', () => {
+    expect(plan.points.at(-1)).toMatchObject({ type: 'medaille', ...plan.medaille })
+    const sansSalve = disposer(derouler(CHAPELET_MARIAL, { salveRegina: false }))
+    expect(sansSalve.points).toEqual(plan.points.slice(0, -1))
+  })
+
   it('tient dans un cadre au moins deux fois plus large que haut', () => {
     expect(plan.hauteur * 2).toBeLessThanOrEqual(plan.largeur)
   })

@@ -76,7 +76,8 @@ test.describe('passages qui tournent', () => {
     await perle(page).tap()
 
     await page.goBack()
-    await page.getByRole('button', { name: 'Commencer le chapelet' }).click()
+    await page.getByRole('button', { name: 'Recommencer du début' }).click()
+    await expect(titrePriere(page)).toHaveText('Signe de croix')
     await jusquALAnnonce(page)
     await expect(page.getByTestId('passage')).toContainText('Mt 1, 18-25')
     const lectures = await page.evaluate(() => localStorage.getItem('avec-dieu.lectures'))
@@ -177,7 +178,7 @@ test.describe('choix de la série', () => {
     await commencer(page)
     await toucher(page)
     await page.goBack()
-    await expect(page.getByRole('button', { name: 'Commencer le chapelet' })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Reprendre le chapelet' })).toBeVisible()
   })
 })
 
@@ -193,9 +194,9 @@ test.describe('aide aux gestes', () => {
     await expect(aide).toHaveCount(0)
     await expect(titrePriere(page)).toHaveText('Signe de croix')
 
-    // Elle revient au chapelet suivant, faute d'avoir coché « Ne plus afficher ».
+    // Elle revient à l'ouverture suivante, faute d'avoir coché « Ne plus afficher ».
     await page.goBack()
-    await page.getByRole('button', { name: 'Commencer le chapelet' }).click()
+    await page.getByRole('button', { name: 'Reprendre le chapelet' }).click()
     await expect(aide).toBeVisible()
   })
 
@@ -208,9 +209,9 @@ test.describe('aide aux gestes', () => {
     await suivant(page)
     await expect(titrePriere(page)).toHaveText('Je crois en Dieu')
 
-    // Un nouveau chapelet, après redémarrage de l'app.
+    // Après redémarrage de l'app, le chapelet reprend, sans l'aide.
     await page.reload()
-    await expect(titrePriere(page)).toHaveText('Signe de croix')
+    await expect(titrePriere(page)).toHaveText('Je crois en Dieu')
     await expect(page.getByRole('dialog')).toHaveCount(0)
   })
 })

@@ -17,8 +17,21 @@ export interface Plan {
 }
 
 // Place occupée le long du fil, en unités (un petit grain = 1).
-const ENCOMBREMENT: Record<TypeGrain, number> = { croix: 2.6, gros: 1.7, petit: 1, noeud: 0.9 }
-const RAYON: Record<TypeGrain, number> = { croix: 11, gros: 6.5, petit: 4, noeud: 3.5 }
+// La médaille ferme la boucle : elle ne prend aucune place sur le fil.
+const ENCOMBREMENT: Record<TypeGrain, number> = {
+  croix: 2.6,
+  gros: 1.7,
+  petit: 1,
+  noeud: 0.9,
+  medaille: 0,
+}
+const RAYON: Record<TypeGrain, number> = {
+  croix: 11,
+  gros: 6.5,
+  petit: 4,
+  noeud: 3.5,
+  medaille: 6.5,
+}
 const ECART_MEDAILLE = 1.4
 
 const LARGEUR = 300
@@ -40,16 +53,17 @@ export function disposer({ pas, grains }: Deroule): Plan {
   const ellipse = echantillonnerEllipse()
   const echelle = ellipse.longueur / unites
 
-  // La boucle part de la médaille (en haut) et tourne vers la droite.
+  const medaille = { x: BOUCLE.cx, y: BOUCLE.cy - BOUCLE.ry }
+  // La boucle part de la médaille (en haut), tourne vers la droite et y revient.
   let curseur = ECART_MEDAILLE
   const pointsBoucle = boucle.map((type) => {
+    if (type === 'medaille') return { type, ...medaille, r: RAYON[type] }
     const centre = curseur + ENCOMBREMENT[type] / 2
     curseur += ENCOMBREMENT[type]
     const { x, y } = ellipse.pointA(centre * echelle)
     return { type, x, y, r: RAYON[type] }
   })
 
-  const medaille = { x: BOUCLE.cx, y: BOUCLE.cy - BOUCLE.ry }
   // Le pendentif pend de la médaille vers le bas ; ses grains sont dans l'ordre inverse.
   curseur = ECART_MEDAILLE
   const pointsPendentif = [...pendentif].reverse().map((type) => {

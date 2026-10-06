@@ -33,8 +33,10 @@ const DEROULE: Attendu[] = [
         mystere,
       })),
       { priere: 'Gloire au Père', mystere },
+      { priere: 'Ô mon Jésus', mystere },
     ]
   }),
+  { priere: 'Salve Regina' },
 ]
 
 // Un lundi : mystères joyeux.
@@ -119,7 +121,7 @@ test('glisser au tout début ne fait rien', async ({ page }) => {
   await verifierPas(page, DEROULE[0], 0)
 })
 
-test('glisser depuis l’écran de fin revient au dernier Gloire au Père', async ({ page }) => {
+test('glisser depuis l’écran de fin revient au Salve Regina', async ({ page }) => {
   await commencer(page)
   for (let i = 0; i < DEROULE.length; i++) await suivant(page)
   await expect(page.getByRole('heading', { level: 2 })).toHaveText('Chapelet terminé')

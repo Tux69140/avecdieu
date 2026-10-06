@@ -9,14 +9,16 @@ import { PRIERES } from './prieres'
 // par le porteur du projet AVANT de mettre à jour l'empreinte ci-dessous.
 // Validation : 5 prières et 20 titres de mystères, le 2026-10-05 ;
 // découpage des prières en vers et en strophes, le 2026-10-06 ;
-// fruits (tradition et aujourd'hui) et 60 passages AELF, le 2026-10-06.
+// fruits (tradition et aujourd'hui) et 60 passages AELF, le 2026-10-06 ;
+// « Ô mon Jésus », Salve Regina avec son verset, et les coupures pour prier
+// à plusieurs (Notre Père, Je vous salue Marie, Gloire au Père), le 2026-10-06.
 const empreinte = (donnees: unknown) =>
   createHash('sha256').update(JSON.stringify(donnees)).digest('hex')
 
 describe('recueil de textes figés', () => {
   it('les prières sont celles validées par le porteur du projet', () => {
     expect(empreinte(PRIERES)).toBe(
-      '6803186459f2efcca3e9297f6b38d26f1c9b4c6221d5081da2cb41f72fd62437',
+      '95272c8d0588de2087215055f0c3e7e715ad8c747b1db5ca058ba29dcca2b57e',
     )
   })
 

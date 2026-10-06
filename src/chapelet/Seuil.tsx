@@ -1,9 +1,13 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { IndiceSuite } from '../composants/IndiceSuite'
+import { Interrupteur } from '../composants/Interrupteur'
 import { useSuiteCachee } from '../composants/suiteCachee'
 import { SERIES, type SerieId } from '../recueil/mysteres'
-import { lireAffichage, retenirAffichage, type Affichage } from './memoire'
+import { ChoixAffichage } from './ChoixAffichage'
+import { AIDE_VIBRATIONS } from './libelles'
+import { lireReglages, modifierReglages, type Reglages } from './reglages'
+import { libelleReprise, type ChapeletEnCours } from './reprise'
 import { joursDeLaSerie } from './serieDuJour'
 import './Seuil.css'
 
@@ -11,26 +15,21 @@ interface Props {
   serie: SerieId
   duJour: SerieId
   date: Date
+  // Le chapelet de cette série commencé aujourd'hui, s'il y en a un.
+  enCours: ChapeletEnCours | null
   onCommencer: () => void
+  onRecommencer: () => void
 }
 
-const AFFICHAGES: [Affichage, string][] = [
-  ['complet', 'Texte complet'],
-  ['compact', 'Compact'],
-]
-
 // Le seuil du chapelet, entre le menu et le signe de croix : la série et ses
-// mystères, puis les choix qui se font avant de prier (autre série, affichage).
-export function Seuil({ serie, duJour, date, onCommencer }: Props) {
-  const [affichage, setAffichage] = useState(lireAffichage)
+// mystères, puis les choix qui se font avant de prier (autre série, affichage,
+// vibrations). Les habitudes qu'on règle une fois sont dans les réglages.
+export function Seuil({ serie, duJour, date, enCours, onCommencer, onRecommencer }: Props) {
+  const [reglages, setReglages] = useState(lireReglages)
   const { fin, cachee } = useSuiteCachee()
   const jour = date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
   const autres = (Object.keys(SERIES) as SerieId[]).filter((s) => s !== serie)
-
-  const choisir = (choix: Affichage) => {
-    setAffichage(choix)
-    retenirAffichage(choix)
-  }
+  const modifier = (changement: Partial<Reglages>) => setReglages(modifierReglages(changement))
 
   return (
     <main className="seuil">
@@ -46,8 +45,15 @@ export function Seuil({ serie, duJour, date, onCommencer }: Props) {
         ))}
       </ol>
       <button className="btn btn-principal seuil-commencer" type="button" onClick={onCommencer}>
-        Commencer le chapelet
+        {enCours ? libelleReprise(enCours) : 'Commencer le chapelet'}
       </button>
+      {enCours && (
+        <p className="seuil-recommencer">
+          <button className="lien-discret" type="button" onClick={onRecommencer}>
+            Recommencer du début
+          </button>
+        </p>
+      )}
 
       <section className="seuil-section" aria-labelledby="seuil-autres">
         <h2 id="seuil-autres">Prier d’autres mystères</h2>
@@ -68,23 +74,25 @@ export function Seuil({ serie, duJour, date, onCommencer }: Props) {
 
       <section className="seuil-section" aria-labelledby="seuil-affichage">
         <h2 id="seuil-affichage">Affichage des prières</h2>
-        <div className="bascule" role="radiogroup" aria-labelledby="seuil-affichage">
-          {AFFICHAGES.map(([valeur, libelle]) => (
-            <button
-              key={valeur}
-              type="button"
-              role="radio"
-              aria-checked={affichage === valeur}
-              onClick={() => choisir(valeur)}
-            >
-              {libelle}
-            </button>
-          ))}
-        </div>
-        <p className="seuil-aide">
-          Compact : le nom de la prière et le compteur, pour qui la sait par cœur.
-        </p>
+        <ChoixAffichage
+          titre="seuil-affichage"
+          affichage={reglages.affichage}
+          onChoisir={(affichage) => modifier({ affichage })}
+        />
       </section>
+
+      <div className="seuil-section">
+        <Interrupteur
+          libelle="Vibrations"
+          aide={AIDE_VIBRATIONS}
+          actif={reglages.vibrations}
+          onBasculer={(vibrations) => modifier({ vibrations })}
+        />
+      </div>
+
+      <Link className="seuil-reglages" to="/reglages">
+        Tous les réglages
+      </Link>
       <div ref={fin} className="fin-ecran" />
       <IndiceSuite visible={cachee} />
     </main>
