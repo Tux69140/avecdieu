@@ -6,7 +6,9 @@
       "Bash(pnpm lint)",
       "Bash(pnpm build)",
       "Bash(pnpm exec vitest run)",
-      "Bash(pnpm exec playwright test)"
+      "Bash(pnpm exec playwright test)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
     ]
   }
 }
