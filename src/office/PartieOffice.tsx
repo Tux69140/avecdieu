@@ -1,6 +1,6 @@
 import { useId } from 'react'
-import type { Partie, TypePartie } from './modele'
-import { TexteOffice } from './TexteOffice'
+import type { Bloc, Partie, Strophe, TypePartie } from './modele'
+import { LigneOffice, TexteOffice } from './TexteOffice'
 import './PartieOffice.css'
 
 // Mise en page du texte (PartieOffice.css) : un vers coupé faute de place
@@ -17,7 +17,9 @@ const MISES: Partial<Record<TypePartie, 'vers' | 'prose'>> = {
   autre: 'prose',
 }
 
-export function PartieOffice({ partie }: { partie: Partie }) {
+// « replier » : les prières courantes se replient sur leur première ligne
+// (réglage « Prières courantes en entier » coupé).
+export function PartieOffice({ partie, replier }: { partie: Partie; replier: boolean }) {
   const id = useId()
   return (
     <section
@@ -25,14 +27,49 @@ export function PartieOffice({ partie }: { partie: Partie }) {
       aria-labelledby={id}
       data-type={partie.type}
       data-mise={MISES[partie.type]}
+      data-ajoutee={partie.ajoutee ? 'oui' : undefined}
     >
       <h2 id={id} className="etiquette partie-libelle">
         {partie.libelle}
         {partie.precision && <span className="partie-precision"> · {partie.precision}</span>}
       </h2>
       {partie.titre && <p className="partie-titre">{partie.titre}</p>}
-      <TexteOffice strophes={partie.strophes} />
+      {partie.blocs.map((bloc, i) => (
+        <BlocOffice key={i} bloc={bloc} replier={replier} />
+      ))}
       {partie.source && <p className="partie-source">{partie.source}</p>}
     </section>
+  )
+}
+
+function BlocOffice({ bloc, replier }: { bloc: Bloc; replier: boolean }) {
+  return (
+    <div
+      className="bloc"
+      data-ajoute={bloc.ajoute ? 'oui' : undefined}
+      data-antienne={bloc.antienne ? 'oui' : undefined}
+      data-testid={bloc.priere ? 'priere-courante' : undefined}
+    >
+      {bloc.rubrique && <p className="office-rubrique">{bloc.rubrique}</p>}
+      {bloc.priere && replier ? (
+        <PriereRepliee strophes={bloc.strophes} />
+      ) : (
+        <TexteOffice strophes={bloc.strophes} />
+      )}
+    </div>
+  )
+}
+
+// La première ligne seule ; un toucher déplie la suite, juste en dessous.
+function PriereRepliee({ strophes }: { strophes: Strophe[] }) {
+  const [[premiere, ...finDeStrophe] = [], ...suite] = strophes
+  if (!premiere) return null
+  return (
+    <details className="priere-repliee">
+      <summary>
+        <LigneOffice ligne={premiere} />
+      </summary>
+      <TexteOffice strophes={[finDeStrophe, ...suite].filter((s) => s.length > 0)} />
+    </details>
   )
 }

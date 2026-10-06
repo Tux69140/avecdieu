@@ -1,6 +1,6 @@
 import { insecables } from '../chapelet/typographie'
 import { Marque } from '../composants/Marque'
-import type { Segment, Strophe } from './modele'
+import type { Ligne, Segment, Strophe } from './modele'
 
 // Le texte d'une partie, tel que la frontière AELF l'a lu : des strophes de
 // lignes, chaque repère liturgique dans sa propre balise, en rouge rubrique
@@ -9,14 +9,20 @@ export function TexteOffice({ strophes }: { strophes: Strophe[] }) {
   return strophes.map((strophe, i) => (
     <p key={i} className="office-strophe">
       {strophe.map((ligne, j) => (
-        <span key={j} className="office-ligne">
-          {ligne.map((segment, k) => (
-            <SegmentOffice key={k} segment={segment} />
-          ))}
-        </span>
+        <LigneOffice key={j} ligne={ligne} />
       ))}
     </p>
   ))
+}
+
+export function LigneOffice({ ligne }: { ligne: Ligne }) {
+  return (
+    <span className="office-ligne">
+      {ligne.map((segment, k) => (
+        <SegmentOffice key={k} segment={segment} />
+      ))}
+    </span>
+  )
 }
 
 function SegmentOffice({ segment: { texte, signe } }: { segment: Segment }) {

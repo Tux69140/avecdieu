@@ -73,3 +73,53 @@
   text-decoration: underline 1px var(--rubrique);
   text-underline-offset: 3px;
 }
+
+/* Les morceaux d'une partie : texte de l'AELF, ajouts de l'app. */
+.bloc + .bloc {
+  margin-top: var(--esp-md);
+}
+
+/* Une antienne reprise au fil du psaume se distingue des versets. */
+.bloc[data-antienne='oui'] {
+  font-style: italic;
+}
+
+/* « Tous », à plusieurs : rubrique rouge, comme au chapelet. */
+.office-rubrique {
+  margin: 0 0 var(--esp-xs);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--rubrique);
+}
+
+/* Prière courante repliée : la première ligne, et des points de suite qui
+   invitent à la déplier. */
+.priere-repliee summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.priere-repliee summary::-webkit-details-marker {
+  display: none;
+}
+
+.priere-repliee:not([open]) summary .office-ligne::after {
+  content: ' …';
+  color: var(--sepia);
+}
+
+/* Ce que l'app ajoute selon les rubriques : un filet rouge dans la marge,
+   sans autre texte (choix du porteur du projet, 2026-10-06). Le texte reste
+   aligné sur celui de l'AELF. */
+.office[data-ajouts='oui'] .partie[data-ajoutee='oui'],
+.office[data-ajouts='oui'] .bloc[data-ajoute='oui'] {
+  margin-left: -12px;
+  padding-left: 10px;
+  border-left: 2px solid var(--rubrique);
+}
+
+.office[data-ajouts='oui'] .partie[data-ajoutee='oui'] .bloc[data-ajoute='oui'] {
+  margin-left: 0;
+  padding-left: 0;
+  border-left: 0;
+}

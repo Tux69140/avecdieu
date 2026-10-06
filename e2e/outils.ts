@@ -31,6 +31,8 @@ export interface Reglages {
   affichage?: 'complet' | 'compact'
   vibrations?: boolean
   accents?: boolean
+  prieresEntieres?: boolean
+  signalerAjouts?: boolean
 }
 
 // Les parcours ne dépendent pas du réseau : l'AELF est remplacée par ses

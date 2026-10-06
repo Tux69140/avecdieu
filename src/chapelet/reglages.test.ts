@@ -16,6 +16,8 @@ describe('réglages du chapelet', () => {
       affichage: 'complet',
       vibrations: true,
       accents: true,
+      prieresEntieres: false,
+      signalerAjouts: true,
     })
     expect(REGLAGES_PAR_DEFAUT).toEqual(lireReglages())
   })
@@ -23,6 +25,11 @@ describe('réglages du chapelet', () => {
   it('retiennent les accents de psalmodie masqués', () => {
     modifierReglages({ accents: false })
     expect(lireReglages().accents).toBe(false)
+  })
+
+  it('retiennent les prières courantes en entier et les ajouts non signalés', () => {
+    modifierReglages({ prieresEntieres: true, signalerAjouts: false })
+    expect(lireReglages()).toMatchObject({ prieresEntieres: true, signalerAjouts: false })
   })
 
   it('retiennent chaque changement sans toucher aux autres', () => {

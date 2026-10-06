@@ -1,8 +1,9 @@
 import { expect, test, type Page } from '@playwright/test'
 import { espionner, journal, preparer, servirAelf } from './outils.ts'
 
-// Phase 5 : les sept offices du jour, lus d'un trait tels que l'AELF les
-// fournit, repères liturgiques en rouge rubrique.
+// Phase 5 : les sept offices du jour, lus d'un trait depuis l'AELF, repères
+// liturgiques en rouge rubrique. Les ajouts selon les rubriques (phase 6) :
+// e2e/rubriques.spec.ts.
 
 const MARDI = new Date(2026, 9, 6, 10, 0)
 const ROUGE_RUBRIQUE = 'rgb(158, 42, 31)'
@@ -60,10 +61,11 @@ test('ouvrir les laudes depuis le menu et les lire d’un trait', async ({ page 
     'Intercession',
     'Notre Père',
     'Oraison',
+    'Bénédiction',
   ])
   // Entre deux parties, une perle verte : la couleur du jour.
   const reperes = page.getByTestId('repere')
-  await expect(reperes).toHaveCount(16)
+  await expect(reperes).toHaveCount(17)
   await expect(reperes.first().locator('.repere-perle')).toHaveAttribute('data-couleur', 'vert')
 
   expect(demandes).toEqual(['https://api.aelf.org/v1/laudes/2026-10-06/france'])

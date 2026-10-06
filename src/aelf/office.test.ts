@@ -18,7 +18,10 @@ const tousLesTextes = (office: Office) =>
     p.precision ?? '',
     p.titre ?? '',
     p.source ?? '',
-    ...p.strophes.flat(2).map((s) => s.texte),
+    ...p.blocs
+      .flatMap((b) => b.strophes)
+      .flat(2)
+      .map((s) => s.texte),
   ])
 
 describe('lireOffice', () => {
@@ -53,7 +56,7 @@ describe('lireOffice', () => {
     expect(lecture.titre).toBeTruthy()
     const patristique = office.parties.find((p) => p.libelle === 'Lecture patristique')!
     expect(patristique.titre).toBeTruthy()
-    expect(patristique.strophes.length).toBeGreaterThan(0)
+    expect(patristique.blocs[0].strophes.length).toBeGreaterThan(0)
   })
 
   it('omet les parties vides : complies à un seul psaume, antienne non numérotée', () => {
@@ -91,7 +94,7 @@ describe('lireOffice', () => {
 
   it('ne répète pas « Notre Père » sous son propre titre', () => {
     const notrePere = officeDe('laudes').parties.find((p) => p.type === 'notre-pere')!
-    expect(notrePere.strophes).toEqual([])
+    expect(notrePere.blocs).toEqual([])
   })
 
   it.each(OFFICES)('%s : du texte seulement, sans balise ni entité HTML', (nom) => {
@@ -104,7 +107,12 @@ describe('lireOffice', () => {
 
   it.each(OFFICES)('%s : versets, V/ R/ et médiantes repérés', (nom) => {
     const signes = new Set(
-      officeDe(nom).parties.flatMap((p) => p.strophes.flat(2).map((s) => s.signe)),
+      officeDe(nom).parties.flatMap((p) =>
+        p.blocs
+          .flatMap((b) => b.strophes)
+          .flat(2)
+          .map((s) => s.signe),
+      ),
     )
     expect(signes).toContain('V')
     expect(signes).toContain('mediante')

@@ -11,7 +11,7 @@ import { lireFragment } from './fragments'
 // Une réponse de l'AELF (/v1/<office>/<date>/<zone>) devient un Office : les
 // parties dans l'ordre de l'AELF, avec les libellés validés par le porteur du
 // projet (2026-10-06). Le texte est donné tel que l'AELF le fournit ; sa
-// reconstitution selon les rubriques viendra en phase 6.
+// reconstitution selon les rubriques se fait ensuite (src/office/rubriques.ts).
 
 type Brut = Record<string, unknown>
 
@@ -158,7 +158,7 @@ export function lireOffice(nom: NomOffice, date: string, reponse: unknown): Offi
       ...(precision && precision !== libelle && { precision: typographier(precision) }),
       ...(titre && titre !== libelle && { titre }),
       ...(source && { source }),
-      strophes: seulTitre ? [] : strophes,
+      blocs: seulTitre ? [] : [{ strophes }],
       ajoutee: false,
     })
   }

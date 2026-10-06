@@ -1,0 +1,33 @@
+import { ecrire, lireObjet } from '../chapelet/stockage'
+import type { NomOffice } from './modele'
+
+// R1 : l'invitatoire ouvre la journée de prière, en tête du premier des deux
+// offices ouverts ce jour-là (laudes ou office des lectures). Le téléphone
+// retient, pour chaque date, lequel des deux le porte.
+
+const CLE = 'avec-dieu.invitatoire'
+// Assez pour une semaine priée d'avance ou en retard ; le reste s'oublie.
+const DATES_RETENUES = 14
+
+const ouvreLaJournee = (nom: NomOffice) => nom === 'laudes' || nom === 'lectures'
+
+function retenir(date: string, nom: NomOffice) {
+  const dates = { ...lireObjet(CLE), [date]: nom }
+  const recentes = Object.keys(dates).sort().slice(-DATES_RETENUES)
+  ecrire(CLE, JSON.stringify(Object.fromEntries(recentes.map((d) => [d, dates[d]]))))
+}
+
+// Ouvrir un office : le premier des deux ouverts dans la journée reçoit
+// l'invitatoire. Vrai si cet office le porte.
+export function ouvrirOffice(nom: NomOffice, date: string): boolean {
+  if (!ouvreLaJournee(nom)) return false
+  const porteur = lireObjet(CLE)[date]
+  if (porteur === 'laudes' || porteur === 'lectures') return porteur === nom
+  retenir(date, nom)
+  return true
+}
+
+// Le lien « en tête de l'office » : l'invitatoire passe à cet office-ci.
+export function deplacerInvitatoire(nom: NomOffice, date: string) {
+  if (ouvreLaJournee(nom)) retenir(date, nom)
+}

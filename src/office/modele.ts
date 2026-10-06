@@ -58,7 +58,24 @@ export type TypePartie =
   | 'oraison'
   | 'benediction'
   | 'antienne-mariale'
+  | 'examen'
+  | 'conclusion'
   | 'autre'
+
+// Un morceau du texte d'une partie : tel que l'AELF le donne, ou ajouté par
+// l'app selon les rubriques (phase 6).
+export interface Bloc {
+  strophes: Strophe[]
+  // Ajouté selon les rubriques : un filet rouge le signale, si le réglage le veut.
+  ajoute?: boolean
+  // Prière courante (Notre Père, Gloire au Père…), repliée sur sa première
+  // ligne sauf réglage contraire : son nom, pour qui ne voit pas l'écran.
+  priere?: string
+  // Rubrique en rouge au-dessus du bloc : « Tous », à plusieurs.
+  rubrique?: string
+  // Une antienne reprise au fil du psaume : elle se distingue du psaume.
+  antienne?: boolean
+}
 
 export interface Partie {
   type: TypePartie
@@ -70,8 +87,8 @@ export interface Partie {
   titre?: string
   // Auteur et éditeur d'une hymne.
   source?: string
-  strophes: Strophe[]
-  // Ajoutée par l'app selon les rubriques (phase 6) : jamais en phase 5.
+  blocs: Bloc[]
+  // Partie entière ajoutée par l'app selon les rubriques.
   ajoutee: boolean
 }
 

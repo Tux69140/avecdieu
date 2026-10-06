@@ -72,6 +72,18 @@ export function EcranReglages() {
           actif={reglages.accents}
           onBasculer={(accents) => modifier({ accents })}
         />
+        <Interrupteur
+          libelle="Prières courantes en entier"
+          aide="Notre Père, Gloire au Père et Je confesse à Dieu, écrits en entier sans avoir à les déplier."
+          actif={reglages.prieresEntieres}
+          onBasculer={(prieresEntieres) => modifier({ prieresEntieres })}
+        />
+        <Interrupteur
+          libelle="Signaler les ajouts de l’app"
+          aide="Un filet rouge marque ce que l’app ajoute au texte de l’AELF selon les rubriques."
+          actif={reglages.signalerAjouts}
+          onBasculer={(signalerAjouts) => modifier({ signalerAjouts })}
+        />
       </section>
     </main>
   )

@@ -114,6 +114,19 @@ for (const office of ['laudes', 'lectures', 'complies']) {
   })
 }
 
+test('office : lien de l’invitatoire, prières courantes en entier, ajouts signalés', async ({
+  page,
+}) => {
+  await servirAelf(page)
+  await preparer(page, { reglages: { prieresEntieres: true, plusieurs: true } })
+  await page.goto('/office/laudes/2026-10-06')
+  await expect(page.getByTestId('office')).toBeVisible()
+  await page.goto('/office/lectures/2026-10-06')
+  await expect(page.getByRole('button', { name: 'Dire l’invitatoire ici' })).toBeVisible()
+  await expect(page.getByTestId('office')).toBeVisible()
+  expect(await violationsGraves(page)).toEqual([])
+})
+
 test('office injoignable', async ({ page }) => {
   await page.route('https://api.aelf.org/**', (route) => route.abort())
   await preparer(page)

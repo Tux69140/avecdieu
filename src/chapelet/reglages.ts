@@ -15,6 +15,11 @@ export interface Reglages {
   vibrations: boolean
   // Offices : syllabes accentuées de la psalmodie soulignées.
   accents: boolean
+  // Offices : Notre Père, Gloire au Père et Je confesse à Dieu écrits en entier,
+  // au lieu d'être repliés sur leur première ligne.
+  prieresEntieres: boolean
+  // Offices : un filet rouge le long de ce que l'app ajoute selon les rubriques.
+  signalerAjouts: boolean
 }
 
 // Ceux du PRD.
@@ -26,6 +31,8 @@ export const REGLAGES_PAR_DEFAUT: Reglages = {
   affichage: 'complet',
   vibrations: true,
   accents: true,
+  prieresEntieres: false,
+  signalerAjouts: true,
 }
 
 const BASCULES = [
@@ -35,6 +42,8 @@ const BASCULES = [
   'plusieurs',
   'vibrations',
   'accents',
+  'prieresEntieres',
+  'signalerAjouts',
 ] as const
 
 const CLE = 'avec-dieu.reglages'

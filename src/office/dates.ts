@@ -22,3 +22,35 @@ const FORMAT = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric
 export function dateLisible(date: string): string {
   return FORMAT.format(enDate(date)).replace(/^(\S+) 1 /, '$1 1er ')
 }
+
+const decaler = (date: string, jours: number) => {
+  const d = enDate(date)
+  d.setDate(d.getDate() + jours)
+  return dateDuJour(d)
+}
+
+// Le dimanche de Pâques, par le comput grégorien (algorithme anonyme de Meeus).
+export function paques(annee: number): string {
+  const a = annee % 19
+  const b = Math.floor(annee / 100)
+  const c = annee % 100
+  const d = Math.floor(b / 4)
+  const e = b % 4
+  const f = Math.floor((b + 8) / 25)
+  const g = Math.floor((b - f + 1) / 3)
+  const h = (19 * a + b - d - g + 15) % 30
+  const i = Math.floor(c / 4)
+  const k = c % 4
+  const l = (32 + 2 * e + 2 * i - h - k) % 7
+  const m = Math.floor((a + 11 * h + 22 * l) / 451)
+  const mois = Math.floor((h + l - 7 * m + 114) / 31)
+  const jour = ((h + l - 7 * m + 114) % 31) + 1
+  return `${annee}-${deux(mois)}-${deux(jour)}`
+}
+
+// R2 : l'Alléluia de l'introduction se tait du mercredi des Cendres (Pâques
+// moins 46 jours) jusqu'à la Vigile pascale, solennités comprises.
+export function sansAlleluia(date: string): boolean {
+  const dimanche = paques(Number(date.slice(0, 4)))
+  return date >= decaler(dimanche, -46) && date < dimanche
+}

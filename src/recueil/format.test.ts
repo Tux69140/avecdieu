@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { TEXTES_OFFICE } from './office'
 import { PRIERES } from './prieres'
 
 // Dans le recueil, chaque ligne est un vers ; une ligne vide ('') sépare deux strophes.
@@ -18,4 +19,16 @@ describe('format du recueil des prières', () => {
       })
     })
   }
+})
+
+describe('format du recueil des offices', () => {
+  for (const [id, lignes] of Object.entries(TEXTES_OFFICE))
+    it(`${id} : vers sans espaces superflus, apostrophe typographique`, () => {
+      expect(lignes.length).toBeGreaterThan(0)
+      for (const ligne of lignes) {
+        expect(ligne).toBe(ligne.trim())
+        expect(ligne).not.toBe('')
+        expect(ligne).not.toContain("'")
+      }
+    })
 })
