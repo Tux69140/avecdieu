@@ -124,6 +124,7 @@ Avec Dieu accompagne la prière de toute la journée sur un téléphone Android.
 13. L'iPhone dans la première version *(plus tard)*.
 14. Toute autre langue que le français.
 15. Le choix entre plusieurs traductions des prières.
+16. L'Angélus et l'offrande du matin (décision du porteur du projet, 2026-10-06).
 
 ## Décisions d'implémentation
 
