@@ -92,4 +92,5 @@ export const REGLES_RUBRIQUES: string[] = [
   'R8. Fin de l’office : « Que le Seigneur nous bénisse » conclut les laudes et les vêpres ; « Bénissons le Seigneur », l’office des lectures et les petites heures. Les complies gardent la bénédiction que donne l’AELF. Quand l’AELF joint à l’oraison son propre envoi (« Bénissons le Seigneur, alléluia, alléluia », dans l’octave de Pâques et à la Pentecôte), cet envoi tient lieu de fin.',
   'R9. Complies : l’examen de conscience se place juste après l’introduction, avant l’hymne.',
   'R10. Prier à plusieurs : la rubrique « Tous » précède chaque Gloire au Père.',
+  'R11. Répons bref : là où l’AELF abrège la reprise du répons, l’app l’écrit en entier, signalée comme ajout : après « R/ », tout le répons ; après « * », sa seconde partie. Le signe abrégé disparaît. Les répons de l’office des lectures restent tels quels.',
 ]

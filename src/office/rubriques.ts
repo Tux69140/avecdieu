@@ -3,10 +3,11 @@ import { PRIERES, RUBRIQUE_ENSEMBLE } from '../recueil/prieres'
 import { sansAlleluia } from './dates'
 import type { Bloc, NomOffice, Office, Partie, Strophe } from './modele'
 import { conclureOraison } from './oraison'
+import { reprendreRepons } from './repons'
 import { strophesDe, texteDesBlocs } from './textes'
 
 // L'office complet, reconstitué selon les règles validées par le porteur du
-// projet (src/recueil/office.ts, R1 à R10) à partir du texte abrégé de l'AELF.
+// projet (src/recueil/office.ts, R1 à R11) à partir du texte abrégé de l'AELF.
 // Tout ce que l'app ajoute est marqué (Bloc.ajoute, Partie.ajoutee).
 
 export interface Contexte {
@@ -205,6 +206,10 @@ export function reconstituer(office: Office, contexte: Contexte): Office {
             ],
           },
         ]
+      case 'repons':
+        // R11 : les reprises du répons bref, écrites en entier ; les répons
+        // de l'office des lectures restent tels quels.
+        return [nom === 'lectures' ? partie : reprendreRepons(partie)]
       case 'oraison': {
         const conclue = conclureOraison(partie, CONCLUSION_LONGUE.includes(nom))
         if (!conclue.envoi) return [conclue.oraison]

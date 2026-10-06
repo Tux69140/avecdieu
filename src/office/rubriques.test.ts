@@ -11,7 +11,8 @@ import { strophesDe, texteDe } from './textes'
 // enregistrées dans src/aelf/exemples/. Un dimanche (2026-10-04), une férie
 // du temps ordinaire (2026-10-06), une solennité (Toussaint, 2026-11-01),
 // l'Avent (2026-11-29), le Carême (2027-02-17), le temps pascal (2027-05-13),
-// plus le second cantique de Daniel (2026-10-11) et la Pentecôte (2027-05-16).
+// plus le second cantique de Daniel (2026-10-11), deux répons aux reprises
+// doublées (2026-10-17, 2027-03-25, Jeudi saint) et la Pentecôte (2027-05-16).
 
 const DOSSIER = 'src/aelf/exemples'
 
@@ -359,6 +360,63 @@ describe('R10 : prier à plusieurs', () => {
   })
 })
 
+describe('R11 : les reprises du répons bref', () => {
+  const lignes = (office: Office) =>
+    partie(office, 'Répons').blocs.map(
+      // Les espaces fines de l'AELF (« éternelle ! ») comptent pour des espaces.
+      (b) => `${b.ajoute ? '+ ' : ''}${texte(b).replace(/\s/g, ' ')}`,
+    )
+
+  it('« R/ » en fin de ligne : tout le répons, écrit en entier', () => {
+    expect(lignes(complet('complies', '2026-10-06'))).toEqual([
+      'R/En tes mains, Seigneur, je remets mon esprit. V/Écoute et viens me délivrer.',
+      '+ R/En tes mains, Seigneur, je remets mon esprit.',
+      'Gloire au Père et au Fils et au Saint-Esprit.',
+      '+ R/En tes mains, Seigneur, je remets mon esprit.',
+    ])
+  })
+
+  it('« * » en fin de ligne : la seconde partie du répons', () => {
+    expect(lignes(complet('laudes', '2026-10-06'))).toEqual([
+      'R/Ô Christ, le Fils du Dieu vivant, * Pitié pour nous. V/Toi qui es assis à la droite du Père,',
+      '+ R/Pitié pour nous.',
+      'Gloire au Père et au Fils et au Saint-Esprit.',
+      '+ R/Ô Christ, le Fils du Dieu vivant, * Pitié pour nous.',
+    ])
+  })
+
+  it('plusieurs versets, chacun suivi du répons', () => {
+    expect(lignes(complet('laudes', '2026-10-11'))).toEqual([
+      'R/Il est notre salut, notre gloire éternelle ! V/Si nous mourons avec lui, avec lui, nous vivrons.',
+      '+ R/Il est notre salut, notre gloire éternelle !',
+      'V/Si nous souffrons avec lui, avec lui nous régnerons.',
+      '+ R/Il est notre salut, notre gloire éternelle !',
+    ])
+  })
+
+  it('deux signes accolés (« R/ * ») : le R/ l’emporte', () => {
+    expect(lignes(complet('vepres', '2026-10-17')).slice(-2)).toEqual([
+      'Gloire au Père et au Fils et au Saint-Esprit.',
+      '+ R/Louez le Seigneur du haut des cieux ! * Louez-le, tous les univers !',
+    ])
+  })
+
+  it('deux signes accolés (« * R/ ») : le R/ l’emporte aussi', () => {
+    expect(lignes(complet('laudes', '2027-03-25')).slice(-2)).toEqual([
+      'V/Si nous souffrons avec lui, avec lui nous régnerons.',
+      '+ R/Souviens-toi de Jésus Christ ressuscité d’entre les morts : * Il est notre salut, notre gloire éternelle.',
+    ])
+  })
+
+  it('les répons de l’office des lectures restent tels quels', () => {
+    const lectures = complet('lectures', '2026-10-06')
+    const lues = aelf('lectures', '2026-10-06')
+    expect(lectures.parties.filter((p) => p.type === 'repons')).toEqual(
+      lues.parties.filter((p) => p.type === 'repons'),
+    )
+  })
+})
+
 describe('jeu d’offices de référence : 100 % des ajouts attendus', () => {
   const exemples = readdirSync(DOSSIER)
     .map((f) => /^([a-z]+)-(\d{4}-\d{2}-\d{2})\.json$/.exec(f))
@@ -375,6 +433,12 @@ describe('jeu d’offices de référence : 100 % des ajouts attendus', () => {
             expect(p.blocs.some(estGloire), `Gloire au Père après ${p.libelle}`).toBe(!dn357)
           }
           if (p.type === 'notre-pere') expect(p.blocs).toHaveLength(1)
+          // Plus aucune reprise abrégée (R11).
+          if (p.type === 'repons' && nom !== 'lectures')
+            for (const ligne of p.blocs.flatMap((b) => b.strophes).flat())
+              expect(['R', 'mediante'], `reprise abrégée dans ${texteDe([[ligne]])}`).not.toContain(
+                ligne.at(-1)?.signe,
+              )
           if (p.type === 'oraison')
             expect(texte(p.blocs.at(-1)!), 'oraison conclue par Amen').toMatch(/Amen\s*[.!]$/)
         }
@@ -411,6 +475,18 @@ describe('jeu d’offices de référence : 100 % des ajouts attendus', () => {
             // Seules l'abréviation de la conclusion et l'envoi se détachent.
             expect(texteDe(attendu).startsWith(texteDe(aelfSeul))).toBe(true)
             expect(texteDe(attendu).length - texteDe(aelfSeul).length).toBeLessThan(120)
+          } else if (lue.type === 'repons' && nom !== 'lectures') {
+            // Seuls les signes de reprise abrégée tombent (R11).
+            const sansReprise = attendu.flat().map((l) => {
+              let fin = l.length
+              const reprise = ({ signe, texte }: (typeof l)[number]) =>
+                signe === 'R' || signe === 'mediante' || (!signe && texte.trim() === '')
+              while (fin > 0 && reprise(l[fin - 1])) fin--
+              return l.slice(0, fin)
+            })
+            const suivi = (lignes: typeof sansReprise) =>
+              texteDe([lignes]).replace(/\s+/g, ' ').trim()
+            expect(suivi(aelfSeul.flat())).toBe(suivi(sansReprise.filter((l) => l.length > 0)))
           } else if (!gardee!.blocs.every((b) => b.ajoute)) expect(aelfSeul).toEqual(attendu)
         }
         if (nom !== 'complies') expect(office.parties.at(-1)!.type).toBe('conclusion')

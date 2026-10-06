@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test'
 import { preparer, servirAelf } from './outils.ts'
 
 // Phase 6 : l'office complet, reconstitué selon les rubriques validées par le
-// porteur du projet (R1 à R10, src/recueil/office.ts).
+// porteur du projet (R1 à R11, src/recueil/office.ts).
 
 const MARDI = new Date(2026, 9, 6, 10, 0)
 const ROUGE_RUBRIQUE = 'rgb(158, 42, 31)'

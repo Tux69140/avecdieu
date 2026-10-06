@@ -14,7 +14,8 @@ import { PRIERES } from './prieres'
 // « Ô mon Jésus », Salve Regina avec son verset, et les coupures pour prier
 // à plusieurs (Notre Père, Je vous salue Marie, Gloire au Père), le 2026-10-06 ;
 // textes ajoutés aux offices et règles de rubriques R1 à R10, le 2026-10-06 ;
-// R8 complétée (envoi de l’AELF dans l’octave de Pâques et à la Pentecôte), le 2026-10-06.
+// R8 complétée (envoi de l’AELF dans l’octave de Pâques et à la Pentecôte) et
+// R11 (reprises du répons bref), le 2026-10-06.
 const empreinte = (donnees: unknown) =>
   createHash('sha256').update(JSON.stringify(donnees)).digest('hex')
 
@@ -51,7 +52,7 @@ describe('recueil de textes figés', () => {
 
   it('les règles de rubriques sont celles validées par le porteur du projet', () => {
     expect(empreinte(REGLES_RUBRIQUES)).toBe(
-      'a3d2bbed8c7cbad557fda89daf8b096b8be0312eac92ffcca394a402e08f2bea',
+      '8025402f5aca585c9d74f4ca3ebe3105d95b148d7648e23e62b6b1702a06b556',
     )
   })
 })
