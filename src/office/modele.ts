@@ -69,7 +69,7 @@ export interface Bloc {
   // Ajouté selon les rubriques : un filet rouge le signale, si le réglage le veut.
   ajoute?: boolean
   // Prière courante (Notre Père, Gloire au Père…), repliée sur sa première
-  // ligne sauf réglage contraire : son nom, pour qui ne voit pas l'écran.
+  // ligne sauf réglage contraire : son nom.
   priere?: string
   // Rubrique en rouge au-dessus du bloc : « Tous », à plusieurs.
   rubrique?: string

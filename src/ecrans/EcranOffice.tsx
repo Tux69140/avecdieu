@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { Navigate, useParams } from 'react-router'
 import { chargerOffice, ErreurAelf, type OfficeDuJour } from '../aelf/api'
 import { lireReglages } from '../chapelet/reglages'
@@ -7,7 +7,7 @@ import { useRetour } from '../composants/retour'
 import { useSuiteCachee } from '../composants/suiteCachee'
 import { dateLisible, estDate } from '../office/dates'
 import { deplacerInvitatoire, ouvrirOffice } from '../office/journee'
-import { estNomOffice, NOMS_OFFICES, type NomOffice } from '../office/modele'
+import { estNomOffice, NOMS_OFFICES, type NomOffice, type Partie } from '../office/modele'
 import { PartieOffice } from '../office/PartieOffice'
 import { Repere } from '../office/Repere'
 import { invitatoireDe, reconstituer } from '../office/rubriques'
@@ -25,16 +25,28 @@ export function EcranOffice() {
 type Etat =
   | { sorte: 'chargement' }
   | { sorte: 'erreur'; absent: boolean }
-  | { sorte: 'pret'; lu: OfficeDuJour; laudes?: OfficeDuJour }
+  // « premier » (R1) : cet office ouvre la journée et porte l'invitatoire.
+  | { sorte: 'pret'; lu: OfficeDuJour; invitatoire?: Partie[]; premier: boolean }
+
+// Une clé qui ne bouge pas quand l'invitatoire s'insère en tête : une prière
+// dépliée reste celle que l'on a dépliée.
+const cles = (parties: Partie[]) => {
+  const vues = new Map<string, number>()
+  return parties.map((p) => {
+    const n = (vues.get(p.libelle) ?? 0) + 1
+    vues.set(p.libelle, n)
+    return `${p.libelle}·${n}`
+  })
+}
 
 function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
   const [etat, setEtat] = useState<Etat>({ sorte: 'chargement' })
   const [essai, setEssai] = useState(0)
   const [{ accents, plusieurs, prieresEntieres, signalerAjouts }] = useState(lireReglages)
-  // R1 : le premier des deux offices ouverts dans la journée porte l'invitatoire.
-  const [premier, setPremier] = useState(() => ouvrirOffice(nom, date))
   const retour = useRetour()
   const { fin, cachee } = useSuiteCachee()
+  const texte = useRef<HTMLDivElement>(null)
+  const versInvitatoire = useRef(false)
   // Comme au chapelet : le téléphone ne se verrouille pas en pleine lecture.
   useEffect(() => garderEcranAllume(), [])
 
@@ -47,7 +59,13 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
         ? chargerOffice('laudes', date, abandon.signal).catch(() => undefined)
         : Promise.resolve(undefined)
     Promise.all([chargerOffice(nom, date, abandon.signal), laudes]).then(
-      ([lu, laudes]) => setEtat({ sorte: 'pret', lu, laudes }),
+      ([lu, laudes]) => {
+        const invitatoire = invitatoireDe((laudes ?? lu).office)
+        // R1 : seul un office affiché avec son invitatoire compte comme le
+        // premier de la journée ; un office absent ou incomplet ne le prend pas.
+        const premier = invitatoire !== undefined && ouvrirOffice(nom, date)
+        setEtat({ sorte: 'pret', lu, invitatoire, premier })
+      },
       (erreur: unknown) => {
         if (abandon.signal.aborted) return
         setEtat({ sorte: 'erreur', absent: erreur instanceof ErreurAelf && erreur.absent })
@@ -58,19 +76,34 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
 
   const office = useMemo(() => {
     if (etat.sorte !== 'pret') return undefined
-    const invitatoire = etat.laudes && invitatoireDe(etat.laudes.office)
-    return reconstituer(etat.lu.office, { premier, plusieurs, invitatoire })
-  }, [etat, premier, plusieurs])
-  // Sur l'office des lectures, le lien n'a de sens que si les laudes sont là.
+    const { lu, invitatoire, premier } = etat
+    return reconstituer(lu.office, { premier, plusieurs, invitatoire })
+  }, [etat, plusieurs])
+
+  const clesDesParties = useMemo(() => cles(office?.parties ?? []), [office])
+
   const peutRecevoirInvitatoire =
     etat.sorte === 'pret' &&
-    !premier &&
-    (nom === 'laudes' || (nom === 'lectures' && etat.laudes !== undefined))
+    !etat.premier &&
+    etat.invitatoire !== undefined &&
+    (nom === 'laudes' || nom === 'lectures')
 
   const recevoirInvitatoire = () => {
+    if (etat.sorte !== 'pret') return
     deplacerInvitatoire(nom, date)
-    setPremier(true)
+    versInvitatoire.current = true
+    setEtat({ ...etat, premier: true })
   }
+
+  // Le lien disparaît une fois touché : la lecture reprend sur l'invitatoire.
+  useEffect(() => {
+    if (!versInvitatoire.current) return
+    versInvitatoire.current = false
+    const titre = texte.current?.querySelector<HTMLElement>('[data-type="invitatoire"] h2')
+    if (!titre) return
+    titre.tabIndex = -1
+    titre.focus()
+  }, [office])
 
   const reessayer = () => {
     setEtat({ sorte: 'chargement' })
@@ -124,9 +157,9 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
       )}
 
       {etat.sorte === 'pret' && office && (
-        <div className="office-texte" data-testid="office">
+        <div ref={texte} className="office-texte" data-testid="office">
           {office.parties.map((partie, i) => (
-            <Fragment key={i}>
+            <Fragment key={clesDesParties[i]}>
               {i > 0 && <Repere couleur={etat.lu.jour.couleurs[0]} />}
               <PartieOffice partie={partie} replier={!prieresEntieres} />
             </Fragment>

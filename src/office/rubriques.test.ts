@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { lireOffice } from '../aelf/office'
 import { CONCLUSIONS } from '../recueil/office'
@@ -23,12 +23,16 @@ interface Ouverture {
   plusieurs?: boolean
 }
 
+// Comme l'écran : l'invitatoire du jour est celui des laudes. Il est proposé
+// à tous les offices, pour vérifier que seuls ceux qui ouvrent la journée le prennent.
 function complet(
   nom: NomOffice,
   date: string,
   { premier = false, plusieurs = false }: Ouverture = {},
 ) {
-  const invitatoire = nom === 'lectures' ? invitatoireDe(aelf('laudes', date)) : undefined
+  const laudes = `${DOSSIER}/laudes-${date}.json`
+  const invitatoire =
+    nom !== 'laudes' && existsSync(laudes) ? invitatoireDe(aelf('laudes', date)) : undefined
   return reconstituer(aelf(nom, date), { premier, plusieurs, invitatoire })
 }
 
@@ -165,6 +169,15 @@ describe('R4 et R5 : antiennes et Gloire au Père de la psalmodie', () => {
     expect(partie(laudes, 'Cantique des trois enfants (Dn 3)').blocs.some(estGloire)).toBe(true)
   })
 
+  it('« R/ du psaume » : le refrain du psaume devient l’antienne, avant et après', () => {
+    const laudes = complet('laudes', '2026-10-06')
+    const refrain =
+      'Que les peuples, Dieu, te rendent grâce ; qu’ils te rendent grâce tous ensemble !'
+    const sansInsecables = (bloc: Bloc) => texte(bloc).replace(/\s/g, ' ')
+    expect(sansInsecables(partie(laudes, 'Antienne 3').blocs[0])).toBe(refrain)
+    expect(sansInsecables(partie(laudes, 'Psaume 66').blocs.at(-1)!)).toBe(refrain)
+  })
+
   it('une seule antienne pour l’heure : dite après le dernier psaume, Gloire après chacun', () => {
     const none = complet('none', '2026-11-01')
     const forme = (libelle: string) =>
@@ -241,6 +254,41 @@ describe('R7 : la conclusion de l’oraison', () => {
     expect(conclue(entiere, false)).toEqual([entiere])
     const vepres = partie(complet('vepres', '2026-10-06'), 'Oraison').blocs.map(texte)
     expect(vepres).toEqual([expect.stringMatching(/Jésus, ton Fils, Dieu à jamais\.$/), 'Amen.'])
+  })
+
+  it('reconnaît les autres abréviations, et ne prend pas « notre Seigneur » seul pour une conclusion', () => {
+    expect(conclue('Garde-nous. Lui qui vit et règne.', true)).toEqual([
+      'Garde-nous.',
+      `${CONCLUSIONS.longue['fils-a-la-fin']} Amen.`,
+    ])
+    expect(conclue('Garde-nous. Par Jésus Christ.', true)).toEqual([
+      'Garde-nous.',
+      `${CONCLUSIONS.longue.pere} Amen.`,
+    ])
+    expect(conclue('Prépare-nous à la venue de notre Seigneur.', false)).toEqual([
+      'Prépare-nous à la venue de notre Seigneur.',
+      `${CONCLUSIONS.breve.pere} Amen.`,
+    ])
+  })
+
+  it('détache l’envoi, même écrit dans le paragraphe de l’oraison', () => {
+    const lue: Partie = {
+      ...oraison(''),
+      blocs: [
+        {
+          strophes: strophesDe([
+            'Garde-nous.',
+            'V/ Bénissons le Seigneur, alléluia.',
+            'R/ Nous rendons grâce à Dieu, alléluia.',
+          ]),
+        },
+      ],
+    }
+    const { oraison: conclue, envoi } = conclureOraison(lue, true)
+    expect(conclue.blocs.map(texte)).toEqual(['Garde-nous.', `${CONCLUSIONS.longue.pere} Amen.`])
+    expect(texteDe(envoi!)).toBe(
+      'V/Bénissons le Seigneur, alléluia. R/Nous rendons grâce à Dieu, alléluia.',
+    )
   })
 
   it('l’ajout est signalé', () => {
@@ -330,10 +378,41 @@ describe('jeu d’offices de référence : 100 % des ajouts attendus', () => {
           if (p.type === 'oraison')
             expect(texte(p.blocs.at(-1)!), 'oraison conclue par Amen').toMatch(/Amen\s*[.!]$/)
         }
-        // Chaque antienne est reprise après son dernier psaume.
-        const reprises = office.parties.flatMap((p) => p.blocs).filter((b) => b.antienne)
-        const antiennes = office.parties.filter((p) => p.type === 'antienne')
-        expect(reprises.length).toBeGreaterThanOrEqual(antiennes.length)
+        // Chaque psaume finit par l'antienne qui le couvre s'il est le dernier
+        // qu'elle couvre, et par aucune autre.
+        const psalmique = (p?: Partie) => p?.type === 'psaume' || p?.type === 'cantique'
+        let antienne: Partie | undefined
+        office.parties.forEach((p, i) => {
+          if (p.type === 'antienne') antienne = p
+          else if (!psalmique(p)) antienne = undefined
+          if (!psalmique(p) || p.libelle === 'Psaume 94' || p.ajoutee) return
+          const reprises = p.blocs.filter((b) => b.antienne)
+          if (antienne && !psalmique(office.parties[i + 1])) {
+            expect(reprises.map(texte), `antienne après ${p.libelle}`).toEqual([
+              texteDe(antienne.blocs.flatMap((b) => b.strophes)),
+            ])
+            expect(p.blocs.at(-1)!.antienne).toBe(true)
+          } else expect(reprises, `pas d’antienne après ${p.libelle}`).toEqual([])
+        })
+        // Le texte de l'AELF est gardé intact, partie par partie.
+        // Deux parties peuvent porter le même libellé (« Répons ») : on les
+        // apparie dans l'ordre.
+        const rang = (parties: Partie[], p: Partie) =>
+          parties.filter((q) => q.libelle === p.libelle).indexOf(p)
+        const lues = aelf(nom, date).parties
+        for (const lue of lues) {
+          if (['introduction', 'notre-pere', 'invitatoire'].includes(lue.type)) continue
+          if (lue.libelle === 'Psaume 94' && !premier) continue
+          const gardee = office.parties.filter((p) => p.libelle === lue.libelle)[rang(lues, lue)]
+          expect(gardee, `partie ${lue.libelle} gardée`).toBeDefined()
+          const aelfSeul = gardee!.blocs.filter((b) => !b.ajoute).flatMap((b) => b.strophes)
+          const attendu = lue.blocs.flatMap((b) => b.strophes)
+          if (lue.type === 'oraison') {
+            // Seules l'abréviation de la conclusion et l'envoi se détachent.
+            expect(texteDe(attendu).startsWith(texteDe(aelfSeul))).toBe(true)
+            expect(texteDe(attendu).length - texteDe(aelfSeul).length).toBeLessThan(120)
+          } else if (!gardee!.blocs.every((b) => b.ajoute)) expect(aelfSeul).toEqual(attendu)
+        }
         if (nom !== 'complies') expect(office.parties.at(-1)!.type).toBe('conclusion')
         if (nom === 'complies') expect(libelles(office)[1]).toBe('Examen de conscience')
         expect(libelles(office).includes('Invitatoire')).toBe(

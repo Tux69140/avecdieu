@@ -1,15 +1,19 @@
 import { CONCLUSIONS, type FormeConclusion } from '../recueil/office'
-import type { Bloc, Partie, Strophe } from './modele'
+import type { Bloc, Ligne, Partie, Strophe } from './modele'
 import { retrancherFin, texteDe } from './textes'
 
 // R7 : la conclusion de l'oraison, que l'AELF donne entière, abrégée ou pas du
 // tout. Longue à l'office des lectures, aux laudes et aux vêpres ; brève
 // ailleurs.
 
-// « Lui qui règne. », « Toi qui règnes. » : la forme est dite, le texte abrégé.
-const ABREGEE = /\b(Lui qui règne|Toi qui règnes)\s*\.(\s*Amen\s*[.!]?)?$/
-// Déjà conclue : l'AELF la garde telle quelle.
-const CONCLUE = /(siècles des siècles|notre Seigneur|Dieu,? à jamais)\s*[.!]?(\s*Amen\s*[.!]?)?$/
+// « Lui qui règne. », « Toi qui règnes. », « Par Jésus Christ. » : la forme
+// est dite, le texte abrégé.
+const ABREGEE =
+  /\b(Lui qui (?:vit et )?règne|Toi qui (?:vis et )?règnes|Par Jésus,? (?:le )?Christ)\s*\.(\s*Amen\s*[.!]?)?$/
+// Déjà conclue : l'AELF la garde telle quelle. « notre Seigneur » seul ne
+// suffit pas (« …la venue de notre Seigneur. ») : il faut le Christ nommé avant.
+const CONCLUE =
+  /(siècles des siècles|(Jésus|Christ),? (ton Fils,? )?(le Christ,? )?notre Seigneur|Dieu,? à jamais)\s*[.!]?(\s*Amen\s*[.!]?)?$/
 const AMEN = /Amen\s*[.!]?$/
 // Adressée au Christ dès ses premiers mots.
 const AU_FILS = /^(Ô\s+)?(Seigneur\s+)?(Jésus|Christ)\b/
@@ -27,22 +31,30 @@ const bloc = (lignes: string[]): Bloc => ({
   ajoute: true,
 })
 
-// Une strophe qui s'ouvre sur « V/ Bénissons le Seigneur » : l'envoi que
-// l'AELF joint parfois à l'oraison (octave de Pâques, Pentecôte).
-const estEnvoi = (strophe: Strophe) =>
-  strophe[0]?.[0]?.signe === 'V' && /^Bénissons/.test(strophe[0][1]?.texte ?? '')
+// Une ligne « V/ Bénissons le Seigneur » : l'envoi que l'AELF joint parfois à
+// l'oraison (octave de Pâques, Pentecôte), en strophe à part ou non.
+const estEnvoi = (ligne: Ligne) =>
+  ligne[0]?.signe === 'V' && /^Bénissons/.test(ligne[1]?.texte ?? '')
+
+// L'oraison d'un côté, l'envoi de l'autre.
+function separerEnvoi(strophes: Strophe[]): [Strophe[], Strophe[] | undefined] {
+  for (const [i, strophe] of strophes.entries()) {
+    const j = strophe.findIndex(estEnvoi)
+    if (j < 0 || (i === 0 && j === 0)) continue
+    const avant = [...strophes.slice(0, i), strophe.slice(0, j)].filter((s) => s.length > 0)
+    return [avant, [strophe.slice(j), ...strophes.slice(i + 1)]]
+  }
+  return [strophes, undefined]
+}
 
 export interface OraisonConclue {
   oraison: Partie
-  // L'envoi donné par l'AELF, qui tient lieu de fin de l'office (R8).
+  // L'envoi donné par l'AELF, qui suit l'oraison et tient lieu de fin de l'office.
   envoi?: Strophe[]
 }
 
 export function conclureOraison(partie: Partie, longue: boolean): OraisonConclue {
-  const strophes = partie.blocs.flatMap((b) => b.strophes)
-  const debutEnvoi = strophes.findIndex(estEnvoi)
-  const priere = debutEnvoi > 0 ? strophes.slice(0, debutEnvoi) : strophes
-  const envoi = debutEnvoi > 0 ? strophes.slice(debutEnvoi) : undefined
+  const [priere, envoi] = separerEnvoi(partie.blocs.flatMap((b) => b.strophes))
 
   const texte = texteDe(priere).trim()
   const conclusions = CONCLUSIONS[longue ? 'longue' : 'breve']
@@ -51,7 +63,11 @@ export function conclureOraison(partie: Partie, longue: boolean): OraisonConclue
   const abregee = ABREGEE.exec(texte)
   if (abregee) {
     texteAelf = retrancherFin(priere, texte.length - abregee.index)
-    const forme = abregee[1].startsWith('Lui') ? 'fils-a-la-fin' : 'au-fils'
+    const forme: FormeConclusion = abregee[1].startsWith('Lui')
+      ? 'fils-a-la-fin'
+      : abregee[1].startsWith('Toi')
+        ? 'au-fils'
+        : 'pere'
     ajout = bloc([conclusions[forme], 'Amen.'])
   } else if (CONCLUE.test(texte)) {
     if (!AMEN.test(texte)) ajout = bloc(['Amen.'])

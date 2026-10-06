@@ -12,9 +12,16 @@ const DATES_RETENUES = 14
 const ouvreLaJournee = (nom: NomOffice) => nom === 'laudes' || nom === 'lectures'
 
 function retenir(date: string, nom: NomOffice) {
-  const dates = { ...lireObjet(CLE), [date]: nom }
-  const recentes = Object.keys(dates).sort().slice(-DATES_RETENUES)
-  ecrire(CLE, JSON.stringify(Object.fromEntries(recentes.map((d) => [d, dates[d]]))))
+  const dates = lireObjet(CLE)
+  // La date ouverte reste retenue, même plus ancienne que les autres.
+  const autres = Object.keys(dates)
+    .filter((d) => d !== date)
+    .sort()
+    .slice(-(DATES_RETENUES - 1))
+  ecrire(
+    CLE,
+    JSON.stringify(Object.fromEntries([...autres.map((d) => [d, dates[d]]), [date, nom]])),
+  )
 }
 
 // Ouvrir un office : le premier des deux ouverts dans la journée reçoit

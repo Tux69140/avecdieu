@@ -3,7 +3,7 @@ import { PRIERES, RUBRIQUE_ENSEMBLE } from '../recueil/prieres'
 import { sansAlleluia } from './dates'
 import type { Bloc, NomOffice, Office, Partie, Strophe } from './modele'
 import { conclureOraison } from './oraison'
-import { strophesDe } from './textes'
+import { strophesDe, texteDesBlocs } from './textes'
 
 // L'office complet, reconstitué selon les règles validées par le porteur du
 // projet (src/recueil/office.ts, R1 à R10) à partir du texte abrégé de l'AELF.
@@ -85,9 +85,36 @@ function sansGloire(partie: Partie): boolean {
   return /Dn 3/.test(partie.libelle) && premierVerset?.texte === '57'
 }
 
+// « R/ du psaume » : l'AELF renvoie au refrain du psaume, la première strophe
+// marquée R/. Il devient l'antienne, sans repères de psalmodie.
+const RENVOI_AU_REFRAIN = /^R\/\s*du psaume\.?$/i
+
+function refrainDe(psaume?: Partie): Strophe | undefined {
+  const strophe = psaume && strophesDeLaPartie(psaume).find((s) => s[0]?.[0]?.signe === 'R')
+  return strophe?.map((ligne) => [
+    {
+      texte: ligne
+        .filter((s) => s.signe !== 'R' && s.signe !== 'verset')
+        .map((s) => s.texte)
+        .join('')
+        .trim(),
+    },
+  ])
+}
+
+function antiennesDites(parties: Partie[]): Partie[] {
+  return parties.map((partie, i) => {
+    if (partie.type !== 'antienne' || !RENVOI_AU_REFRAIN.test(texteDesBlocs(partie.blocs)))
+      return partie
+    const refrain = refrainDe(parties[i + 1])
+    return refrain ? { ...partie, blocs: [{ strophes: [refrain], ajoute: true }] } : partie
+  })
+}
+
 // R4 et R5 : le Gloire au Père après chaque psaume, et l'antienne après le
 // dernier psaume qu'elle couvre.
-function psalmodie(parties: Partie[], plusieurs: boolean): Partie[] {
+function psalmodie(lues: Partie[], plusieurs: boolean): Partie[] {
+  const parties = antiennesDites(lues)
   let antienne: Partie | undefined
   return parties.map((partie, i) => {
     if (partie.type === 'antienne') antienne = partie
@@ -118,10 +145,10 @@ const examen = () =>
     { strophes: strophesDe(TEXTES_OFFICE.absolution) },
   ])
 
-// R8 : la fin de l'office, sauf aux complies, qui gardent la bénédiction de l'AELF.
-function fin(nom: NomOffice, envoi?: Strophe[]): Partie | undefined {
+// R8 : la fin de l'office, sauf aux complies, qui gardent la bénédiction de
+// l'AELF, et sauf quand l'AELF joint son propre envoi à l'oraison.
+function fin(nom: NomOffice): Partie | undefined {
   if (nom === 'complies') return undefined
-  if (envoi) return partieAjoutee('conclusion', 'Conclusion', [{ strophes: envoi }], false)
   if (nom === 'laudes' || nom === 'vepres')
     return partieAjoutee('conclusion', 'Bénédiction', [
       { strophes: strophesDe(TEXTES_OFFICE.benediction) },
@@ -145,7 +172,7 @@ export function reconstituer(office: Office, contexte: Contexte): Office {
   // À l'office des lectures, l'invitatoire vient des laudes : déplacé, il est un ajout.
   const deplace = nom !== 'laudes'
 
-  let envoi: Strophe[] | undefined
+  let envoi = false
   const parties = sansInvitatoire.flatMap((partie): Partie[] => {
     switch (partie.type) {
       case 'introduction':
@@ -179,13 +206,17 @@ export function reconstituer(office: Office, contexte: Contexte): Office {
         ]
       case 'oraison': {
         const conclue = conclureOraison(partie, CONCLUSION_LONGUE.includes(nom))
-        envoi = conclue.envoi
-        return [conclue.oraison]
+        if (!conclue.envoi) return [conclue.oraison]
+        envoi = true
+        return [
+          conclue.oraison,
+          partieAjoutee('conclusion', 'Conclusion', [{ strophes: conclue.envoi }], false),
+        ]
       }
       default:
         return [partie]
     }
   })
-  const derniere = fin(nom, envoi)
+  const derniere = envoi ? undefined : fin(nom)
   return { ...office, parties: [...parties, ...(derniere ? [derniere] : [])] }
 }

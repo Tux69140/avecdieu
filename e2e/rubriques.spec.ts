@@ -45,12 +45,29 @@ test('l’invitatoire suit le premier office ouvert, et le lien le déplace', as
   await expect(titres(page).nth(2)).toHaveText('Psaume 94')
   await expect(partie(page, 'Introduction')).toContainText('Seigneur, ouvre mes lèvres')
   await expect(partie(page, 'Invitatoire')).toHaveAttribute('data-ajoutee', 'oui')
+  // La lecture reprend sur l'invitatoire, même au lecteur d'écran.
+  await expect(partie(page, 'Invitatoire').getByRole('heading')).toBeFocused()
   await expect(page.getByRole('button', { name: 'Dire l’invitatoire ici' })).toHaveCount(0)
 
   // Les laudes l'ont perdu, et proposent à leur tour de le reprendre.
   await ouvrir(page, 'laudes')
   await expect(titres(page).nth(1)).toHaveText(/^Hymne/)
   await expect(page.getByRole('button', { name: 'Dire l’invitatoire ici' })).toBeVisible()
+})
+
+test('un office des lectures que l’AELF ne donne pas ne prend pas l’invitatoire', async ({
+  page,
+}) => {
+  await servirAelf(page)
+  // Comme le dimanche de Pâques, où la Vigile pascale le remplace.
+  await page.route('https://api.aelf.org/v1/lectures/**', (route) =>
+    route.fulfill({ status: 404, body: 'introuvable' }),
+  )
+  await preparer(page)
+  await page.goto('/office/lectures/2026-10-06')
+  await expect(page.getByRole('alert')).toContainText('L’AELF ne propose pas cet office')
+  await ouvrir(page, 'laudes')
+  await expect(titres(page).nth(1)).toHaveText('Invitatoire')
 })
 
 test('Gloire au Père et Notre Père repliés sur leur première ligne, dépliés d’un toucher', async ({

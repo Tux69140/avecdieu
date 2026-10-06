@@ -41,4 +41,10 @@ describe('R1 : l’office qui ouvre la journée', () => {
     expect(retenues).toHaveLength(14)
     expect(retenues[0]).toBe('2026-10-07')
   })
+
+  it('une date plus ancienne que les autres reste retenue une fois ouverte', () => {
+    for (let jour = 10; jour <= 25; jour++) ouvrirOffice('laudes', `2026-10-${jour}`)
+    expect(ouvrirOffice('lectures', '2026-10-01')).toBe(true)
+    expect(ouvrirOffice('laudes', '2026-10-01')).toBe(false)
+  })
 })

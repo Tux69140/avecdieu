@@ -44,10 +44,11 @@ export function retrancherFin(strophes: Strophe[], longueur: number): Strophe[] 
     segment.texte = segment.texte.slice(0, segment.texte.length - coupe)
     reste -= coupe
     if (segment.texte === '') ligne.pop()
-    if (ligne.length === 0) strophe.pop()
+    const ligneVidee = ligne.length === 0
+    if (ligneVidee) strophe.pop()
     if (strophe.length === 0) copie.pop()
-    // Entre deux lignes, le texte suivi compte une espace.
-    else if (ligne.length === 0 && reste > 0) reste -= 1
+    // Entre deux lignes, et entre deux strophes, le texte suivi compte une espace.
+    if (ligneVidee && reste > 0 && copie.length > 0) reste -= 1
   }
   const derniere = copie.at(-1)?.at(-1)?.at(-1)
   if (derniere) derniere.texte = derniere.texte.trimEnd()
