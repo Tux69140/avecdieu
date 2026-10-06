@@ -6,6 +6,12 @@
 @import '@fontsource-variable/literata/opsz-italic.css';
 
 :root {
+  /* Bords occupés par les barres d'Android. Capacitor fournit --safe-area-inset-*
+     (justes sur toutes les WebView) ; le navigateur, env(). */
+  --bord-haut: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  --bord-bas: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+  --bord-gauche: var(--safe-area-inset-left, env(safe-area-inset-left, 0px));
+  --bord-droit: var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
   --parchemin: #ebe0cb;
   --velin: #f6efe2;
   --filet: #d6c7ab;
@@ -75,8 +81,7 @@ body {
 body {
   min-height: 100dvh;
   /* Sur le téléphone, l'app s'étend sous les barres d'Android : on s'en écarte. */
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
-    env(safe-area-inset-left);
+  padding: var(--bord-haut) var(--bord-droit) var(--bord-bas) var(--bord-gauche);
   background: var(--parchemin);
   color: var(--encre);
   font-family: var(--texte);

@@ -56,7 +56,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: var(--esp-lg) var(--gouttiere) calc(var(--esp-md) + env(safe-area-inset-bottom));
+  padding: var(--esp-lg) var(--gouttiere) calc(var(--esp-md) + var(--bord-bas));
   /* Fondu court au-dessus, puis fond plein : « Plus bas » ne chevauche jamais le texte. */
   background: linear-gradient(to bottom, transparent, var(--parchemin) var(--esp-lg));
 }

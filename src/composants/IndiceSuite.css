@@ -19,7 +19,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  padding: var(--esp-lg) 0 env(safe-area-inset-bottom);
+  padding: var(--esp-lg) 0 var(--bord-bas);
   background: linear-gradient(to bottom, transparent, var(--parchemin) 60%);
 }
 

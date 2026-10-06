@@ -25,7 +25,7 @@ interface Props {
 
 // Une prière du chapelet. En mode compact, seuls son nom et le compteur
 // s'affichent ; le texte de la prière et le passage du mystère se déplient à
-// la demande. Les liens sont des boutons : les toucher n'avance pas. Sans
+// la demande, sous les liens qui ne bougent pas. Les liens sont des boutons : les toucher n'avance pas. Sans
 // annonce, seul le titre du mystère reste (choix du porteur du projet).
 export function Priere(props: Props) {
   const { pas, serie, compact, plusieurs, annonce, passageDeplie, onBasculerPassage } = props
@@ -54,6 +54,19 @@ export function Priere(props: Props) {
           </span>
         )}
       </div>
+      {/* Les liens restent sous le titre : ce qu'ils déplient s'ouvre en dessous. */}
+      {compact && (
+        <div className="liens-compacts">
+          <button className="lien-discret" type="button" onClick={() => setVoirPriere((v) => !v)}>
+            {voirPriere ? 'Masquer la prière' : 'Voir la prière'}
+          </button>
+          {passage && (
+            <button className="lien-discret" type="button" onClick={onBasculerPassage}>
+              {passageDeplie ? 'Masquer le passage' : 'Lire le passage'}
+            </button>
+          )}
+        </div>
+      )}
       {(!compact || voirPriere) && (
         <div className="priere-texte">
           {strophes(priere, plusieurs).map((vers, i) => (
@@ -66,18 +79,6 @@ export function Priere(props: Props) {
               ))}
             </p>
           ))}
-        </div>
-      )}
-      {compact && (
-        <div className="liens-compacts">
-          <button className="lien-discret" type="button" onClick={() => setVoirPriere((v) => !v)}>
-            {voirPriere ? 'Masquer la prière' : 'Voir la prière'}
-          </button>
-          {passage && (
-            <button className="lien-discret" type="button" onClick={onBasculerPassage}>
-              {passageDeplie ? 'Masquer le passage' : 'Lire le passage'}
-            </button>
-          )}
         </div>
       )}
       {compact && passage && passageDeplie && <PassageBiblique passage={passage} />}

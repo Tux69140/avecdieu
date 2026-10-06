@@ -140,6 +140,27 @@ test.describe('mode compact', () => {
   })
 })
 
+test('en compact, les liens restent sous le titre quand la prière ou le passage se déplient', async ({
+  page,
+}) => {
+  await commencer(page, '/chapelet', { affichage: 'compact' })
+  for (let i = 0; i < 8; i++) await toucher(page)
+  await expect(page.getByTestId('compteur')).toHaveText('1 / 10')
+  const position = async (nom: RegExp) => {
+    await expect.poll(() => page.evaluate(() => document.getAnimations().length)).toBe(0)
+    const boite = (await page.getByRole('button', { name: nom }).boundingBox())!
+    // Position dans la page, que l'écran ait défilé ou non.
+    return Math.round(boite.y + (await page.evaluate(() => window.scrollY)))
+  }
+  const priere = /^(Voir|Masquer) la prière$/
+  const passage = /^(Lire|Masquer) le passage$/
+  const avant = [await position(priere), await position(passage)]
+  await page.getByRole('button', { name: 'Voir la prière' }).tap()
+  expect([await position(priere), await position(passage)]).toEqual(avant)
+  await page.getByRole('button', { name: 'Lire le passage' }).tap()
+  expect([await position(priere), await position(passage)]).toEqual(avant)
+})
+
 test.describe('choix de la série', () => {
   const SERIES: [string, string, string][] = [
     ['Mystères lumineux', 'Le jeudi', 'Le Baptême de Jésus au Jourdain'],
