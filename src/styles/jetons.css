@@ -92,6 +92,28 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Sous les barres d'Android, transparentes, deux bandes de parchemin cachent ce
+   qui défile : le texte ne passe jamais sous l'heure ni sous les boutons du
+   système. Elles n'ont de hauteur que sur le téléphone. Contrôlé par
+   e2e/barres.spec.ts. */
+.voile-barre {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--parchemin);
+}
+
+.voile-barre-haut {
+  top: 0;
+  height: var(--bord-haut);
+}
+
+.voile-barre-bas {
+  bottom: 0;
+  height: var(--bord-bas);
+}
+
 /* Grain de papier très léger. */
 body::before {
   content: '';

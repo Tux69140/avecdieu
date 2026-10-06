@@ -45,6 +45,10 @@ volontairement le code visé et vérifier que le test échoue, puis réparer.
 - **Une suite lancée sur une machine encombrée ment** : des échecs dispersés sans rapport entre
   eux après plusieurs lancements rapprochés font d'abord soupçonner les navigateurs de test
   restés ouverts, pas le code.
+- **Les barres d'Android ne se voient pas dans le navigateur** : sur le téléphone, l'app s'étend
+  sous les barres d'état et de navigation, transparentes. `e2e/barres.spec.ts` simule leur
+  hauteur ; tout nouvel écran y est ajouté, et tout élément fixé en haut ou en bas s'écarte des
+  jetons `--bord-*`.
 - **Les parcours tournent contre la version construite** (`vite preview`, port 4173) : c'est
   elle qui ira dans l'APK.
 

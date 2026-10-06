@@ -1,0 +1,101 @@
+import { expect, test, type Page } from '@playwright/test'
+import { readFileSync } from 'node:fs'
+import { commencer, preparer, suivant } from './outils.ts'
+
+// Sur le téléphone, l'app s'étend sous les barres d'Android (état en haut,
+// navigation en bas), transparentes. Capacitor donne leur hauteur dans les
+// variables --safe-area-inset-* ; on les simule ici comme sur le Xiaomi. Rien
+// ne doit s'afficher sous les barres, ni en haut de page ni en défilant
+// (défaut vu deux fois sur le téléphone du porteur du projet).
+const HAUT = 40
+const BAS = 48
+
+async function simulerBarres(page: Page) {
+  await page.addInitScript(
+    ({ haut, bas }) => {
+      // Le script passe avant que la page existe : on attend sa racine.
+      const appliquer = () => {
+        const racine = document.documentElement.style
+        racine.setProperty('--safe-area-inset-top', `${haut}px`)
+        racine.setProperty('--safe-area-inset-bottom', `${bas}px`)
+      }
+      if (document.documentElement) appliquer()
+      else document.addEventListener('readystatechange', appliquer, { once: true })
+    },
+    { haut: HAUT, bas: BAS },
+  )
+}
+
+// Ce qui s'affiche au point (x, y) de l'écran.
+const auPoint = (page: Page, x: number, y: number) =>
+  page.evaluate(([x, y]) => document.elementFromPoint(x, y)?.className ?? '', [x, y])
+
+async function verifierBarres(page: Page) {
+  const { width, height } = page.viewportSize()!
+  await expect.poll(() => page.evaluate(() => document.getAnimations().length)).toBe(0)
+  const hauteur = await page.evaluate(() => document.documentElement.scrollHeight)
+  // En haut de page, au milieu, puis tout en bas.
+  for (const y of [0, (hauteur - height) / 2, hauteur]) {
+    await page.evaluate((y) => window.scrollTo(0, y), y)
+    for (const x of [20, width / 2, width - 20]) {
+      expect(await auPoint(page, x, HAUT / 2), `barre du haut, défilement ${y}`).toContain(
+        'voile-barre',
+      )
+      expect(await auPoint(page, x, height - BAS / 2), `barre du bas, défilement ${y}`).toContain(
+        'voile-barre',
+      )
+    }
+  }
+  // Rien d'utile ne commence sous la barre du haut.
+  await page.evaluate(() => window.scrollTo(0, 0))
+  const premier = await page.evaluate(() => {
+    const visibles = [...document.querySelectorAll('main *')].filter(
+      (e) => e.getBoundingClientRect().height > 0,
+    )
+    return Math.min(...visibles.map((e) => e.getBoundingClientRect().top))
+  })
+  expect(premier).toBeGreaterThanOrEqual(HAUT)
+}
+
+test.beforeEach(async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 640 })
+  await page.clock.setFixedTime(new Date(2026, 9, 5, 10, 0))
+  await simulerBarres(page)
+})
+
+test('Capacitor fournit la hauteur des barres (réglage « css »)', () => {
+  // Une valeur invalide a déjà privé l'app de la hauteur des barres.
+  const config = readFileSync('capacitor.config.ts', 'utf8')
+  expect(config).toMatch(/insetsHandling: 'css'/)
+})
+
+for (const [nom, chemin] of [
+  ['seuil', '/chapelet'],
+  ['menu', '/menu'],
+  ['réglages', '/reglages'],
+  ['à propos', '/a-propos'],
+]) {
+  test(`${nom} : rien sous les barres d’Android`, async ({ page }) => {
+    await preparer(page)
+    await page.goto(chemin)
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+    await verifierBarres(page)
+  })
+}
+
+test('chapelet : rien sous les barres d’Android', async ({ page }) => {
+  await commencer(page)
+  await verifierBarres(page)
+})
+
+test('annonce d’un mystère : la grosse perle reste au-dessus de la barre du bas', async ({
+  page,
+}) => {
+  await commencer(page)
+  for (let i = 0; i < 7; i++) await suivant(page)
+  const perle = page.getByRole('button', { name: 'Commencer la dizaine' })
+  await expect(perle).toBeVisible()
+  const boite = (await perle.boundingBox())!
+  expect(boite.y + boite.height).toBeLessThanOrEqual(page.viewportSize()!.height - BAS)
+  await verifierBarres(page)
+})
