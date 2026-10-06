@@ -198,3 +198,26 @@ test('l’accueil mène au chapelet en attendant la phase 8', async ({ page }) =
   await page.goto('/')
   await expect(page).toHaveURL(/\/chapelet$/)
 })
+
+test('le compteur se place à droite du titre, sur sa ligne, le titre restant centré', async ({
+  page,
+}) => {
+  // Le plus petit téléphone visé.
+  await page.setViewportSize({ width: 360, height: 760 })
+  await page.goto('/chapelet')
+  await expect(page.getByRole('heading', { level: 2 })).toHaveText('Signe de croix')
+  for (let i = 0; i < 3; i++) await toucher(page)
+  await expect(page.getByTestId('compteur')).toHaveText('1 / 3')
+  await expect.poll(() => page.evaluate(() => document.getAnimations().length)).toBe(0)
+
+  const titre = (await page.getByTestId('priere').getByRole('heading', { level: 2 }).boundingBox())!
+  const compteur = (await page.getByTestId('compteur').boundingBox())!
+  // Même ligne : les deux boîtes se recouvrent verticalement.
+  expect(compteur.y).toBeLessThan(titre.y + titre.height)
+  expect(compteur.y + compteur.height).toBeGreaterThan(titre.y)
+  // À droite du titre, sans le chevaucher ni sortir de l'écran.
+  expect(compteur.x).toBeGreaterThanOrEqual(titre.x + titre.width)
+  expect(compteur.x + compteur.width).toBeLessThanOrEqual(360)
+  // Titre centré sur l'écran, à une vingtaine de pixels près sur un petit écran.
+  expect(Math.abs(titre.x + titre.width / 2 - 180)).toBeLessThan(20)
+})

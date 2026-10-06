@@ -53,10 +53,23 @@
   line-height: 1.2;
 }
 
+/* Titre centré, compteur à sa droite sur la même ligne (choix du porteur du
+   projet). La colonne de droite garde toujours la place du compteur : sur un
+   petit écran, le titre se décale un peu plutôt que de le chevaucher. */
 .priere-tete {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(max-content, 1fr);
+  align-items: baseline;
+  column-gap: var(--esp-sm);
+}
+
+.priere-tete h2 {
+  grid-column: 2;
+}
+
+.priere-tete .compteur {
+  grid-column: 3;
+  justify-self: end;
 }
 
 .priere-tete h2,
