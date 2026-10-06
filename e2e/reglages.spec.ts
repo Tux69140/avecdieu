@@ -4,7 +4,7 @@ import {
   espionner,
   journal,
   preparer,
-  suivant,
+  avancer,
   toucher,
   type Reglages,
 } from './outils.ts'
@@ -19,10 +19,6 @@ const dizaine = (d: number) => 7 + (d - 1) * 14
 
 const titrePriere = (page: Page) => page.getByTestId('priere').getByRole('heading', { level: 2 })
 const reglage = (page: Page, nom: string | RegExp) => page.getByRole('switch', { name: nom })
-
-async function avancer(page: Page, fois: number) {
-  for (let i = 0; i < fois; i++) await suivant(page)
-}
 
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(LUNDI)
@@ -188,6 +184,8 @@ test.describe('vibrations', () => {
     await page.goBack()
     await reglage(page, 'Vibrations').click()
     await page.getByRole('button', { name: 'Reprendre à la 1re dizaine' }).click()
+    // Une touche pressée avant que la prière reprise soit affichée serait perdue.
+    await expect(titrePriere(page)).toHaveText('Notre Père')
     await toucher(page)
     await expect(page.getByTestId('compteur')).toHaveText('1 / 10')
     await expect.poll(() => journal(page)).toContain('vibre 40')

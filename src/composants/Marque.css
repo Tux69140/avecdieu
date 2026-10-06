@@ -1,12 +1,36 @@
-.marque {
+/* Doublé pour l’emporter sur la règle des vers, un par ligne. */
+.marque.marque {
+  display: inline;
+  margin-right: 0.25em;
+  font-family: var(--texte);
+  color: var(--rubrique);
+  white-space: nowrap;
+}
+
+.marque .marque-lettre {
+  position: relative;
   display: inline-block;
-  width: 1.2em;
-  height: 1.2em;
-  margin-right: 0.3em;
-  vertical-align: -0.2em;
-  fill: none;
-  stroke: var(--rubrique);
-  stroke-width: 1.6;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+}
+
+/* Le trait qui barre la lettre : sur le jambage droit du V, sur la queue du R. */
+.marque-lettre::after {
+  content: '';
+  position: absolute;
+  height: 0.06em;
+  background: currentColor;
+  transform-origin: left center;
+}
+
+.marque-v .marque-lettre::after {
+  left: 0.42em;
+  top: 0.82em;
+  width: 0.5em;
+  transform: rotate(-38deg);
+}
+
+.marque-r .marque-lettre::after {
+  left: 0.38em;
+  top: 1.02em;
+  width: 0.5em;
+  transform: rotate(-38deg);
 }

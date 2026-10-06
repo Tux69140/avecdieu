@@ -69,6 +69,17 @@ export async function commencer(page: Page, chemin = '/chapelet', ouverture: Ouv
   )
 }
 
+// Avance de plusieurs étapes, en attendant chacune : un toucher donné avant que
+// l'annonce soit affichée tomberait à côté de sa grosse perle.
+export async function avancer(page: Page, fois: number) {
+  const chapelet = page.locator('main.chapelet')
+  for (let i = 0; i < fois; i++) {
+    const pas = Number(await chapelet.getAttribute('data-pas'))
+    await suivant(page)
+    await expect(chapelet).toHaveAttribute('data-pas', String(pas + 1))
+  }
+}
+
 // Étape suivante : un toucher, ou la grosse perle sur l'annonce d'un mystère.
 export async function suivant(page: Page) {
   const perle = page.getByRole('button', { name: 'Commencer la dizaine' })

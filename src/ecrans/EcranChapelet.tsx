@@ -164,6 +164,7 @@ function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisi
   return (
     <main
       className="chapelet"
+      data-pas={index}
       onPointerDown={appui}
       onPointerUp={relachement}
       onPointerCancel={() => (debutGeste.current = null)}

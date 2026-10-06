@@ -1,6 +1,6 @@
 import { AxeBuilder } from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
-import { commencer, preparer, suivant } from './outils.ts'
+import { avancer, commencer, preparer } from './outils.ts'
 
 // Contrôle automatique d'accessibilité (contrastes, titres, libellés ARIA) :
 // échoue sur toute violation grave ou critique. Le clavier et le lecteur
@@ -12,10 +12,6 @@ async function violationsGraves(page: Page) {
   return violations
     .filter((v) => v.impact === 'serious' || v.impact === 'critical')
     .map((v) => `${v.id} : ${v.help} (${v.nodes.length} élément(s))`)
-}
-
-async function avancer(page: Page, fois: number) {
-  for (let i = 0; i < fois; i++) await suivant(page)
 }
 
 test.beforeEach(async ({ page }) => {
