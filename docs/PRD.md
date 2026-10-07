@@ -206,7 +206,7 @@ Avec Dieu accompagne la prière de toute la journée sur un téléphone Android.
   - le soleil avance au fil de la journée.
 - **Le style** est celui d'un livre liturgique : fond crème comme un parchemin, tons or et brun, rubriques en rouge, titres en capitales à empattements, pastille de la couleur liturgique.
 - **Le thème nuit** s'active automatiquement selon le réglage d'Android ou après le coucher du soleil.
-- **Transitions douces et sobres**, désactivées si Android demande de réduire les animations. Taille du texte réglable.
+- **Transitions douces et sobres**, désactivées si Android demande de réduire les animations. Taille du texte réglable, dans les Réglages ou en pinçant deux doigts dans les offices et au chapelet.
 - **Zone liturgique :** France par défaut, modifiable. Changer de zone recharge les textes.
 - Interface en français uniquement.
 

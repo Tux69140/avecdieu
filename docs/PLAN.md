@@ -263,7 +263,9 @@ L'app garde toujours au moins 7 jours d'offices et de jours liturgiques d'avance
 
 Dans les réglages :
 - le choix de la zone liturgique (France par défaut) ; en changer recharge les textes ;
-- la taille du texte (de 16 à 24 px).
+- la taille du texte (de 16 à 24 px), avec de quoi revenir à la taille d'origine.
+
+Dans les offices et au chapelet, pincer ou écarter deux doigts règle cette même taille, comme dans l'app de l'AELF (demande du porteur du projet, 2026-10-07) ; l'app la retient.
 
 Le thème nuit s'active automatiquement selon le réglage d'Android. Toutes les animations sont coupées si Android demande de les réduire. Les transitions douces de `docs/DESIGN.md` sont mises en place.
 
@@ -272,6 +274,7 @@ Le thème nuit s'active automatiquement selon le réglage d'Android. Toutes les 
 - [ ] Changer de zone vide puis recharge le cache, et les offices affichés correspondent à la nouvelle zone.
 - [ ] Le thème nuit suit le réglage d'Android, et tous les écrans respectent les jetons nuit.
 - [ ] La taille du texte s'applique aux offices et au chapelet, et persiste.
+- [ ] Pincer ou écarter deux doigts dans un office ou au chapelet change la taille du texte entre 16 et 24 px, sans faire avancer le chapelet (parcours Playwright).
 - [ ] Avec « réduire les animations », aucune transition ne joue (test).
 - [ ] À vérifier : le comportement de la zone `france` un jour de fête propre à la France (hypothèse du PRD).
 
