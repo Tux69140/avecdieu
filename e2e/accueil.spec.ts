@@ -218,6 +218,8 @@ test('rien ne sort de l’app que les demandes à l’AELF', async ({ page }) =>
 test.describe('glisser sur le cadran', () => {
   // Le milieu du cadran, à l'écart des perles.
   const milieu = async (page: Page) => {
+    // Le jour change en redessinant l'accueil : attendre que le cadran soit là.
+    await expect(page.locator('.accueil-cadran')).toBeVisible()
     const boite = (await page.locator('.accueil-cadran').boundingBox())!
     return boite.y + boite.height / 2
   }
@@ -248,4 +250,16 @@ test.describe('glisser sur le cadran', () => {
     await glisserDepuis(page, sexte.x + sexte.width / 2, sexte.y + sexte.height / 2, -120)
     await expect(page).toHaveURL('/jour/2026-10-07')
   })
+})
+
+test('le chapelet sous les offices, à son heure, atténué une fois passée', async ({ page }) => {
+  await ouvrir(page, MARDI(17, 50))
+  const chapelet = page.getByRole('list', { name: 'Chapelet' }).getByRole('listitem')
+  await expect(chapelet).toHaveText(/^Chapelet20 h$/)
+  await expect(chapelet).not.toHaveAttribute('data-etat', 'passe')
+  await page.clock.setFixedTime(MARDI(20, 5))
+  await page.reload()
+  await expect(chapelet).toHaveAttribute('data-etat', 'passe')
+  await chapelet.getByRole('link').click()
+  await expect(page).toHaveURL(/\/chapelet$/)
 })

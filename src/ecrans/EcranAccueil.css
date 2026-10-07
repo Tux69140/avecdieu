@@ -232,3 +232,11 @@
 .accueil-offices [data-etat='moment'] .accueil-office-nom {
   color: var(--rubrique);
 }
+
+/* Le chapelet prolonge la liste des offices, séparé d'eux par un filet d'or
+   posé sur le dernier filet de la liste (demande du porteur du projet). */
+.accueil-chapelet {
+  position: relative;
+  margin-top: -1px;
+  border-top: 1px solid var(--or);
+}

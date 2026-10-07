@@ -6,7 +6,12 @@ import { useGlisserLesJours } from '../accueil/glisserLesJours'
 import { minutesDe, useMaintenant } from '../accueil/maintenant'
 import { ecrireEcart, situerOffices, type Journee } from '../accueil/moment'
 import { dateCourte, dateDuJour, dateLisible, decaler, enDate, estDate } from '../office/dates'
-import { ecrireHeure, heuresDesOffices, heuresSolairesEnService } from '../office/heures'
+import {
+  ecrireHeure,
+  heuresDesOffices,
+  heuresDuJour,
+  heuresSolairesEnService,
+} from '../office/heures'
 import { NOMS_OFFICES, OFFICES } from '../office/modele'
 import { lieuDuSoleil } from '../lieu/lieu'
 import { useLieu } from '../lieu/useLieu'
@@ -97,6 +102,7 @@ function Accueil({ date, aujourdhui, maintenant }: Props) {
       </div>
       {journee && <PriereDuMoment date={date} journee={journee} minutes={minutes} />}
       <ListeOffices date={date} journee={journee} />
+      <LigneChapelet date={date} minutes={estAujourdhui ? minutes : undefined} />
     </main>
   )
 }
@@ -145,6 +151,24 @@ function ListeOffices({ date, journee }: { date: string; journee?: Journee }) {
           </li>
         )
       })}
+    </ul>
+  )
+}
+
+// Le chapelet sous les offices, à son heure (celle des rappels), atténué une
+// fois l'heure passée (demande du porteur du projet, 2026-10-07).
+function LigneChapelet({ date, minutes }: { date: string; minutes?: number }) {
+  const heure = heuresDuJour(date).chapelet
+  const passe =
+    minutes !== undefined && heure !== undefined && heure.heures * 60 + heure.minutes <= minutes
+  return (
+    <ul className="accueil-offices accueil-chapelet" aria-label="Chapelet">
+      <li data-etat={passe ? 'passe' : undefined}>
+        <Link to="/chapelet">
+          <span className="accueil-office-nom">Chapelet</span>
+          <span className="accueil-office-heure">{heure ? ecrireHeure(heure) : ''}</span>
+        </Link>
+      </li>
     </ul>
   )
 }

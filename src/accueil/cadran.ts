@@ -8,14 +8,14 @@ import { ecrireHeure } from '../office/heures'
 // nuit (décision du porteur du projet, 2026-10-07).
 
 export const LARGEUR = 360
-export const HAUTEUR = 180
+export const HAUTEUR = 156
 
 const ANGLE_DEBUT = 165
 const ANGLE_FIN = 15
 const CX = 180
-const CY = 160
+const CY = 136
 const RX = 158
-const RY = 124
+const RY = 100
 
 export interface Point {
   x: number

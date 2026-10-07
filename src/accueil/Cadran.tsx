@@ -34,7 +34,7 @@ interface Props {
 
 // La nuit, le croissant se tient au ciel, sous le sommet de l'arc : posé à
 // l'heure qu'il est, il se cacherait derrière la perle des complies.
-const LUNE = { x: LARGEUR / 2, y: 64 }
+const LUNE = { x: LARGEUR / 2, y: 66 }
 
 const enMinutes = ({ heures, minutes }: Heure) => heures * 60 + minutes
 const pourcents = ({ x, y }: Point) => ({
