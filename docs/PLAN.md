@@ -379,11 +379,11 @@ Décisions du porteur du projet (2026-10-07, cadrage en cours) :
 
 ### Critères d'acceptation
 
-- [ ] Les levers et couchers calculés s'écartent de moins de 2 minutes des éphémérides officielles, pour plusieurs villes et dates (critère de succès 5).
-- [ ] Tierce, sexte et none tombent exactement au quart, à la moitié et aux trois quarts du jour solaire, décalage compris.
-- [ ] La saisie d'une ville introuvable affiche l'erreur prévue dans le design, et la position ne quitte jamais le téléphone.
-- [ ] Un déplacement simulé de plus de 50 km, avec l'option active, recalcule les heures et reprogramme les rappels. En dessous de 50 km, rien ne change.
-- [ ] Le cadran en mode solaire place les perles sur l'arc du lever au coucher.
+- [x] Les levers et couchers calculés s'écartent de moins de 2 minutes des éphémérides officielles, pour plusieurs villes et dates (critère de succès 5).
+- [x] Tierce, sexte et none tombent exactement au quart, à la moitié et aux trois quarts du jour solaire, décalage compris.
+- [x] La saisie d'une ville introuvable affiche l'erreur prévue dans le design, et la position ne quitte jamais le téléphone.
+- [x] Un déplacement simulé de plus de 50 km, avec l'option active, recalcule les heures et reprogramme les rappels. En dessous de 50 km, rien ne change.
+- [x] Le cadran en mode solaire place les perles sur l'arc du lever au coucher.
 
 ## Bloquée par
 
