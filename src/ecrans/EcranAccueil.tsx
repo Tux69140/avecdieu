@@ -4,7 +4,7 @@ import { astre } from '../accueil/cadran'
 import { Cadran } from '../accueil/Cadran'
 import { useGlisserLesJours } from '../accueil/glisserLesJours'
 import { minutesDe, useMaintenant } from '../accueil/maintenant'
-import { ecrireEcart, situerOffices, type Journee } from '../accueil/moment'
+import { situerOffices, type Journee } from '../accueil/moment'
 import { dateCourte, dateDuJour, dateLisible, decaler, enDate, estDate } from '../office/dates'
 import {
   ecrireHeure,
@@ -100,53 +100,31 @@ function Accueil({ date, aujourdhui, maintenant }: Props) {
           <BandeauJour date={date} />
         </Cadran>
       </div>
-      {journee && <PriereDuMoment date={date} journee={journee} minutes={minutes} />}
       <ListeOffices date={date} journee={journee} />
       <LigneChapelet date={date} minutes={estAujourdhui ? minutes : undefined} />
     </main>
   )
 }
 
-// Tout l'encadré se touche ; le chevron d'or, à droite, centré sur ses trois
-// lignes (idée du porteur du projet, 2026-10-06).
-function PriereDuMoment({
-  date,
-  journee,
-  minutes,
-}: {
-  date: string
-  journee: Journee
-  minutes: number
-}) {
-  const office = journee.moment
-  const heure = office && heuresDesOffices(date)[office]
-  if (!office || !heure) return null
-  return (
-    <Link className="accueil-moment" to={`/office/${office}/${date}`} data-testid="moment">
-      <span className="etiquette">Prière du moment</span>
-      <span className="accueil-moment-nom">{NOMS_OFFICES[office]}</span>
-      <span className="accueil-moment-heure">
-        {ecrireHeure(heure)} · {ecrireEcart(heure, minutes)}
-      </span>
-    </Link>
-  )
-}
-
 // Les sept offices ; l'office des lectures, sans heure, se dit à toute heure.
-// Un office passé est atténué, mais s'ouvre comme les autres.
+// Un office passé est atténué, mais s'ouvre comme les autres. L'office du
+// moment porte le badge « Prière du moment » (il remplace l'encadré
+// d'origine, à la demande du porteur du projet, 2026-10-07).
 function ListeOffices({ date, journee }: { date: string; journee?: Journee }) {
   const heures = heuresDesOffices(date)
   return (
     <ul className="accueil-offices" aria-label="Offices du jour">
       {OFFICES.map((office) => {
         const heure = heures[office]
+        const duMoment = journee?.moment === office && heure !== undefined
         return (
           <li key={office} data-etat={journee?.etats[office]}>
-            <Link to={`/office/${office}/${date}`}>
+            <Link to={`/office/${office}/${date}`} data-testid={duMoment ? 'moment' : undefined}>
               <span className="accueil-office-nom">{NOMS_OFFICES[office]}</span>
               <span className="accueil-office-heure">
                 {heure ? ecrireHeure(heure) : 'à toute heure'}
               </span>
+              {duMoment && <span className="accueil-moment">Prière du moment</span>}
             </Link>
           </li>
         )

@@ -130,54 +130,6 @@
   padding: var(--esp-xs);
 }
 
-/* La prière du moment : un seul toucher pour prier. */
-.accueil-moment {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  margin-top: var(--esp-md);
-  padding: calc(var(--esp-sm) + var(--esp-xs)) var(--esp-md) calc(var(--esp-sm) + var(--esp-xs))
-    20px;
-  border: 1px solid var(--filet);
-  border-radius: var(--r-lg);
-  background: var(--velin);
-  color: var(--encre);
-  text-decoration: none;
-}
-
-.accueil-moment > span {
-  grid-column: 1;
-}
-
-.accueil-moment::after {
-  content: '›';
-  grid-column: 2;
-  grid-row: 1 / 4;
-  align-self: center;
-  padding-left: var(--esp-md);
-  font-size: 34px;
-  line-height: 1;
-  color: var(--or-fonce);
-}
-
-.accueil-moment:active {
-  background: var(--halo);
-}
-
-.accueil-moment-nom {
-  font-family: var(--display);
-  font-size: 28px;
-  line-height: 1.1;
-}
-
-.accueil-moment-heure {
-  font-family: var(--sc);
-  font-weight: 600;
-  font-size: 17px;
-  letter-spacing: 0.04em;
-  color: var(--sepia);
-  font-variant-numeric: lining-nums;
-}
-
 /* Les sept offices : une ligne chacun, filets fins, flèche d'or. */
 .accueil-offices {
   list-style: none;
@@ -192,7 +144,8 @@
 
 .accueil-offices a {
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  /* Le nom, le badge de l'office du moment, l'heure, la flèche. */
+  grid-template-columns: auto 1fr auto auto;
   align-items: center;
   gap: var(--esp-sm);
   /* 48 px : la cible tactile minimale, pour que les complies et le chapelet
@@ -203,11 +156,13 @@
 }
 
 .accueil-office-nom {
+  grid-column: 1;
   font-family: var(--display);
   font-size: 21px;
 }
 
 .accueil-office-heure {
+  grid-column: 3;
   font-family: var(--sc);
   font-weight: 600;
   font-size: 16px;
@@ -218,6 +173,8 @@
 
 .accueil-offices a::after {
   content: '›';
+  grid-row: 1;
+  grid-column: 4;
   font-size: 26px;
   line-height: 1;
   color: var(--or-fonce);
@@ -242,4 +199,24 @@
   position: relative;
   margin-top: -1px;
   border-top: 1px solid var(--or);
+}
+
+/* L'office du moment : juste après son nom, un badge discret, en minuscules
+   italiques pour tenir sur la ligne des complies à 360 px (demande du porteur
+   du projet, 2026-10-07). */
+.accueil-moment {
+  grid-row: 1;
+  grid-column: 2;
+  justify-self: start;
+  /* De l'air après le nom : collé à lui, le badge étouffe la ligne. */
+  margin-left: var(--esp-sm);
+  padding: 0 var(--esp-xs);
+  border: 1px solid var(--rubrique);
+  border-radius: 9999px;
+  font-family: var(--texte);
+  font-size: 11px;
+  font-style: italic;
+  line-height: 1.3;
+  white-space: nowrap;
+  color: var(--rubrique);
 }

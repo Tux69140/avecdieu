@@ -19,7 +19,7 @@
 
 ## Typography
 - **Display/Hero** : Baumans (400, seule graisse, pas d'italique) — titres : nom de l'app, fête du jour, noms d'offices, titres de cartes. Choix décalé assumé par le porteur du projet ; jamais en dessous de 20 px.
-- **Rubriques / dates** : Cormorant SC (500, 600) — vraies petites capitales pour les dates, libellés (« Prière du moment », « Antienne 1 »), V/ R/, repères du cadran, lettrines ; interlettrage 0,06–0,1 em ; jamais en dessous de 14 px.
+- **Rubriques / dates** : Cormorant SC (500, 600) — vraies petites capitales pour les dates, libellés (« Antienne 1 »), V/ R/, repères du cadran, lettrines ; interlettrage 0,06–0,1 em ; jamais en dessous de 14 px.
 - **Body** : Literata (400, 500, 600 + italique, taille optique automatique) — tout le texte des prières, les antiennes (italique), les boutons (500), les réglages.
 - **Data/Tables** : Literata avec `tabular-nums lining-nums` — heures des offices, compteurs.
 - **Code** : sans objet (aucun code affiché dans l'app).
@@ -80,3 +80,4 @@
 | 2026-10-07 | Office : en-tête sur une ligne, vers resserrés ; interrupteurs lisibles | Comparaison avec l'app AELF et critique Impeccable, validées par le porteur du projet : ‹ date ☰ sur une ligne de 48 px, titre à 32 px, fil de perles sous le titre (ouvre le sommaire), repères 16/12 px ; interrupteur allumé = rail plein d'or (or foncé le jour, 3,85:1), éteint = rail vide cerclé de sépia |
 | 2026-10-07 | Barre d'office qui s'efface ; menu des prières du jour | Validés par le porteur du projet : la barre (‹, étape et fil de perles, ☰) se cache en lisant, revient après 32 px de remontée et en fin d'office ; le menu ☰ liste les 7 offices et le chapelet à leur heure, l'office ouvert marqué de la perle rosée ; chaque écran s'ouvre en haut, le retour retrouve sa place |
 | 2026-10-07 | Accueil resserré | Validé par le porteur du projet : lignes des offices à 48 px, marges réduites ; à 360 × 780, l'écran montre tout jusqu'aux complies sans défiler, cadran inchangé |
+| 2026-10-07 | Accueil : badge « Prière du moment » sur la ligne de l'office | Demande du porteur du projet : l'encadré répétait la liste ; badge discret cerclé de rouge, Literata italique 11 px (plus étroite que les petites capitales), sans délai, écarté du nom de 8 px ; tout tient à 360 px jusqu'au chapelet |

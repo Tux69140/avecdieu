@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { HEURES_PAR_DEFAUT } from '../office/heures'
-import { ecrireEcart, situerOffices } from './moment'
+import { situerOffices } from './moment'
 
 const a = (heures: number, minutes = 0) => heures * 60 + minutes
 const situer = (maintenant: number) => situerOffices(HEURES_PAR_DEFAUT, maintenant)
@@ -54,19 +54,5 @@ describe('situerOffices', () => {
     const heures = { ...HEURES_PAR_DEFAUT, tierce: { heures: 7, minutes: 30 } }
     expect(situerOffices(heures, a(7, 40)).moment).toBe('tierce')
     expect(situerOffices(heures, a(7, 40)).etats.laudes).toBe('passe')
-  })
-})
-
-describe('ecrireEcart', () => {
-  it.each([
-    [{ heures: 18, minutes: 30 }, a(17, 50), 'dans 40 min'],
-    [{ heures: 18, minutes: 30 }, a(18, 40), 'depuis 10 min'],
-    [{ heures: 21, minutes: 30 }, a(19, 15), 'dans 2 h 15'],
-    [{ heures: 9, minutes: 0 }, a(8, 0), 'dans 1 h'],
-    [{ heures: 7, minutes: 0 }, a(0, 55), 'dans 6 h 05'],
-    [{ heures: 21, minutes: 30 }, a(23, 45), 'depuis 2 h 15'],
-    [{ heures: 12, minutes: 0 }, a(12, 0), 'maintenant'],
-  ])('%o à %i min : « %s »', (heure, maintenant, texte) => {
-    expect(ecrireEcart(heure, maintenant)).toBe(texte)
   })
 })

@@ -43,17 +43,3 @@ export function situerOffices(
   }
   return { moment: moment?.nom, etats }
 }
-
-const duree = (minutes: number) => {
-  if (minutes < 60) return `${minutes} min`
-  const reste = minutes % 60
-  const heures = Math.floor(minutes / 60)
-  return reste === 0 ? `${heures} h` : `${heures} h ${String(reste).padStart(2, '0')}`
-}
-
-// « dans 40 min », « depuis 10 min », « dans 2 h 15 ».
-export function ecrireEcart(heure: Heure, maintenant: number): string {
-  const ecart = enMinutes(heure) - maintenant
-  if (ecart === 0) return 'maintenant'
-  return ecart > 0 ? `dans ${duree(ecart)}` : `depuis ${duree(-ecart)}`
-}

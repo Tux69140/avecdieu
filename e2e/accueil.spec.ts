@@ -35,18 +35,22 @@ test('un dimanche, le titre dit le jour, sans ligne de semaine', async ({ page }
   await expect(bandeau(page).locator('p')).toHaveText(['28e dimanche du temps ordinaire'])
 })
 
-for (const [heure, minutes, office, ecart, astre] of [
-  [7, 30, 'Laudes', '7 h · depuis 30 min', 'lune'],
-  [8, 10, 'Tierce', '9 h · dans 50 min', 'soleil'],
-  [12, 10, 'Sexte', '12 h · depuis 10 min', 'soleil'],
-  [17, 50, 'Vêpres', '18 h 30 · dans 40 min', 'soleil'],
-  [18, 40, 'Vêpres', '18 h 30 · depuis 10 min', 'soleil'],
-  [19, 45, 'Complies', '21 h 30 · dans 1 h 45', 'lune'],
-  [23, 50, 'Complies', '21 h 30 · depuis 2 h 20', 'lune'],
+for (const [heure, minutes, office, horaire, astre] of [
+  [7, 30, 'Laudes', '7 h', 'lune'],
+  [8, 10, 'Tierce', '9 h', 'soleil'],
+  [12, 10, 'Sexte', '12 h', 'soleil'],
+  [17, 50, 'Vêpres', '18 h 30', 'soleil'],
+  [18, 40, 'Vêpres', '18 h 30', 'soleil'],
+  [19, 45, 'Complies', '21 h 30', 'lune'],
+  [23, 50, 'Complies', '21 h 30', 'lune'],
 ] as const) {
   test(`à ${heure} h ${minutes}, prière du moment : ${office}`, async ({ page }) => {
     await ouvrir(page, MARDI(heure, minutes))
-    await expect(moment(page)).toHaveText(`Prière du moment${office}${ecart}`)
+    // Le badge sur la ligne de l'office, dans la liste : plus d'encadré à part.
+    await expect(moment(page)).toHaveText(`${office}${horaire}Prière du moment`)
+    await expect(
+      page.getByRole('list', { name: 'Offices du jour' }).getByTestId('moment'),
+    ).toHaveCount(1)
     await expect(page.getByTestId(astre)).toBeVisible()
     await expect(page.getByTestId(astre === 'lune' ? 'soleil' : 'lune')).toHaveCount(0)
   })
