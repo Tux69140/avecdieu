@@ -24,7 +24,7 @@
 - **Data/Tables** : Literata avec `tabular-nums lining-nums` — heures des offices, compteurs.
 - **Code** : sans objet (aucun code affiché dans l'app).
 - **Loading** : `https://fonts.googleapis.com/css2?family=Baumans&family=Cormorant+SC:wght@500;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;1,7..72,400&display=swap` — à auto-héberger dans l'app (hors-ligne dès le premier lancement). `font-synthesis: none` pour interdire le faux gras de Baumans.
-- **Scale** : 14 (libellés SC) / 16 (notes, heures) / 18 (texte des prières, défaut ; réglable 16 → 24) / 22 (nom d'office en liste) / 30 (titre de carte) / 40 (titre d'office) / 56 px (titre). Interligne du texte 1,65.
+- **Scale** : 14 (libellés SC) / 16 (notes, heures) / 18 (texte des prières, défaut ; réglable 16 → 24) / 22 (nom d'office en liste) / 30 (titre de carte) / 32 (titre d'office) / 56 px (titre). Interligne du texte 1,65 ; vers des psaumes, cantiques et hymnes 1,5.
 - **Psalmodie** : syllabes accentuées soulignées d'un trait fin rouge (1 px, décalé de 3 px), masquables ; numéros de versets en exposant rouge 12 px.
 
 ## Color
@@ -77,3 +77,4 @@
 | 2026-10-06 | Accueil : lune sous le sommet de l'arc, pastille seule | La lune posée à l'heure se cachait derrière la perle des complies ; une seule pastille sans texte, choix du porteur du projet pour un écran simple à lire |
 | 2026-10-07 | Accueil : arc aplati, ligne du chapelet sous les offices | Demandes du porteur du projet après essai ; le chapelet dessiné passe couché, croix pendue la tête en haut (il refuse la croix couchée) |
 | 2026-10-07 | Lueur rosée de toutes les perles en cours | Choix du porteur du projet : chapelet dessiné, grosse perle de l'annonce, fil de perles des offices, office du moment sur le cadran ; le soleil du cadran garde son halo d'or |
+| 2026-10-07 | Office : en-tête sur une ligne, vers resserrés ; interrupteurs lisibles | Comparaison avec l'app AELF et critique Impeccable, validées par le porteur du projet : ‹ date ☰ sur une ligne de 48 px, titre à 32 px, fil de perles sous le titre (ouvre le sommaire), repères 16/12 px ; interrupteur allumé = rail plein d'or (or foncé le jour, 3,85:1), éteint = rail vide cerclé de sépia |

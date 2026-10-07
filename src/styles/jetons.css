@@ -26,6 +26,9 @@
   /* Lueur rosée des perles en cours et du Gloire au Père : la rubrique très
      diluée (choix du porteur du projet, 2026-10-07). */
   --halo-perle: rgba(158, 42, 31, 0.3);
+  /* Interrupteur allumé : rail plein, au moins 3:1 sur le parchemin (WCAG 1.4.11). */
+  --interrupteur-actif: #8a6a2a;
+  --interrupteur-curseur: #f6efe2;
   /* Relief des perles du chapelet : reflet et ombre de chaque matière. */
   --or-reflet: #e9cf8e;
   --soleil-reflet: #fbe6a6;
@@ -90,6 +93,8 @@
   --soleil: #e2b45a;
   --halo: rgba(226, 180, 90, 0.22);
   --halo-perle: rgba(224, 122, 106, 0.3);
+  --interrupteur-actif: #c9a45c;
+  --interrupteur-curseur: #14100c;
   --or-reflet: #e9cf8e;
   --soleil-reflet: #f5dc98;
   --soleil-ombre: #9a6c1c;

@@ -6,26 +6,74 @@
 }
 
 .office-entete {
-  margin: var(--esp-sm) 0 var(--esp-xl);
+  margin: 0 0 var(--esp-lg);
   text-align: center;
+}
+
+/* ‹ à gauche, la date au milieu, ☰ à droite, sur une ligne de 48 px. */
+.office-barre {
+  display: grid;
+  grid-template-columns: 48px 1fr 48px;
+  align-items: center;
+  margin: 0 calc(-1 * var(--esp-sm));
+}
+
+.office-icone {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--encre);
+  cursor: pointer;
+}
+
+.office-icone svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .office-date {
   margin: 0;
   font-family: var(--sc);
   font-weight: 600;
-  font-size: 17px;
+  font-size: 15px;
   letter-spacing: 0.06em;
   color: var(--sepia);
 }
 
 .office-entete h1 {
-  margin: var(--esp-xs) 0 0;
+  margin: 0;
   font-family: var(--display);
   font-weight: 400;
-  font-size: 40px;
+  font-size: 32px;
   line-height: 1.1;
   text-wrap: balance;
+}
+
+/* Le fil de perles sous le titre : 48 px à toucher pour ouvrir le sommaire. */
+.office-perles {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 48px;
+  margin-top: var(--esp-2xs);
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.office-perles .fil-de-perles {
+  flex: 1;
 }
 
 .office-chargement {

@@ -121,7 +121,7 @@ test.describe('taille du texte', () => {
     await page.goto('/office/laudes/2026-10-06')
     await expect(page.getByTestId('office')).toBeVisible()
     expect(await taille(page, '.office-texte')).toBe('22px')
-    expect(await taille(page, '.office-entete h1')).toBe('40px')
+    expect(await taille(page, '.office-entete h1')).toBe('32px')
     await commencer(page)
     expect(await taille(page, '.priere-texte')).toBe('22px')
 

@@ -2,7 +2,9 @@
   display: flex;
   align-items: center;
   gap: var(--esp-sm);
-  margin: var(--esp-lg) 0;
+  /* Plus serré qu'à l'origine, mais nettement plus large que l'écart entre
+     deux blocs d'une partie (16 px) : les parties restent distinctes. */
+  margin: var(--esp-md) 0 calc(var(--esp-sm) + var(--esp-xs));
 }
 
 .repere::before,

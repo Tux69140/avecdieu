@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
-import { Navigate, useParams } from 'react-router'
+import { Link, Navigate, useParams } from 'react-router'
 import { chargerOffice, ErreurAelf, type OfficeDuJour } from '../aelf/api'
 import type { Etendue } from '../aelf/cache'
 import { textesEnregistres } from '../aelf/reserve'
@@ -13,6 +13,7 @@ import { deplacerInvitatoire, ouvrirOffice } from '../office/journee'
 import { estNomOffice, NOMS_OFFICES, type NomOffice, type Partie } from '../office/modele'
 import { BandeauOffice } from '../office/BandeauOffice'
 import { etapesDe } from '../office/etapes'
+import { FilDePerles } from '../office/FilDePerles'
 import { PartieOffice } from '../office/PartieOffice'
 import { Repere } from '../office/Repere'
 import { invitatoireDe, reconstituer } from '../office/rubriques'
@@ -157,15 +158,33 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
         data-accents={accents ? 'oui' : 'non'}
         data-ajouts={signalerAjouts ? 'oui' : 'non'}
       >
-        <button className="retour lien-discret" type="button" onClick={retour}>
-          ‹ Retour
-        </button>
         <header className="office-entete">
-          <p className="office-date">{dateLisible(date)}</p>
+          {/* Une seule ligne pour sortir, se repérer dans la journée et ouvrir
+              le menu : la prière commence haut sur l'écran. */}
+          <div className="office-barre">
+            <button className="office-icone" type="button" aria-label="Retour" onClick={retour}>
+              <svg viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M12.5 4l-6 6 6 6" />
+              </svg>
+            </button>
+            <p className="office-date">{dateLisible(date)}</p>
+            <Link className="office-icone" to="/menu" aria-label="Menu">
+              <svg viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M3 5h14M3 10h14M3 15h14" />
+              </svg>
+            </Link>
+          </div>
           <h1 ref={titre}>{NOMS_OFFICES[nom]}</h1>
+          {/* Les perles, comme dans le bandeau : un toucher ouvre le sommaire. */}
           {office && (
-            <button className="lien-discret" type="button" onClick={sommaire.ouvrir}>
-              Sommaire
+            <button
+              className="office-perles"
+              type="button"
+              aria-haspopup="dialog"
+              aria-label="Sommaire"
+              onClick={sommaire.ouvrir}
+            >
+              <FilDePerles nombre={etapes.length} courante={courante} />
             </button>
           )}
           {peutRecevoirInvitatoire && (

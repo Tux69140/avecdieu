@@ -43,6 +43,12 @@
   text-wrap: pretty;
 }
 
+/* Les vers (psaumes, cantiques, hymnes) un peu plus serrés que la prose : une
+   strophe tient mieux à l'écran. */
+.partie[data-mise='vers'] {
+  line-height: 1.5;
+}
+
 /* Un vers de psaume ou d'hymne : s'il se coupe, la suite est en retrait. */
 .partie[data-mise='vers'] .office-ligne {
   padding-left: 1.2em;

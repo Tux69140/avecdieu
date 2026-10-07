@@ -25,13 +25,14 @@
   line-height: 1.3;
 }
 
-/* Éteint : un rail cerclé d'or ; allumé : un rail d'encre, curseur à droite. */
+/* Éteint : un rail vide cerclé de sépia, curseur sépia à gauche ; allumé : un
+   rail plein d'or, curseur clair à droite. L'or dit « allumé », jamais l'inverse. */
 .interrupteur-piste {
   flex: none;
   position: relative;
   width: 46px;
   height: 28px;
-  border: 1px solid var(--or);
+  border: 2px solid var(--sepia);
   border-radius: 14px;
   background: transparent;
   transition: background-color 0.2s ease-out;
@@ -39,22 +40,26 @@
 
 .interrupteur-curseur {
   position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 20px;
-  height: 20px;
+  top: 4px;
+  left: 4px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  background: var(--or);
+  background: var(--sepia);
   transition: transform 0.2s ease-out;
 }
 
-.interrupteur [aria-checked='true'] .interrupteur-piste {
-  background: var(--encre);
-  border-color: var(--encre);
+[role='switch'][aria-checked='true'] .interrupteur-piste {
+  background: var(--interrupteur-actif);
+  border-color: var(--interrupteur-actif);
 }
 
-.interrupteur [aria-checked='true'] .interrupteur-curseur {
-  background: var(--velin);
+[role='switch'][aria-checked='true'] .interrupteur-curseur {
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: var(--interrupteur-curseur);
   transform: translateX(18px);
 }
 

@@ -89,16 +89,6 @@
   cursor: pointer;
 }
 
-.rappel-bascule[aria-checked='true'] .interrupteur-piste {
-  background: var(--encre);
-  border-color: var(--encre);
-}
-
-.rappel-bascule[aria-checked='true'] .interrupteur-curseur {
-  background: var(--velin);
-  transform: translateX(18px);
-}
-
 /* Le choix du son, déplié sous la ligne de la prière. */
 .choix-son {
   margin: 0 0 var(--esp-sm) var(--esp-md);
