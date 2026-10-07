@@ -103,7 +103,9 @@ test.describe('écran des réglages', () => {
     const aide = page.getByRole('dialog', { name: 'Prier avec l’app' })
     await aide.getByRole('checkbox', { name: 'Ne plus afficher' }).check()
     await aide.getByRole('button').last().click()
-    await expect(aide).toBeHidden()
+    // Retirée de la page, elle a enregistré son choix (l'événement « close »
+    // arrive après la fermeture : un changement d'écran trop prompt le perdrait).
+    await expect(aide).toHaveCount(0)
 
     await page.goto('/reglages')
     await deplierReglages(page, 'Chapelet')
