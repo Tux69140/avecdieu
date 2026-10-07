@@ -127,6 +127,7 @@ Avec Dieu accompagne la prière de toute la journée sur un téléphone Android.
 16. L'Angélus et l'offrande du matin (décision du porteur du projet, 2026-10-06).
 17. Une carte « Chapelet du jour » sur l'accueil (décision du porteur du projet, 2026-10-06 ; une simple ligne « Chapelet » l'a remplacée le 2026-10-07).
 20. Un calendrier pour sauter à une date lointaine : la navigation se fait jour par jour *(plus tard, si le besoin se fait sentir)*.
+21. Suivre la taille de police choisie dans Android : l'app a sa propre taille du texte et le pincement, et ses écrans dessinés (cadran) déborderaient (décision du porteur du projet, 2026-10-07).
 18. L'office selon le Bréviaire romain de 1960 (Divinum Officium) *(à étudier en fin de développement)*.
 19. Un examen de conscience rédigé et guidé aux complies *(plus tard ; la phase 6 n'en donne que la rubrique et le « Je confesse à Dieu »)*.
 
