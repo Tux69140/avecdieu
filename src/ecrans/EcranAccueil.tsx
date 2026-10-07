@@ -1,7 +1,8 @@
-import { Link, Navigate, useParams } from 'react-router'
+import { Link, Navigate, useNavigate, useParams } from 'react-router'
 import { BandeauJour } from '../accueil/BandeauJour'
 import { astre } from '../accueil/cadran'
 import { Cadran } from '../accueil/Cadran'
+import { useGlisserLesJours } from '../accueil/glisserLesJours'
 import { minutesDe, useMaintenant } from '../accueil/maintenant'
 import { ecrireEcart, situerOffices, type Journee } from '../accueil/moment'
 import { dateCourte, dateDuJour, dateLisible, decaler, enDate, estDate } from '../office/dates'
@@ -41,6 +42,10 @@ function Accueil({ date, aujourdhui, maintenant }: Props) {
   const lendemain = decaler(date, 1)
   // Changer de jour remplace l'adresse : le retour d'Android quitte l'accueil
   // au lieu de repasser par chaque jour parcouru.
+  const naviguer = useNavigate()
+  const glisser = useGlisserLesJours((sens) =>
+    naviguer(routeDuJour(sens === 1 ? lendemain : veille, aujourdhui), { replace: true }),
+  )
   return (
     <main className="accueil">
       <Link className="bouton-menu" to="/menu" state={{ depuis: date }} aria-label="Menu">
@@ -71,18 +76,23 @@ function Accueil({ date, aujourdhui, maintenant }: Props) {
           {dateCourte(lendemain)} ›
         </Link>
       </nav>
-      <Cadran
-        date={date}
-        heures={heures}
-        journee={journee}
-        astre={
-          estAujourdhui
-            ? astre(minutes, { lever: minutesDe(soleil.lever), coucher: minutesDe(soleil.coucher) })
-            : undefined
-        }
-      >
-        <BandeauJour date={date} />
-      </Cadran>
+      <div className="accueil-cadran" {...glisser}>
+        <Cadran
+          date={date}
+          heures={heures}
+          journee={journee}
+          astre={
+            estAujourdhui
+              ? astre(minutes, {
+                  lever: minutesDe(soleil.lever),
+                  coucher: minutesDe(soleil.coucher),
+                })
+              : undefined
+          }
+        >
+          <BandeauJour date={date} />
+        </Cadran>
+      </div>
       {journee && <PriereDuMoment date={date} journee={journee} minutes={minutes} />}
       <ListeOffices date={date} journee={journee} />
     </main>

@@ -167,9 +167,9 @@ Décisions du porteur du projet (2026-10-06) :
 ### Critères d'acceptation
 
 - [x] Les règles de rubriques et les conclusions d'oraison sont rédigées dans un recueil lisible, validées par le porteur du projet et figées.
-- [ ] Un jeu d'offices de référence enregistrés (chacun des 7 offices, couvrant un dimanche, une solennité, l'Avent, le Carême, le temps pascal et le temps ordinaire) produit 100 % des ajouts attendus (critère de succès 2).
+- [x] Un jeu d'offices de référence enregistrés (chacun des 7 offices, couvrant un dimanche, une solennité, l'Avent, le Carême, le temps pascal et le temps ordinaire) produit 100 % des ajouts attendus (critère de succès 2).
 - [ ] L'introduction change selon que l'office ouvert est le premier de la journée ou non.
-- [ ] Chaque partie ajoutée porte le filet rouge des ajouts, retiré quand le réglage est coupé.
+- [x] Chaque partie ajoutée porte le filet rouge des ajouts, retiré quand le réglage est coupé.
 
 ## Bloquée par
 
@@ -224,10 +224,10 @@ Décisions du porteur du projet (2026-10-06) :
 
 ### Critères d'acceptation
 
-- [ ] Le bandeau affiche les données du `JourLiturgique` (vérifié sur des réponses AELF enregistrées).
-- [ ] La position du soleil, l'état des perles et la prière du moment sont justes à plusieurs heures de la journée (tests avec une horloge simulée).
-- [ ] Un toucher sur une perle (passée comprise), une ligne de la liste ou la prière du moment ouvre la bonne route.
-- [ ] La navigation par date change le jour affiché et met l'adresse à jour (`/jour/AAAA-MM-JJ`).
+- [x] Le bandeau affiche les données du `JourLiturgique` (vérifié sur des réponses AELF enregistrées).
+- [x] La position du soleil, l'état des perles et la prière du moment sont justes à plusieurs heures de la journée (tests avec une horloge simulée).
+- [x] Un toucher sur une perle (passée comprise), une ligne de la liste ou la prière du moment ouvre la bonne route.
+- [x] La navigation par date change le jour affiché et met l'adresse à jour (`/jour/AAAA-MM-JJ`).
 
 ## Bloquée par
 

@@ -12,9 +12,12 @@ export async function toucher(page: Page) {
 // Glissement au doigt, de vrais événements tactiles, horizontal (dx) ou vertical (dy).
 export async function glisser(page: Page, dx: number, y = page.viewportSize()!.height / 2, dy = 0) {
   const { width } = page.viewportSize()!
+  await glisserDepuis(page, width / 2 - dx / 2, y - dy / 2, dx, dy)
+}
+
+// Le même glissement, parti d'un point précis de l'écran.
+export async function glisserDepuis(page: Page, x0: number, y0: number, dx: number, dy = 0) {
   const cdp = await page.context().newCDPSession(page)
-  const x0 = width / 2 - dx / 2
-  const y0 = y - dy / 2
   const point = (i: number) => [{ x: x0 + (dx * i) / 8, y: y0 + (dy * i) / 8 }]
   await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: point(0) })
   for (let i = 1; i <= 8; i++) {

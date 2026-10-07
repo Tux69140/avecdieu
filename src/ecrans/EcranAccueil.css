@@ -62,6 +62,11 @@
   text-underline-offset: 4px;
 }
 
+/* Le cadran se glisse d'un jour à l'autre ; le défilement vertical reste au navigateur. */
+.accueil-cadran {
+  touch-action: pan-y;
+}
+
 /* Le bandeau, sous l'arc : date, temps, titre, pastille. */
 .bandeau-date {
   margin: 0;

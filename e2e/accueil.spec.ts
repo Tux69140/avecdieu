@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
-import { preparer, servirAelf } from './outils.ts'
+import { glisser, glisserDepuis, preparer, servirAelf } from './outils.ts'
 
 // Phase 8 : l'accueil « Aujourd'hui ». Le mardi 6 octobre 2026, la lune cède
 // la place au soleil vers 8 h et revient vers 19 h 20 (centre de la France).
@@ -201,4 +201,39 @@ test('rien ne sort de l’app que les demandes à l’AELF', async ({ page }) =>
   await expect(bandeau(page)).toContainText('S. Bruno')
   expect(demandes).toEqual(['https://api.aelf.org/v1/informations/2026-10-06/france'])
   expect(externes).toEqual([])
+})
+
+test.describe('glisser sur le cadran', () => {
+  // Le milieu du cadran, à l'écart des perles.
+  const milieu = async (page: Page) => {
+    const boite = (await page.locator('.accueil-cadran').boundingBox())!
+    return boite.y + boite.height / 2
+  }
+
+  test('vers la gauche, le jour suivant ; vers la droite, le jour précédent', async ({ page }) => {
+    await ouvrir(page, MARDI(17, 50))
+    await glisser(page, -160, await milieu(page))
+    await expect(page).toHaveURL('/jour/2026-10-07')
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mercredi 7 octobre')
+    await glisser(page, 160, await milieu(page))
+    await expect(page).toHaveURL('/')
+    await glisser(page, 160, await milieu(page))
+    await expect(page).toHaveURL('/jour/2026-10-05')
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Lundi 5 octobre')
+  })
+
+  test('un geste vertical ou trop court ne change pas de jour', async ({ page }) => {
+    await ouvrir(page, MARDI(17, 50))
+    await glisser(page, 0, await milieu(page), 160)
+    await glisser(page, -30, await milieu(page))
+    await expect(page).toHaveURL('/')
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mardi 6 octobre')
+  })
+
+  test('un glissement parti d’une perle change de jour sans ouvrir l’office', async ({ page }) => {
+    await ouvrir(page, MARDI(17, 50))
+    const sexte = (await perle(page, 'sexte').boundingBox())!
+    await glisserDepuis(page, sexte.x + sexte.width / 2, sexte.y + sexte.height / 2, -120)
+    await expect(page).toHaveURL('/jour/2026-10-07')
+  })
 })
