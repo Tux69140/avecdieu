@@ -31,18 +31,27 @@ describe('disposition du chapelet dessiné', () => {
     }
   })
 
-  it('fait pendre le pendentif à l’intérieur de la boucle, de la médaille en haut à la croix en bas', () => {
-    const { cx, cy, rx, ry } = plan.boucle
-    expect(plan.medaille.y).toBeCloseTo(cy - ry)
+  it('couche la boucle ; le pendentif part à droite puis descend, la croix pend en bas', () => {
+    const { cx, cy, rx } = plan.boucle
+    expect(plan.medaille).toEqual({ x: cx + rx, y: cy })
     const finPendentif = deroule.pas.find((p) => p.dizaine === 1)!.grain
     const pendentif = plan.points.slice(0, finPendentif + 1)
     for (const p of pendentif) {
-      expect(((p.x - cx) / rx) ** 2 + ((p.y - cy) / ry) ** 2).toBeLessThan(1)
-      expect(p.x).toBeCloseTo(plan.medaille.x)
-      expect(p.y).toBeGreaterThan(plan.medaille.y)
+      expect(p.x).toBeGreaterThan(plan.medaille.x)
+      expect(p.y).toBeGreaterThanOrEqual(plan.medaille.y - 0.01)
     }
+    // Du grain le plus proche de la médaille à la croix, le fil ne remonte jamais.
+    for (let i = 0; i < pendentif.length - 1; i++)
+      expect(pendentif[i].y).toBeGreaterThanOrEqual(pendentif[i + 1].y - 0.01)
     const croix = plan.points[0]
-    expect(Math.max(...pendentif.map((p) => p.y))).toBe(croix.y)
+    expect(croix.y).toBe(Math.max(...pendentif.map((p) => p.y)))
+    expect(croix.y).toBeGreaterThan(cy)
+    // La croix droite dépasse son rayon de 3,4 vers le bas : elle reste dans le cadre.
+    expect(croix.y + 12.4).toBeLessThanOrEqual(plan.hauteur)
+  })
+
+  it('tient en moins d’un tiers de sa largeur en hauteur', () => {
+    expect(plan.hauteur / plan.largeur).toBeLessThan(1 / 3)
   })
 
   it('pose le Salve Regina sur la médaille, et sans lui le dessin reste le même', () => {

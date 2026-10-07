@@ -11,8 +11,7 @@ interface Props {
 // halo, grains à venir en nacre cerclée d'or, tous en relief. Les nœuds du fil
 // ne sont pas des perles : seul leur halo se voit, lorsqu'on y est.
 export function ChapeletDessine({ plan, grainCourant }: Props) {
-  const { boucle, medaille, points, largeur, hauteur } = plan
-  const croix = points[0]
+  const { boucle, medaille, points, largeur, hauteur, pendentif } = plan
   return (
     <svg
       className="chapelet-dessine"
@@ -33,7 +32,7 @@ export function ChapeletDessine({ plan, grainCourant }: Props) {
         />
       </defs>
       <ellipse className="fil" cx={boucle.cx} cy={boucle.cy} rx={boucle.rx} ry={boucle.ry} />
-      <line className="fil" x1={medaille.x} y1={medaille.y} x2={croix.x} y2={croix.y} />
+      <path className="fil" d={pendentif} />
       {/* Quand le Salve Regina s'y dit, la médaille est un grain du déroulé. */}
       {points.at(-1)?.type !== 'medaille' && (
         <ellipse className="medaille" cx={medaille.x} cy={medaille.y} rx={5} ry={6.5} />
