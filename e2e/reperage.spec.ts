@@ -18,6 +18,8 @@ test.beforeEach(async ({ page }) => {
 async function ouvrir(page: Page, chemin = '/office/laudes/2026-10-06') {
   await page.goto(chemin)
   await expect(page.getByTestId('office')).toBeVisible()
+  // Des polices qui arrivent font bouger la page : ce défilement-là cacherait le bandeau.
+  await page.evaluate(() => document.fonts.ready.then(() => undefined))
 }
 
 const bandeau = (page: Page) => page.getByTestId('bandeau-office')

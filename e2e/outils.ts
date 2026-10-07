@@ -254,6 +254,8 @@ export async function faireRevenirBandeau(page: Page, position = 1500) {
           requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(fin))),
         ),
     )
+  // Des polices qui arrivent font bouger la page : ce défilement-là cacherait le bandeau.
+  await page.evaluate(() => document.fonts.ready.then(() => undefined))
   await page.evaluate((y) => window.scrollTo(0, y + 40), position)
   await image()
   await page.evaluate(() => window.scrollBy(0, -40))

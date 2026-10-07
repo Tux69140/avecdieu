@@ -1,7 +1,7 @@
 .accueil {
   max-width: calc(34em + 2 * var(--gouttiere));
   margin: 0 auto;
-  padding: var(--esp-md) var(--gouttiere) var(--esp-3xl);
+  padding: var(--esp-sm) var(--gouttiere) var(--esp-3xl);
 }
 
 /* ☰ en haut à gauche, sur sa propre ligne. */
@@ -134,8 +134,9 @@
 .accueil-moment {
   display: grid;
   grid-template-columns: 1fr auto;
-  margin-top: var(--esp-lg);
-  padding: var(--esp-md) var(--esp-md) var(--esp-md) 20px;
+  margin-top: var(--esp-md);
+  padding: calc(var(--esp-sm) + var(--esp-xs)) var(--esp-md) calc(var(--esp-sm) + var(--esp-xs))
+    20px;
   border: 1px solid var(--filet);
   border-radius: var(--r-lg);
   background: var(--velin);
@@ -164,8 +165,8 @@
 
 .accueil-moment-nom {
   font-family: var(--display);
-  font-size: 30px;
-  line-height: 1.15;
+  font-size: 28px;
+  line-height: 1.1;
 }
 
 .accueil-moment-heure {
@@ -180,7 +181,7 @@
 /* Les sept offices : une ligne chacun, filets fins, flèche d'or. */
 .accueil-offices {
   list-style: none;
-  margin: var(--esp-lg) 0 0;
+  margin: var(--esp-md) 0 0;
   padding: 0;
   border-top: 1px solid var(--filet);
 }
@@ -194,7 +195,9 @@
   grid-template-columns: 1fr auto auto;
   align-items: center;
   gap: var(--esp-sm);
-  min-height: 56px;
+  /* 48 px : la cible tactile minimale, pour que les complies et le chapelet
+     tiennent à l'écran sans défiler (critique du 2026-10-07). */
+  min-height: 48px;
   color: var(--encre);
   text-decoration: none;
 }
