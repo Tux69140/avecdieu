@@ -1,5 +1,5 @@
-import { expect, test } from '@playwright/test'
-import { preparer, servirAelf } from './outils.ts'
+import { expect } from '@playwright/test'
+import { preparer, servirAelf, test } from './outils.ts'
 
 // Le menu ☰ de l'accueil : aujourd'hui, chapelet, réglages, à propos.
 

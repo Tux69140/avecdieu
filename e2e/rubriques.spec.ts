@@ -1,5 +1,5 @@
-import { expect, test, type Page } from '@playwright/test'
-import { preparer, servirAelf } from './outils.ts'
+import { expect, type Page } from '@playwright/test'
+import { preparer, servirAelf, test } from './outils.ts'
 
 // Phase 6 : l'office complet, reconstitué selon les rubriques validées par le
 // porteur du projet (R1 à R11, src/recueil/office.ts).

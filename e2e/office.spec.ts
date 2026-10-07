@@ -1,5 +1,5 @@
-import { expect, test, type Page } from '@playwright/test'
-import { espionner, journal, preparer, servirAelf } from './outils.ts'
+import { expect, type Page } from '@playwright/test'
+import { espionner, journal, preparer, servirAelf, test } from './outils.ts'
 
 // Phase 5 : les sept offices du jour, lus d'un trait depuis l'AELF, repères
 // liturgiques en rouge rubrique. Les ajouts selon les rubriques (phase 6) :
@@ -56,10 +56,10 @@ test('ouvrir les laudes depuis l’accueil et les lire d’un trait', async ({ p
   await expect(reperes).toHaveCount(17)
   await expect(reperes.first().locator('.repere-perle')).toHaveAttribute('data-couleur', 'vert')
 
-  expect(demandes).toEqual([
-    'https://api.aelf.org/v1/informations/2026-10-06/france',
-    'https://api.aelf.org/v1/laudes/2026-10-06/france',
-  ])
+  // Rien n'est demandé deux fois, pas même par la réserve des jours à venir.
+  expect(demandes).toContain('https://api.aelf.org/v1/informations/2026-10-06/france')
+  expect(demandes).toContain('https://api.aelf.org/v1/laudes/2026-10-06/france')
+  expect(new Set(demandes).size).toBe(demandes.length)
   expect(externes).toEqual([])
 
   // Le retour ramène à l'accueil.
@@ -120,14 +120,15 @@ test('les accents de psalmodie se masquent dans les réglages', async ({ page })
   await expect(accent).toHaveCSS('text-decoration-line', 'none')
 })
 
-test('sans réseau, un message clair et « Réessayer »', async ({ page }) => {
+test('premier lancement sans réseau : un message clair et « Réessayer »', async ({ page }) => {
   await page.route('https://api.aelf.org/**', (route) => route.abort('internetdisconnected'))
   await preparer(page)
   await page.goto('/office/vepres/2026-10-06')
   const alerte = page.getByRole('alert')
-  await expect(alerte).toContainText('Impossible de récupérer l’office.')
-  await expect(alerte).toContainText(
-    'Le site de l’AELF ne répond pas. Vérifiez votre connexion internet, puis réessayez.',
+  await expect(alerte).toHaveText(
+    '⚠ Les offices demandent une première connexion à internet.' +
+      'Une fois connecté, l’app enregistre une semaine de textes d’avance. ' +
+      'Le chapelet, lui, se prie dès maintenant.Réessayer',
   )
 
   // Le réseau revient : « Réessayer » affiche l'office.

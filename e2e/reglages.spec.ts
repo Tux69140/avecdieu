@@ -1,11 +1,12 @@
-import { expect, test, type Page } from '@playwright/test'
+import { expect, type Page } from '@playwright/test'
 import {
+  avancer,
   commencer,
   espionner,
   journal,
   preparer,
-  avancer,
   servirAelf,
+  test,
   toucher,
   type Reglages,
 } from './outils.ts'

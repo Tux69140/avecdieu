@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router'
+import { entretenirReserve } from './aelf/reserve'
 import { EcranAccueil } from './ecrans/EcranAccueil'
 import { EcranAPropos } from './ecrans/EcranAPropos'
 import { EcranChapelet } from './ecrans/EcranChapelet'
@@ -20,6 +21,9 @@ const routeur = createBrowserRouter([
   { path: '/a-propos', element: <EcranAPropos /> },
   { path: '*', element: <Navigate to="/" replace /> },
 ])
+
+// Sept jours de textes d'avance, pour prier sans réseau (phase 9).
+entretenirReserve()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

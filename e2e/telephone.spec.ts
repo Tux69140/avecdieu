@@ -1,5 +1,5 @@
-import { expect, test } from '@playwright/test'
-import { commencer, espionner, journal, suivant, toucher } from './outils.ts'
+import { expect } from '@playwright/test'
+import { commencer, espionner, journal, suivant, test, toucher } from './outils.ts'
 
 const LUNDI = new Date(2026, 9, 5, 10, 0)
 // Ouverture (7 prières), 5 dizaines (l'annonce et 13 prières), le Salve Regina, l'écran de fin.

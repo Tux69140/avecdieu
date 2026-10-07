@@ -40,3 +40,11 @@
   margin-top: var(--esp-lg);
   border-top: 1px solid var(--filet);
 }
+
+/* Ce que l'app garde pour prier sans réseau : une information, pas un réglage. */
+.reglages-note {
+  margin: var(--esp-sm) 0 0;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--sepia);
+}

@@ -1,5 +1,5 @@
-import { expect, test, type Page } from '@playwright/test'
-import { commencer, glisser, preparer, servirAelf, suivant, toucher } from './outils.ts'
+import { expect, type Page } from '@playwright/test'
+import { commencer, glisser, preparer, servirAelf, suivant, test, toucher } from './outils.ts'
 
 const AVE = 'Je vous salue Marie'
 const JOYEUX = [
@@ -65,8 +65,11 @@ test.beforeEach(async ({ page }) => {
 
 test('réciter un chapelet complet, toucher par toucher, sans quitter l’app', async ({ page }) => {
   const requetesExternes: string[] = []
+  // Seule l'AELF peut être jointe : la réserve des jours à venir, à l'ouverture.
   page.on('request', (r) => {
-    if (!r.url().startsWith('http://localhost:4173/')) requetesExternes.push(r.url())
+    const url = r.url()
+    if (!url.startsWith('http://localhost:4173/') && !url.startsWith('https://api.aelf.org/'))
+      requetesExternes.push(url)
   })
 
   await commencer(page)

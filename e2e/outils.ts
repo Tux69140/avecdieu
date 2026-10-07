@@ -1,7 +1,21 @@
-import { expect, type Page } from '@playwright/test'
+import { test as base, expect, type Page } from '@playwright/test'
 import { existsSync, readFileSync } from 'node:fs'
 
 // Gestes et ouvertures partagés par les parcours.
+
+// Le `test` de tous les parcours : sans réseau par défaut, l'app ne joint
+// jamais la vraie AELF (la réserve des jours à venir la solliciterait à chaque
+// ouverture). Posée avant toute autre, cette route ne sert qu'en dernier
+// recours : `servirAelf` et les routes d'un parcours passent devant.
+export const test = base.extend<{ sansReseau: void }>({
+  sansReseau: [
+    async ({ page }, use) => {
+      await page.route('https://api.aelf.org/**', (route) => route.abort('internetdisconnected'))
+      await use()
+    },
+    { auto: true },
+  ],
+})
 
 // Un toucher n'importe où : ici, au tiers bas de l'écran.
 export async function toucher(page: Page) {

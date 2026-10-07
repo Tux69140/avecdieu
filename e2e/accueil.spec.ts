@@ -1,5 +1,5 @@
-import { expect, test, type Page } from '@playwright/test'
-import { glisser, glisserDepuis, preparer, servirAelf } from './outils.ts'
+import { expect, type Page } from '@playwright/test'
+import { glisser, glisserDepuis, preparer, servirAelf, test } from './outils.ts'
 
 // Phase 8 : l'accueil « Aujourd'hui ». Le mardi 6 octobre 2026, la lune cède
 // la place au soleil vers 8 h et revient vers 19 h 20 (centre de la France).
@@ -162,7 +162,7 @@ test('une adresse de jour invalide ou d’aujourd’hui mène à l’accueil', a
   await expect(page).toHaveURL('/')
 })
 
-test('sans réponse de l’AELF, la date reste et l’on peut réessayer', async ({ page }) => {
+test('premier lancement sans réseau : la date reste, le chapelet est proposé', async ({ page }) => {
   await page.clock.setFixedTime(MARDI(17, 50))
   await preparer(page)
   let panne = true
@@ -176,13 +176,20 @@ test('sans réponse de l’AELF, la date reste et l’on peut réessayer', async
   })
   await page.goto('/')
   await expect(page.getByRole('alert')).toHaveText(
-    '⚠ Le jour liturgique n’a pas pu être récupéré. Réessayer',
+    '⚠ Les offices demandent une première connexion à internet. Une fois connecté, l’app ' +
+      'enregistre une semaine de textes d’avance. Le chapelet, lui, se prie dès maintenant.' +
+      'Prier le chapelet',
+  )
+  await expect(page.getByRole('link', { name: 'Prier le chapelet' })).toHaveAttribute(
+    'href',
+    '/chapelet',
   )
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mardi 6 octobre')
   // Le reste de l'accueil ne dépend pas de l'AELF.
   await expect(moment(page)).toContainText('Vêpres')
+  // Le réseau revient : le jour se charge de lui-même.
   panne = false
-  await page.getByRole('button', { name: 'Réessayer' }).click()
+  await page.evaluate(() => window.dispatchEvent(new Event('online')))
   await expect(bandeau(page)).toContainText('S. Bruno, prêtre')
   await expect(page.getByRole('alert')).toHaveCount(0)
 })
@@ -199,7 +206,12 @@ test('rien ne sort de l’app que les demandes à l’AELF', async ({ page }) =>
   await preparer(page)
   await page.goto('/')
   await expect(bandeau(page)).toContainText('S. Bruno')
-  expect(demandes).toEqual(['https://api.aelf.org/v1/informations/2026-10-06/france'])
+  // La réserve des jours à venir : 9 jours de 8 ressources, chacune une fois.
+  await expect.poll(() => demandes.length).toBe(72)
+  expect(demandes.every((d) => /^https:\/\/api\.aelf\.org\/v1\/\w+\/[\d-]+\/france$/.test(d))).toBe(
+    true,
+  )
+  expect(new Set(demandes).size).toBe(72)
   expect(externes).toEqual([])
 })
 

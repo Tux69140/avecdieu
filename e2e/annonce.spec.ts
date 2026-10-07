@@ -1,5 +1,5 @@
-import { expect, test, type Page } from '@playwright/test'
-import { commencer, glisser, preparer, suivant, toucher } from './outils.ts'
+import { expect, type Page } from '@playwright/test'
+import { commencer, glisser, preparer, suivant, test, toucher } from './outils.ts'
 
 // Phase 3 : annonce des mystères, mode compact, choix de la série, aide aux gestes.
 

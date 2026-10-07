@@ -1,11 +1,13 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { Navigate, useParams } from 'react-router'
 import { chargerOffice, ErreurAelf, type OfficeDuJour } from '../aelf/api'
+import type { Etendue } from '../aelf/cache'
+import { textesEnregistres } from '../aelf/reserve'
 import { lireReglages } from '../chapelet/reglages'
 import { IndiceSuite } from '../composants/IndiceSuite'
 import { useRetour } from '../composants/retour'
 import { useSuiteCachee } from '../composants/suiteCachee'
-import { dateLisible, estDate } from '../office/dates'
+import { dateLisible, estDate, periodeLisible } from '../office/dates'
 import { deplacerInvitatoire, ouvrirOffice } from '../office/journee'
 import { estNomOffice, NOMS_OFFICES, type NomOffice, type Partie } from '../office/modele'
 import { PartieOffice } from '../office/PartieOffice'
@@ -24,7 +26,8 @@ export function EcranOffice() {
 
 type Etat =
   | { sorte: 'chargement' }
-  | { sorte: 'erreur'; absent: boolean }
+  // « enregistres » : les jours qu'on peut prier sans réseau, s'il y en a.
+  | { sorte: 'erreur'; absent: boolean; enregistres?: Etendue }
   // « premier » (R1) : cet office ouvre la journée et porte l'invitatoire.
   | { sorte: 'pret'; lu: OfficeDuJour; invitatoire?: Partie[]; premier: boolean }
 
@@ -68,7 +71,8 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
       },
       (erreur: unknown) => {
         if (abandon.signal.aborted) return
-        setEtat({ sorte: 'erreur', absent: erreur instanceof ErreurAelf && erreur.absent })
+        const absent = erreur instanceof ErreurAelf && erreur.absent
+        setEtat({ sorte: 'erreur', absent, enregistres: textesEnregistres() })
       },
     )
     return () => abandon.abort()
@@ -110,6 +114,14 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
     setEssai((n) => n + 1)
   }
 
+  // Le réseau revenu, l'office se charge de lui-même.
+  const enPanne = etat.sorte === 'erreur' && !etat.absent
+  useEffect(() => {
+    if (!enPanne) return
+    window.addEventListener('online', reessayer)
+    return () => window.removeEventListener('online', reessayer)
+  }, [enPanne])
+
   return (
     <main
       className="office"
@@ -137,17 +149,41 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
 
       {etat.sorte === 'erreur' && (
         <div className="office-erreur" role="alert">
-          <p className="office-erreur-titre">
-            <span aria-hidden="true">⚠ </span>Impossible de récupérer l’office.
-          </p>
           {etat.absent ? (
-            // Réessayer n'y changerait rien : l'AELF n'a pas ce texte.
-            <p>L’AELF ne propose pas cet office pour ce jour.</p>
+            <>
+              <p className="office-erreur-titre">
+                <span aria-hidden="true">⚠ </span>Impossible de récupérer l’office.
+              </p>
+              {/* Réessayer n'y changerait rien : l'AELF n'a pas ce texte. */}
+              <p>L’AELF ne propose pas cet office pour ce jour.</p>
+            </>
           ) : (
             <>
-              <p>
-                Le site de l’AELF ne répond pas. Vérifiez votre connexion internet, puis réessayez.
-              </p>
+              {/* Textes validés par le porteur du projet le 2026-10-07. */}
+              {etat.enregistres ? (
+                <>
+                  <p className="office-erreur-titre">
+                    <span aria-hidden="true">⚠ </span>Cet office n’est pas enregistré sur le
+                    téléphone.
+                  </p>
+                  <p>
+                    Les textes enregistrés vont{' '}
+                    {periodeLisible(etat.enregistres.debut, etat.enregistres.fin)}. Pour ce jour-ci,
+                    connectez-vous à internet, puis réessayez.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="office-erreur-titre">
+                    <span aria-hidden="true">⚠ </span>Les offices demandent une première connexion à
+                    internet.
+                  </p>
+                  <p>
+                    Une fois connecté, l’app enregistre une semaine de textes d’avance. Le chapelet,
+                    lui, se prie dès maintenant.
+                  </p>
+                </>
+              )}
               <button className="btn btn-secondaire" type="button" onClick={reessayer}>
                 Réessayer
               </button>

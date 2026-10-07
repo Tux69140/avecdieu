@@ -23,6 +23,14 @@ export function dateLisible(date: string): string {
   return FORMAT.format(enDate(date)).replace(/^(\S+) 1 /, '$1 1er ')
 }
 
+// « du mardi 6 au mercredi 14 octobre » : le mois n'est dit qu'une fois s'il
+// est le même aux deux bouts.
+export function periodeLisible(debut: string, fin: string): string {
+  const memeMois = debut.slice(0, 7) === fin.slice(0, 7)
+  const premier = dateLisible(debut)
+  return `du ${memeMois ? premier.replace(/ \S+$/, '') : premier} au ${dateLisible(fin)}`
+}
+
 const COURT = new Intl.DateTimeFormat('fr-FR', { weekday: 'short', day: 'numeric' })
 
 // « dim. 4 », « dim. 1er » : les jours voisins, sur l'accueil.

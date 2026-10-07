@@ -1,6 +1,6 @@
 import { AxeBuilder } from '@axe-core/playwright'
-import { expect, test, type Page } from '@playwright/test'
-import { avancer, commencer, preparer, servirAelf } from './outils.ts'
+import { expect, type Page } from '@playwright/test'
+import { avancer, commencer, preparer, servirAelf, test } from './outils.ts'
 
 // Contrôle automatique d'accessibilité (contrastes, titres, libellés ARIA) :
 // échoue sur toute violation grave ou critique. Le clavier et le lecteur
@@ -155,5 +155,16 @@ test('à propos', async ({ page }) => {
   await preparer(page)
   await page.goto('/a-propos')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Avec Dieu')
+  expect(await violationsGraves(page)).toEqual([])
+})
+
+test('premier lancement sans réseau : accueil et office', async ({ page }) => {
+  await page.route('https://api.aelf.org/**', (route) => route.abort('internetdisconnected'))
+  await preparer(page)
+  await page.goto('/')
+  await expect(page.getByRole('link', { name: 'Prier le chapelet' })).toBeVisible()
+  expect(await violationsGraves(page)).toEqual([])
+  await page.goto('/office/laudes/2026-10-05')
+  await expect(page.getByRole('alert')).toBeVisible()
   expect(await violationsGraves(page)).toEqual([])
 })

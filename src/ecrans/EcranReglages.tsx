@@ -1,9 +1,11 @@
 import { useState } from 'react'
+import { textesEnregistres } from '../aelf/reserve'
 import { ChoixAffichage } from '../chapelet/ChoixAffichage'
 import { AIDE_VIBRATIONS } from '../chapelet/libelles'
 import { lireReglages, modifierReglages, type Reglages } from '../chapelet/reglages'
 import { Interrupteur } from '../composants/Interrupteur'
 import { useRetour } from '../composants/retour'
+import { dateLisible } from '../office/dates'
 import { usePeutVibrer } from '../telephone/retours'
 import './EcranReglages.css'
 
@@ -27,6 +29,7 @@ export function EcranReglages() {
   // Sans vibreur (tablette), le réglage n'a pas lieu d'être.
   const vibreur = usePeutVibrer()
   const modifier = (changement: Partial<Reglages>) => setReglages(modifierReglages(changement))
+  const [enregistres] = useState(textesEnregistres)
 
   return (
     <main className="reglages">
@@ -84,6 +87,11 @@ export function EcranReglages() {
           actif={reglages.signalerAjouts}
           onBasculer={(signalerAjouts) => modifier({ signalerAjouts })}
         />
+        <p className="reglages-note" data-testid="hors-connexion">
+          {enregistres
+            ? `Textes disponibles hors connexion jusqu’au ${dateLisible(enregistres.fin)}.`
+            : 'Aucun texte enregistré pour l’instant.'}
+        </p>
       </section>
     </main>
   )

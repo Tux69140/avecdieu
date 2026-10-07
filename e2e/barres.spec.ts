@@ -1,6 +1,6 @@
-import { expect, test, type Page } from '@playwright/test'
+import { expect, type Page } from '@playwright/test'
 import { readFileSync } from 'node:fs'
-import { commencer, preparer, servirAelf, suivant } from './outils.ts'
+import { commencer, preparer, servirAelf, suivant, test } from './outils.ts'
 
 // Sur le téléphone, l'app s'étend sous les barres d'Android (état en haut,
 // navigation en bas), transparentes. Capacitor donne leur hauteur dans les

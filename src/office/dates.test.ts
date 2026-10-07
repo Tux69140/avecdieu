@@ -7,6 +7,7 @@ import {
   enDate,
   estDate,
   paques,
+  periodeLisible,
   sansAlleluia,
 } from './dates'
 
@@ -59,5 +60,20 @@ describe('Pâques et l’Alléluia (R2)', () => {
     expect(sansAlleluia('2027-03-27')).toBe(true)
     expect(sansAlleluia('2027-03-28')).toBe(false)
     expect(sansAlleluia('2026-10-06')).toBe(false)
+  })
+})
+
+describe('periodeLisible', () => {
+  it('« du mardi 6 au mercredi 14 octobre » : le mois une seule fois', () => {
+    expect(periodeLisible('2026-10-06', '2026-10-14')).toBe('du mardi 6 au mercredi 14 octobre')
+  })
+
+  it('à cheval sur deux mois, chaque date a le sien', () => {
+    expect(periodeLisible('2026-10-30', '2026-11-07')).toBe(
+      'du vendredi 30 octobre au samedi 7 novembre',
+    )
+    expect(periodeLisible('2026-10-31', '2026-11-01')).toBe(
+      'du samedi 31 octobre au dimanche 1er novembre',
+    )
   })
 })
