@@ -6,8 +6,10 @@ import { useGlisserLesJours } from '../accueil/glisserLesJours'
 import { minutesDe, useMaintenant } from '../accueil/maintenant'
 import { ecrireEcart, situerOffices, type Journee } from '../accueil/moment'
 import { dateCourte, dateDuJour, dateLisible, decaler, enDate, estDate } from '../office/dates'
-import { ecrireHeure, heuresDesOffices } from '../office/heures'
+import { ecrireHeure, heuresDesOffices, heuresSolairesEnService } from '../office/heures'
 import { NOMS_OFFICES, OFFICES } from '../office/modele'
+import { lieuDuSoleil } from '../lieu/lieu'
+import { useLieu } from '../lieu/useLieu'
 import { leverEtCoucher } from '../office/soleil'
 import './EcranAccueil.css'
 
@@ -33,11 +35,17 @@ interface Props {
 }
 
 function Accueil({ date, aujourdhui, maintenant }: Props) {
+  // Un lieu changé en voyage redessine le cadran sans attendre la minute.
+  useLieu()
   const estAujourdhui = date === aujourdhui
-  const heures = heuresDesOffices()
+  const heures = heuresDesOffices(date)
   const minutes = minutesDe(maintenant)
   const journee = estAujourdhui ? situerOffices(heures, minutes) : undefined
-  const soleil = leverEtCoucher(enDate(date))
+  const { lever, coucher } = leverEtCoucher(enDate(date), lieuDuSoleil())
+  const soleil = { lever: minutesDe(lever), coucher: minutesDe(coucher) }
+  // En heures solaires, l'arc va du lever au coucher (hors des cercles polaires).
+  const arcSolaire =
+    heuresSolairesEnService() && !Number.isNaN(soleil.lever + soleil.coucher) ? soleil : undefined
   const veille = decaler(date, -1)
   const lendemain = decaler(date, 1)
   // Changer de jour remplace l'adresse : le retour d'Android quitte l'accueil
@@ -81,14 +89,8 @@ function Accueil({ date, aujourdhui, maintenant }: Props) {
           date={date}
           heures={heures}
           journee={journee}
-          astre={
-            estAujourdhui
-              ? astre(minutes, {
-                  lever: minutesDe(soleil.lever),
-                  coucher: minutesDe(soleil.coucher),
-                })
-              : undefined
-          }
+          astre={estAujourdhui ? astre(minutes, soleil) : undefined}
+          soleil={arcSolaire}
         >
           <BandeauJour date={date} />
         </Cadran>
@@ -111,7 +113,7 @@ function PriereDuMoment({
   minutes: number
 }) {
   const office = journee.moment
-  const heure = office && heuresDesOffices()[office]
+  const heure = office && heuresDesOffices(date)[office]
   if (!office || !heure) return null
   return (
     <Link className="accueil-moment" to={`/office/${office}/${date}`} data-testid="moment">
@@ -127,7 +129,7 @@ function PriereDuMoment({
 // Les sept offices ; l'office des lectures, sans heure, se dit à toute heure.
 // Un office passé est atténué, mais s'ouvre comme les autres.
 function ListeOffices({ date, journee }: { date: string; journee?: Journee }) {
-  const heures = heuresDesOffices()
+  const heures = heuresDesOffices(date)
   return (
     <ul className="accueil-offices" aria-label="Offices du jour">
       {OFFICES.map((office) => {

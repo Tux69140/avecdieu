@@ -11,7 +11,7 @@ Décisions durables qui s'appliquent à toutes les phases :
   - `/` : accueil « Aujourd'hui » ; `/jour/AAAA-MM-JJ` : accueil d'un autre jour
   - `/office/<office>/<AAAA-MM-JJ>` : avec `<office>` ∈ `lectures | laudes | tierce | sexte | none | vepres | complies` (mêmes noms que l'API AELF)
   - `/chapelet` : chapelet du jour ; `/chapelet/<série>` : avec `<série>` ∈ `joyeux | lumineux | douloureux | glorieux`
-  - `/reglages` ; `/menu` (ouvert par ☰ depuis le seuil) ; `/a-propos`
+  - `/reglages` ; `/lieu` (lieu des heures solaires, phase 12) ; `/menu` (ouvert par ☰ depuis le seuil) ; `/a-propos`
   - Les notifications de rappel ouvrent directement ces routes.
 - **Modèles clés** :
   - `JourLiturgique` : date, zone, temps liturgique, semaine, fête, rang, couleur(s)

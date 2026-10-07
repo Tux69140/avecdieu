@@ -15,6 +15,14 @@ describe('estNuit', () => {
     expect(estNuit('automatique', false, MARDI(8, 30))).toBe(false)
   })
 
+  it('en automatique, suit le coucher du soleil du lieu choisi', () => {
+    // À Brest, le soleil se couche vers 19 h 47, une demi-heure après le centre.
+    const BREST = { latitude: 48.39, longitude: -4.49 }
+    expect(estNuit('automatique', false, MARDI(19, 35))).toBe(true)
+    expect(estNuit('automatique', false, MARDI(19, 35), BREST)).toBe(false)
+    expect(estNuit('automatique', false, MARDI(19, 55), BREST)).toBe(true)
+  })
+
   it('en automatique, le mode sombre d’Android l’emporte, même à midi', () => {
     expect(estNuit('automatique', true, MARDI(12))).toBe(true)
   })

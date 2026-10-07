@@ -5,8 +5,11 @@ import {
   surToucherNotification,
 } from '../telephone/notifications'
 import { creerCanal, supprimerCanaux } from '../telephone/sonnerie'
-import { canauxNecessaires, programmer } from './programme'
+import { LIEU_CHANGE, lireLieu } from '../lieu/lieu'
+import { calculerHeures } from '../office/heures'
+import { canauxNecessaires, JOURS_PROGRAMMES, programmer } from './programme'
 import { aucunRappelActif, lireRappels, RAPPELS_CHANGES } from './reglages'
+import { lireSolaire } from './solaire'
 
 // Android garde les notifications du mois à venir. Elles sont refaites en
 // entier à chaque changement de rappel, à l'ouverture de l'app et à son
@@ -25,7 +28,12 @@ export async function reprogrammer(maintenant = new Date()) {
   const canaux = canauxNecessaires(rappels)
   for (const canal of canaux) await creerCanal(canal).catch(() => {})
   await supprimerCanaux(canaux.map((c) => c.id)).catch(() => {})
-  await remplacerNotifications(programmer(rappels, maintenant), await minuteExacte())
+  const solaire = lireSolaire()
+  const { lieu } = lireLieu()
+  const prevues = programmer(rappels, maintenant, JOURS_PROGRAMMES, (date) =>
+    calculerHeures(date, rappels, solaire, lieu),
+  )
+  await remplacerNotifications(prevues, await minuteExacte())
 }
 
 // Les reprogrammations passent l'une après l'autre : deux à la fois
@@ -43,7 +51,9 @@ export function entretenirRappels(): () => void {
   reprogrammerBientot()
   document.addEventListener('visibilitychange', auPremierPlan)
   window.addEventListener(RAPPELS_CHANGES, reprogrammerBientot)
+  window.addEventListener(LIEU_CHANGE, reprogrammerBientot)
   return () => {
+    window.removeEventListener(LIEU_CHANGE, reprogrammerBientot)
     document.removeEventListener('visibilitychange', auPremierPlan)
     window.removeEventListener(RAPPELS_CHANGES, reprogrammerBientot)
   }

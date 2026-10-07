@@ -104,3 +104,8 @@
   padding: 24% 12% 0;
   text-align: center;
 }
+
+/* Heures solaires : la nuit, avant le lever et après le coucher, en pointillés. */
+.cadran-nuit {
+  stroke-dasharray: 2 4;
+}

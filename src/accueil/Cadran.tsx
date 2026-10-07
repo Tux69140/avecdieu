@@ -4,10 +4,15 @@ import { ecrireHeure, type Heure } from '../office/heures'
 import { NOMS_OFFICES, OFFICES, type NomOffice } from '../office/modele'
 import {
   cheminDeLArc,
+  ECHELLE_FIXE,
+  echelleSolaire,
   HAUTEUR,
+  JOUR_SOLAIRE,
   LARGEUR,
+  pointDeLaPart,
   pointDuCadran,
   REPERES,
+  reperesSolaires,
   type Astre,
   type Point,
 } from './cadran'
@@ -21,6 +26,8 @@ interface Props {
   // est. Un autre jour, les perles ont toutes le même aspect, sans astre.
   journee?: Journee
   astre?: Astre
+  // En heures solaires : le lever et le coucher du jour affiché (minutes).
+  soleil?: { lever: number; coucher: number }
   // Le bandeau du jour, sous l'arc.
   children: ReactNode
 }
@@ -37,30 +44,25 @@ const pourcents = ({ x, y }: Point) => ({
 
 // Le cadran de l'accueil : l'arc du jour, ses repères, le soleil ou la lune, et
 // chaque office comme une perle qui l'ouvre d'un toucher (passé compris).
-export function Cadran({ date, heures, journee, astre, children }: Props) {
+export function Cadran({ date, heures, journee, astre, soleil, children }: Props) {
   const offices = OFFICES.flatMap((nom) => {
     const heure = heures[nom]
     return heure ? [{ nom, heure }] : []
   })
+  const echelle = soleil
+    ? echelleSolaire(
+        soleil,
+        offices.map(({ heure }) => enMinutes(heure)),
+      )
+    : ECHELLE_FIXE
   return (
     <div className="cadran">
       <div className="cadran-zone">
         <svg viewBox={`0 0 ${LARGEUR} ${HAUTEUR}`} aria-hidden="true">
-          <path className="cadran-arc" d={cheminDeLArc()} />
-          {REPERES.map(({ texte, minutes }) => {
-            const a = pointDuCadran(minutes, -5)
-            const b = pointDuCadran(minutes, 5)
-            const etiquette = pointDuCadran(minutes, 19)
-            return (
-              <g key={texte}>
-                <line className="cadran-trait" x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
-                <text x={etiquette.x} y={etiquette.y + 5} textAnchor="middle">
-                  {texte}
-                </text>
-              </g>
-            )
-          })}
-          {astre?.sorte === 'soleil' && <Soleil centre={pointDuCadran(astre.minutes)} />}
+          {soleil ? <ArcSolaire soleil={soleil} /> : <ArcFixe />}
+          {astre?.sorte === 'soleil' && (
+            <Soleil centre={pointDuCadran(astre.minutes, 0, echelle)} />
+          )}
           {astre?.sorte === 'lune' && <Lune centre={LUNE} />}
         </svg>
         {offices.map(({ nom, heure }) => (
@@ -68,7 +70,7 @@ export function Cadran({ date, heures, journee, astre, children }: Props) {
             key={nom}
             className="cadran-perle"
             to={`/office/${nom}/${date}`}
-            style={pourcents(pointDuCadran(enMinutes(heure)))}
+            style={pourcents(pointDuCadran(enMinutes(heure), 0, echelle))}
             aria-label={`${NOMS_OFFICES[nom]}, ${ecrireHeure(heure)}`}
             data-etat={journee?.etats[nom] ?? 'a-venir'}
             data-testid={`perle-${nom}`}
@@ -81,6 +83,68 @@ export function Cadran({ date, heures, journee, astre, children }: Props) {
     </div>
   )
 }
+
+function Trait({ part }: { part: number }) {
+  const a = pointDeLaPart(part, -5)
+  const b = pointDeLaPart(part, 5)
+  return <line className="cadran-trait" x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
+}
+
+// Heures fixes : l'arc entier, de 6 h à 22 h, et ses repères d'heure.
+function ArcFixe() {
+  return (
+    <>
+      <path className="cadran-arc" d={cheminDeLArc()} />
+      {REPERES.map(({ texte, minutes }) => {
+        const part = ECHELLE_FIXE(minutes)
+        const etiquette = pointDeLaPart(part, 19)
+        return (
+          <g key={texte}>
+            <Trait part={part} />
+            <text x={etiquette.x} y={etiquette.y + 5} textAnchor="middle">
+              {texte}
+            </text>
+          </g>
+        )
+      })}
+    </>
+  )
+}
+
+// Heures solaires : l'arc doré du lever au coucher, les pointillés de la
+// nuit aux deux bouts. Les repères du lever et du coucher se logent au-dessus
+// des bouts de l'arc, alignés sur les bords, pour ne pas couvrir les perles.
+function ArcSolaire({ soleil }: { soleil: { lever: number; coucher: number } }) {
+  const { debut, fin } = JOUR_SOLAIRE
+  return (
+    <>
+      <path className="cadran-arc cadran-nuit" d={cheminDeLArc(0, debut)} />
+      <path className="cadran-arc" d={cheminDeLArc(debut, fin)} />
+      <path className="cadran-arc cadran-nuit" d={cheminDeLArc(fin, 1)} />
+      {reperesSolaires(soleil).map(({ lignes, part }) => {
+        const bord = part < 0.5 ? 'gauche' : part > 0.5 ? 'droite' : 'sommet'
+        const point = pointDeLaPart(part, 19)
+        const x = bord === 'gauche' ? MARGE : bord === 'droite' ? LARGEUR - MARGE : point.x
+        const y = bord === 'sommet' ? point.y + 5 : point.y - 30
+        const ancre = bord === 'gauche' ? 'start' : bord === 'droite' ? 'end' : 'middle'
+        return (
+          <g key={lignes[0]}>
+            <Trait part={part} />
+            <text x={x} y={y} textAnchor={ancre}>
+              {lignes.map((ligne, i) => (
+                <tspan key={ligne} x={x} dy={i === 0 ? 0 : 16}>
+                  {ligne}
+                </tspan>
+              ))}
+            </text>
+          </g>
+        )
+      })}
+    </>
+  )
+}
+
+const MARGE = 2
 
 function Soleil({ centre: { x, y } }: { centre: Point }) {
   return (

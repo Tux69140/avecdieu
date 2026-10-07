@@ -82,6 +82,7 @@ for (const [nom, chemin] of [
   ['menu', '/menu'],
   ['réglages', '/reglages'],
   ['à propos', '/a-propos'],
+  ['lieu des heures solaires', '/lieu'],
   ['accueil', '/'],
   ['accueil d’un autre jour', '/jour/2026-10-11'],
   ['office', '/office/lectures/2026-10-06'],

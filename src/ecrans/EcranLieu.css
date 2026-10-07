@@ -1,0 +1,129 @@
+.lieu {
+  max-width: calc(34em + 2 * var(--gouttiere));
+  margin: 0 auto;
+  padding: var(--esp-sm) var(--gouttiere) var(--esp-3xl);
+}
+
+.lieu h1 {
+  margin: var(--esp-xs) 0 var(--esp-lg);
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 34px;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.lieu-localiser {
+  display: block;
+  width: 100%;
+}
+
+.lieu-localiser[aria-busy='true'] {
+  opacity: 0.6;
+}
+
+.lieu .choix-aide {
+  margin-top: var(--esp-xs);
+  text-align: center;
+}
+
+.lieu-ou {
+  margin: var(--esp-md) 0;
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: 0.06em;
+  text-align: center;
+  color: var(--sepia);
+}
+
+/* Le champ de recherche : vélin, bord fin, halo d'or au focus (docs/DESIGN.md). */
+.lieu-champ {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  border: 1px solid var(--filet);
+  border-radius: var(--r-md);
+  background: var(--velin);
+  color: var(--encre);
+  font-family: var(--texte);
+  font-size: 17px;
+}
+
+.lieu-champ::placeholder {
+  color: var(--sepia);
+  opacity: 1;
+}
+
+.lieu-champ:focus {
+  outline: none;
+  border-color: var(--or);
+  box-shadow: 0 0 0 3px var(--halo);
+}
+
+.lieu-villes {
+  margin: var(--esp-xs) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lieu-villes li {
+  border-bottom: 1px solid var(--filet);
+}
+
+.lieu-villes button {
+  width: 100%;
+  min-height: 48px;
+  padding: var(--esp-sm) 0;
+  border: none;
+  background: none;
+  font-family: var(--texte);
+  font-size: 17px;
+  line-height: 1.35;
+  text-align: left;
+  color: var(--encre);
+  cursor: pointer;
+}
+
+.lieu-ville {
+  font-weight: 500;
+}
+
+.lieu-detail {
+  color: var(--sepia);
+}
+
+/* En brun brique, jamais en rouge (réservé aux rubriques). */
+.lieu-erreur {
+  margin: var(--esp-md) 0 0;
+  padding: var(--esp-md);
+  border-left: 3px solid var(--erreur);
+  background: var(--velin);
+}
+
+.lieu-erreur,
+.lieu-erreur p {
+  line-height: 1.5;
+  color: var(--erreur);
+  font-weight: 500;
+}
+
+.lieu-erreur p {
+  margin: 0 0 var(--esp-sm);
+}
+
+.lieu-actuel {
+  margin-top: var(--esp-xl);
+  border-top: 1px solid var(--filet);
+}
+
+.lieu-actuel > p {
+  margin: var(--esp-md) 0 var(--esp-xs);
+  font-size: 17px;
+}
+
+/* La croix bleue du navigateur détonne sur le parchemin : effacer se fait au clavier. */
+.lieu-champ::-webkit-search-cancel-button {
+  appearance: none;
+}

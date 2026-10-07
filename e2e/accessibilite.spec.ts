@@ -276,3 +276,33 @@ test.describe('de nuit', () => {
     expect(await violationsGraves(page)).toEqual([])
   })
 })
+
+test('lieu des heures solaires, villes trouvées et erreur', async ({ page }) => {
+  await preparer(page)
+  await page.goto('/lieu')
+  await page.getByRole('searchbox', { name: 'Chercher une ville' }).fill('saint-den')
+  await expect(page.getByRole('list', { name: 'Villes trouvées' })).toBeVisible()
+  expect(await violationsGraves(page)).toEqual([])
+  await page.getByRole('searchbox', { name: 'Chercher une ville' }).fill('Trifouilly')
+  await expect(page.getByRole('alert')).toBeVisible()
+  expect(await violationsGraves(page)).toEqual([])
+})
+
+test('heures solaires : rubrique et volet, de jour puis de nuit', async ({ page }) => {
+  await preparer(page)
+  await page.addInitScript(() => {
+    const lieu = { nom: 'Lyon', pres: false, latitude: 45.75, longitude: 4.85 }
+    localStorage.setItem('avec-dieu.lieu', JSON.stringify({ lieu }))
+    localStorage.setItem('avec-dieu.heures-solaires', JSON.stringify({ actives: true }))
+  })
+  await page.goto('/reglages')
+  await deplierReglages(page, 'Rappels')
+  expect(await violationsGraves(page)).toEqual([])
+  await page.getByRole('button', { name: /^Vêpres, heure solaire/ }).click()
+  await expect(page.getByRole('dialog', { name: 'Vêpres' })).toBeVisible()
+  await page.waitForFunction(() => document.getAnimations().length === 0)
+  expect(await violationsGraves(page)).toEqual([])
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'nuit')
+  expect(await violationsGraves(page)).toEqual([])
+})

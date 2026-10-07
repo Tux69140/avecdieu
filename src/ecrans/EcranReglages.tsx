@@ -10,7 +10,9 @@ import { Interrupteur } from '../composants/Interrupteur'
 import { useRetour } from '../composants/retour'
 import { Rubrique } from '../composants/Rubrique'
 import { dateLisible } from '../office/dates'
+import { useLieu } from '../lieu/useLieu'
 import { lireRappels, modifierRappel } from '../rappels/reglages'
+import { lireSolaire, modifierSolaire } from '../rappels/solaire'
 import { RubriqueRappels } from '../rappels/RubriqueRappels'
 import { resumerRappels } from '../rappels/textes'
 import { usePeutVibrer } from '../telephone/retours'
@@ -53,6 +55,9 @@ export function EcranReglages() {
   const modifier = (changement: Partial<Reglages>) => setReglages(modifierReglages(changement))
   const [enregistres, setEnregistres] = useState(textesEnregistres)
   const [rappels, setRappels] = useState(lireRappels)
+  const [solaire, setSolaire] = useState(lireSolaire)
+  // Le lieu se choisit sur son propre écran ; en voyage, il change seul.
+  const { lieu } = useLieu()
 
   const rubrique = (nom: NomRubrique) => ({
     ouverte: ouvertes.has(nom),
@@ -172,10 +177,17 @@ export function EcranReglages() {
           </p>
         </Rubrique>
 
-        <Rubrique titre="Rappels" resume={resumerRappels(rappels)} {...rubrique('rappels')}>
+        <Rubrique
+          titre="Rappels"
+          resume={resumerRappels(rappels, solaire.actives && !!lieu)}
+          {...rubrique('rappels')}
+        >
           <RubriqueRappels
             rappels={rappels}
             onChanger={(priere, changement) => setRappels(modifierRappel(priere, changement))}
+            solaire={solaire}
+            lieu={lieu}
+            onChangerSolaire={(changement) => setSolaire(modifierSolaire(changement))}
           />
         </Rubrique>
       </div>

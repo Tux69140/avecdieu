@@ -29,6 +29,12 @@ export function EcranAPropos() {
         <li>cloche Marcel de Notre-Dame de Paris, par M4RC3LNOTES (CC0) ;</li>
         <li>angélus de l’église Saint-Pierre de Saint-Pé-d’Ardet, par Tiasma31 (CC BY-SA 3.0).</li>
       </ul>
+      {/* Crédit exigé par la licence de GeoNames (phase 12), texte validé le 2026-10-07. */}
+      <h2>Heures solaires</h2>
+      <p>
+        Liste des villes de plus de 15 000 habitants : GeoNames (CC BY 4.0). Lever et coucher du
+        soleil calculés sur le téléphone.
+      </p>
     </main>
   )
 }

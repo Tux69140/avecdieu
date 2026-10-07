@@ -39,4 +39,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- Heures solaires (phase 12) : la position approximative suffit au soleil
+         (quelques kilomètres font quelques secondes) ; la précise n'est jamais demandée. -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 </manifest>

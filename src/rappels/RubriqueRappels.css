@@ -178,3 +178,26 @@
   margin-top: var(--esp-sm);
   margin-left: calc(-1 * var(--esp-sm));
 }
+
+/* En heures solaires, l'heure ouvre le volet du décalage. */
+button.rappel-heure {
+  padding: 0;
+  border: none;
+  background: none;
+}
+
+/* « Heures des prières » : fixes ou solaires, et le lieu du soleil. */
+.rappels-heures {
+  margin-bottom: var(--esp-md);
+}
+
+.rubrique-contenu .rappels-heures h3 {
+  margin-top: 0;
+}
+
+.rappels-lieu {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  margin-left: calc(-1 * var(--esp-sm));
+}

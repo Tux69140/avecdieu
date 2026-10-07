@@ -1,6 +1,8 @@
 import { TEXTES_OFFICE } from '../recueil/office'
 import { PRIERES } from '../recueil/prieres'
+import type { LieuChoisi } from '../lieu/lieu'
 import type { Heure } from '../office/heures'
+import type { OfficeSolaire } from '../office/heuresSolaires'
 import { NOMS_OFFICES } from '../office/modele'
 import { NOMS_CLOCHES, PRIERES_RAPPELEES, type Priere, type Rappels, type Son } from './reglages'
 
@@ -46,11 +48,42 @@ export function nomDuSon(son: Son): string {
   return son.nom
 }
 
-// « Laudes, vêpres, complies » ou « Aucun rappel » : le résumé de la rubrique.
-export function resumerRappels(rappels: Rappels): string {
+// « Laudes, vêpres, complies » ou « Aucun rappel » : le résumé de la rubrique,
+// précédé en mode solaire de « Heures solaires · ».
+export function resumerRappels(rappels: Rappels, solaires = false): string {
   const actives = PRIERES_RAPPELEES.filter((priere) => rappels[priere].actif).map((priere, i) => {
     const nom = NOMS_PRIERES[priere]
     return i === 0 ? nom : nom.charAt(0).toLowerCase() + nom.slice(1)
   })
-  return actives.length > 0 ? actives.join(', ') : 'Aucun rappel'
+  const resume = actives.length > 0 ? actives.join(', ') : 'Aucun rappel'
+  return solaires ? `Heures solaires · ${resume}` : resume
 }
+
+// Heures solaires (phase 12), libellés validés le 2026-10-07.
+
+// Ce qui suit le nom de l'office sur sa ligne : « Laudes · lever ».
+export const REPERES_SOLAIRES: Partial<Record<OfficeSolaire, string>> = {
+  laudes: 'lever',
+  sexte: 'midi solaire',
+  vepres: 'coucher',
+}
+
+// Le sous-titre du volet de chaque office ; « e » se met en exposant.
+export const SOUS_TITRES_SOLAIRES: Record<OfficeSolaire, [string, string?]> = {
+  laudes: ['Au lever du soleil'],
+  tierce: ['Fin de la 3', 'e heure du jour'],
+  sexte: ['Au midi solaire'],
+  none: ['Fin de la 9', 'e heure du jour'],
+  vepres: ['Au coucher du soleil'],
+}
+
+// « 0 min », « +5 min », « −10 min », « +1 h » (le vrai signe moins).
+export function ecrireDecalage(minutes: number): string {
+  if (minutes === 0) return '0 min'
+  const signe = minutes > 0 ? '+' : '−'
+  const absolu = Math.abs(minutes)
+  return `${signe}${absolu === 60 ? '1 h' : `${absolu} min`}`
+}
+
+// « à Lyon », « près de Lyon » : le lieu dans une phrase.
+export const dansLeLieu = ({ nom, pres }: LieuChoisi) => (pres ? `près de ${nom}` : `à ${nom}`)

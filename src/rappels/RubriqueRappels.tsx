@@ -1,4 +1,14 @@
 import { useCallback, useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router'
+import { Bascule } from '../composants/Bascule'
+import { nommerLieu, type LieuChoisi } from '../lieu/lieu'
+import { calculerHeures } from '../office/heures'
+import {
+  OFFICES_SOLAIRES,
+  type OfficeSolaire,
+  type ReglagesSolaires,
+} from '../office/heuresSolaires'
+import { dateDuJour } from '../office/dates'
 import {
   accordNotifications,
   demanderAccord,
@@ -25,13 +35,25 @@ import {
   type Rappel,
   type Rappels,
 } from './reglages'
-import { NOMS_PRIERES } from './textes'
+import { dansLeLieu, NOMS_PRIERES, REPERES_SOLAIRES } from './textes'
+import { VoletSolaire } from './VoletSolaire'
 import './RubriqueRappels.css'
 
 interface Props {
   rappels: Rappels
   onChanger: (priere: Priere, changement: Partial<Rappel>) => void
+  solaire: ReglagesSolaires
+  lieu?: LieuChoisi
+  onChangerSolaire: (changement: Partial<ReglagesSolaires>) => void
 }
+
+const HEURES = [
+  ['fixes', 'Fixes'],
+  ['solaires', 'Solaires'],
+] as const
+
+const estSolaire = (priere: Priere): priere is OfficeSolaire =>
+  (OFFICES_SOLAIRES as readonly string[]).includes(priere)
 
 interface Etat {
   accord: Accord
@@ -58,10 +80,23 @@ function useEtatAndroid(): [Etat | undefined, () => void] {
 
 // La rubrique « Rappels » des réglages (phase 11) : une ligne par prière, les
 // avis quand Android refuse, et le guide de batterie sur Xiaomi et Samsung.
-export function RubriqueRappels({ rappels, onChanger }: Props) {
+// En tête, le choix des heures fixes ou solaires (phase 12).
+export function RubriqueRappels({ rappels, onChanger, solaire, lieu, onChangerSolaire }: Props) {
   const vibreurPossible = usePeutVibrer()
   const [android, relire] = useEtatAndroid()
   const [etape, setEtape] = useState<Etape>()
+  const [volet, setVolet] = useState<OfficeSolaire>()
+  const naviguer = useNavigate()
+  const solaires = solaire.actives && !!lieu
+  const maintenant = new Date()
+  const heures = calculerHeures(dateDuJour(maintenant), rappels, solaire, lieu)
+
+  // Sans lieu, « Solaires » mène d'abord à l'écran du lieu ; en revenir sans
+  // choisir garde les heures fixes.
+  const choisirHeures = (choix: 'fixes' | 'solaires') => {
+    if (choix === 'solaires' && !lieu) naviguer('/lieu', { state: { activer: true } })
+    else onChangerSolaire({ actives: choix === 'solaires' })
+  }
 
   // La fenêtre suivante, ou la fin : Android relu, rappels refaits.
   const avancer = async (depuis: 'activation' | Etape) => {
@@ -86,6 +121,26 @@ export function RubriqueRappels({ rappels, onChanger }: Props) {
 
   return (
     <>
+      <div className="rappels-heures">
+        <h3 id="rappels-heures">Heures des prières</h3>
+        <Bascule
+          titre="rappels-heures"
+          choix={HEURES}
+          valeur={solaires ? 'solaires' : 'fixes'}
+          onChoisir={choisirHeures}
+        />
+        {solaires && lieu && (
+          <>
+            <p className="choix-aide">
+              Selon la course du soleil {dansLeLieu(lieu)}, du lever au coucher.
+            </p>
+            <Link className="lien-discret rappels-lieu" to="/lieu">
+              Lieu : {nommerLieu(lieu)} ›
+            </Link>
+          </>
+        )}
+      </div>
+
       <ul className="rappels">
         {PRIERES_RAPPELEES.map((priere) => (
           <LigneRappel
@@ -95,9 +150,29 @@ export function RubriqueRappels({ rappels, onChanger }: Props) {
             vibreurPossible={vibreurPossible}
             onChanger={(changement) => onChanger(priere, changement)}
             onActiver={() => avancer('activation')}
+            solaire={
+              solaires && estSolaire(priere)
+                ? {
+                    heure: heures[priere],
+                    repere: REPERES_SOLAIRES[priere],
+                    onOuvrir: () => setVolet(priere),
+                  }
+                : undefined
+            }
           />
         ))}
       </ul>
+
+      {volet && lieu && (
+        <VoletSolaire
+          office={volet}
+          reglages={solaire}
+          lieu={lieu}
+          maintenant={maintenant}
+          onChanger={onChangerSolaire}
+          onFermer={() => setVolet(undefined)}
+        />
+      )}
 
       {actifs && android?.accord === 'refuse' && (
         <div className="rappels-avis" role="status">

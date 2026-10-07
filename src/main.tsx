@@ -6,9 +6,11 @@ import { suivreApparence } from './affichage/apparence'
 import { EcranAccueil } from './ecrans/EcranAccueil'
 import { EcranAPropos } from './ecrans/EcranAPropos'
 import { EcranChapelet } from './ecrans/EcranChapelet'
+import { EcranLieu } from './ecrans/EcranLieu'
 import { EcranMenu } from './ecrans/EcranMenu'
 import { EcranOffice } from './ecrans/EcranOffice'
 import { EcranReglages } from './ecrans/EcranReglages'
+import { suivreLesVoyages } from './lieu/voyage'
 import { entretenirRappels, ouvrirLesNotifications } from './rappels/entretien'
 import './styles/jetons.css'
 
@@ -19,6 +21,7 @@ const routeur = createBrowserRouter([
   { path: '/chapelet/:serie', element: <EcranChapelet /> },
   { path: '/office/:office/:date', element: <EcranOffice /> },
   { path: '/reglages', element: <EcranReglages /> },
+  { path: '/lieu', element: <EcranLieu /> },
   { path: '/menu', element: <EcranMenu /> },
   { path: '/a-propos', element: <EcranAPropos /> },
   { path: '*', element: <Navigate to="/" replace /> },
@@ -32,6 +35,8 @@ entretenirReserve()
 // mois à venir sont refaits à chaque ouverture (phase 11).
 ouvrirLesNotifications((route) => routeur.navigate(route))
 entretenirRappels()
+// En voyage, avec l'option, le lieu des heures solaires suit le téléphone (phase 12).
+suivreLesVoyages()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

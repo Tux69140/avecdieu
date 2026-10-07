@@ -1,5 +1,6 @@
 import { useId, useRef, useState } from 'react'
 import { ChoixSon } from './ChoixSon'
+import type { Heure } from '../office/heures'
 import { HEURE_PROPOSEE_LECTURES, type Rappel } from './reglages'
 import { ecrireHeureRappel, nomDuSon } from './textes'
 
@@ -10,6 +11,9 @@ interface Props {
   onChanger: (changement: Partial<Rappel>) => void
   // Un rappel vient d'être activé : l'app demande ce qu'il lui faut.
   onActiver: () => void
+  // En heures solaires : l'heure du jour, que l'on touche pour ouvrir le volet
+  // du décalage, et le repère du soleil (« lever »).
+  solaire?: { heure?: Heure; repere?: string; onOuvrir: () => void }
 }
 
 const versChamp = (heure?: { heures: number; minutes: number }) =>
@@ -17,7 +21,14 @@ const versChamp = (heure?: { heures: number; minutes: number }) =>
 
 // Une prière à rappeler : son nom (qu'on touche pour choisir le son), son
 // heure (qu'on touche pour ouvrir l'horloge d'Android) et son interrupteur.
-export function LigneRappel({ nom, rappel, vibreurPossible, onChanger, onActiver }: Props) {
+export function LigneRappel({
+  nom,
+  rappel,
+  vibreurPossible,
+  onChanger,
+  onActiver,
+  solaire,
+}: Props) {
   const [ouvert, setOuvert] = useState(false)
   const champ = useRef<HTMLInputElement>(null)
   const choix = useId()
@@ -54,7 +65,10 @@ export function LigneRappel({ nom, rappel, vibreurPossible, onChanger, onActiver
           aria-controls={ouvert ? choix : undefined}
           onClick={() => setOuvert(!ouvert)}
         >
-          <span className="rappel-priere">{nom}</span>
+          <span className="rappel-priere">
+            {nom}
+            {solaire?.repere && ` · ${solaire.repere}`}
+          </span>
           {actif && (
             <span className="rappel-son">
               {nomDuSon(son)}
@@ -63,16 +77,27 @@ export function LigneRappel({ nom, rappel, vibreurPossible, onChanger, onActiver
             </span>
           )}
         </button>
-        <label className="rappel-heure">
-          <span aria-hidden="true">{heure ? ecrireHeureRappel(heure) : '—'}</span>
-          <input
-            ref={champ}
-            type="time"
-            aria-label={`${nom}, heure`}
-            value={versChamp(heure)}
-            onChange={(e) => changerHeure(e.target.value)}
-          />
-        </label>
+        {solaire ? (
+          <button
+            className="rappel-heure"
+            type="button"
+            aria-label={`${nom}, heure solaire${solaire.heure ? `, ${ecrireHeureRappel(solaire.heure)}` : ''}`}
+            onClick={solaire.onOuvrir}
+          >
+            {solaire.heure ? ecrireHeureRappel(solaire.heure) : '—'}
+          </button>
+        ) : (
+          <label className="rappel-heure">
+            <span aria-hidden="true">{heure ? ecrireHeureRappel(heure) : '—'}</span>
+            <input
+              ref={champ}
+              type="time"
+              aria-label={`${nom}, heure`}
+              value={versChamp(heure)}
+              onChange={(e) => changerHeure(e.target.value)}
+            />
+          </label>
+        )}
         <button
           className="rappel-bascule"
           type="button"

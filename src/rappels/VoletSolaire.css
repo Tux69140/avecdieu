@@ -1,0 +1,94 @@
+/* Le volet d'un office solaire, dans la fenêtre des rappels. */
+.volet-sous-titre {
+  color: var(--sepia);
+}
+
+.volet-solaire h3 {
+  margin: var(--esp-md) 0 var(--esp-xs);
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.06em;
+  color: var(--sepia);
+}
+
+.volet-decalage {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-md);
+}
+
+.volet-decalage button {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--or);
+  border-radius: 9999px;
+  background: none;
+  font-family: var(--texte);
+  font-size: 22px;
+  color: var(--encre);
+  cursor: pointer;
+}
+
+.volet-decalage button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.volet-decalage output {
+  min-width: 5em;
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+/* « Pas avant 7 h 00 » : l'heure ouvre l'horloge, l'interrupteur l'active. */
+.volet-limite {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-sm);
+  margin-top: var(--esp-md);
+  border-top: 1px solid var(--filet);
+  border-bottom: 1px solid var(--filet);
+}
+
+.volet-limite-heure {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.volet-limite[data-active='non'] .volet-limite-heure {
+  color: var(--sepia);
+}
+
+.volet-limite-heure input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.volet-limite-heure:focus-within {
+  outline: 2px solid var(--or);
+  outline-offset: 2px;
+}
+
+.volet-solaire .volet-resultat {
+  margin-top: var(--esp-md);
+  font-weight: 500;
+}
+
+.volet-astre {
+  color: var(--sepia);
+}

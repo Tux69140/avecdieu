@@ -1,6 +1,9 @@
 import { dateDuJour, decaler, enDate } from '../office/dates'
 import type { Heure } from '../office/heures'
 import { PRIERES_RAPPELEES, type Priere, type Rappel, type Rappels, type Son } from './reglages'
+
+// L'heure de chaque prière un jour donné : fixe, ou selon le soleil (phase 12).
+export type HeuresDuJour = (date: string) => Record<Priere, Heure | undefined>
 import {
   nomDuSon,
   OUVERTURE_DES_HEURES,
@@ -62,14 +65,26 @@ export function canalDe({ son, vibreur }: Rappel): Canal {
 
 const enMinutes = ({ heures, minutes }: Heure) => heures * 60 + minutes
 
+// Les heures réglées avec les rappels, les mêmes chaque jour.
+const heuresFixes =
+  (rappels: Rappels): HeuresDuJour =>
+  () =>
+    Object.fromEntries(
+      PRIERES_RAPPELEES.map((p) => [p, rappels[p].heure]),
+    ) as ReturnType<HeuresDuJour>
+
 // R1 : le premier office du matin s'ouvre par « Seigneur, ouvre mes lèvres ».
 // Les rappels étant prêts un mois d'avance, c'est le plus matinal des rappels
-// actifs entre l'office des lectures et les laudes.
-export function officeDuMatin(rappels: Rappels): Priere | undefined {
+// actifs entre l'office des lectures et les laudes ; en mode solaire, il peut
+// changer d'un jour à l'autre.
+export function officeDuMatin(
+  rappels: Rappels,
+  heures = heuresFixes(rappels)(''),
+): Priere | undefined {
   const candidats = (['lectures', 'laudes'] as const).filter(
-    (priere) => rappels[priere].actif && rappels[priere].heure,
+    (priere) => rappels[priere].actif && heures[priere],
   )
-  return candidats.sort((a, b) => enMinutes(rappels[a].heure!) - enMinutes(rappels[b].heure!))[0]
+  return candidats.sort((a, b) => enMinutes(heures[a]!) - enMinutes(heures[b]!))[0]
 }
 
 function texteDe(priere: Priere, matin: Priere | undefined) {
@@ -89,18 +104,21 @@ export function programmer(
   rappels: Rappels,
   maintenant: Date,
   jours = JOURS_PROGRAMMES,
+  heuresDuJour = heuresFixes(rappels),
 ): NotificationPrevue[] {
-  const matin = officeDuMatin(rappels)
   const premier = dateDuJour(maintenant)
   const prevues: NotificationPrevue[] = []
   for (let n = 0; n < jours; n++) {
     const date = decaler(premier, n)
     const jour = enDate(date)
+    const heures = heuresDuJour(date)
+    const matin = officeDuMatin(rappels, heures)
     PRIERES_RAPPELEES.forEach((priere, rang) => {
       const rappel = rappels[priere]
-      if (!rappel.actif || !rappel.heure) return
+      const heure = heures[priere]
+      if (!rappel.actif || !heure) return
       const quand = new Date(jour)
-      quand.setHours(rappel.heure.heures, rappel.heure.minutes, 0, 0)
+      quand.setHours(heure.heures, heure.minutes, 0, 0)
       if (quand <= maintenant) return
       prevues.push({
         id: numeroDuJour(date) * 10 + rang,

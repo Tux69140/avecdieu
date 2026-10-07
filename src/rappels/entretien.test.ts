@@ -1,7 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { telephoneSimule } from '../telephone/simulation'
 import { ouvrirLesNotifications, reprogrammer } from './entretien'
+import { choisirLieu } from '../lieu/lieu'
 import { modifierRappel } from './reglages'
+import { modifierSolaire } from './solaire'
 
 const MAINTENANT = new Date(2026, 9, 7, 10, 0)
 
@@ -27,6 +29,22 @@ describe('reprogrammation des rappels', () => {
       'rappel-bourdon_notre_dame-vibreur',
       'rappel-cloche_marcel-vibreur',
     ])
+  })
+
+  it('en heures solaires, chaque jour sonne à l’heure du soleil de ce jour-là', async () => {
+    choisirLieu({ nom: 'Lyon', pres: false, latitude: 45.76, longitude: 4.84 })
+    modifierSolaire({ actives: true })
+    modifierRappel('sexte', { actif: true })
+    await reprogrammer(MAINTENANT)
+    const heures = telephoneSimule().programmees.map((n) => {
+      const quand = new Date(n.quand)
+      return quand.getHours() * 60 + quand.getMinutes()
+    })
+    // Midi solaire de Lyon : vers 13 h 23 début octobre, 12 h 30 début novembre
+    // (heure d'hiver) ; jamais midi pile, l'heure fixe.
+    expect(heures[0]).toBeGreaterThan(13 * 60 + 15)
+    expect(heures.at(-1)).toBeLessThan(12 * 60 + 40)
+    expect(new Set(heures).size).toBeGreaterThan(2)
   })
 
   it('remplace les anciennes et retire les canaux inutiles', async () => {
