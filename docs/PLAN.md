@@ -277,12 +277,23 @@ Dans les offices et au chapelet, pincer ou écarter deux doigts règle cette mê
 
 Le thème nuit s'active automatiquement selon le réglage d'Android. Toutes les animations sont coupées si Android demande de les réduire. Les transitions douces de `docs/DESIGN.md` sont mises en place.
 
+Décisions du porteur du projet (2026-10-07) :
+- **Réglages en accordéon** : trois rubriques, toutes fermées à l'ouverture de l'app, plusieurs ouvrables à la fois (l'écran se souvient de ce qui est ouvert tant que l'app reste ouverte). Chaque titre porte une ligne de résumé et un chevron › qui pivote à l'ouverture. « Tous les réglages » depuis le seuil du chapelet ouvre la rubrique Chapelet.
+  - `Affichage` / `Taille du texte, thème` (nouvelle, en tête) ;
+  - `Chapelet` / `Annonce, prières, vibrations` (contenu inchangé) ;
+  - `Offices` / `Zone, accents, textes hors connexion` (la zone en tête, puis le reste inchangé).
+- **Zone liturgique** : les 8 zones de l'AELF, France par défaut. Libellé `Zone liturgique`, aide `Le calendrier des fêtes propres à votre pays.`, choix `France`, `Afrique`, `Belgique`, `Canada`, `Luxembourg`, `Monaco`, `Suisse`, `Calendrier romain général`.
+- **Taille du texte** : 5 crans (16, 18, 20, 22, 24 px ; 18 d'origine), boutons `A−` et `A+` autour de 5 points, avec en exemple le début du Notre Père (`Notre Père, qui es aux cieux, / que ton nom soit sanctifié,`) qui change en direct ; lien `Taille d’origine` seulement hors de 18 ; aide `Dans un office ou au chapelet, pincez ou écartez deux doigts.` Lecteur d'écran : `Réduire le texte`, `Agrandir le texte`, `Taille 2 sur 5`.
+- **Ce qui grandit** : le texte à prier des offices et du chapelet, et à la même échelle ce qui s'y mêle (V/ R/, versets, astérisques, libellés des parties). Titres, accueil, menu et réglages ne changent pas.
+- **Pincement** : il saute de cran en cran, sans aucun repère à l'écran : seul le texte change.
+- **Thème** : `Thème` à trois choix `Automatique | Jour | Nuit`, aide `Automatique : nuit après le coucher du soleil, ou si le téléphone est en mode sombre.` (coucher du soleil du cadran, centre de la France).
+
 ### Critères d'acceptation
 
 - [ ] Changer de zone vide puis recharge le cache, et les offices affichés correspondent à la nouvelle zone.
-- [ ] Le thème nuit suit le réglage d'Android, et tous les écrans respectent les jetons nuit.
+- [ ] En automatique, le thème nuit s'allume si Android est en mode sombre ou après le coucher du soleil ; « Jour » et « Nuit » le forcent ; tous les écrans respectent les jetons nuit.
 - [ ] La taille du texte s'applique aux offices et au chapelet, et persiste.
-- [ ] Pincer ou écarter deux doigts dans un office ou au chapelet change la taille du texte entre 16 et 24 px, sans faire avancer le chapelet (parcours Playwright).
+- [ ] Pincer ou écarter deux doigts dans un office ou au chapelet change la taille du texte de cran en cran entre 16 et 24 px, sans faire avancer le chapelet (parcours Playwright).
 - [ ] Avec « réduire les animations », aucune transition ne joue (test).
 - [ ] À vérifier : le comportement de la zone `france` un jour de fête propre à la France (hypothèse du PRD).
 
