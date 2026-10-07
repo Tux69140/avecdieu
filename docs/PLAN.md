@@ -364,6 +364,19 @@ Un commutateur fait passer de l'heure fixe à l'heure solaire. En mode solaire :
 - le cadran de l'accueil s'étire du lever au coucher du soleil ;
 - le thème nuit peut aussi s'activer après le coucher du soleil.
 
+Décisions du porteur du projet (2026-10-07, cadrage en cours) :
+- **Commutateur en tête de la rubrique `Rappels`** : `Heures des prières` / `Fixes | Solaires` ; en solaire, aide `Selon la course du soleil à Lyon, du lever au coucher.` et ligne `Lieu : Lyon ›`. Lignes des offices : `Laudes · lever`, `Sexte · midi solaire`, avec l'heure du jour. Résumé de la rubrique : `Heures solaires · Laudes, vêpres`.
+- **Aucune connexion** : lever et coucher se calculent sur le téléphone ; la liste des villes est embarquée (rien n'est cherché en ligne). **Villes de plus de 15 000 habitants** (GeoNames, environ 25 000 dans le monde), plus `Me localiser` par le GPS.
+- **Décalage et limite** : chaque office solaire a un décalage de −1 h à +1 h, par 5 min ; les laudes ont une limite `Pas avant`, les vêpres une limite `Pas après`. D'origine : décalages à 0, laudes pas avant 7 h, vêpres pas après 19 h 30 (limites activées, désactivables).
+- **Volet d'un office solaire** (toucher son heure ; complies, lectures et chapelet gardent l'horloge d'Android) : `LAUDES` / `Au lever du soleil` / `Décalage` avec `−` `0 min` `+` / `Pas avant 7 h 00` et interrupteur (heure réglée par l'horloge d'Android) / `Aujourd’hui : 7 h 52` / `Lever du soleil à Lyon : 7 h 52` / `Fermer`. Sous-titres : tierce `Fin de la 3e heure du jour`, sexte `Au midi solaire`, none `Fin de la 9e heure du jour`, vêpres `Au coucher du soleil` (limite `Pas après 19 h 30`).
+- **Écran du lieu**, ouvert en passant à `Solaires` sans lieu connu (revenir sans choisir garde les heures fixes) ou par `Lieu : … ›` : `‹ Retour` / `LIEU DES HEURES SOLAIRES` / bouton `Me localiser` / `Une seule fois. La position reste sur le téléphone.` / `ou` / champ `Chercher une ville` (résultats `Saint-Denis · La Réunion, France`) / `Lieu actuel : Près de Lyon` (après le GPS, la ville la plus proche de la liste). Erreurs en brun brique :
+  - `⚠ Aucune ville de ce nom dans la liste. Essayez une ville voisine de plus de 15 000 habitants, ou « Me localiser ».` ;
+  - `⚠ Android refuse l’accès à la position. Cherchez plutôt une ville, ou autorisez la position dans les réglages d’Android.` / `Ouvrir les réglages d’Android` ;
+  - `⚠ La position n’a pas pu être trouvée. Vérifiez que la localisation du téléphone est allumée, ou cherchez une ville.`
+- **Voyage** : sur l'écran du lieu, `Actualiser à chaque ouverture` (désactivé d'origine), aide `À plus de 50 km du lieu enregistré, l’app recalcule les heures. La position reste sur le téléphone.` Le recalcul est silencieux : seule la ligne `Lieu :` change.
+- **Cadran solaire** : arc doré du lever au coucher, prolongé en pointillés aux deux bouts pour les offices de la nuit (complies au bout). Repères `LEVER 7 H 52` · `MIDI` · `COUCHER 18 H 40`.
+- **À propos**, nouvelle rubrique `Heures solaires` : `Liste des villes de plus de 15 000 habitants : GeoNames (CC BY 4.0). Lever et coucher du soleil calculés sur le téléphone.`
+
 ### Critères d'acceptation
 
 - [ ] Les levers et couchers calculés s'écartent de moins de 2 minutes des éphémérides officielles, pour plusieurs villes et dates (critère de succès 5).
