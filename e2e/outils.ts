@@ -245,7 +245,9 @@ export async function pincer(page: Page, debut: number, fin: number) {
 }
 
 // Dans un office : descendre jusqu'à `position`, puis remonter d'un doigt pour
-// faire revenir le bandeau, qui s'efface pendant la lecture.
+// faire revenir le bandeau, qui s'efface pendant la lecture. Sur une machine
+// chargée, un mouvement peut se perdre entre deux images : on le refait, comme
+// un doigt qui recommence (le seuil exact est vérifié par e2e/reperage.spec.ts).
 export async function faireRevenirBandeau(page: Page, position = 1500) {
   const image = () =>
     page.evaluate(
@@ -256,8 +258,11 @@ export async function faireRevenirBandeau(page: Page, position = 1500) {
     )
   // Des polices qui arrivent font bouger la page : ce défilement-là cacherait le bandeau.
   await page.evaluate(() => document.fonts.ready.then(() => undefined))
-  await page.evaluate((y) => window.scrollTo(0, y + 40), position)
-  await image()
-  await page.evaluate(() => window.scrollBy(0, -40))
-  await image()
+  await expect(async () => {
+    await page.evaluate((y) => window.scrollTo(0, y + 40), position)
+    await image()
+    await page.evaluate(() => window.scrollBy(0, -40))
+    await image()
+    await expect(page.getByTestId('bandeau-office')).toBeVisible({ timeout: 1000 })
+  }).toPass()
 }

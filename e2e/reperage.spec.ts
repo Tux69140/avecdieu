@@ -46,9 +46,14 @@ async function remonter(page: Page, ecart = 40) {
 
 // Amène un titre de partie juste sous le bandeau, comme un priant qui lit
 // puis remonte un peu : le bandeau est là.
+// Sur une machine chargée, un mouvement peut se perdre entre deux images : on
+// le refait (le seuil exact est vérifié par le test « sans clignoter »).
 async function amenerSousLeBandeau(cible: Locator) {
-  await cible.evaluate((e) => window.scrollTo(0, e.getBoundingClientRect().top + scrollY - 70))
-  await remonter(cible.page())
+  await expect(async () => {
+    await cible.evaluate((e) => window.scrollTo(0, e.getBoundingClientRect().top + scrollY - 70))
+    await remonter(cible.page())
+    await expect(bandeau(cible.page())).toBeVisible({ timeout: 1000 })
+  }).toPass()
 }
 
 // Ce que montre le fil : une lettre par perle (d = dite, c = en cours, v = à venir).
