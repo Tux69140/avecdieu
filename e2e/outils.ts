@@ -223,3 +223,39 @@ export const toucherNotification = (page: Page, route: string) =>
     const t = (window as unknown as { __telephone: { toucher: (r: string) => void } }).__telephone
     t.toucher(route)
   }, route)
+
+// Deux doigts posés à `debut` px l'un de l'autre, écartés (ou rapprochés)
+// jusqu'à `fin`. Le premier ne bouge pas : sans précaution, son relâchement
+// passerait pour un toucher.
+export async function pincer(page: Page, debut: number, fin: number) {
+  const cdp = await page.context().newCDPSession(page)
+  const { width, height } = page.viewportSize()!
+  const y = height / 2
+  const x = width / 2 - 100
+  const doigts = (ecart: number) => [
+    { x, y, id: 0 },
+    { x: x + ecart, y, id: 1 },
+  ]
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: doigts(debut) })
+  for (let i = 1; i <= 10; i++) {
+    const points = doigts(debut + ((fin - debut) * i) / 10)
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: points })
+  }
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
+}
+
+// Dans un office : descendre jusqu'à `position`, puis remonter d'un doigt pour
+// faire revenir le bandeau, qui s'efface pendant la lecture.
+export async function faireRevenirBandeau(page: Page, position = 1500) {
+  const image = () =>
+    page.evaluate(
+      () =>
+        new Promise((fin) =>
+          requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(fin))),
+        ),
+    )
+  await page.evaluate((y) => window.scrollTo(0, y + 40), position)
+  await image()
+  await page.evaluate(() => window.scrollBy(0, -40))
+  await image()
+}

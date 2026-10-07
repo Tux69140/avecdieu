@@ -1,6 +1,7 @@
 import { AxeBuilder } from '@axe-core/playwright'
 import { expect, type Page } from '@playwright/test'
 import {
+  faireRevenirBandeau,
   avancer,
   commencer,
   deplierReglages,
@@ -157,7 +158,7 @@ async function bandeauPuisSommaire(page: Page) {
   await preparer(page)
   await page.goto('/office/laudes/2026-10-06')
   await expect(page.getByTestId('office')).toBeVisible()
-  await page.evaluate(() => window.scrollTo(0, 1500))
+  await faireRevenirBandeau(page)
   await expect(page.getByTestId('bandeau-office')).toBeVisible()
   expect(await violationsGraves(page)).toEqual([])
   await page.getByTestId('bandeau-office').click()

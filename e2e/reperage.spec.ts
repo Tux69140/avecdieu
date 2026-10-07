@@ -1,9 +1,10 @@
 import { expect, type Locator, type Page } from '@playwright/test'
-import { preparer, servirAelf, test } from './outils.ts'
+import { pincer, preparer, servirAelf, test } from './outils.ts'
 
-// Phase 7 : se repérer dans l'office. Un bandeau fixe nomme l'étape en cours
+// Phase 7 : se repérer dans l'office. Un bandeau nomme l'étape en cours
 // (l'antienne compte avec son psaume) et montre la progression en fil de
-// perles ; le sommaire conduit à n'importe quelle étape.
+// perles ; le sommaire conduit à n'importe quelle étape. Depuis le 2026-10-07,
+// le bandeau s'efface pendant la lecture et revient quand on remonte un peu.
 
 const MARDI = new Date(2026, 9, 6, 10, 0)
 
@@ -24,9 +25,28 @@ const sommaire = (page: Page) => page.getByRole('dialog', { name: /^Sommaire/ })
 const titre = (page: Page, nom: string) =>
   page.getByTestId('office').getByRole('heading', { level: 2, name: nom, exact: true })
 
-// Amène un titre de partie juste sous le bandeau, comme un priant qui lit.
+// Laisse passer deux images : le défilement est relevé à l'image qui suit
+// l'événement. Un doigt qui fait défiler dure de toute façon plusieurs images.
+const image = (page: Page) =>
+  page.evaluate(
+    () =>
+      new Promise((fin) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(fin))),
+      ),
+  )
+
+// Le priant remonte d'un doigt : le bandeau revient.
+async function remonter(page: Page, ecart = 40) {
+  await image(page)
+  await page.evaluate((ecart) => window.scrollBy(0, -ecart), ecart)
+  await image(page)
+}
+
+// Amène un titre de partie juste sous le bandeau, comme un priant qui lit
+// puis remonte un peu : le bandeau est là.
 async function amenerSousLeBandeau(cible: Locator) {
-  await cible.evaluate((e) => window.scrollTo(0, e.getBoundingClientRect().top + scrollY - 110))
+  await cible.evaluate((e) => window.scrollTo(0, e.getBoundingClientRect().top + scrollY - 70))
+  await remonter(cible.page())
 }
 
 // Ce que montre le fil : une lettre par perle (d = dite, c = en cours, v = à venir).
@@ -39,12 +59,13 @@ const fil = (page: Page) =>
         .join(''),
     )
 
-test('le bandeau paraît dès que le titre sort de l’écran et nomme l’étape lue', async ({
-  page,
-}) => {
+test('le bandeau revient quand on remonte et nomme l’étape lue', async ({ page }) => {
   await ouvrir(page)
-  // À l'ouverture : l'en-tête, avec son lien vers le sommaire ; pas de bandeau.
+  // À l'ouverture : l'en-tête, avec ‹, ☰ et le fil de perles qui ouvre le
+  // sommaire ; pas de bandeau.
   await expect(page.getByRole('button', { name: 'Sommaire', exact: true })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Retour' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Menu' })).toBeVisible()
   await expect(bandeau(page)).toBeHidden()
 
   // L'antienne ouvre l'étape de son psaume.
@@ -60,8 +81,11 @@ test('le bandeau paraît dès que le titre sort de l’écran et nomme l’étap
   await expect(bandeau(page).getByTestId('etape-courante')).toHaveText('Lecture brève')
   await expect.poll(() => fil(page)).toBe('ddddddcvvvvvv')
 
-  // Tout en bas : la dernière étape.
+  // Tout en bas, le bandeau revient de lui-même : la dernière étape.
+  await page.evaluate(() => window.scrollBy(0, 200))
+  await expect(bandeau(page)).toBeHidden()
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight))
+  await expect(bandeau(page)).toBeVisible()
   await expect(bandeau(page).getByTestId('etape-courante')).toHaveText('Bénédiction')
   await expect.poll(() => fil(page)).toBe('ddddddddddddc')
 
@@ -128,8 +152,7 @@ test('près de la fin, une étape courte reste celle qu’on a choisie', async (
   }
   // Le priant fait défiler (l'oraison a mené tout en bas) : le bandeau reprend la lecture.
   await page.evaluate(() => window.scrollBy(0, -40))
-  // Un doigt qui fait défiler dure plusieurs images, pas une seule.
-  await page.evaluate(() => new Promise((fin) => requestAnimationFrame(() => setTimeout(fin))))
+  await image(page)
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight))
   await expect(bandeau(page).getByTestId('etape-courante')).toHaveText('Bénédiction')
 })
@@ -187,4 +210,88 @@ test('le fil de perles reste lisible à 360 px pour l’office le plus long', as
   // Des perles bien séparées, qu'on compte d'un coup d'œil.
   for (let i = 1; i < perles.length; i++)
     expect(perles[i][0] - perles[i - 1][1]).toBeGreaterThanOrEqual(6)
+})
+
+test('le bandeau s’efface en lisant, sans clignoter au moindre mouvement', async ({ page }) => {
+  await ouvrir(page)
+  await page.evaluate(() => window.scrollTo(0, 2500))
+  await image(page)
+  await expect(bandeau(page)).toBeHidden()
+  // Un doigt qui tremble ne le fait pas revenir.
+  await remonter(page, 20)
+  await expect(bandeau(page)).toBeHidden()
+  await page.evaluate(() => window.scrollBy(0, 20))
+  await remonter(page, 20)
+  await expect(bandeau(page)).toBeHidden()
+  // Remonter d'un doigt, si.
+  await remonter(page, 40)
+  await expect(bandeau(page)).toBeVisible()
+  // Reprendre la lecture : il reste un instant, puis s'efface.
+  await page.evaluate(() => window.scrollBy(0, 30))
+  await image(page)
+  await expect(bandeau(page)).toBeVisible()
+  await page.evaluate(() => window.scrollBy(0, 30))
+  await image(page)
+  await expect(bandeau(page)).toBeHidden()
+})
+
+test('pincer pour changer la taille du texte ne fait pas revenir le bandeau', async ({ page }) => {
+  await ouvrir(page)
+  await page.evaluate(() => window.scrollTo(0, 3000))
+  await image(page)
+  await expect(bandeau(page)).toBeHidden()
+  await pincer(page, 140, 100)
+  await expect
+    .poll(() => page.getByTestId('office').evaluate((e) => getComputedStyle(e).fontSize))
+    .toBe('16px')
+  await image(page)
+  await image(page)
+  await expect(bandeau(page)).toBeHidden()
+})
+
+test('‹ et ☰ du bandeau : le retour, et le menu des prières du jour', async ({ page }) => {
+  await page.goto('/')
+  await page
+    .getByRole('list', { name: 'Offices du jour' })
+    .getByRole('link', { name: /^Laudes/ })
+    .click()
+  await expect(page.getByTestId('office')).toBeVisible()
+  await amenerSousLeBandeau(titre(page, 'Psaume 66'))
+  await bandeau(page).getByRole('link', { name: 'Menu' }).click()
+
+  const prieres = page.getByRole('list', { name: 'Prières du jour' })
+  await expect(prieres.getByRole('link')).toHaveText([
+    /^Office des lectures\s*à toute heure$/,
+    /^Laudes\s*7 h$/,
+    /^Tierce\s*9 h$/,
+    /^Sexte\s*12 h$/,
+    /^None\s*15 h$/,
+    /^Vêpres\s*18 h 30$/,
+    /^Complies\s*21 h 30$/,
+    /^Chapelet\s*20 h$/,
+  ])
+  // L'office d'où l'on vient est marqué.
+  await expect(prieres.locator('[aria-current="page"]')).toHaveText(/Laudes/)
+  await prieres.getByRole('link', { name: /^Vêpres/ }).click()
+  await expect(page).toHaveURL('/office/vepres/2026-10-06')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Vêpres')
+
+  // ‹ du bandeau : comme le retour d'Android.
+  await amenerSousLeBandeau(titre(page, 'Oraison'))
+  await bandeau(page).getByRole('button', { name: 'Retour' }).click()
+  await expect(page).toHaveURL('/office/laudes/2026-10-06')
+})
+
+test('le menu s’ouvre en haut ; le retour ramène à la même place dans l’office', async ({
+  page,
+}) => {
+  await ouvrir(page)
+  await amenerSousLeBandeau(titre(page, 'Psaume 66'))
+  const position = await page.evaluate(() => scrollY)
+  await bandeau(page).getByRole('link', { name: 'Menu' }).click()
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Avec Dieu')
+  expect(await page.evaluate(() => scrollY)).toBe(0)
+  await page.goBack()
+  await expect(page.getByTestId('office')).toBeVisible()
+  await expect.poll(() => page.evaluate(() => scrollY)).toBe(position)
 })

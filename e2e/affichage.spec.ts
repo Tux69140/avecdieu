@@ -1,5 +1,13 @@
 import { expect, type Page } from '@playwright/test'
-import { avancer, commencer, deplierReglages, preparer, servirAelf, test } from './outils.ts'
+import {
+  avancer,
+  commencer,
+  deplierReglages,
+  pincer,
+  preparer,
+  servirAelf,
+  test,
+} from './outils.ts'
 
 // Phase 10 : réglages en rubriques, zone liturgique, taille du texte (réglée
 // ou pincée), thème nuit, animations réduites. Décisions du 2026-10-07.
@@ -17,26 +25,6 @@ const taille = (page: Page, selecteur: string) =>
     .locator(selecteur)
     .first()
     .evaluate((e) => getComputedStyle(e).fontSize)
-
-// Deux doigts posés à `debut` px l'un de l'autre, écartés (ou rapprochés)
-// jusqu'à `fin`. Le premier ne bouge pas : sans précaution, son relâchement
-// passerait pour un toucher.
-async function pincer(page: Page, debut: number, fin: number) {
-  const cdp = await page.context().newCDPSession(page)
-  const { width, height } = page.viewportSize()!
-  const y = height / 2
-  const x = width / 2 - 100
-  const doigts = (ecart: number) => [
-    { x, y, id: 0 },
-    { x: x + ecart, y, id: 1 },
-  ]
-  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: doigts(debut) })
-  for (let i = 1; i <= 10; i++) {
-    const points = doigts(debut + ((fin - debut) * i) / 10)
-    await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: points })
-  }
-  await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
-}
 
 test.describe('les rubriques des réglages', () => {
   test('toutes fermées à l’ouverture, chacune se déplie et se replie', async ({ page }) => {

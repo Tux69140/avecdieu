@@ -1,6 +1,7 @@
 import { expect, type Page } from '@playwright/test'
 import { readFileSync } from 'node:fs'
 import {
+  faireRevenirBandeau,
   commencer,
   deplierReglages,
   preparer,
@@ -108,11 +109,11 @@ test('office : le bandeau et le sommaire s’écartent des barres d’Android', 
   await preparer(page)
   await page.goto('/office/laudes/2026-10-06')
   await expect(page.getByTestId('office')).toBeVisible()
-  await page.evaluate(() => window.scrollTo(0, 1500))
+  await faireRevenirBandeau(page)
   const bandeau = page.getByTestId('bandeau-office')
   await expect(bandeau).toBeVisible()
   await verifierBarres(page)
-  await page.evaluate(() => window.scrollTo(0, 1500))
+  await faireRevenirBandeau(page)
   await expect(bandeau).toBeVisible()
   await expect.poll(() => page.evaluate(() => document.getAnimations().length)).toBe(0)
   expect((await bandeau.boundingBox())!.y).toBeGreaterThanOrEqual(HAUT)

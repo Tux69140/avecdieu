@@ -194,6 +194,7 @@ Décisions du porteur du projet (2026-10-07) :
 - **Bandeau en haut, dès qu'on descend** : à l'ouverture, l'en-tête reste tel quel avec un lien `Sommaire` sous le titre ; dès que le titre sort de l'écran, un bandeau fin glisse en haut (nom de l'étape, chevron ⌄, fil de perles dessous). Un toucher sur le bandeau ouvre le sommaire.
 - **Perles** (`docs/DESIGN.md`) : dite = or plein, en cours = soleil avec halo rosé, à venir = cercle or.
 - **Sommaire en volet qui descend** depuis le bandeau, par-dessus le texte assombri : titre `Sommaire · Laudes`, chaque étape avec sa perle et sa précision (`Hymne · Soleil levant`, `Lecture brève · 1 Jn 4, 14-15`). Toucher une étape y conduit et referme le volet ; le bouton retour d'Android le referme aussi.
+- **Revu le 2026-10-07** (comparaison avec l'app AELF, critique Impeccable, validé par le porteur du projet) : l'en-tête tient en une ligne `‹ date ☰`, le fil de perles sous le titre ouvre le sommaire ; le bandeau s'efface pendant la lecture et revient quand on remonte d'environ 1 cm ou en fin d'office, avec ‹ et ☰ ; ☰ ouvre le menu, qui liste les prières du jour à leur heure.
 
 ### Critères d'acceptation
 

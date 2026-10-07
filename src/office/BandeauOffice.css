@@ -22,12 +22,20 @@
     visibility 0s 0.25s;
 }
 
-.bandeau-office-bouton {
-  display: block;
-  width: 100%;
+/* ‹ et ☰ de part et d'autre de l'étape et du fil de perles. */
+.bandeau-office-contenu {
+  display: grid;
+  grid-template-columns: 48px 1fr 48px;
+  align-items: center;
   max-width: calc(34em + 2 * var(--gouttiere));
   margin: 0 auto;
-  padding: var(--esp-sm) var(--gouttiere) var(--esp-sm);
+  padding: 0 calc(var(--gouttiere) - var(--esp-sm));
+}
+
+.bandeau-office-bouton {
+  display: block;
+  min-width: 0;
+  padding: var(--esp-sm) 0;
   border: none;
   background: none;
   color: var(--sepia);

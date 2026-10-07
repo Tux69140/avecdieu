@@ -80,3 +80,37 @@
 .menu-liste button:active {
   background: var(--halo);
 }
+
+/* Les prières du jour, comme sur l'accueil : le nom, l'heure à droite. */
+.menu-jour {
+  margin: var(--esp-md) 0 var(--esp-xs);
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.06em;
+  color: var(--sepia);
+}
+
+.menu-prieres a {
+  gap: var(--esp-sm);
+  min-height: 48px;
+}
+
+.menu-priere {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--esp-sm);
+}
+
+.menu-heure {
+  font-family: var(--sc);
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--sepia);
+}
+
+/* L'office d'où l'on vient : la perle en cours, comme dans le fil. */
+.menu-prieres [aria-current='page'] {
+  font-weight: 600;
+}

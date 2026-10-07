@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router'
 import { entretenirReserve } from './aelf/reserve'
 import { suivreApparence } from './affichage/apparence'
+import { retenirDefilement } from './composants/defilement'
+import { Racine } from './composants/Racine'
 import { EcranAccueil } from './ecrans/EcranAccueil'
 import { EcranAPropos } from './ecrans/EcranAPropos'
 import { EcranChapelet } from './ecrans/EcranChapelet'
@@ -15,17 +17,23 @@ import { entretenirRappels, ouvrirLesNotifications } from './rappels/entretien'
 import './styles/jetons.css'
 
 const routeur = createBrowserRouter([
-  { path: '/', element: <EcranAccueil /> },
-  { path: '/jour/:date', element: <EcranAccueil /> },
-  { path: '/chapelet', element: <EcranChapelet /> },
-  { path: '/chapelet/:serie', element: <EcranChapelet /> },
-  { path: '/office/:office/:date', element: <EcranOffice /> },
-  { path: '/reglages', element: <EcranReglages /> },
-  { path: '/lieu', element: <EcranLieu /> },
-  { path: '/menu', element: <EcranMenu /> },
-  { path: '/a-propos', element: <EcranAPropos /> },
-  { path: '*', element: <Navigate to="/" replace /> },
+  {
+    element: <Racine />,
+    children: [
+      { path: '/', element: <EcranAccueil /> },
+      { path: '/jour/:date', element: <EcranAccueil /> },
+      { path: '/chapelet', element: <EcranChapelet /> },
+      { path: '/chapelet/:serie', element: <EcranChapelet /> },
+      { path: '/office/:office/:date', element: <EcranOffice /> },
+      { path: '/reglages', element: <EcranReglages /> },
+      { path: '/lieu', element: <EcranLieu /> },
+      { path: '/menu', element: <EcranMenu /> },
+      { path: '/a-propos', element: <EcranAPropos /> },
+      { path: '*', element: <Navigate to="/" replace /> },
+    ],
+  },
 ])
+retenirDefilement(routeur)
 
 // Thème et taille du texte posés avant le premier affichage : pas d'éclair clair la nuit.
 suivreApparence()

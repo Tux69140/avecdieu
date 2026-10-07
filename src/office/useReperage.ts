@@ -1,11 +1,18 @@
 import { useCallback, useEffect, useRef, useState, type RefObject } from 'react'
+import { REGLAGES_CHANGES } from '../chapelet/reglages'
+import { suivreBarre, type Barre } from './barre'
 import { etapeALaLigne, ligneDeLecture } from './reperage'
 
 // L'écart laissé entre le bandeau et le titre d'une étape où l'on saute.
 const RESPIRATION = 16
+// Après un changement de taille du texte (pincement), la page se remet en
+// place : ce défilement-là n'est pas celui du priant.
+const GEL_APRES_TAILLE = 400
+// En deçà, on est au bout de l'office.
+const FIN = 8
 
 interface Reperes {
-  // Le titre de l'office : le bandeau paraît quand il sort de l'écran.
+  // Le titre de l'office : le bandeau ne paraît qu'une fois sorti de l'écran.
   titre: RefObject<HTMLElement | null>
   // Le texte de l'office, où chaque étape commence par une ancre [data-etape].
   texte: RefObject<HTMLElement | null>
@@ -18,7 +25,8 @@ export interface Reperage {
   allerA: (etape: number) => void
 }
 
-// Suit le défilement : l'étape en cours, et s'il faut montrer le bandeau.
+// Suit le défilement : l'étape en cours, et s'il faut montrer le bandeau
+// (src/office/barre.ts : caché en lisant, de retour quand on remonte).
 export function useReperage({ titre, texte, bandeau }: Reperes, nombre: number): Reperage {
   const [bandeauVisible, setBandeauVisible] = useState(false)
   const [courante, setCourante] = useState(0)
@@ -26,6 +34,8 @@ export function useReperage({ titre, texte, bandeau }: Reperes, nombre: number):
   // que le priant ne fait pas défiler, même près de la fin où elle ne peut
   // monter jusqu'à la ligne de lecture.
   const epingle = useRef<{ etape: number; position: number } | null>(null)
+  const barre = useRef<Barre>({ visible: false, ancre: 0 })
+  const gelJusqua = useRef(0)
 
   // Le haut de l'écran (sous la barre d'Android) et le bas du bandeau.
   const bords = useCallback(() => {
@@ -42,11 +52,17 @@ export function useReperage({ titre, texte, bandeau }: Reperes, nombre: number):
   const mesurer = useCallback(() => {
     const { haut, bas } = bords()
     const finTitre = titre.current?.getBoundingClientRect().bottom
-    setBandeauVisible(finTitre !== undefined && finTitre < haut)
+    const reste = document.documentElement.scrollHeight - innerHeight - scrollY
+    if (performance.now() < gelJusqua.current) barre.current.ancre = scrollY
+    else
+      barre.current = suivreBarre(barre.current, scrollY, {
+        horsTitre: finTitre !== undefined && finTitre < haut,
+        enFin: reste < FIN,
+      })
+    setBandeauVisible(barre.current.visible)
     const fixee = epingle.current
     if (fixee && Math.abs(scrollY - fixee.position) < 2) return setCourante(fixee.etape)
     epingle.current = null
-    const reste = document.documentElement.scrollHeight - innerHeight - scrollY
     const debuts = ancres().map((a) => a.getBoundingClientRect().top)
     setCourante(etapeALaLigne(debuts, ligneDeLecture(bas, innerHeight, reste)))
   }, [bords, titre, ancres])
@@ -60,13 +76,19 @@ export function useReperage({ titre, texte, bandeau }: Reperes, nombre: number):
       cancelAnimationFrame(attente)
       attente = requestAnimationFrame(mesurer)
     }
+    const geler = () => {
+      gelJusqua.current = performance.now() + GEL_APRES_TAILLE
+      plusTard()
+    }
     plusTard()
     addEventListener('scroll', plusTard, { passive: true })
-    addEventListener('resize', plusTard)
+    addEventListener('resize', geler)
+    addEventListener(REGLAGES_CHANGES, geler)
     return () => {
       cancelAnimationFrame(attente)
       removeEventListener('scroll', plusTard)
-      removeEventListener('resize', plusTard)
+      removeEventListener('resize', geler)
+      removeEventListener(REGLAGES_CHANGES, geler)
     }
   }, [mesurer, nombre])
 
@@ -78,6 +100,8 @@ export function useReperage({ titre, texte, bandeau }: Reperes, nombre: number):
       const cible = ancre.getBoundingClientRect().top + scrollY - bas - RESPIRATION
       scrollTo({ top: cible, behavior: 'instant' })
       epingle.current = { etape, position: scrollY }
+      // Après un saut, la barre reste là jusqu'à ce qu'on reprenne la lecture.
+      barre.current = { visible: true, ancre: scrollY }
       mesurer()
       // Le lecteur d'écran reprend au titre de l'étape.
       const titreEtape = ancre.nextElementSibling?.querySelector<HTMLElement>('h2')

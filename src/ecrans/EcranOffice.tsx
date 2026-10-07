@@ -1,10 +1,12 @@
-import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
-import { Link, Navigate, useParams } from 'react-router'
+import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { Navigate, useLocation, useNavigationType, useParams } from 'react-router'
 import { chargerOffice, ErreurAelf, type OfficeDuJour } from '../aelf/api'
 import type { Etendue } from '../aelf/cache'
 import { textesEnregistres } from '../aelf/reserve'
 import { usePincement } from '../affichage/usePincement'
 import { lireReglages } from '../chapelet/reglages'
+import { positionRetenue } from '../composants/defilement'
+import { BoutonRetour, LienMenu } from '../composants/Icones'
 import { IndiceSuite } from '../composants/IndiceSuite'
 import { useRetour } from '../composants/retour'
 import { useSuiteCachee } from '../composants/suiteCachee'
@@ -97,6 +99,17 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
 
   const clesDesParties = useMemo(() => cles(office?.parties ?? []), [office])
 
+  // Revenu du menu par le retour d'Android : la lecture reprend où on l'avait
+  // laissée, une fois le texte affiché.
+  const { key } = useLocation()
+  const revenu = useNavigationType() === 'POP'
+  const aRetrouver = useRef(revenu ? positionRetenue(key) : undefined)
+  useLayoutEffect(() => {
+    if (!office || aRetrouver.current === undefined) return
+    scrollTo(0, aRetrouver.current)
+    aRetrouver.current = undefined
+  }, [office])
+
   // Phase 7 : l'étape en cours, dans le bandeau et le sommaire.
   const etapes = useMemo(() => etapesDe(office?.parties ?? []), [office])
   const debuts = useMemo(() => new Map(etapes.map((e, k) => [e.debut, k])), [etapes])
@@ -150,6 +163,9 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
           courante={courante}
           visible={bandeauVisible}
           onOuvrir={sommaire.ouvrir}
+          onRetour={retour}
+          date={date}
+          office={nom}
         />
       )}
       <main
@@ -162,17 +178,9 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
           {/* Une seule ligne pour sortir, se repérer dans la journée et ouvrir
               le menu : la prière commence haut sur l'écran. */}
           <div className="office-barre">
-            <button className="office-icone" type="button" aria-label="Retour" onClick={retour}>
-              <svg viewBox="0 0 20 20" aria-hidden="true">
-                <path d="M12.5 4l-6 6 6 6" />
-              </svg>
-            </button>
+            <BoutonRetour onClick={retour} />
             <p className="office-date">{dateLisible(date)}</p>
-            <Link className="office-icone" to="/menu" aria-label="Menu">
-              <svg viewBox="0 0 20 20" aria-hidden="true">
-                <path d="M3 5h14M3 10h14M3 15h14" />
-              </svg>
-            </Link>
+            <LienMenu depuis={date} office={nom} />
           </div>
           <h1 ref={titre}>{NOMS_OFFICES[nom]}</h1>
           {/* Les perles, comme dans le bandeau : un toucher ouvre le sommaire. */}

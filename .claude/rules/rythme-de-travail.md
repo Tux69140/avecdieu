@@ -14,6 +14,11 @@ moment où elle le modifie, à 360 px de large (le plus petit téléphone visé)
 capturé « pour la forme ». Les captures vivent dans le dossier temporaire de la session et sont
 supprimées quand elles sont périmées.
 
+**Un seul thème par capture** (jour, sauf si l'écran ne change qu'en nuit) : jamais la paire
+jour/nuit, ni pour les maquettes ni pour les captures de fin de tâche. Les deux palettes sont
+validées ; le thème nuit se vérifie par les tests (contrastes axe), pas par une capture livrée.
+Le dire dans chaque consigne d'agent qui capture.
+
 ## 3. Tests ciblés pendant, suite complète une fois
 
 Voir `tests.md` : les tests des fichiers touchés pendant la tâche, la suite complète en fin de
