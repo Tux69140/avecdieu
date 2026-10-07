@@ -115,6 +115,10 @@ Un premier écran de réglages pour le chapelet : annonce des mystères (oui ou 
 - [x] Un chapelet quitté puis rouvert le jour même reprend au même grain (l'app rouvre directement sur la prière ; le seuil propose « Reprendre » ou « Recommencer du début »). Rouvert le lendemain, il repart au début avec la série du nouveau jour.
 - [x] Validée sur le Xiaomi et le Samsung par le porteur du projet (2026-10-06).
 
+Ajouts du porteur du projet (2026-10-07), textes validés :
+- **Aide aux gestes** : l'interrupteur `Aide aux gestes` (Réglages › Chapelet, aide `Au début du chapelet, rappelle comment avancer et revenir en arrière.`) la rétablit après « Ne plus afficher ».
+- **Réinitialiser l’app** : lien discret en bas des réglages, puis la confirmation `Réinitialiser l’app ?` / `Réglages, rappels, lieu et chapelet en cours sont effacés : l’app revient comme au premier lancement. Les textes enregistrés pour la semaine sont gardés.` / `Réinitialiser` · `Annuler` ; l'app revient à l'accueil, les rappels annulés.
+
 ## Bloquée par
 
 - Phase 3
@@ -188,7 +192,7 @@ Pendant la lecture d'un office, un bandeau fixe indique la partie en cours et la
 Décisions du porteur du projet (2026-10-07) :
 - **L'antienne compte avec son psaume** : une seule étape « Psaume 84 », qui commence à l'antienne (laudes : 13 étapes au lieu de 18). Le bandeau affiche le libellé de l'étape (« Psaume 84 », « Hymne », « Lecture brève »).
 - **Bandeau en haut, dès qu'on descend** : à l'ouverture, l'en-tête reste tel quel avec un lien `Sommaire` sous le titre ; dès que le titre sort de l'écran, un bandeau fin glisse en haut (nom de l'étape, chevron ⌄, fil de perles dessous). Un toucher sur le bandeau ouvre le sommaire.
-- **Perles** (`docs/DESIGN.md`) : dite = or plein, en cours = soleil avec halo, à venir = cercle or.
+- **Perles** (`docs/DESIGN.md`) : dite = or plein, en cours = soleil avec halo rosé, à venir = cercle or.
 - **Sommaire en volet qui descend** depuis le bandeau, par-dessus le texte assombri : titre `Sommaire · Laudes`, chaque étape avec sa perle et sa précision (`Hymne · Soleil levant`, `Lecture brève · 1 Jn 4, 14-15`). Toucher une étape y conduit et referme le volet ; le bouton retour d'Android le referme aussi.
 
 ### Critères d'acceptation

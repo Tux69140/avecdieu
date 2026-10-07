@@ -80,7 +80,7 @@
     var(--soleil-ombre)
   );
   box-shadow:
-    0 0 0 10px var(--halo),
+    0 0 0 10px var(--halo-perle),
     0 3px 6px var(--ombre-perle);
   transition: transform 0.1s ease-out;
 }

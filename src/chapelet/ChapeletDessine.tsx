@@ -70,7 +70,7 @@ function Grain({ point, etat }: { point: Point; etat: 'passe' | 'courant' | 'a-v
   // Le Gloire au Père se dit les doigts sur le fil : aucune perle, seule une
   // lumière sur le fil pendant qu'on le dit.
   if (type === 'noeud')
-    return etat === 'courant' ? <circle className="halo halo-fil" cx={x} cy={y} r={r + 3} /> : null
+    return etat === 'courant' ? <circle className="halo" cx={x} cy={y} r={r + 3} /> : null
   const classe = `grain grain-${etat}`
   return (
     <g>

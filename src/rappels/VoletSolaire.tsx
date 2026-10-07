@@ -12,7 +12,7 @@ import {
 import { NOMS_OFFICES } from '../office/modele'
 import { leverEtCoucher } from '../office/soleil'
 import { dansLeLieu, ecrireDecalage, ecrireHeureRappel, SOUS_TITRES_SOLAIRES } from './textes'
-import './DialogueRappels.css'
+import '../composants/Dialogue.css'
 import './VoletSolaire.css'
 
 interface Props {
@@ -67,7 +67,7 @@ export function VoletSolaire({ office, reglages, lieu, maintenant, onChanger, on
   return (
     <dialog
       ref={fenetre}
-      className="dialogue-rappels volet-solaire"
+      className="dialogue volet-solaire"
       aria-labelledby={titre}
       onCancel={(e) => {
         e.preventDefault()

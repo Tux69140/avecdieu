@@ -28,5 +28,5 @@
   height: 12px;
   border-color: var(--soleil);
   background: var(--soleil);
-  box-shadow: 0 0 0 4px var(--halo);
+  box-shadow: 0 0 0 4px var(--halo-perle);
 }

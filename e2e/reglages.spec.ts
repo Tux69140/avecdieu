@@ -96,6 +96,53 @@ test.describe('écran des réglages', () => {
     )
     await expect(reglage(page, 'Vibrations')).toHaveAttribute('aria-checked', 'false')
   })
+  test('l’aide aux gestes, écartée par « Ne plus afficher », se rétablit ici', async ({ page }) => {
+    await preparer(page, { aide: true })
+    await page.goto('/chapelet')
+    await page.getByRole('button', { name: 'Commencer le chapelet' }).click()
+    const aide = page.getByRole('dialog', { name: 'Prier avec l’app' })
+    await aide.getByRole('checkbox', { name: 'Ne plus afficher' }).check()
+    await aide.getByRole('button').last().click()
+    await expect(aide).toBeHidden()
+
+    await page.goto('/reglages')
+    await deplierReglages(page, 'Chapelet')
+    await expect(reglage(page, 'Aide aux gestes')).toHaveAttribute('aria-checked', 'false')
+    await reglage(page, 'Aide aux gestes').click()
+    await expect(reglage(page, 'Aide aux gestes')).toHaveAttribute('aria-checked', 'true')
+
+    await page.goto('/chapelet')
+    await page.getByRole('button', { name: /Commencer le chapelet|Recommencer du début/ }).click()
+    await expect(page.getByRole('dialog', { name: 'Prier avec l’app' })).toBeVisible()
+  })
+
+  test('« Réinitialiser l’app » demande confirmation, puis rend l’app comme neuve', async ({
+    page,
+  }) => {
+    await preparer(page)
+    await page.goto('/reglages')
+    await deplierReglages(page, 'Chapelet')
+    await reglage(page, 'Annonce des mystères').click()
+
+    const confirmation = page.getByRole('dialog', { name: 'Réinitialiser l’app ?' })
+    await page.getByRole('button', { name: 'Réinitialiser l’app' }).click()
+    await expect(confirmation).toContainText(
+      'Réglages, rappels, lieu et chapelet en cours sont effacés : l’app revient comme au premier lancement. Les textes enregistrés pour la semaine sont gardés.',
+    )
+    await confirmation.getByRole('button', { name: 'Annuler' }).click()
+    await expect(confirmation).toBeHidden()
+    await expect(reglage(page, 'Annonce des mystères')).toHaveAttribute('aria-checked', 'false')
+
+    await page.getByRole('button', { name: 'Réinitialiser l’app' }).click()
+    await confirmation.getByRole('button', { name: 'Réinitialiser', exact: true }).click()
+    await accueil(page)
+    await expect(page).toHaveURL(/\/$/)
+
+    await ouvrirReglages(page)
+    await expect(reglage(page, 'Annonce des mystères')).toHaveAttribute('aria-checked', 'true')
+    // L'aide aux gestes, écartée au départ du parcours, revient elle aussi.
+    await expect(reglage(page, 'Aide aux gestes')).toHaveAttribute('aria-checked', 'true')
+  })
 })
 
 test.describe('déroulé selon les réglages', () => {

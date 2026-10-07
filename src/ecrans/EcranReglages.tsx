@@ -4,6 +4,7 @@ import { ZONES, type Zone } from '../aelf/zones'
 import { ChoixTaille } from '../affichage/ChoixTaille'
 import { ChoixAffichage } from '../chapelet/ChoixAffichage'
 import { AIDE_VIBRATIONS } from '../chapelet/libelles'
+import { aideAMontrer, masquerAide, montrerAide } from '../chapelet/memoire'
 import { lireReglages, modifierReglages, type Reglages, type Theme } from '../chapelet/reglages'
 import { Bascule as ChoixBascule } from '../composants/Bascule'
 import { Interrupteur } from '../composants/Interrupteur'
@@ -14,6 +15,7 @@ import { useLieu } from '../lieu/useLieu'
 import { lireRappels, modifierRappel } from '../rappels/reglages'
 import { lireSolaire, modifierSolaire } from '../rappels/solaire'
 import { RubriqueRappels } from '../rappels/RubriqueRappels'
+import { Reinitialiser } from '../reglages/Reinitialiser'
 import { resumerRappels } from '../rappels/textes'
 import { usePeutVibrer } from '../telephone/retours'
 import './EcranReglages.css'
@@ -56,6 +58,7 @@ export function EcranReglages() {
   const [enregistres, setEnregistres] = useState(textesEnregistres)
   const [rappels, setRappels] = useState(lireRappels)
   const [solaire, setSolaire] = useState(lireSolaire)
+  const [aide, setAide] = useState(aideAMontrer)
   // Le lieu se choisit sur son propre écran ; en voyage, il change seul.
   const { lieu } = useLieu()
 
@@ -116,16 +119,26 @@ export function EcranReglages() {
             affichage={reglages.affichage}
             onChoisir={(affichage) => modifier({ affichage })}
           />
-          {vibreur && (
-            <div className="reglages-vibrations">
+          <div className="reglages-gestes">
+            {vibreur && (
               <Interrupteur
                 libelle="Vibrations"
                 aide={AIDE_VIBRATIONS}
                 actif={reglages.vibrations}
                 onBasculer={(vibrations) => modifier({ vibrations })}
               />
-            </div>
-          )}
+            )}
+            <Interrupteur
+              libelle="Aide aux gestes"
+              aide="Au début du chapelet, rappelle comment avancer et revenir en arrière."
+              actif={aide}
+              onBasculer={(actif) => {
+                if (actif) montrerAide()
+                else masquerAide()
+                setAide(actif)
+              }}
+            />
+          </div>
         </Rubrique>
 
         <Rubrique
@@ -191,6 +204,7 @@ export function EcranReglages() {
           />
         </Rubrique>
       </div>
+      <Reinitialiser />
     </main>
   )
 }

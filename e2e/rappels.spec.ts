@@ -290,3 +290,30 @@ test('choisir le son : écouter une cloche, le son du téléphone, un MP3, le vi
     .toMatch(/^rappel-mp3-[a-z0-9]+-sans-vibreur$/)
   expect((await telephone(page)).canaux).toEqual([(await programmees(page))[0].canal])
 })
+
+test('réinitialiser l’app annule les rappels confiés à Android', async ({ page }) => {
+  await simulerTelephone(page, { accord: 'granted', exacte: true })
+  await ouvrirRappels(page)
+  await interrupteur(page, 'Laudes').click()
+  await expect.poll(async () => (await programmees(page)).length).toBe(30)
+
+  // Le téléphone simulé repart à zéro avec la page : on note ce qu'il garde
+  // au moment où l'app le quitte pour revenir à l'accueil.
+  await page.evaluate(() =>
+    addEventListener('pagehide', () =>
+      sessionStorage.setItem(
+        'programmees-au-depart',
+        String(
+          (window as unknown as { __telephone?: { programmees: unknown[] } }).__telephone
+            ?.programmees.length,
+        ),
+      ),
+    ),
+  )
+  await page.getByRole('button', { name: 'Réinitialiser l’app' }).click()
+  await dialogue(page, 'Réinitialiser l’app ?')
+    .getByRole('button', { name: 'Réinitialiser', exact: true })
+    .click()
+  await expect(page.getByRole('link', { name: 'Menu' })).toBeVisible()
+  expect(await page.evaluate(() => sessionStorage.getItem('programmees-au-depart'))).toBe('0')
+})

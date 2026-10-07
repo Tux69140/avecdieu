@@ -38,12 +38,8 @@
 }
 
 .chapelet-dessine .halo {
-  fill: var(--halo);
+  fill: var(--halo-perle);
   animation: halo-apparait 0.25s ease-out;
-}
-
-.chapelet-dessine .halo-fil {
-  fill: var(--halo-fil);
 }
 
 @keyframes halo-apparait {

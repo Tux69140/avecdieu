@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef } from 'react'
 import type { Fabricant } from '../telephone/sonnerie'
 import type { Etape } from './autorisations'
-import './DialogueRappels.css'
+import '../composants/Dialogue.css'
 
 interface Props {
   etape: Etape
@@ -63,7 +63,7 @@ export function DialogueRappels({ etape, marque, onAccepter, onRenoncer }: Props
   return (
     <dialog
       ref={fenetre}
-      className="dialogue-rappels"
+      className="dialogue"
       aria-labelledby={titre}
       data-etape={etape}
       // Échap ou le bouton retour : comme « Plus tard ».

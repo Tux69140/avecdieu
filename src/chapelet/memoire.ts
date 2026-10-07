@@ -1,5 +1,5 @@
 import type { SerieId } from '../recueil/mysteres'
-import { ecrire, lire, lireObjet } from './stockage'
+import { effacer, ecrire, lire, lireObjet } from './stockage'
 
 // Ce que l'app retient d'un chapelet à l'autre, en dehors des réglages :
 // les lectures de chaque mystère et l'aide aux gestes.
@@ -27,4 +27,9 @@ export function aideAMontrer(): boolean {
 
 export function masquerAide() {
   ecrire(CLES.aide, 'masquee')
+}
+
+// Rétablie depuis les réglages : elle revient au prochain chapelet.
+export function montrerAide() {
+  effacer(CLES.aide)
 }

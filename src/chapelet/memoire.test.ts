@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { aideAMontrer, compterLecture, lireLectures, masquerAide } from './memoire'
+import { aideAMontrer, compterLecture, lireLectures, masquerAide, montrerAide } from './memoire'
 
 beforeEach(() => {
   localStorage.clear()
@@ -30,6 +30,12 @@ describe('aide aux gestes', () => {
     expect(aideAMontrer()).toBe(true)
     masquerAide()
     expect(aideAMontrer()).toBe(false)
+  })
+
+  it('revient quand on la rétablit dans les réglages', () => {
+    masquerAide()
+    montrerAide()
+    expect(aideAMontrer()).toBe(true)
   })
 })
 

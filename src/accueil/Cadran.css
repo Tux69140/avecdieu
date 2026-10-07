@@ -92,7 +92,7 @@
   width: 14px;
   height: 14px;
   border: 2px solid var(--rubrique);
-  box-shadow: 0 0 0 5px var(--halo);
+  box-shadow: 0 0 0 5px var(--halo-perle);
 }
 
 .cadran-perle:active span {
