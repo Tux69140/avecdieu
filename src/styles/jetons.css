@@ -65,9 +65,46 @@
   --esp-3xl: 64px;
 
   --taille-texte: 18px;
+  /* Le texte à prier des offices et du chapelet, réglable de 16 à 24 px
+     (phase 10) ; ce qui s'y mêle suit en em. */
+  --taille-priere: 18px;
   --gouttiere: 24px;
 
   color-scheme: light;
+}
+
+/* Thème nuit (docs/DESIGN.md) : brun-noir chaud, jamais noir pur, pour les
+   complies dans la pénombre. Posé par src/affichage/apparence.ts. Les
+   couleurs liturgiques ne changent pas. */
+:root[data-theme='nuit'] {
+  --parchemin: #14100c;
+  --velin: #1d1813;
+  --filet: #3a3026;
+  --encre: #e6d9c2;
+  --sepia: #a6927a;
+  --sepia-pale: #6e604f;
+  --rubrique: #e07a6a;
+  --or: #c9a45c;
+  --or-fonce: #b08a3e;
+  --soleil: #e2b45a;
+  --halo: rgba(226, 180, 90, 0.22);
+  --halo-fil: rgba(224, 122, 106, 0.3);
+  --or-reflet: #e9cf8e;
+  --soleil-reflet: #f5dc98;
+  --soleil-ombre: #9a6c1c;
+  /* Nacre éteinte : des grains blancs éblouiraient dans la pénombre. */
+  --nacre-reflet: #8a7c68;
+  --nacre: #5c5040;
+  --nacre-ombre: #3a3026;
+  --ombre-perle: rgba(0, 0, 0, 0.5);
+  --voile: rgba(0, 0, 0, 0.6);
+  --succes: #8fb07a;
+  --attention: #d8a94a;
+  --erreur: #d98a5e;
+  --info: #8fb0cc;
+  --grain-opacite: 0.05;
+
+  color-scheme: dark;
 }
 
 @media (max-width: 420px) {
@@ -180,6 +217,17 @@ body::before {
 :focus-visible {
   outline: 2px solid var(--or);
   outline-offset: 2px;
+}
+
+/* Chaque écran entre en fondu, bref et sobre (docs/DESIGN.md, Motion). */
+#root > main {
+  animation: ecran-fondu 0.25s ease-out;
+}
+
+@keyframes ecran-fondu {
+  from {
+    opacity: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

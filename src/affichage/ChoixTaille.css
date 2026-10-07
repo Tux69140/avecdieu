@@ -1,0 +1,60 @@
+.taille-crans {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-md);
+}
+
+.taille-bouton {
+  min-width: 56px;
+  min-height: 48px;
+  border: 1px solid var(--or);
+  border-radius: var(--r-md);
+  background: transparent;
+  font-family: var(--texte);
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--encre);
+  cursor: pointer;
+}
+
+.taille-bouton-grand {
+  font-size: 22px;
+}
+
+.taille-bouton:disabled {
+  border-color: var(--filet);
+  color: var(--sepia-pale);
+  cursor: default;
+}
+
+.taille-points {
+  display: flex;
+  gap: var(--esp-sm);
+}
+
+.taille-point {
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--or);
+  border-radius: 9999px;
+}
+
+.taille-point[data-plein='oui'] {
+  background: var(--or);
+}
+
+/* L'exemple, à la taille choisie, comme le texte des prières. */
+.taille-exemple {
+  margin: var(--esp-md) 0 var(--esp-xs);
+  font-size: var(--taille-priere);
+  line-height: 1.45;
+}
+
+.taille-exemple span {
+  display: block;
+}
+
+.choix-taille .lien-discret {
+  margin-left: calc(-1 * var(--esp-sm));
+}

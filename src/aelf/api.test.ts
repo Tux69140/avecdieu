@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { modifierReglages } from '../chapelet/reglages'
 import { chargerJour, chargerOffice, ErreurAelf } from './api'
 
 const laudes = readFileSync('src/aelf/exemples/laudes-2026-10-06.json', 'utf8')
@@ -135,5 +136,36 @@ describe('les textes enregistrés sur le téléphone', () => {
     await expect(attente).rejects.toMatchObject({ name: 'AbortError' })
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')))
     await expect.poll(() => chargerOffice('laudes', '2026-10-06').then(() => 'lu')).toBe('lu')
+  })
+})
+
+describe('la zone choisie', () => {
+  it('l’AELF est interrogée pour la zone des réglages', async () => {
+    modifierReglages({ zone: 'canada' })
+    const espion = repondre(laudes)
+    await chargerOffice('laudes', '2026-10-06')
+    expect(espion).toHaveBeenCalledWith(
+      'https://api.aelf.org/v1/laudes/2026-10-06/canada',
+      expect.anything(),
+    )
+  })
+
+  it('une réponse arrivée après un changement de zone n’est pas enregistrée', async () => {
+    let repondreMaintenant = () => {}
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(
+        () =>
+          new Promise<Response>((resoudre) => {
+            repondreMaintenant = () => resoudre(new Response(laudes))
+          }),
+      ),
+    )
+    const attente = chargerOffice('laudes', '2026-10-06')
+    modifierReglages({ zone: 'suisse' })
+    repondreMaintenant()
+    await attente
+    expect(localStorage.getItem('avec-dieu.aelf.suisse.laudes.2026-10-06')).toBeNull()
+    expect(localStorage.getItem('avec-dieu.aelf.france.laudes.2026-10-06')).toBeNull()
   })
 })

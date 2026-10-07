@@ -278,7 +278,7 @@ Dans les offices et au chapelet, pincer ou écarter deux doigts règle cette mê
 Le thème nuit s'active automatiquement selon le réglage d'Android. Toutes les animations sont coupées si Android demande de les réduire. Les transitions douces de `docs/DESIGN.md` sont mises en place.
 
 Décisions du porteur du projet (2026-10-07) :
-- **Réglages en accordéon** : trois rubriques, toutes fermées à l'ouverture de l'app, plusieurs ouvrables à la fois (l'écran se souvient de ce qui est ouvert tant que l'app reste ouverte). Chaque titre porte une ligne de résumé et un chevron › qui pivote à l'ouverture. « Tous les réglages » depuis le seuil du chapelet ouvre la rubrique Chapelet.
+- **Réglages en accordéon** : trois rubriques, toutes fermées à l'ouverture de l'app, plusieurs ouvrables à la fois (l'écran se souvient de ce qui est ouvert tant que l'app reste ouverte). Chaque titre porte une ligne de résumé et un chevron › qui pivote à l'ouverture. (Le lien « Tous les réglages » du seuil, prévu pour ouvrir la rubrique Chapelet, n'existe plus depuis la phase 8 : sans objet.)
   - `Affichage` / `Taille du texte, thème` (nouvelle, en tête) ;
   - `Chapelet` / `Annonce, prières, vibrations` (contenu inchangé) ;
   - `Offices` / `Zone, accents, textes hors connexion` (la zone en tête, puis le reste inchangé).
@@ -295,7 +295,7 @@ Décisions du porteur du projet (2026-10-07) :
 - [ ] La taille du texte s'applique aux offices et au chapelet, et persiste.
 - [ ] Pincer ou écarter deux doigts dans un office ou au chapelet change la taille du texte de cran en cran entre 16 et 24 px, sans faire avancer le chapelet (parcours Playwright).
 - [ ] Avec « réduire les animations », aucune transition ne joue (test).
-- [ ] À vérifier : le comportement de la zone `france` un jour de fête propre à la France (hypothèse du PRD).
+- [ ] À vérifier : le comportement de la zone `france` un jour de fête propre à la France (hypothèse du PRD). Vérifié le 2026-10-07 : la zone `france` répond `"zone":"france"` avec le propre de France (Ste Jeanne d'Arc le 30 mai, S. Louis le 25 août avec son oraison propre), et `"romain"` seulement les jours où les deux calendriers coïncident.
 
 ## Bloquée par
 

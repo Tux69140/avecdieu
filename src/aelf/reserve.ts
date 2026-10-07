@@ -1,6 +1,8 @@
+import { lireReglages, modifierReglages, type Reglages } from '../chapelet/reglages'
 import { dateDuJour, decaler } from '../office/dates'
 import { chargerJour, chargerOffice, ErreurAelf } from './api'
-import { contient, effacerAvant, etendue, RESSOURCES, type Ressource } from './cache'
+import { contient, effacerAvant, etendue, oublierTout, RESSOURCES, type Ressource } from './cache'
+import type { Zone } from './zones'
 
 // La réserve des textes pour prier sans réseau (phase 9, décisions du porteur
 // du projet du 2026-10-07) : la veille, aujourd'hui et les 7 jours suivants.
@@ -44,19 +46,46 @@ export async function completerReserve(aujourdhui: string): Promise<void> {
   if (!panne) effacerAvant(decaler(aujourdhui, -1))
 }
 
+const ZONE_CHANGEE = 'avec-dieu:zone-changee'
+
+// Une autre zone, un autre calendrier : les textes enregistrés sont oubliés,
+// et la réserve se refait aussitôt pour la nouvelle zone.
+export function changerDeZone(zone: Zone): Reglages {
+  if (zone === lireReglages().zone) return lireReglages()
+  const reglages = modifierReglages({ zone })
+  oublierTout()
+  window.dispatchEvent(new Event(ZONE_CHANGEE))
+  return reglages
+}
+
 // À l'ouverture de l'app, chaque fois qu'elle revient au premier plan (une app
-// laissée ouverte passe minuit) et quand le réseau revient.
+// laissée ouverte passe minuit), quand le réseau revient et quand la zone change.
 export function entretenirReserve(): () => void {
   let enCours: Promise<void> | undefined
+  // Demandée pendant qu'elle se fait : la réserve se refera juste après.
+  let aRefaire = false
   const completer = () => {
-    if (enCours || document.visibilityState === 'hidden') return
-    enCours = completerReserve(dateDuJour()).finally(() => (enCours = undefined))
+    if (document.visibilityState === 'hidden') return
+    if (enCours) {
+      aRefaire = true
+      return
+    }
+    enCours = completerReserve(dateDuJour()).finally(() => {
+      enCours = undefined
+      if (aRefaire) {
+        aRefaire = false
+        completer()
+      }
+    })
   }
   completer()
-  document.addEventListener('visibilitychange', completer)
-  window.addEventListener('online', completer)
+  const evenements = [
+    [document, 'visibilitychange'],
+    [window, 'online'],
+    [window, ZONE_CHANGEE],
+  ] as const
+  for (const [cible, nom] of evenements) cible.addEventListener(nom, completer)
   return () => {
-    document.removeEventListener('visibilitychange', completer)
-    window.removeEventListener('online', completer)
+    for (const [cible, nom] of evenements) cible.removeEventListener(nom, completer)
   }
 }

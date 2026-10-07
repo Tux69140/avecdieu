@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type PointerEvent } from 'react'
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router'
+import { usePincement } from '../affichage/usePincement'
 import { AideGestes } from '../chapelet/AideGestes'
 import { Annonce } from '../chapelet/Annonce'
 import { ChapeletDessine } from '../chapelet/ChapeletDessine'
@@ -87,6 +88,7 @@ function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisi
   const indexPrecedent = useRef(index)
   const dizainesLues = useRef(new Set<number>())
   const { fin, cachee } = useSuiteCachee()
+  const pincer = usePincement<HTMLElement>()
 
   const nombre = deroule.pas.length
   const termine = index === nombre
@@ -130,6 +132,8 @@ function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisi
   }, [nombre, surAnnonce, aideOuverte])
 
   const appui = (e: PointerEvent) => {
+    // Un deuxième doigt : c'est un pincement (taille du texte), pas un toucher.
+    if (!e.isPrimary) debutGeste.current = null
     if (aideOuverte || !e.isPrimary || e.button !== 0) return
     debutGeste.current = {
       id: e.pointerId,
@@ -151,6 +155,7 @@ function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisi
   const jour = date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
   return (
     <main
+      ref={pincer}
       className="chapelet"
       data-pas={index}
       onPointerDown={appui}

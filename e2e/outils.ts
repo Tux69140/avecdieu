@@ -72,6 +72,19 @@ export async function servirAelf(page: Page) {
   return demandes
 }
 
+// Les réglages s'ouvrent rubriques fermées (phase 10) : on déplie celles dont
+// le parcours a besoin, toutes par défaut.
+export async function deplierReglages(
+  page: Page,
+  ...rubriques: ('Affichage' | 'Chapelet' | 'Offices')[]
+) {
+  for (const nom of rubriques.length > 0 ? rubriques : ['Affichage', 'Chapelet', 'Offices']) {
+    const bouton = page.getByRole('button', { name: nom, exact: true })
+    if ((await bouton.getAttribute('aria-expanded')) === 'false') await bouton.click()
+    await expect(bouton).toHaveAttribute('aria-expanded', 'true')
+  }
+}
+
 interface Ouverture {
   // L'aide aux gestes s'affiche-t-elle ? Masquée par défaut dans les parcours.
   aide?: boolean

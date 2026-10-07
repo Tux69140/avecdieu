@@ -18,6 +18,9 @@ describe('réglages du chapelet', () => {
       accents: true,
       prieresEntieres: false,
       signalerAjouts: true,
+      zone: 'france',
+      tailleTexte: 18,
+      theme: 'automatique',
     })
     expect(REGLAGES_PAR_DEFAUT).toEqual(lireReglages())
   })
@@ -59,6 +62,21 @@ describe('réglages du chapelet', () => {
       JSON.stringify({ annonce: 'non', affichage: 'grand', vibrations: false }),
     )
     expect(lireReglages()).toEqual({ ...REGLAGES_PAR_DEFAUT, vibrations: false })
+  })
+
+  it('retiennent la zone, la taille du texte et le thème (phase 10)', () => {
+    modifierReglages({ zone: 'belgique', tailleTexte: 22, theme: 'nuit' })
+    expect(lireReglages()).toMatchObject({ zone: 'belgique', tailleTexte: 22, theme: 'nuit' })
+  })
+
+  it('ignorent une zone, une taille ou un thème inconnus', () => {
+    localStorage.setItem(
+      'avec-dieu.reglages',
+      JSON.stringify({ zone: 'mars', tailleTexte: 19, theme: 'rose' }),
+    )
+    expect(lireReglages()).toEqual(REGLAGES_PAR_DEFAUT)
+    localStorage.setItem('avec-dieu.reglages', JSON.stringify({ tailleTexte: '20' }))
+    expect(lireReglages().tailleTexte).toBe(18)
   })
 
   it('n’interrompent jamais la prière si la mémoire est bloquée', () => {

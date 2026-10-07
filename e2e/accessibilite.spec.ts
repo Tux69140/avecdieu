@@ -1,6 +1,6 @@
 import { AxeBuilder } from '@axe-core/playwright'
 import { expect, type Page } from '@playwright/test'
-import { avancer, commencer, preparer, servirAelf, test } from './outils.ts'
+import { avancer, commencer, deplierReglages, preparer, servirAelf, test } from './outils.ts'
 
 // Contrôle automatique d'accessibilité (contrastes, titres, libellés ARIA) :
 // échoue sur toute violation grave ou critique. Le clavier et le lecteur
@@ -71,6 +71,7 @@ test('écran de fin du chapelet', async ({ page }) => {
 test('écran des réglages', async ({ page }) => {
   await preparer(page)
   await page.goto('/reglages')
+  await deplierReglages(page)
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Réglages')
   expect(await violationsGraves(page)).toEqual([])
 })
@@ -167,4 +168,50 @@ test('premier lancement sans réseau : accueil et office', async ({ page }) => {
   await page.goto('/office/laudes/2026-10-05')
   await expect(page.getByRole('alert')).toBeVisible()
   expect(await violationsGraves(page)).toEqual([])
+})
+
+test('réglages dépliés, de jour puis de nuit', async ({ page }) => {
+  await preparer(page)
+  await page.goto('/reglages')
+  await deplierReglages(page)
+  expect(await violationsGraves(page)).toEqual([])
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'nuit')
+  expect(await violationsGraves(page)).toEqual([])
+})
+
+test.describe('de nuit', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.emulateMedia({ colorScheme: 'dark' })
+    await servirAelf(page)
+  })
+
+  test('accueil', async ({ page }) => {
+    await preparer(page)
+    await page.goto('/')
+    await expect(page.getByTestId('bandeau').locator('.bandeau-titre')).toBeVisible()
+    expect(await violationsGraves(page)).toEqual([])
+  })
+
+  test('office', async ({ page }) => {
+    await preparer(page)
+    await page.goto('/office/laudes/2026-10-06')
+    await expect(page.getByTestId('office')).toBeVisible()
+    expect(await violationsGraves(page)).toEqual([])
+  })
+
+  test('chapelet, seuil puis dizaine', async ({ page }) => {
+    await preparer(page)
+    await page.goto('/chapelet')
+    expect(await violationsGraves(page)).toEqual([])
+    await page.getByRole('button', { name: 'Commencer le chapelet' }).click()
+    await avancer(page, 10)
+    expect(await violationsGraves(page)).toEqual([])
+  })
+
+  test('menu', async ({ page }) => {
+    await preparer(page)
+    await page.goto('/menu')
+    expect(await violationsGraves(page)).toEqual([])
+  })
 })

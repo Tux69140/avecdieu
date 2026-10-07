@@ -1,5 +1,5 @@
 import { expect, type Page } from '@playwright/test'
-import { commencer, preparer, servirAelf, test } from './outils.ts'
+import { commencer, deplierReglages, preparer, servirAelf, test } from './outils.ts'
 
 // Phase 9 : la veille, aujourd'hui et 7 jours d'avance, enregistrés à chaque
 // ouverture avec réseau, pour prier sans réseau. Messages validés par le
@@ -66,6 +66,7 @@ test('une nouvelle ouverture ne redemande rien de ce qui est enregistré', async
 test('les réglages disent jusqu’à quand on peut prier sans réseau', async ({ page }) => {
   await remplirPuisCouper(page)
   await page.goto('/reglages')
+  await deplierReglages(page, 'Offices')
   await expect(page.getByTestId('hors-connexion')).toHaveText(
     'Textes disponibles hors connexion jusqu’au mardi 13 octobre.',
   )
@@ -94,6 +95,7 @@ test('premier lancement sans réseau : rien d’enregistré, le chapelet se prie
   await page.route('https://api.aelf.org/**', (route) => route.abort('internetdisconnected'))
   await preparer(page)
   await page.goto('/reglages')
+  await deplierReglages(page, 'Offices')
   await expect(page.getByTestId('hors-connexion')).toHaveText(
     'Aucun texte enregistré pour l’instant.',
   )

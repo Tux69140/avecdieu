@@ -226,7 +226,7 @@ Avec Dieu accompagne la prière de toute la journée sur un téléphone Android.
 
 **Hypothèses à vérifier**
 
-- La zone France renvoie bien le calendrier propre de la France les jours de fête nationale : le 5 octobre 2026, elle renvoyait le calendrier romain.
+- La zone France renvoie bien le calendrier propre de la France les jours de fête nationale : le 5 octobre 2026, elle renvoyait le calendrier romain. Vérifié le 2026-10-07 : elle renvoie le propre de France ses jours de fête (Ste Jeanne d'Arc, S. Louis), et le calendrier romain seulement quand les deux coïncident.
 - La structure des offices fournie par l'AELF reste la même toute l'année liturgique.
 
 **Références**

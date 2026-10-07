@@ -1,10 +1,14 @@
 import { useState } from 'react'
-import { textesEnregistres } from '../aelf/reserve'
+import { changerDeZone, textesEnregistres } from '../aelf/reserve'
+import { ZONES, type Zone } from '../aelf/zones'
+import { ChoixTaille } from '../affichage/ChoixTaille'
 import { ChoixAffichage } from '../chapelet/ChoixAffichage'
 import { AIDE_VIBRATIONS } from '../chapelet/libelles'
-import { lireReglages, modifierReglages, type Reglages } from '../chapelet/reglages'
+import { lireReglages, modifierReglages, type Reglages, type Theme } from '../chapelet/reglages'
+import { Bascule as ChoixBascule } from '../composants/Bascule'
 import { Interrupteur } from '../composants/Interrupteur'
 import { useRetour } from '../composants/retour'
+import { Rubrique } from '../composants/Rubrique'
 import { dateLisible } from '../office/dates'
 import { usePeutVibrer } from '../telephone/retours'
 import './EcranReglages.css'
@@ -22,14 +26,42 @@ const BASCULES: [Bascule, string, string?][] = [
   ],
 ]
 
-// Les réglages, retenus sur le téléphone : ceux du chapelet, puis ceux des offices.
+const THEMES = [
+  ['automatique', 'Automatique'],
+  ['jour', 'Jour'],
+  ['nuit', 'Nuit'],
+] as const satisfies readonly (readonly [Theme, string])[]
+
+type NomRubrique = 'affichage' | 'chapelet' | 'offices'
+
+// Les rubriques ouvertes, retenues tant que l'app reste ouverte : toutes
+// fermées au lancement (décision du porteur du projet, 2026-10-07).
+const ouvertes = new Set<NomRubrique>()
+
+// Les réglages, retenus sur le téléphone, en trois rubriques : l'affichage,
+// le chapelet, les offices (libellés validés le 2026-10-07).
 export function EcranReglages() {
   const [reglages, setReglages] = useState(lireReglages)
+  const [, setOuvertes] = useState(() => new Set(ouvertes))
   const retour = useRetour()
   // Sans vibreur (tablette), le réglage n'a pas lieu d'être.
   const vibreur = usePeutVibrer()
   const modifier = (changement: Partial<Reglages>) => setReglages(modifierReglages(changement))
-  const [enregistres] = useState(textesEnregistres)
+  const [enregistres, setEnregistres] = useState(textesEnregistres)
+
+  const rubrique = (nom: NomRubrique) => ({
+    ouverte: ouvertes.has(nom),
+    onBasculer: () => {
+      if (!ouvertes.delete(nom)) ouvertes.add(nom)
+      setOuvertes(new Set(ouvertes))
+    },
+  })
+
+  // Une autre zone : les textes enregistrés sont oubliés, puis refaits.
+  const choisirZone = (zone: Zone) => {
+    setReglages(changerDeZone(zone))
+    setEnregistres(textesEnregistres())
+  }
 
   return (
     <main className="reglages">
@@ -38,61 +70,103 @@ export function EcranReglages() {
       </button>
       <h1>Réglages</h1>
 
-      <section className="reglages-section" aria-labelledby="reglages-chapelet">
-        <h2 id="reglages-chapelet">Chapelet</h2>
-        {BASCULES.map(([cle, libelle, aide]) => (
-          <Interrupteur
-            key={cle}
-            libelle={libelle}
-            aide={aide}
-            actif={reglages[cle]}
-            onBasculer={(actif) => modifier({ [cle]: actif })}
+      <div className="reglages-rubriques">
+        <Rubrique titre="Affichage" resume="Taille du texte, thème" {...rubrique('affichage')}>
+          <h3 id="reglages-taille">Taille du texte</h3>
+          <ChoixTaille
+            titre="reglages-taille"
+            taille={reglages.tailleTexte}
+            onChoisir={(tailleTexte) => modifier({ tailleTexte })}
           />
-        ))}
-        <h3 id="reglages-affichage">Affichage des prières</h3>
-        <ChoixAffichage
-          titre="reglages-affichage"
-          affichage={reglages.affichage}
-          onChoisir={(affichage) => modifier({ affichage })}
-        />
-        {vibreur && (
-          <div className="reglages-vibrations">
+          <h3 id="reglages-theme">Thème</h3>
+          <ChoixBascule
+            titre="reglages-theme"
+            choix={THEMES}
+            valeur={reglages.theme}
+            onChoisir={(theme) => modifier({ theme })}
+          />
+          <p className="choix-aide">
+            Automatique : nuit après le coucher du soleil, ou si le téléphone est en mode sombre.
+          </p>
+        </Rubrique>
+
+        <Rubrique titre="Chapelet" resume="Annonce, prières, vibrations" {...rubrique('chapelet')}>
+          {BASCULES.map(([cle, libelle, aide]) => (
             <Interrupteur
-              libelle="Vibrations"
-              aide={AIDE_VIBRATIONS}
-              actif={reglages.vibrations}
-              onBasculer={(vibrations) => modifier({ vibrations })}
+              key={cle}
+              libelle={libelle}
+              aide={aide}
+              actif={reglages[cle]}
+              onBasculer={(actif) => modifier({ [cle]: actif })}
+            />
+          ))}
+          <h3 id="reglages-affichage">Affichage des prières</h3>
+          <ChoixAffichage
+            titre="reglages-affichage"
+            affichage={reglages.affichage}
+            onChoisir={(affichage) => modifier({ affichage })}
+          />
+          {vibreur && (
+            <div className="reglages-vibrations">
+              <Interrupteur
+                libelle="Vibrations"
+                aide={AIDE_VIBRATIONS}
+                actif={reglages.vibrations}
+                onBasculer={(vibrations) => modifier({ vibrations })}
+              />
+            </div>
+          )}
+        </Rubrique>
+
+        <Rubrique
+          titre="Offices"
+          resume="Zone, accents, textes hors connexion"
+          {...rubrique('offices')}
+        >
+          <h3 id="reglages-zone">Zone liturgique</h3>
+          <p className="choix-aide reglages-aide-zone">
+            Le calendrier des fêtes propres à votre pays.
+          </p>
+          <div className="reglages-zones" role="radiogroup" aria-labelledby="reglages-zone">
+            {(Object.entries(ZONES) as [Zone, string][]).map(([zone, nom]) => (
+              <label key={zone} className="reglages-zone">
+                <input
+                  type="radio"
+                  name="zone"
+                  checked={reglages.zone === zone}
+                  onChange={() => choisirZone(zone)}
+                />
+                {nom}
+              </label>
+            ))}
+          </div>
+          <div className="reglages-offices">
+            <Interrupteur
+              libelle="Accents de psalmodie"
+              aide="Souligne les syllabes accentuées des psaumes et cantiques."
+              actif={reglages.accents}
+              onBasculer={(accents) => modifier({ accents })}
+            />
+            <Interrupteur
+              libelle="Prières courantes en entier"
+              aide="Notre Père, Gloire au Père et Je confesse à Dieu, écrits en entier sans avoir à les déplier."
+              actif={reglages.prieresEntieres}
+              onBasculer={(prieresEntieres) => modifier({ prieresEntieres })}
+            />
+            <Interrupteur
+              libelle="Signaler les ajouts de l’app"
+              aide="Un filet rouge marque ce que l’app ajoute au texte de l’AELF selon les rubriques."
+              actif={reglages.signalerAjouts}
+              onBasculer={(signalerAjouts) => modifier({ signalerAjouts })}
             />
           </div>
-        )}
-      </section>
-
-      <section className="reglages-section" aria-labelledby="reglages-offices">
-        <h2 id="reglages-offices">Offices</h2>
-        <Interrupteur
-          libelle="Accents de psalmodie"
-          aide="Souligne les syllabes accentuées des psaumes et cantiques."
-          actif={reglages.accents}
-          onBasculer={(accents) => modifier({ accents })}
-        />
-        <Interrupteur
-          libelle="Prières courantes en entier"
-          aide="Notre Père, Gloire au Père et Je confesse à Dieu, écrits en entier sans avoir à les déplier."
-          actif={reglages.prieresEntieres}
-          onBasculer={(prieresEntieres) => modifier({ prieresEntieres })}
-        />
-        <Interrupteur
-          libelle="Signaler les ajouts de l’app"
-          aide="Un filet rouge marque ce que l’app ajoute au texte de l’AELF selon les rubriques."
-          actif={reglages.signalerAjouts}
-          onBasculer={(signalerAjouts) => modifier({ signalerAjouts })}
-        />
-        <p className="reglages-note" data-testid="hors-connexion">
-          {enregistres
-            ? `Textes disponibles hors connexion jusqu’au ${dateLisible(enregistres.fin)}.`
-            : 'Aucun texte enregistré pour l’instant.'}
-        </p>
-      </section>
+          <p className="reglages-note" data-testid="hors-connexion">
+            {enregistres
+              ? `Textes disponibles hors connexion jusqu’au ${dateLisible(enregistres.fin)}.`
+              : 'Aucun texte enregistré pour l’instant.'}
+          </p>
+        </Rubrique>
+      </div>
     </main>
   )
 }

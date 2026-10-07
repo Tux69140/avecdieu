@@ -1,5 +1,5 @@
 import type { JourLiturgique, NomOffice, Office } from '../office/modele'
-import { ABSENT, enregistrer, lireEnregistre, oublier, ZONE, type Ressource } from './cache'
+import { ABSENT, enregistrer, lireEnregistre, oublier, zoneChoisie, type Ressource } from './cache'
 import { lireJour, lireOffice } from './office'
 
 // Le seul endroit de l'app qui parle au réseau, et seulement à l'AELF : rien
@@ -19,9 +19,9 @@ const officeAbsent = () =>
   Object.assign(new ErreurAelf('Office absent de l’AELF'), { absent: true })
 
 // La réponse brute de l'AELF pour une ressource (un office, ou « informations »).
-async function demander(ressource: Ressource, date: string): Promise<unknown> {
+async function demander(ressource: Ressource, date: string, zone: string): Promise<unknown> {
   try {
-    const http = await fetch(`${RACINE}/${ressource}/${date}/${ZONE}`, {
+    const http = await fetch(`${RACINE}/${ressource}/${date}/${zone}`, {
       headers: { Accept: 'application/json' },
     })
     if (http.status === 404) return ABSENT
@@ -38,19 +38,20 @@ async function demander(ressource: Ressource, date: string): Promise<unknown> {
 // la réserve des jours à venir se partagent la même réponse.
 const enCours = new Map<string, Promise<unknown>>()
 
-function demanderUneFois(ressource: Ressource, date: string): Promise<unknown> {
-  const cle = `${ressource}/${date}`
+function demanderUneFois(ressource: Ressource, date: string, zone: string): Promise<unknown> {
+  const cle = `${ressource}/${date}/${zone}`
   let demande = enCours.get(cle)
   if (!demande) {
-    demande = demander(ressource, date).finally(() => enCours.delete(cle))
+    demande = demander(ressource, date, zone).finally(() => enCours.delete(cle))
     enCours.set(cle, demande)
   }
   return demande
 }
 
 // La ressource lue par `lire`, depuis le téléphone ou, à défaut, l'AELF. Une
-// réponse n'est enregistrée qu'une fois lue sans erreur ; une entrée devenue
-// illisible est oubliée et redemandée.
+// réponse n'est enregistrée qu'une fois lue sans erreur, et seulement si la
+// zone n'a pas changé entre-temps ; une entrée devenue illisible est oubliée
+// et redemandée.
 async function obtenir<T>(
   ressource: Ressource,
   date: string,
@@ -65,9 +66,11 @@ async function obtenir<T>(
       oublier(ressource, date)
     }
   }
-  const reponse = await demanderUneFois(ressource, date)
+  const zone = zoneChoisie()
+  const reponse = await demanderUneFois(ressource, date, zone)
+  const memeZone = zoneChoisie() === zone
   if (reponse === ABSENT) {
-    enregistrer(ressource, date, ABSENT)
+    if (memeZone) enregistrer(ressource, date, ABSENT)
     throw officeAbsent()
   }
   let lu: T
@@ -76,7 +79,7 @@ async function obtenir<T>(
   } catch (erreur) {
     throw new ErreurAelf('Réponse AELF illisible', { cause: erreur })
   }
-  enregistrer(ressource, date, reponse)
+  if (memeZone) enregistrer(ressource, date, reponse)
   return lu
 }
 

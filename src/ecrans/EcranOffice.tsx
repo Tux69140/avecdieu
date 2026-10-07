@@ -3,6 +3,7 @@ import { Navigate, useParams } from 'react-router'
 import { chargerOffice, ErreurAelf, type OfficeDuJour } from '../aelf/api'
 import type { Etendue } from '../aelf/cache'
 import { textesEnregistres } from '../aelf/reserve'
+import { usePincement } from '../affichage/usePincement'
 import { lireReglages } from '../chapelet/reglages'
 import { IndiceSuite } from '../composants/IndiceSuite'
 import { useRetour } from '../composants/retour'
@@ -50,6 +51,7 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
   const { fin, cachee } = useSuiteCachee()
   const texte = useRef<HTMLDivElement>(null)
   const versInvitatoire = useRef(false)
+  const pincer = usePincement<HTMLElement>()
   // Comme au chapelet : le téléphone ne se verrouille pas en pleine lecture.
   useEffect(() => garderEcranAllume(), [])
 
@@ -124,6 +126,7 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
 
   return (
     <main
+      ref={pincer}
       className="office"
       data-accents={accents ? 'oui' : 'non'}
       data-ajouts={signalerAjouts ? 'oui' : 'non'}

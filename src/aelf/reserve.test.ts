@@ -1,7 +1,8 @@
 import { readFileSync } from 'node:fs'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { contient, enregistrer, etendue, RESSOURCES } from './cache'
-import { completerReserve, joursAGarder } from './reserve'
+import { lireReglages } from '../chapelet/reglages'
+import { changerDeZone, completerReserve, entretenirReserve, joursAGarder } from './reserve'
 
 // L'AELF simulée : chaque ressource rend la réponse enregistrée du 6 octobre,
 // datée du jour demandé (le jour liturgique doit porter la bonne date).
@@ -90,5 +91,22 @@ describe('completerReserve', () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')))
     await completerReserve('2026-10-07')
     expect(contient('laudes', '2026-10-05')).toBe(true)
+  })
+})
+
+describe('changerDeZone', () => {
+  it('oublie les textes de l’ancienne zone et refait la réserve pour la nouvelle', async () => {
+    const espion = aelf()
+    await completerReserve('2026-10-07')
+    espion.mockClear()
+    const arret = entretenirReserve()
+    changerDeZone('belgique')
+    expect(lireReglages().zone).toBe('belgique')
+    expect(localStorage.getItem('avec-dieu.aelf.france.laudes.2026-10-07')).toBeNull()
+    await expect
+      .poll(() => etendue('2026-10-07'))
+      .toEqual({ debut: '2026-10-06', fin: '2026-10-14' })
+    expect(demandees(espion).every((d) => d.endsWith('/belgique'))).toBe(true)
+    arret()
   })
 })

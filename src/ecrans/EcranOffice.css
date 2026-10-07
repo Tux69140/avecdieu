@@ -34,6 +34,11 @@
   color: var(--sepia);
 }
 
+/* Le texte de l'office, à la taille choisie (Réglages, ou pincement). */
+.office-texte {
+  font-size: var(--taille-priere);
+}
+
 /* Avis d'erreur : filet brun brique à gauche, jamais le rouge des rubriques. */
 .office-erreur {
   padding: var(--esp-md);

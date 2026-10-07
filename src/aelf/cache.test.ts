@@ -6,8 +6,10 @@ import {
   enregistrer,
   etendue,
   lireEnregistre,
+  oublierTout,
   RESSOURCES,
 } from './cache'
+import { modifierReglages } from '../chapelet/reglages'
 
 beforeEach(() => localStorage.clear())
 
@@ -81,5 +83,21 @@ describe('etendue', () => {
   it('aujourd’hui manque : on garde la dernière suite enregistrée', () => {
     for (const date of ['2026-10-01', '2026-10-02', '2026-10-09', '2026-10-10']) jourComplet(date)
     expect(etendue('2026-10-20')).toEqual({ debut: '2026-10-09', fin: '2026-10-10' })
+  })
+})
+
+describe('les zones', () => {
+  it('seuls comptent les textes de la zone choisie ; oublierTout efface toutes les zones', () => {
+    enregistrer('laudes', '2026-10-06', { zone: 'france' })
+    modifierReglages({ zone: 'suisse' })
+    expect(contient('laudes', '2026-10-06')).toBe(false)
+    enregistrer('laudes', '2026-10-06', { zone: 'suisse' })
+    expect(lireEnregistre('laudes', '2026-10-06')).toEqual({ zone: 'suisse' })
+    localStorage.setItem('avec-dieu.reglages-autre', 'garde')
+    oublierTout()
+    expect(contient('laudes', '2026-10-06')).toBe(false)
+    modifierReglages({ zone: 'france' })
+    expect(contient('laudes', '2026-10-06')).toBe(false)
+    expect(localStorage.getItem('avec-dieu.reglages-autre')).toBe('garde')
   })
 })

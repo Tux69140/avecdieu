@@ -1,5 +1,5 @@
+import { Bascule } from '../composants/Bascule'
 import type { Affichage } from './reglages'
-import './ChoixAffichage.css'
 
 interface Props {
   affichage: Affichage
@@ -8,28 +8,16 @@ interface Props {
   titre: string
 }
 
-const AFFICHAGES: [Affichage, string][] = [
+const AFFICHAGES = [
   ['complet', 'Texte complet'],
   ['compact', 'Compact'],
-]
+] as const
 
 // Texte complet ou compact : sur le seuil et dans les réglages, la même mémoire.
 export function ChoixAffichage({ affichage, onChoisir, titre }: Props) {
   return (
     <>
-      <div className="bascule" role="radiogroup" aria-labelledby={titre}>
-        {AFFICHAGES.map(([valeur, libelle]) => (
-          <button
-            key={valeur}
-            type="button"
-            role="radio"
-            aria-checked={affichage === valeur}
-            onClick={() => onChoisir(valeur)}
-          >
-            {libelle}
-          </button>
-        ))}
-      </div>
+      <Bascule choix={AFFICHAGES} valeur={affichage} onChoisir={onChoisir} titre={titre} />
       <p className="choix-aide">
         Compact : le nom de la prière et le compteur, pour qui la sait par cœur.
       </p>

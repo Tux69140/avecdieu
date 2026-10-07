@@ -2,13 +2,14 @@ import { expect, type Page } from '@playwright/test'
 import {
   avancer,
   commencer,
-  espionner,
+  deplierReglages,
   journal,
-  preparer,
-  servirAelf,
-  test,
   toucher,
   type Reglages,
+  preparer,
+  servirAelf,
+  espionner,
+  test,
 } from './outils.ts'
 
 // Phase 4 : réglages du chapelet (annonce, « Ô mon Jésus », Salve Regina,
@@ -26,6 +27,7 @@ const reglage = (page: Page, nom: string | RegExp) => page.getByRole('switch', {
 async function ouvrirReglages(page: Page) {
   await page.getByRole('link', { name: 'Menu' }).click()
   await page.getByRole('link', { name: 'Réglages' }).click()
+  await deplierReglages(page)
 }
 
 // Du seuil ou de l'accueil, le chapelet par le menu.
@@ -66,6 +68,7 @@ test.describe('écran des réglages', () => {
   test('chaque réglage se retient après redémarrage de l’app', async ({ page }) => {
     await preparer(page)
     await page.goto('/reglages')
+    await deplierReglages(page)
     await reglage(page, 'Annonce des mystères').click()
     await reglage(page, /Ô mon Jésus/).click()
     await reglage(page, 'Salve Regina à la fin').click()
@@ -74,6 +77,7 @@ test.describe('écran des réglages', () => {
     await reglage(page, 'Vibrations').click()
 
     await page.reload()
+    await deplierReglages(page)
     for (const nom of ['Annonce des mystères', /Ô mon Jésus/, 'Salve Regina à la fin'])
       await expect(reglage(page, nom)).toHaveAttribute('aria-checked', 'false')
     await expect(reglage(page, 'Prier à plusieurs')).toHaveAttribute('aria-checked', 'true')
@@ -222,6 +226,7 @@ test.describe('vibrations', () => {
     await expect(page.getByRole('radio', { name: 'Compact' })).toBeVisible()
     await expect(reglage(page, 'Vibrations')).toHaveCount(0)
     await page.goto('/reglages')
+    await deplierReglages(page)
     await expect(reglage(page, 'Prier à plusieurs')).toBeVisible()
     await expect(reglage(page, 'Vibrations')).toHaveCount(0)
   })

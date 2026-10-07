@@ -1,5 +1,6 @@
 .passage {
   margin-top: var(--esp-lg);
+  font-size: var(--taille-priere);
   text-align: left;
 }
 
@@ -8,7 +9,7 @@
   text-align: center;
   font-family: var(--sc);
   font-weight: 600;
-  font-size: 18px;
+  font-size: 1em;
   letter-spacing: 0.04em;
   color: var(--rubrique);
 }
@@ -23,7 +24,7 @@
 .passage-texte sup {
   font-family: var(--sc);
   font-weight: 600;
-  font-size: 13px;
+  font-size: 0.722em;
   line-height: 0;
   color: var(--rubrique);
   margin-right: 2px;

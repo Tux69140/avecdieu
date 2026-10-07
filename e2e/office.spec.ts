@@ -1,5 +1,5 @@
 import { expect, type Page } from '@playwright/test'
-import { espionner, journal, preparer, servirAelf, test } from './outils.ts'
+import { deplierReglages, espionner, journal, preparer, servirAelf, test } from './outils.ts'
 
 // Phase 5 : les sept offices du jour, lus d'un trait depuis l'AELF, repères
 // liturgiques en rouge rubrique. Les ajouts selon les rubriques (phase 6) :
@@ -109,6 +109,7 @@ test('les accents de psalmodie se masquent dans les réglages', async ({ page })
   await servirAelf(page)
   await preparer(page)
   await page.goto('/reglages')
+  await deplierReglages(page, 'Offices')
   const bascule = page.getByRole('switch', { name: 'Accents de psalmodie' })
   await expect(bascule).toHaveAttribute('aria-checked', 'true')
   await bascule.click()

@@ -1,5 +1,5 @@
 import { expect, type Page } from '@playwright/test'
-import { preparer, servirAelf, test } from './outils.ts'
+import { deplierReglages, preparer, servirAelf, test } from './outils.ts'
 
 // Phase 6 : l'office complet, reconstitué selon les rubriques validées par le
 // porteur du projet (R1 à R11, src/recueil/office.ts).
@@ -100,6 +100,7 @@ test('réglages : prières courantes en entier, et ajouts sans filet', async ({ 
   await servirAelf(page)
   await preparer(page)
   await page.goto('/reglages')
+  await deplierReglages(page, 'Offices')
   for (const [nom, avant] of [
     ['Prières courantes en entier', 'false'],
     ['Signaler les ajouts de l’app', 'true'],

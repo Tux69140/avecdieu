@@ -101,6 +101,8 @@
 
 .priere-texte {
   margin-top: var(--esp-sm);
+  /* La taille choisie (Réglages, ou pincement) ; la rubrique « Tous » suit en em. */
+  font-size: var(--taille-priere);
 }
 
 .strophe {
@@ -111,7 +113,7 @@
 .rubrique-ensemble {
   margin: 0 0 var(--esp-xs);
   font-style: italic;
-  font-size: 16px;
+  font-size: 0.889em;
   color: var(--rubrique);
 }
 

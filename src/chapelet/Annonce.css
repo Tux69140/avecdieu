@@ -18,6 +18,7 @@
 
 .fruit {
   margin-top: var(--esp-sm);
+  font-size: var(--taille-priere);
 }
 
 .fruit p {
@@ -29,7 +30,7 @@
   font-family: var(--sc);
   font-style: normal;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 0.833em;
   letter-spacing: 0.08em;
   color: var(--sepia);
   margin-right: var(--esp-xs);
@@ -37,7 +38,7 @@
 
 .fruit .fruit-tradition {
   margin-top: var(--esp-2xs);
-  font-size: 16px;
+  font-size: 0.889em;
   line-height: 1.45;
   color: var(--sepia);
   text-wrap: balance;
