@@ -290,12 +290,12 @@ Décisions du porteur du projet (2026-10-07) :
 
 ### Critères d'acceptation
 
-- [ ] Changer de zone vide puis recharge le cache, et les offices affichés correspondent à la nouvelle zone.
-- [ ] En automatique, le thème nuit s'allume si Android est en mode sombre ou après le coucher du soleil ; « Jour » et « Nuit » le forcent ; tous les écrans respectent les jetons nuit.
-- [ ] La taille du texte s'applique aux offices et au chapelet, et persiste.
-- [ ] Pincer ou écarter deux doigts dans un office ou au chapelet change la taille du texte de cran en cran entre 16 et 24 px, sans faire avancer le chapelet (parcours Playwright).
-- [ ] Avec « réduire les animations », aucune transition ne joue (test).
-- [ ] À vérifier : le comportement de la zone `france` un jour de fête propre à la France (hypothèse du PRD). Vérifié le 2026-10-07 : la zone `france` répond `"zone":"france"` avec le propre de France (Ste Jeanne d'Arc le 30 mai, S. Louis le 25 août avec son oraison propre), et `"romain"` seulement les jours où les deux calendriers coïncident.
+- [x] Changer de zone vide puis recharge le cache, et les offices affichés correspondent à la nouvelle zone.
+- [x] En automatique, le thème nuit s'allume si Android est en mode sombre ou après le coucher du soleil ; « Jour » et « Nuit » le forcent ; tous les écrans respectent les jetons nuit.
+- [x] La taille du texte s'applique aux offices et au chapelet, et persiste.
+- [x] Pincer ou écarter deux doigts dans un office ou au chapelet change la taille du texte de cran en cran entre 16 et 24 px, sans faire avancer le chapelet (parcours Playwright).
+- [x] Avec « réduire les animations », aucune transition ne joue (test).
+- [x] À vérifier : le comportement de la zone `france` un jour de fête propre à la France (hypothèse du PRD). Vérifié le 2026-10-07 : la zone `france` répond `"zone":"france"` avec le propre de France (Ste Jeanne d'Arc le 30 mai, S. Louis le 25 août avec son oraison propre), et `"romain"` seulement les jours où les deux calendriers coïncident.
 
 ## Bloquée par
 
