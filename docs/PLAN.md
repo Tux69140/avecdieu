@@ -183,13 +183,19 @@ Décisions du porteur du projet (2026-10-06) :
 
 ### Ce qu'on livre
 
-Pendant la lecture d'un office, un bandeau fixe indique la partie en cours (par exemple « Psaume 2 — Ps 83 ») et la progression sous forme de fil de perles. Un sommaire, accessible d'un toucher, permet de sauter à n'importe quelle partie.
+Pendant la lecture d'un office, un bandeau fixe indique la partie en cours et la progression sous forme de fil de perles. Un sommaire, accessible d'un toucher, permet de sauter à n'importe quelle partie.
+
+Décisions du porteur du projet (2026-10-07) :
+- **L'antienne compte avec son psaume** : une seule étape « Psaume 84 », qui commence à l'antienne (laudes : 13 étapes au lieu de 18). Le bandeau affiche le libellé de l'étape (« Psaume 84 », « Hymne », « Lecture brève »).
+- **Bandeau en haut, dès qu'on descend** : à l'ouverture, l'en-tête reste tel quel avec un lien `Sommaire` sous le titre ; dès que le titre sort de l'écran, un bandeau fin glisse en haut (nom de l'étape, chevron ⌄, fil de perles dessous). Un toucher sur le bandeau ouvre le sommaire.
+- **Perles** (`docs/DESIGN.md`) : dite = or plein, en cours = soleil avec halo, à venir = cercle or.
+- **Sommaire en volet qui descend** depuis le bandeau, par-dessus le texte assombri : titre `Sommaire · Laudes`, chaque étape avec sa perle et sa précision (`Hymne · Soleil levant`, `Lecture brève · 1 Jn 4, 14-15`). Toucher une étape y conduit et referme le volet ; le bouton retour d'Android le referme aussi.
 
 ### Critères d'acceptation
 
 - [ ] Le bandeau suit le défilement et nomme toujours la partie visible (parcours Playwright).
-- [ ] Le sommaire liste toutes les parties, et un toucher sur l'une d'elles y amène.
-- [ ] Le fil de perles reste lisible pour un office de 17 parties sur un écran de 360 px de large.
+- [ ] Le sommaire liste toutes les étapes, et un toucher sur l'une d'elles y amène.
+- [ ] Le fil de perles reste lisible pour l'office le plus long sur un écran de 360 px de large.
 
 ## Bloquée par
 
@@ -309,11 +315,29 @@ Décisions du porteur du projet (2026-10-07) :
 
 ### Ce qu'on livre
 
-Dans les réglages, une liste des offices et du chapelet à rappeler, chacun avec son heure. Les valeurs par défaut sont celles du PRD : laudes, vêpres et complies activées. Les notifications sont programmées environ un mois à l'avance et arrivent même si l'app n'est pas ouverte. Un toucher sur la notification ouvre l'office ou le chapelet du jour. L'autorisation « Alarmes et rappels » est demandée au premier rappel activé, avec une explication. Sur Xiaomi et Samsung, l'app guide vers le réglage de batterie qui évite le blocage des rappels.
+Dans les réglages, une liste des offices et du chapelet à rappeler, chacun avec son heure. Les valeurs par défaut sont celles du PRD : aucun rappel activé. Les notifications sont programmées environ un mois à l'avance et arrivent même si l'app n'est pas ouverte. Un toucher sur la notification ouvre l'office ou le chapelet du jour. L'autorisation « Alarmes et rappels » est demandée au premier rappel activé, avec une explication. Sur Xiaomi et Samsung, l'app guide vers le réglage de batterie qui évite le blocage des rappels.
+
+Décisions du porteur du projet (2026-10-07) :
+- **Rubrique `Rappels`, la dernière des Réglages** : une ligne par prière dans l'ordre du jour (office des lectures, laudes, tierce, sexte, none, vêpres, complies, chapelet), avec son interrupteur et son heure ; toucher l'heure ouvre l'horloge d'Android. Résumé : les prières rappelées (`Laudes, vêpres, complies`), ou `Aucun rappel`.
+- **App muette par défaut** : aucun rappel activé d'origine (le PRD est corrigé en ce sens).
+- **Une seule heure partout** : l'heure réglée devient celle de l'office sur le cadran, dans la liste et pour la prière du moment, même rappel coupé.
+- **Office des lectures** : sans heure (et hors du cadran) tant qu'on n'en a pas choisi une ; activer son rappel ouvre l'horloge, proposée sur 6 h 30.
+- **Notification** : titre `C’est l’heure de l’office des lectures` / `des laudes` / `de tierce` / `de sexte` / `de none` / `des vêpres` / `des complies` / `du chapelet` ; texte : les premiers mots de la prière. `Seigneur, ouvre mes lèvres.` pour le premier office du matin (le plus matinal des rappels actifs entre lectures et laudes, R1), `Dieu, viens à mon aide.` pour les autres offices, `Je vous salue, Marie, pleine de grâce.` pour le chapelet.
+- **Son, prière par prière** : sous la ligne de la prière, son son et son vibreur (`Cloche du matin · vibreur`) ; toucher le nom de la prière ouvre le choix : plusieurs cloches fournies par l'app (écoutables, à faire écouter au porteur avant de les retenir), `Son du téléphone`, `Choisir un MP3…`, et l'interrupteur `Vibreur`. D'origine : une cloche, vibreur activé.
+- **Autorisations, au premier rappel activé** (textes validés) :
+  1. `Recevoir les rappels` / `Pour vous prévenir à l’heure de la prière, l’app a besoin de votre accord. Android va vous le demander.` / `Continuer`, puis la fenêtre d'Android pour les notifications ;
+  2. si besoin, `À la minute près` / `Pour que le rappel arrive à l’heure exacte, autorisez « Alarmes et rappels » dans la page qui va s’ouvrir.` / `Ouvrir la page` · `Plus tard` ;
+  3. avis dans la rubrique en cas de refus : `⚠ Android bloque les notifications de l’app : aucun rappel ne s’affichera.` / `Ouvrir les réglages d’Android`, et `⚠ Sans l’autorisation « Alarmes et rappels », les rappels peuvent arriver en retard.` / `Autoriser`.
+- **Guide de batterie**, Xiaomi et Samsung seulement, juste après les autorisations, puis par la ligne `Rappels bloqués ? Régler la batterie ›` en bas de la rubrique (textes validés, noms des menus d'Android à vérifier sur les deux téléphones) :
+  - `Sur un Xiaomi` / `L’économiseur de batterie peut bloquer les rappels. Dans la page qui va s’ouvrir :` / `1. Économiseur de batterie : Aucune restriction` / `2. Démarrage automatique : activé` ;
+  - `Sur un Samsung` / `La mise en veille des applis peut bloquer les rappels. Dans la page qui va s’ouvrir :` / `Batterie : Non restreinte` ;
+  - boutons `Ouvrir la page` · `Plus tard`.
 
 ### Critères d'acceptation
 
-- [ ] Les valeurs par défaut correspondent au tableau du PRD.
+- [ ] Les valeurs par défaut correspondent au tableau du PRD (aucun rappel activé).
+- [ ] Une heure changée dans les rappels déplace l'office sur l'accueil.
+- [ ] Chaque prière sonne avec le son et le vibreur choisis, y compris un MP3 du téléphone.
 - [ ] Activer, désactiver ou changer l'heure d'un rappel reprogramme les notifications sur environ un mois.
 - [ ] Un toucher sur la notification ouvre la bonne route (`/office/<office>/<date>` ou `/chapelet`).
 - [ ] Un refus de l'autorisation est signalé par un avis expliquant que les rappels peuvent arriver en retard.

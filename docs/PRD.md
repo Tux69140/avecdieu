@@ -177,12 +177,16 @@ Avec Dieu accompagne la prière de toute la journée sur un téléphone Android.
 
 | Prière | Heure | Activé par défaut |
 |---|---|---|
-| Laudes | 7 h 00 | oui |
+| Laudes | 7 h 00 | non |
 | Tierce / Sexte / None | 9 h / 12 h / 15 h | non |
-| Vêpres | 18 h 30 | oui |
-| Complies | 21 h 30 | oui |
+| Vêpres | 18 h 30 | non |
+| Complies | 21 h 30 | non |
 | Office des lectures | à choisir | non |
 | Chapelet | 20 h 00 | non |
+
+- **App muette par défaut** (décision du porteur du projet, 2026-10-07) : aucun rappel n'est activé d'origine.
+- **L'heure réglée est celle de l'office dans toute l'app** (cadran, liste, prière du moment), que son rappel soit actif ou non.
+- **Son au choix pour chaque prière** : une cloche fournie par l'app (avec vibration) d'origine, le son de notification du téléphone, ou un MP3 choisi sur le téléphone ; vibreur activable pour chaque prière.
 
 - **Mode solaire, heures temporaires :** la durée du jour, du lever au coucher du soleil, est divisée en 12 heures égales entre elles :
   - laudes au lever ;
