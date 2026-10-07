@@ -248,14 +248,14 @@ Décisions du porteur du projet (2026-10-07) :
 - **Discrétion** : rien ne s'affiche pendant l'enregistrement. Dans Réglages › Offices, une ligne : `Textes disponibles hors connexion jusqu’au mercredi 14 octobre.` (avant toute connexion : `Aucun texte enregistré pour l’instant.`).
 - **Office non enregistré** (sans réseau ou AELF muette) : `⚠ Cet office n’est pas enregistré sur le téléphone.` / `Les textes enregistrés vont du mardi 6 au mercredi 14 octobre. Pour ce jour-ci, connectez-vous à internet, puis réessayez.` / bouton `Réessayer`.
 - **Accueil d'un jour non enregistré**, sous la date : `⚠ Ce jour n’est pas enregistré. Connectez-vous à internet, puis réessayez.` et le lien discret `Réessayer`.
-- **Premier lancement sans réseau** (accueil et écran d'un office) : `⚠ Les offices demandent une première connexion à internet. Une fois connecté, l’app enregistre une semaine de textes d’avance. Le chapelet, lui, se prie dès maintenant.` ; sur l'accueil seulement, le bouton `Prier le chapelet`.
+- **Premier lancement sans réseau** (accueil et écran d'un office) : `⚠ Les offices demandent une première connexion à internet. Une fois connecté, l’app enregistre une semaine de textes d’avance. Le chapelet, lui, se prie dès maintenant.` ; sur l'accueil seulement, le bouton `Prier le chapelet`. L'écran d'un office garde le bouton `Réessayer` (validé après captures).
 - **AELF muette, jour enregistré** : aucun message, l'office s'ouvre.
 
 ### Critères d'acceptation
 
-- [ ] En mode avion, pour chacun des 7 jours à venir, les 7 offices et le chapelet s'ouvrent avec tous leurs textes (critère de succès 1, vérifié sur l'APK).
-- [ ] L'ouverture avec réseau complète le cache jusqu'à 7 jours d'avance au moins, sans retélécharger ce qui est déjà présent.
-- [ ] Les messages pour un jour indisponible, un premier lancement sans réseau et l'AELF injoignable sont couverts par des tests.
+- [x] En mode avion, pour chacun des 7 jours à venir, les 7 offices et le chapelet s'ouvrent avec tous leurs textes (critère de succès 1, vérifié sur l'APK).
+- [x] L'ouverture avec réseau complète le cache jusqu'à 7 jours d'avance au moins, sans retélécharger ce qui est déjà présent.
+- [x] Les messages pour un jour indisponible, un premier lancement sans réseau et l'AELF injoignable sont couverts par des tests.
 
 ## Bloquée par
 
