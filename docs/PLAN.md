@@ -335,10 +335,15 @@ Décisions du porteur du projet (2026-10-07) :
   1. `Recevoir les rappels` / `Pour vous prévenir à l’heure de la prière, l’app a besoin de votre accord. Android va vous le demander.` / `Continuer`, puis la fenêtre d'Android pour les notifications ;
   2. si besoin, `À la minute près` / `Pour que le rappel arrive à l’heure exacte, autorisez « Alarmes et rappels » dans la page qui va s’ouvrir.` / `Ouvrir la page` · `Plus tard` ;
   3. avis dans la rubrique en cas de refus : `⚠ Android bloque les notifications de l’app : aucun rappel ne s’affichera.` / `Ouvrir les réglages d’Android`, et `⚠ Sans l’autorisation « Alarmes et rappels », les rappels peuvent arriver en retard.` / `Autoriser`.
-- **Guide de batterie**, Xiaomi et Samsung seulement, juste après les autorisations, puis par la ligne `Rappels bloqués ? Régler la batterie ›` en bas de la rubrique (textes validés, noms des menus d'Android à vérifier sur les deux téléphones) :
-  - `Sur un Xiaomi` / `L’économiseur de batterie peut bloquer les rappels. Dans la page qui va s’ouvrir :` / `1. Économiseur de batterie : Aucune restriction` / `2. Démarrage automatique : activé` ;
+- **Guide de batterie**, Xiaomi et Samsung seulement, juste après les autorisations et seulement si l'app n'est pas exemptée d'économie de batterie, puis par la ligne `Rappels bloqués ? Régler la batterie ›` en bas de la rubrique (textes validés) :
+  - `Sur un Xiaomi` / `L’économiseur de batterie peut bloquer les rappels. Dans la page qui va s’ouvrir :` / `Économiseur de batterie : Aucune restriction` ;
   - `Sur un Samsung` / `La mise en veille des applis peut bloquer les rappels. Dans la page qui va s’ouvrir :` / `Batterie : Non restreinte` ;
   - boutons `Ouvrir la page` · `Plus tard`.
+- **Démarrage automatique**, Xiaomi seulement, après le guide de batterie et seulement s'il est désactivé (textes validés le 2026-10-07) : `Démarrage automatique` / `Si l’app est fermée, Xiaomi l’empêche de se réveiller pour vous prévenir. Dans la page qui va s’ouvrir, activez Avec Dieu.` / `Ouvrir la page` · `Plus tard`. La page est celle de la sécurité de Xiaomi : sous HyperOS 2, ce réglage n'est pas dans la fiche de l'app. Vu le 2026-10-07 : l'app fermée depuis les récentes, sans démarrage automatique, son alarme ne la réveille plus et le rappel est perdu.
+- **Avis des réglages qui bloquent**, tant qu'un rappel est activé et relus au retour des réglages d'Android (textes validés le 2026-10-07) :
+  - toute marque, arrière-plan interdit : `⚠ Android interdit à l’app de travailler en arrière-plan : aucun rappel ne viendra.` / `Ouvrir les réglages d’Android` ;
+  - Xiaomi, démarrage automatique désactivé : `⚠ Le démarrage automatique est désactivé : si l’app est fermée, le téléphone ne la réveille pas et le rappel ne vient pas.` / `Ouvrir la page` ;
+  - Xiaomi et Samsung, économie de batterie : `⚠ L’économiseur de batterie peut bloquer les rappels.` / `Régler la batterie` (remplace alors la ligne du guide).
 - **Détails de forme codés sans validation, à montrer avec l'essai sur téléphones** : le titre `Son` au-dessus du choix du son, le lien `Changer` à côté d'un MP3 déjà choisi, le nom du MP3 affiché en clair, l'écoute du son du téléphone et du MP3, l'heure écrite `7 h 00`, la rédaction des crédits des cloches dans À propos.
 
 ### Critères d'acceptation
@@ -350,6 +355,7 @@ Décisions du porteur du projet (2026-10-07) :
 - [ ] Un toucher sur la notification ouvre la bonne route (`/office/<office>/<date>` ou `/chapelet`).
 - [ ] Un refus de l'autorisation est signalé par un avis expliquant que les rappels peuvent arriver en retard.
 - [ ] Le guide de batterie s'affiche sur Xiaomi et sur Samsung, et pas sur les autres marques.
+- [ ] Sur le Xiaomi, l'avis du démarrage automatique s'affiche tant qu'il est désactivé, et un rappel arrive l'app fermée depuis les récentes une fois activé.
 
 ## Bloquée par
 

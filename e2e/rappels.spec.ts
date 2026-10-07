@@ -216,33 +216,91 @@ test('« Alarmes et rappels » refusée : un avis, et des rappels sans exactitud
   await expect(page.getByRole('dialog')).toHaveCount(0)
 })
 
-test('guide de batterie sur un Xiaomi, puis par le lien de la rubrique', async ({ page }) => {
-  await simulerTelephone(page, { accord: 'granted', fabricant: 'xiaomi' })
+test('guide de batterie puis démarrage automatique sur un Xiaomi, puis les avis', async ({
+  page,
+}) => {
+  await simulerTelephone(page, {
+    accord: 'granted',
+    fabricant: 'xiaomi',
+    blocages: { batterie: true, arrierePlan: false, demarrage: true },
+  })
   await ouvrirRappels(page)
   await interrupteur(page, 'Laudes').click()
   const guide = dialogue(page, 'Sur un Xiaomi')
   await expect(guide).toContainText(
     'L’économiseur de batterie peut bloquer les rappels. Dans la page qui va s’ouvrir :',
   )
-  await expect(guide.getByRole('listitem')).toHaveText([
-    'Économiseur de batterie : Aucune restriction',
-    'Démarrage automatique : activé',
-  ])
+  await expect(guide).toContainText('Économiseur de batterie : Aucune restriction')
+  await expect(guide).not.toContainText('Démarrage automatique')
   await guide.getByRole('button', { name: 'Ouvrir la page' }).click()
-  await expect(page.getByRole('dialog')).toHaveCount(0)
   expect((await telephone(page)).journal).toContain('fiche de l’app')
 
-  // Une seule fois de lui-même ; ensuite, par le lien.
+  const demarrage = dialogue(page, 'Démarrage automatique')
+  await expect(demarrage).toContainText(
+    'Si l’app est fermée, Xiaomi l’empêche de se réveiller pour vous prévenir. Dans la page qui va s’ouvrir, activez Avec Dieu.',
+  )
+  await demarrage.getByRole('button', { name: 'Ouvrir la page' }).click()
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+  expect((await telephone(page)).journal).toContain('démarrage automatique')
+
+  // Une seule fois d'elles-mêmes ; ensuite, les avis tant que ça bloque.
   await interrupteur(page, 'Vêpres').click()
   await expect(interrupteur(page, 'Vêpres')).toHaveAttribute('aria-checked', 'true')
   await expect(page.getByRole('dialog')).toHaveCount(0)
+  const avis = page.locator('.rappels-avis')
+  await expect(avis).toHaveText([
+    /⚠ Le démarrage automatique est désactivé : si l’app est fermée, le téléphone ne la réveille pas et le rappel ne vient pas\./,
+    /⚠ L’économiseur de batterie peut bloquer les rappels\./,
+  ])
+  await avis.nth(0).getByRole('button', { name: 'Ouvrir la page' }).click()
+  await avis.nth(1).getByRole('button', { name: 'Régler la batterie' }).click()
+  await expect
+    .poll(async () => (await telephone(page)).journal.filter((j) => j === 'démarrage automatique'))
+    .toHaveLength(2)
+  // L'avis de batterie remplace le lien du guide.
+  await expect(page.getByRole('button', { name: /Rappels bloqués/ })).toHaveCount(0)
+})
+
+test('Xiaomi bien réglé : ni guide ni avis, le lien reste', async ({ page }) => {
+  await simulerTelephone(page, {
+    accord: 'granted',
+    fabricant: 'xiaomi',
+    blocages: { batterie: false, arrierePlan: false, demarrage: false },
+  })
+  await ouvrirRappels(page)
+  await interrupteur(page, 'Laudes').click()
+  await expect.poll(async () => (await programmees(page)).length).toBe(30)
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+  await expect(page.locator('.rappels-avis')).toHaveCount(0)
   await page.getByRole('button', { name: 'Rappels bloqués ? Régler la batterie ›' }).click()
   await dialogue(page, 'Sur un Xiaomi').getByRole('button', { name: 'Plus tard' }).click()
   await expect(page.getByRole('dialog')).toHaveCount(0)
 })
 
+test('arrière-plan interdit, sur toute marque : un avis', async ({ page }) => {
+  await simulerTelephone(page, {
+    accord: 'granted',
+    fabricant: 'autre',
+    blocages: { batterie: true, arrierePlan: true },
+  })
+  await ouvrirRappels(page)
+  await expect(page.locator('.rappels-avis')).toHaveCount(0)
+  await interrupteur(page, 'Laudes').click()
+  const avis = page.locator('.rappels-avis')
+  // Hors Xiaomi et Samsung, la batterie ne bloque pas les rappels : pas d'avis.
+  await expect(avis).toHaveText([
+    /⚠ Android interdit à l’app de travailler en arrière-plan : aucun rappel ne viendra\./,
+  ])
+  await avis.getByRole('button', { name: 'Ouvrir les réglages d’Android' }).click()
+  await expect.poll(async () => (await telephone(page)).journal).toContain('fiche de l’app')
+})
+
 test('guide de batterie sur un Samsung', async ({ page }) => {
-  await simulerTelephone(page, { accord: 'granted', fabricant: 'samsung' })
+  await simulerTelephone(page, {
+    accord: 'granted',
+    fabricant: 'samsung',
+    blocages: { batterie: true, arrierePlan: false },
+  })
   await ouvrirRappels(page)
   await interrupteur(page, 'Laudes').click()
   const guide = dialogue(page, 'Sur un Samsung')

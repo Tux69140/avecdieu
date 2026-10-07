@@ -44,6 +44,8 @@ export interface Demandes {
   minute: boolean
   // Le guide de batterie, sur Xiaomi et Samsung.
   batterie: boolean
+  // Le démarrage automatique, sur Xiaomi.
+  demarrage: boolean
 }
 
 const cloche = (cloche: Cloche): Son => ({ sorte: 'cloche', cloche })
@@ -119,7 +121,11 @@ export function lireRappels(): Rappels {
 export function lireDemandes(): Demandes {
   const { demandes } = lireObjet(CLE)
   const lues = estObjet(demandes) ? demandes : {}
-  return { minute: lues.minute === true, batterie: lues.batterie === true }
+  return {
+    minute: lues.minute === true,
+    batterie: lues.batterie === true,
+    demarrage: lues.demarrage === true,
+  }
 }
 
 // Signalé à la page : les rappels se reprogramment, l'accueil suit les heures.

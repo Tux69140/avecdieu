@@ -12,12 +12,13 @@ interface Props {
   onRenoncer: () => void
 }
 
-// Textes validés par le porteur du projet (2026-10-07).
+// Textes validés par le porteur du projet (2026-10-07 ; démarrage automatique
+// à part, sa page n'étant pas dans la fiche de l'app sous HyperOS).
 const GUIDES: Record<'xiaomi' | 'samsung', { titre: string; texte: string; reglages: string[] }> = {
   xiaomi: {
     titre: 'Sur un Xiaomi',
     texte: 'L’économiseur de batterie peut bloquer les rappels. Dans la page qui va s’ouvrir :',
-    reglages: ['Économiseur de batterie : Aucune restriction', 'Démarrage automatique : activé'],
+    reglages: ['Économiseur de batterie : Aucune restriction'],
   },
   samsung: {
     titre: 'Sur un Samsung',
@@ -40,6 +41,14 @@ function contenu(etape: Etape, marque: Fabricant) {
       titre: 'À la minute près',
       texte:
         'Pour que le rappel arrive à l’heure exacte, autorisez « Alarmes et rappels » dans la page qui va s’ouvrir.',
+      accepter: 'Ouvrir la page',
+      renoncer: 'Plus tard',
+    }
+  if (etape === 'demarrage')
+    return {
+      titre: 'Démarrage automatique',
+      texte:
+        'Si l’app est fermée, Xiaomi l’empêche de se réveiller pour vous prévenir. Dans la page qui va s’ouvrir, activez Avec Dieu.',
       accepter: 'Ouvrir la page',
       renoncer: 'Plus tard',
     }

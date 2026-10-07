@@ -12,6 +12,15 @@ type SonNatif =
 
 export type Fabricant = 'xiaomi' | 'samsung' | 'autre'
 
+// Ce qui, en plus des notifications, peut empêcher un rappel d'arriver :
+// l'économie de batterie, l'arrière-plan restreint, et chez Xiaomi le
+// démarrage automatique (absent quand on ne sait pas le lire).
+export interface Blocages {
+  batterie: boolean
+  arrierePlan: boolean
+  demarrage?: boolean
+}
+
 interface GreffonSonnerie {
   creerCanal(o: { id: string; nom: string; son: SonNatif; vibreur: boolean }): Promise<void>
   supprimerCanaux(o: { garder: string[] }): Promise<void>
@@ -20,6 +29,8 @@ interface GreffonSonnerie {
   arreterEcoute(): Promise<void>
   fabricant(): Promise<{ fabricant: Fabricant }>
   ouvrirFicheApp(): Promise<void>
+  blocages(): Promise<Blocages>
+  ouvrirDemarrageAutomatique(): Promise<void>
   ouvrirReglagesNotifications(): Promise<void>
 }
 
@@ -60,6 +71,10 @@ const Sonnerie = registerPlugin<GreffonSonnerie>('Sonnerie', {
     ouvrirReglagesNotifications: async () => {
       telephoneSimule().journal.push('réglages des notifications')
     },
+    blocages: async () => telephoneSimule().blocages,
+    ouvrirDemarrageAutomatique: async () => {
+      telephoneSimule().journal.push('démarrage automatique')
+    },
   },
 })
 
@@ -89,3 +104,10 @@ export const fabricant = (): Promise<Fabricant> =>
 export const ouvrirFicheApp = () => Sonnerie.ouvrirFicheApp().catch(() => {})
 export const ouvrirReglagesNotifications = () =>
   Sonnerie.ouvrirReglagesNotifications().catch(() => {})
+
+// Dans le doute, rien ne bloque : on ne prévient pas sans savoir.
+export const blocages = (): Promise<Blocages> =>
+  Sonnerie.blocages().catch(() => ({ batterie: false, arrierePlan: false }))
+
+export const ouvrirDemarrageAutomatique = () =>
+  Sonnerie.ouvrirDemarrageAutomatique().catch(() => {})

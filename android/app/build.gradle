@@ -33,6 +33,11 @@ android {
         }
     }
     buildTypes {
+        // L'APK d'essai s'installe à côté de l'app du porteur sans la remplacer
+        // (autre clé, autre identifiant) : ses rappels et ses lectures restent.
+        debug {
+            applicationIdSuffix ".essai"
+        }
         release {
             signingConfig cle ? signingConfigs.release : null
             minifyEnabled false

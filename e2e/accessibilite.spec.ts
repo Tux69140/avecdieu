@@ -209,7 +209,12 @@ test('réglages dépliés, de jour puis de nuit', async ({ page }) => {
 
 // Les fenêtres du premier rappel activé, et le choix du son déplié.
 async function fenetresDesRappels(page: Page) {
-  await simulerTelephone(page, { accord: 'prompt', exacte: false, fabricant: 'xiaomi' })
+  await simulerTelephone(page, {
+    accord: 'prompt',
+    exacte: false,
+    fabricant: 'xiaomi',
+    blocages: { batterie: true, arrierePlan: true, demarrage: true },
+  })
   await preparer(page)
   await page.goto('/reglages')
   await deplierReglages(page, 'Rappels')
@@ -218,6 +223,7 @@ async function fenetresDesRappels(page: Page) {
     ['Recevoir les rappels', 'Continuer'],
     ['À la minute près', 'Plus tard'],
     ['Sur un Xiaomi', 'Plus tard'],
+    ['Démarrage automatique', 'Plus tard'],
   ]) {
     const fenetre = page.getByRole('dialog', { name: titre })
     await expect(fenetre).toBeVisible()
@@ -226,7 +232,7 @@ async function fenetresDesRappels(page: Page) {
   }
   await page.locator('.rappel-nom').nth(1).click()
   await expect(page.getByRole('radiogroup', { name: 'Son, Laudes' })).toBeVisible()
-  await expect(page.locator('.rappels-avis')).toBeVisible()
+  await expect(page.locator('.rappels-avis')).toHaveCount(4)
   expect(await violationsGraves(page)).toEqual([])
 }
 

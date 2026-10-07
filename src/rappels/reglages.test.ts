@@ -83,10 +83,10 @@ describe('réglages des rappels', () => {
 
   it('retiennent ce qui a déjà été demandé, sans toucher aux rappels', () => {
     modifierRappel('laudes', { actif: true })
-    expect(lireDemandes()).toEqual({ minute: false, batterie: false })
+    expect(lireDemandes()).toEqual({ minute: false, batterie: false, demarrage: false })
     noterDemande('minute')
     noterDemande('batterie')
-    expect(lireDemandes()).toEqual({ minute: true, batterie: true })
+    expect(lireDemandes()).toEqual({ minute: true, batterie: true, demarrage: false })
     expect(lireRappels().laudes.actif).toBe(true)
   })
 })

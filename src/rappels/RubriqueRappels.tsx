@@ -14,16 +14,16 @@ import {
   demanderAccord,
   minuteExacte,
   ouvrirPageMinute,
-  type Accord,
 } from '../telephone/notifications'
 import { usePeutVibrer } from '../telephone/retours'
 import {
+  blocages,
   fabricant,
+  ouvrirDemarrageAutomatique,
   ouvrirFicheApp,
-  ouvrirReglagesNotifications,
-  type Fabricant,
 } from '../telephone/sonnerie'
 import { etapeSuivante, type Etape } from './autorisations'
+import { AvisRappels, type EtatAndroid } from './AvisRappels'
 import { DialogueRappels } from './DialogueRappels'
 import { reprogrammerBientot } from './entretien'
 import { LigneRappel } from './LigneRappel'
@@ -55,18 +55,12 @@ const HEURES = [
 const estSolaire = (priere: Priere): priere is OfficeSolaire =>
   (OFFICES_SOLAIRES as readonly string[]).includes(priere)
 
-interface Etat {
-  accord: Accord
-  exacte: boolean
-  marque: Fabricant
-}
-
 // Ce qu'Android accorde, relu à l'ouverture et au retour de ses réglages.
-function useEtatAndroid(): [Etat | undefined, () => void] {
-  const [etat, setEtat] = useState<Etat>()
+function useEtatAndroid(): [EtatAndroid | undefined, () => void] {
+  const [etat, setEtat] = useState<EtatAndroid>()
   const relire = useCallback(() => {
-    Promise.all([accordNotifications(), minuteExacte(), fabricant()]).then(
-      ([accord, exacte, marque]) => setEtat({ accord, exacte, marque }),
+    Promise.all([accordNotifications(), minuteExacte(), fabricant(), blocages()]).then(
+      ([accord, exacte, marque, bloque]) => setEtat({ accord, exacte, marque, bloque }),
     )
   }, [])
   useEffect(() => {
@@ -79,7 +73,8 @@ function useEtatAndroid(): [Etat | undefined, () => void] {
 }
 
 // La rubrique « Rappels » des réglages (phase 11) : une ligne par prière, les
-// avis quand Android refuse, et le guide de batterie sur Xiaomi et Samsung.
+// avis quand Android ou la surcouche du fabricant bloque, et le guide de
+// batterie sur Xiaomi et Samsung.
 // En tête, le choix des heures fixes ou solaires (phase 12).
 export function RubriqueRappels({ rappels, onChanger, solaire, lieu, onChangerSolaire }: Props) {
   const vibreurPossible = usePeutVibrer()
@@ -101,7 +96,7 @@ export function RubriqueRappels({ rappels, onChanger, solaire, lieu, onChangerSo
   // La fenêtre suivante, ou la fin : Android relu, rappels refaits.
   const avancer = async (depuis: 'activation' | Etape) => {
     const suivante = await etapeSuivante(depuis)
-    if (suivante === 'minute' || suivante === 'batterie') noterDemande(suivante)
+    if (suivante && suivante !== 'accord') noterDemande(suivante)
     setEtape(suivante)
     if (!suivante) {
       relire()
@@ -113,11 +108,15 @@ export function RubriqueRappels({ rappels, onChanger, solaire, lieu, onChangerSo
     if (etape === 'accord') await demanderAccord()
     else if (etape === 'minute') await ouvrirPageMinute()
     else if (etape === 'batterie') await ouvrirFicheApp()
+    else if (etape === 'demarrage') await ouvrirDemarrageAutomatique()
     if (etape) await avancer(etape)
   }
 
   const actifs = !aucunRappelActif(rappels)
-  const guide = android?.marque === 'xiaomi' || android?.marque === 'samsung'
+  // Le lien du guide, sauf quand l'avis de batterie le dit déjà.
+  const guide =
+    (android?.marque === 'xiaomi' || android?.marque === 'samsung') &&
+    !(actifs && android.accord === 'accorde' && android.bloque.batterie)
 
   return (
     <>
@@ -174,39 +173,14 @@ export function RubriqueRappels({ rappels, onChanger, solaire, lieu, onChangerSo
         />
       )}
 
-      {actifs && android?.accord === 'refuse' && (
-        <div className="rappels-avis" role="status">
-          <p>
-            <span aria-hidden="true">⚠ </span>Android bloque les notifications de l’app : aucun
-            rappel ne s’affichera.
-          </p>
-          <button
-            className="btn btn-secondaire"
-            type="button"
-            onClick={ouvrirReglagesNotifications}
-          >
-            Ouvrir les réglages d’Android
-          </button>
-        </div>
-      )}
-      {actifs && android?.accord === 'accorde' && !android.exacte && (
-        <div className="rappels-avis" role="status">
-          <p>
-            <span aria-hidden="true">⚠ </span>Sans l’autorisation « Alarmes et rappels », les
-            rappels peuvent arriver en retard.
-          </p>
-          <button
-            className="btn btn-secondaire"
-            type="button"
-            onClick={async () => {
-              await ouvrirPageMinute()
-              relire()
-              reprogrammerBientot()
-            }}
-          >
-            Autoriser
-          </button>
-        </div>
+      {actifs && android && (
+        <AvisRappels
+          android={android}
+          onMinuteOuverte={() => {
+            relire()
+            reprogrammerBientot()
+          }}
+        />
       )}
 
       {guide && (

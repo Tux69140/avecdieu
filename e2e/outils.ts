@@ -187,6 +187,7 @@ interface TelephoneSimule {
   exacte?: boolean
   reponseExacte?: boolean
   fabricant?: 'xiaomi' | 'samsung' | 'autre'
+  blocages?: { batterie: boolean; arrierePlan: boolean; demarrage?: boolean }
   affichees?: { id: number; route: string }[]
 }
 

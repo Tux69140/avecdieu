@@ -23,6 +23,8 @@ export interface TelephoneSimule {
   exacte: boolean
   reponseExacte: boolean
   fabricant: 'xiaomi' | 'samsung' | 'autre'
+  // Ce que le téléphone bloque en plus des notifications.
+  blocages: { batterie: boolean; arrierePlan: boolean; demarrage?: boolean }
   programmees: NotificationSimulee[]
   affichees: { id: number; route: string }[]
   canaux: string[]
@@ -47,6 +49,7 @@ export function telephoneSimule(): TelephoneSimule {
     exacte: true,
     reponseExacte: true,
     fabricant: 'autre',
+    blocages: { batterie: false, arrierePlan: false },
     programmees: [],
     affichees: [],
     canaux: [],

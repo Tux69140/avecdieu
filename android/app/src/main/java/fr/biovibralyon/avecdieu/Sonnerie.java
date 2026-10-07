@@ -1,5 +1,7 @@
 package fr.biovibralyon.avecdieu;
 
+import android.app.ActivityManager;
+import android.app.AppOpsManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ContentResolver;
@@ -13,6 +15,8 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.PowerManager;
+import android.os.Process;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.provider.Settings;
@@ -28,6 +32,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -163,6 +168,56 @@ public class Sonnerie extends Plugin {
     public void ouvrirFicheApp(PluginCall call) {
         Intent fiche = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getContext().getPackageName()));
         ouvrir(call, fiche);
+    }
+
+    // Ce qui empêche un rappel d'arriver alors que les notifications sont
+    // accordées : l'économie de batterie (Xiaomi « Aucune restriction »,
+    // Samsung « Non restreinte »), la restriction de l'arrière-plan, et chez
+    // Xiaomi le démarrage automatique, faute duquel l'app fermée n'est plus
+    // réveillée par son alarme (vu le 2026-10-07 : « proc frequent died »).
+    @PluginMethod
+    public void blocages(PluginCall call) {
+        Context contexte = getContext();
+        String paquet = contexte.getPackageName();
+        PowerManager energie = (PowerManager) contexte.getSystemService(Context.POWER_SERVICE);
+        ActivityManager activites = (ActivityManager) contexte.getSystemService(Context.ACTIVITY_SERVICE);
+        JSObject reponse = new JSObject();
+        reponse.put("batterie", energie != null && !energie.isIgnoringBatteryOptimizations(paquet));
+        reponse.put("arrierePlan", Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && activites != null && activites.isBackgroundRestricted());
+        Boolean demarrage = demarrageAutomatique();
+        if (demarrage != null) reponse.put("demarrage", !demarrage);
+        call.resolve(reponse);
+    }
+
+    // La page « Démarrage automatique » de Xiaomi, qui n'est pas dans la fiche
+    // de l'app sous HyperOS ; à défaut, la fiche de l'app.
+    @PluginMethod
+    public void ouvrirDemarrageAutomatique(PluginCall call) {
+        Intent page = new Intent();
+        page.setClassName("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity");
+        page.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        try {
+            getContext().startActivity(page);
+            call.resolve();
+        } catch (Exception e) {
+            ouvrirFicheApp(call);
+        }
+    }
+
+    // Le démarrage automatique de Xiaomi : l'opération 10008 de sa surcouche,
+    // absente des API d'Android, donc lue par réflexion. Rien (null) hors de
+    // Xiaomi ou si la lecture échoue : on ne prévient pas sans savoir.
+    private Boolean demarrageAutomatique() {
+        String marque = Build.MANUFACTURER == null ? "" : Build.MANUFACTURER.toLowerCase(Locale.ROOT);
+        if (!(marque.contains("xiaomi") || marque.contains("redmi") || marque.contains("poco"))) return null;
+        try {
+            AppOpsManager operations = (AppOpsManager) getContext().getSystemService(Context.APP_OPS_SERVICE);
+            Method lire = AppOpsManager.class.getMethod("checkOpNoThrow", int.class, int.class, String.class);
+            int mode = (Integer) lire.invoke(operations, 10008, Process.myUid(), getContext().getPackageName());
+            return mode == AppOpsManager.MODE_ALLOWED;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @PluginMethod
