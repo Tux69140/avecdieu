@@ -9,6 +9,7 @@ public class MainActivity extends BridgeActivity {
     public void onCreate(Bundle savedInstanceState) {
         // Les greffons propres à l'app s'enregistrent avant le démarrage du pont.
         registerPlugin(Vibreur.class);
+        registerPlugin(Sonnerie.class);
         super.onCreate(savedInstanceState);
     }
 }

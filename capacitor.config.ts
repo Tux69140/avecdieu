@@ -15,6 +15,11 @@ const config: CapacitorConfig = {
       initialViewportFitValueHint: 'cover',
       style: 'LIGHT',
     },
+    // Rappels (phase 11) : le grain de l'icône, en or, dans la barre d'état.
+    LocalNotifications: {
+      smallIcon: 'ic_stat_rappel',
+      iconColor: '#B08A3E',
+    },
   },
 }
 

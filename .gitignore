@@ -30,3 +30,6 @@ playwright-report
 
 # APK fabriqué (scripts/fabriquer-apk.sh)
 dist-apk
+
+# Copies de travail des sous-agents
+.claude/worktrees/
