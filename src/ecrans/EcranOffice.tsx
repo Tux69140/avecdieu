@@ -52,12 +52,26 @@ const cles = (parties: Partie[]) => {
   })
 }
 
+// Au-delà, le priant a commencé à lire.
+const DEBUT_DE_LECTURE = 48
+
 function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
   const [etat, setEtat] = useState<Etat>({ sorte: 'chargement' })
   const [essai, setEssai] = useState(0)
   const [{ accents, plusieurs, prieresEntieres, signalerAjouts }] = useState(lireReglages)
   const retour = useRetour()
   const { fin, cachee } = useSuiteCachee()
+  // « Plus bas » ne sert qu'avant de commencer : dès qu'on lit, il ne ferait
+  // qu'estomper la dernière ligne (choix du porteur du projet, 2026-10-07).
+  const [aCommence, setACommence] = useState(false)
+  useEffect(() => {
+    if (aCommence) return
+    const lire = () => {
+      if (scrollY > DEBUT_DE_LECTURE) setACommence(true)
+    }
+    addEventListener('scroll', lire, { passive: true })
+    return () => removeEventListener('scroll', lire)
+  }, [aCommence])
   const texte = useRef<HTMLDivElement>(null)
   const versInvitatoire = useRef(false)
   const pincer = usePincement<HTMLElement>()
@@ -266,7 +280,7 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
         )}
 
         <div ref={fin} className="fin-ecran" />
-        <IndiceSuite visible={cachee && etat.sorte === 'pret'} />
+        <IndiceSuite visible={cachee && !aCommence && etat.sorte === 'pret'} />
       </main>
       {office && sommaire.ouvert && (
         <SommaireOffice

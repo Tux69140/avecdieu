@@ -297,3 +297,14 @@ test('le menu s’ouvre en haut ; le retour ramène à la même place dans l’o
   await expect(page.getByTestId('office')).toBeVisible()
   await expect.poll(() => page.evaluate(() => scrollY)).toBe(position)
 })
+
+test('« Plus bas » s’efface dès qu’on commence à lire, et ne revient pas', async ({ page }) => {
+  await ouvrir(page)
+  const indice = page.getByRole('button', { name: 'Plus bas' })
+  await expect(indice).toBeVisible()
+  await page.evaluate(() => window.scrollTo(0, 300))
+  await expect(indice).toBeHidden()
+  await page.evaluate(() => window.scrollTo(0, 0))
+  await image(page)
+  await expect(indice).toBeHidden()
+})
