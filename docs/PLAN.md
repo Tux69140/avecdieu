@@ -217,15 +217,16 @@ L'écran d'accueil de l'app comprend :
 - la navigation vers les jours précédents et suivants.
 
 Décisions du porteur du projet (2026-10-06) :
-- **Ouverture** : l'app s'ouvre toujours sur l'accueil, même avec un chapelet en cours ; le chapelet s'ouvre par le menu, et son seuil propose la reprise. Pas de carte « Chapelet du jour » (US-6 retirée).
+- **Ouverture** : l'app s'ouvre toujours sur l'accueil, même avec un chapelet en cours ; le chapelet s'ouvre par le menu ou par sa ligne de l'accueil, et son seuil propose la reprise. Pas de carte « Chapelet du jour » (US-6 retirée).
+- **Ligne du chapelet** (demande du porteur du projet après essai, 2026-10-07, revient en partie sur l'US-6) : sous les complies, séparée des offices par un filet d'or, la ligne `Chapelet · 20 h` ouvre le seuil du chapelet ; elle s'atténue une fois son heure passée.
 - **Menu** : le ☰ passe en haut de l'accueil ; le menu devient Aujourd'hui, Chapelet, Réglages, À propos. Le seuil du chapelet perd son ☰ au profit de « ‹ Retour » vers l'accueil. L'écran provisoire « Offices du jour » disparaît.
-- **Cadran** : arc de 6 h à 22 h, complies au bout de l'arc (la maquette l'emporte sur l'ancien PRD). Le soleil laisse place au croissant de lune entre le coucher et le lever, calculés au centre de la France pour la date du jour, sans demander de position.
+- **Cadran** : arc de 6 h à 22 h, complies au bout de l'arc (la maquette l'emporte sur l'ancien PRD), au sommet aplati (demande du porteur du projet après essai, 2026-10-07). Le soleil laisse place au croissant de lune entre le coucher et le lever, calculés pour la date du jour au centre de la France, sans demander de position (au lieu des heures solaires dès qu'il est choisi, phase 12).
 - **Prière du moment** : un office reste « du moment » pendant une heure après son heure, puis l'app passe au suivant et il devient « passé » (atténué). Les complies restent « du moment » jusqu'à minuit ; de minuit à 7 h, ce sont les laudes du nouveau jour. Tout office passé reste ouvrable d'un toucher, sur le cadran comme dans la liste.
 - **Encadré « Prière du moment »** : trois lignes, tout l'encadré se touche, chevron › à droite centré sur les trois lignes :
   `PRIÈRE DU MOMENT` / `Vêpres` / `18 h 30 · dans 40 min` (« depuis 10 min » une fois l'heure passée, « dans 2 h 15 » au-delà d'une heure).
 - **Office des lectures** : en tête de la liste avec « à toute heure », jamais atténué, sans perle sur le cadran, jamais « du moment » ; il prendra place sur le cadran quand une heure lui sera donnée (phase 11).
 - **Bandeau** : date (`MARDI 6 OCTOBRE`), temps (`27e semaine du temps ordinaire`, omis quand le titre le dit déjà), titre (fête ou saint, sinon nom du jour : `S. Bruno, prêtre`, `28e dimanche du temps ordinaire`), puis **une seule pastille de la couleur du jour, sans aucun texte** (ni nom de couleur, ni rang). Typographie corrigée (« 27e », minuscules), mots de l'AELF inchangés, mention « semaine du psautier » retirée. Lecteur d'écran : « couleur liturgique : vert ».
-- **Autre jour** : en haut, « ‹ dim. 4 · Aujourd'hui · mar. 6 › » ; sur un autre jour, le centre devient « Revenir à aujourd'hui », les perles prennent toutes le même aspect, sans soleil ni lune, et l'encadré « Prière du moment » disparaît. Navigation jour par jour, sans calendrier.
+- **Autre jour** : en haut, « ‹ dim. 4 · Aujourd'hui · mar. 6 › » ; sur un autre jour, le centre devient « Revenir à aujourd'hui », les perles prennent toutes le même aspect, sans soleil ni lune, et l'encadré « Prière du moment » disparaît. Navigation jour par jour, sans calendrier ; glisser sur le cadran change aussi de jour, vers la gauche le suivant, vers la droite le précédent (demande du porteur du projet, 2026-10-07).
 - **AELF injoignable** : la date seule, puis `⚠ Le jour liturgique n’a pas pu être récupéré.` en brun brique, avec un lien discret « Réessayer » ; le cadran, la prière du moment et la liste restent affichés.
 
 ### Critères d'acceptation
@@ -256,6 +257,7 @@ Décisions du porteur du projet (2026-10-07) :
 - **Accueil d'un jour non enregistré**, sous la date : `⚠ Ce jour n’est pas enregistré. Connectez-vous à internet, puis réessayez.` et le lien discret `Réessayer`.
 - **Premier lancement sans réseau** (accueil et écran d'un office) : `⚠ Les offices demandent une première connexion à internet. Une fois connecté, l’app enregistre une semaine de textes d’avance. Le chapelet, lui, se prie dès maintenant.` ; sur l'accueil seulement, le bouton `Prier le chapelet`. L'écran d'un office garde le bouton `Réessayer` (validé après captures).
 - **AELF muette, jour enregistré** : aucun message, l'office s'ouvre.
+- **Renouvellement** : la réserve se complète à l'ouverture, au retour dans l'app et au retour du réseau ; l'accueil ou l'office restés sur un message d'absence se rechargent seuls quand le réseau revient.
 
 ### Critères d'acceptation
 
@@ -292,7 +294,7 @@ Décisions du porteur du projet (2026-10-07) :
 - **Taille du texte** : 5 crans (16, 18, 20, 22, 24 px ; 18 d'origine), boutons `A−` et `A+` autour de 5 points, avec en exemple le début du Notre Père (`Notre Père, qui es aux cieux, / que ton nom soit sanctifié,`) qui change en direct ; lien `Taille d’origine` seulement hors de 18 ; aide `Dans un office ou au chapelet, pincez ou écartez deux doigts.` Lecteur d'écran : `Réduire le texte`, `Agrandir le texte`, `Taille 2 sur 5`.
 - **Ce qui grandit** : le texte à prier des offices et du chapelet, et à la même échelle ce qui s'y mêle (V/ R/, versets, astérisques, libellés des parties). Titres, accueil, menu et réglages ne changent pas.
 - **Pincement** : il saute de cran en cran, sans aucun repère à l'écran : seul le texte change.
-- **Thème** : `Thème` à trois choix `Automatique | Jour | Nuit`, aide `Automatique : nuit après le coucher du soleil, ou si le téléphone est en mode sombre.` (coucher du soleil du cadran, centre de la France).
+- **Thème** : `Thème` à trois choix `Automatique | Jour | Nuit`, aide `Automatique : nuit après le coucher du soleil, ou si le téléphone est en mode sombre.` (coucher du soleil du cadran : centre de la France, ou lieu des heures solaires dès qu'il est choisi).
 
 ### Critères d'acceptation
 
@@ -333,6 +335,7 @@ Décisions du porteur du projet (2026-10-07) :
   - `Sur un Xiaomi` / `L’économiseur de batterie peut bloquer les rappels. Dans la page qui va s’ouvrir :` / `1. Économiseur de batterie : Aucune restriction` / `2. Démarrage automatique : activé` ;
   - `Sur un Samsung` / `La mise en veille des applis peut bloquer les rappels. Dans la page qui va s’ouvrir :` / `Batterie : Non restreinte` ;
   - boutons `Ouvrir la page` · `Plus tard`.
+- **Détails de forme codés sans validation, à montrer avec l'essai sur téléphones** : le titre `Son` au-dessus du choix du son, le lien `Changer` à côté d'un MP3 déjà choisi, le nom du MP3 affiché en clair, l'écoute du son du téléphone et du MP3, l'heure écrite `7 h 00`, la rédaction des crédits des cloches dans À propos.
 
 ### Critères d'acceptation
 
@@ -385,6 +388,8 @@ Décisions du porteur du projet (2026-10-07, cadrage en cours) :
 - [x] Un déplacement simulé de plus de 50 km, avec l'option active, recalcule les heures et reprogramme les rappels. En dessous de 50 km, rien ne change.
 - [x] Le cadran en mode solaire place les perles sur l'arc du lever au coucher.
 
+Reste à confirmer sur les téléphones : « Me localiser » fonctionne (vérifié le 2026-10-07) ; un rappel solaire arrive à l'heure calculée (le porteur du projet le confirmera à la prochaine notification).
+
 ## Bloquée par
 
 - Phase 11
@@ -405,6 +410,34 @@ L'app est mise à l'épreuve dans la vraie vie du porteur du projet, sur ses deu
 - [ ] L'accueil s'affiche en moins de 2 secondes après l'ouverture de l'app, sur les deux téléphones (critère 6).
 - [ ] Pendant 14 jours consécutifs, le porteur du projet dit laudes, vêpres, complies et un chapelet uniquement avec l'app (critère 8).
 
+Points laissés pour la recette au fil des phases :
+- l'icône de l'app sur l'écran d'accueil du Xiaomi et du Samsung (dépend de leur lanceur, phase 2) ;
+- l'écran « À propos », validé « on peaufinera plus tard » (phase 4) ;
+- la structure des offices AELF reste la même au fil de l'année (hypothèse du PRD) : tout office qui s'affiche mal pendant la recette est enregistré et ajouté au jeu de référence de la phase 6.
+
 ## Bloquée par
 
 - Toutes les phases précédentes
+
+---
+
+## Phase 14 : Publication sur le Play Store
+
+**User stories** : aucune nouvelle. Décision du cadrage (2026-10-05) : l'app est d'abord installée directement, puis publiée.
+
+### Ce qu'on livre
+
+L'app est disponible sur le Play Store, avec l'accord écrit de l'AELF et la mention qu'elle demande.
+
+### Critères d'acceptation
+
+- [ ] L'AELF a donné son accord écrit ; les risques du PRD sont mis à jour selon sa réponse. En cas de refus pour les passages bibliques, le recueil des passages passe à la traduction Crampon (sans toucher au code) et ces passages sont validés par le porteur du projet.
+- [ ] La mention de l'AELF figure dans l'app sous la forme qu'elle indique.
+- [ ] Le compte Google Play Developer est ouvert par le porteur du projet (25 $, payés une fois).
+- [ ] La fiche du Play Store est rédigée et validée par le porteur du projet, avec une déclaration de confidentialité : aucune donnée collectée, la position ne quitte pas le téléphone.
+- [ ] L'app publiée s'installe depuis le Play Store sur le Xiaomi et le Samsung, signée par la même clé que les versions installées à la main.
+
+## Bloquée par
+
+- Phase 13
+- Réponse de l'AELF au courrier du porteur du projet
