@@ -36,3 +36,9 @@
   letter-spacing: 0.06em;
   color: var(--sepia);
 }
+
+.a-propos-credits {
+  margin: 0 0 var(--esp-sm);
+  padding-left: 1.2em;
+  line-height: 1.5;
+}

@@ -10,6 +10,9 @@ import { Interrupteur } from '../composants/Interrupteur'
 import { useRetour } from '../composants/retour'
 import { Rubrique } from '../composants/Rubrique'
 import { dateLisible } from '../office/dates'
+import { lireRappels, modifierRappel } from '../rappels/reglages'
+import { RubriqueRappels } from '../rappels/RubriqueRappels'
+import { resumerRappels } from '../rappels/textes'
 import { usePeutVibrer } from '../telephone/retours'
 import './EcranReglages.css'
 
@@ -32,14 +35,15 @@ const THEMES = [
   ['nuit', 'Nuit'],
 ] as const satisfies readonly (readonly [Theme, string])[]
 
-type NomRubrique = 'affichage' | 'chapelet' | 'offices'
+type NomRubrique = 'affichage' | 'chapelet' | 'offices' | 'rappels'
 
 // Les rubriques ouvertes, retenues tant que l'app reste ouverte : toutes
 // fermées au lancement (décision du porteur du projet, 2026-10-07).
 const ouvertes = new Set<NomRubrique>()
 
-// Les réglages, retenus sur le téléphone, en trois rubriques : l'affichage,
-// le chapelet, les offices (libellés validés le 2026-10-07).
+// Les réglages, retenus sur le téléphone, en quatre rubriques : l'affichage,
+// le chapelet, les offices et les rappels, en dernier (libellés validés le
+// 2026-10-07).
 export function EcranReglages() {
   const [reglages, setReglages] = useState(lireReglages)
   const [, setOuvertes] = useState(() => new Set(ouvertes))
@@ -48,6 +52,7 @@ export function EcranReglages() {
   const vibreur = usePeutVibrer()
   const modifier = (changement: Partial<Reglages>) => setReglages(modifierReglages(changement))
   const [enregistres, setEnregistres] = useState(textesEnregistres)
+  const [rappels, setRappels] = useState(lireRappels)
 
   const rubrique = (nom: NomRubrique) => ({
     ouverte: ouvertes.has(nom),
@@ -165,6 +170,13 @@ export function EcranReglages() {
               ? `Textes disponibles hors connexion jusqu’au ${dateLisible(enregistres.fin)}.`
               : 'Aucun texte enregistré pour l’instant.'}
           </p>
+        </Rubrique>
+
+        <Rubrique titre="Rappels" resume={resumerRappels(rappels)} {...rubrique('rappels')}>
+          <RubriqueRappels
+            rappels={rappels}
+            onChanger={(priere, changement) => setRappels(modifierRappel(priere, changement))}
+          />
         </Rubrique>
       </div>
     </main>

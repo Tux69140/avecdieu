@@ -1,27 +1,27 @@
-import type { NomOffice } from './modele'
+import { lireRappels, RAPPELS_PAR_DEFAUT } from '../rappels/reglages'
+import { OFFICES, type NomOffice } from './modele'
 
 export interface Heure {
   heures: number
   minutes: number
 }
 
+const heuresDe = (rappels: typeof RAPPELS_PAR_DEFAUT) =>
+  Object.fromEntries(OFFICES.map((nom) => [nom, rappels[nom].heure])) as Record<
+    NomOffice,
+    Heure | undefined
+  >
+
 // Heures fixes par défaut (PRD, « Rappels ») ; l'office des lectures n'a pas
 // d'heure tant que le priant n'en a pas choisi une.
-export const HEURES_PAR_DEFAUT: Record<NomOffice, Heure | undefined> = {
-  lectures: undefined,
-  laudes: { heures: 7, minutes: 0 },
-  tierce: { heures: 9, minutes: 0 },
-  sexte: { heures: 12, minutes: 0 },
-  none: { heures: 15, minutes: 0 },
-  vepres: { heures: 18, minutes: 30 },
-  complies: { heures: 21, minutes: 30 },
-}
+export const HEURES_PAR_DEFAUT = heuresDe(RAPPELS_PAR_DEFAUT)
 
-// L'heure de chaque office, telle que les écrans l'affichent. Seul point
-// d'entrée : les heures réglées avec les rappels (phase 11) puis les heures
-// solaires (phase 12) viendront s'y substituer aux heures par défaut.
+// L'heure de chaque office, telle que les écrans l'affichent : celle réglée
+// avec les rappels, même rappel coupé (une seule heure partout, décision du
+// porteur du projet, 2026-10-07). Les heures solaires (phase 12) viendront
+// s'y substituer.
 export function heuresDesOffices(): Record<NomOffice, Heure | undefined> {
-  return { ...HEURES_PAR_DEFAUT }
+  return heuresDe(lireRappels())
 }
 
 // « 7 h », « 18 h 30 ».

@@ -1,0 +1,53 @@
+/* Une fenêtre sobre au milieu de l'écran, dans les marges des barres d'Android. */
+.dialogue-rappels {
+  width: calc(100% - 2 * var(--esp-md) - var(--bord-gauche) - var(--bord-droit));
+  max-width: 26em;
+  max-height: calc(100dvh - var(--bord-haut) - var(--bord-bas) - 2 * var(--esp-md));
+  padding: var(--esp-lg) var(--esp-lg) var(--esp-md);
+  border: 1px solid var(--filet);
+  border-radius: var(--r-lg);
+  background: var(--parchemin);
+  color: var(--encre);
+  font-family: var(--texte);
+}
+
+.dialogue-rappels[open] {
+  animation: ecran-fondu 0.25s ease-out;
+}
+
+.dialogue-rappels::backdrop {
+  background: var(--voile);
+}
+
+.dialogue-rappels h2 {
+  margin: 0 0 var(--esp-sm);
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 21px;
+  letter-spacing: 0.05em;
+  line-height: 1.25;
+}
+
+.dialogue-rappels p,
+.dialogue-rappels li {
+  margin: 0 0 var(--esp-sm);
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.dialogue-rappels ol {
+  margin: 0 0 var(--esp-sm);
+  padding-left: 1.4em;
+}
+
+.dialogue-reglages {
+  font-weight: 500;
+}
+
+.dialogue-boutons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-sm) var(--esp-md);
+  margin-top: var(--esp-md);
+}

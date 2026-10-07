@@ -1,6 +1,14 @@
 import { expect, type Page } from '@playwright/test'
 import { readFileSync } from 'node:fs'
-import { commencer, preparer, servirAelf, suivant, test } from './outils.ts'
+import {
+  commencer,
+  deplierReglages,
+  preparer,
+  servirAelf,
+  simulerTelephone,
+  suivant,
+  test,
+} from './outils.ts'
 
 // Sur le téléphone, l'app s'étend sous les barres d'Android (état en haut,
 // navigation en bas), transparentes. Capacitor donne leur hauteur dans les
@@ -127,4 +135,19 @@ test('annonce d’un mystère : la grosse perle reste au-dessus de la barre du b
   const boite = (await perle.boundingBox())!
   expect(boite.y + boite.height).toBeLessThanOrEqual(page.viewportSize()!.height - BAS)
   await verifierBarres(page)
+})
+
+test('rappels : la fenêtre d’autorisation s’écarte des barres d’Android', async ({ page }) => {
+  await simulerTelephone(page, { accord: 'prompt' })
+  await preparer(page)
+  await page.goto('/reglages')
+  await deplierReglages(page, 'Rappels')
+  await verifierBarres(page)
+  await page.getByRole('switch', { name: 'Laudes, rappel' }).click()
+  const fenetre = page.getByRole('dialog', { name: 'Recevoir les rappels' })
+  await expect(fenetre).toBeVisible()
+  await expect.poll(() => page.evaluate(() => document.getAnimations().length)).toBe(0)
+  const boite = (await fenetre.boundingBox())!
+  expect(boite.y).toBeGreaterThanOrEqual(HAUT)
+  expect(boite.y + boite.height).toBeLessThanOrEqual(page.viewportSize()!.height - BAS)
 })

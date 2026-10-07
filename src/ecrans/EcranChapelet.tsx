@@ -22,6 +22,7 @@ import { useSuiteCachee } from '../composants/suiteCachee'
 import { SERIES, type SerieId } from '../recueil/mysteres'
 import { PASSAGES } from '../recueil/passages'
 import type { PriereId } from '../recueil/prieres'
+import { retirerNotification } from '../telephone/notifications'
 import { garderEcranAllume, vibrer } from '../telephone/retours'
 import './EcranChapelet.css'
 
@@ -43,6 +44,8 @@ export function EcranChapelet() {
   const duJour = serieDuJour(aujourdhui)
   const prier = (state as { prier?: boolean } | null)?.prier === true
   const enCours = lireEnCours(aujourdhui)
+  // Le chapelet ouvert, son rappel n'a plus à rester affiché.
+  useEffect(() => void retirerNotification('/chapelet'), [])
 
   if (serieChoisie !== undefined && !estSerie(serieChoisie))
     return <Navigate to="/chapelet" replace />

@@ -19,6 +19,7 @@ import { invitatoireDe, reconstituer } from '../office/rubriques'
 import { SommaireOffice } from '../office/SommaireOffice'
 import { useReperage } from '../office/useReperage'
 import { useSommaire } from '../office/useSommaire'
+import { retirerNotification } from '../telephone/notifications'
 import { garderEcranAllume } from '../telephone/retours'
 import './EcranOffice.css'
 
@@ -59,6 +60,8 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
   const pincer = usePincement<HTMLElement>()
   // Comme au chapelet : le téléphone ne se verrouille pas en pleine lecture.
   useEffect(() => garderEcranAllume(), [])
+  // L'office ouvert, son rappel n'a plus à rester affiché.
+  useEffect(() => void retirerNotification(`/office/${nom}/${date}`), [nom, date])
 
   useEffect(() => {
     const abandon = new AbortController()

@@ -21,6 +21,14 @@ export function EcranAPropos() {
       </p>
       <p>Notre Père : traduction liturgique de 2017.</p>
       <p>Credo du chapelet : Symbole des Apôtres.</p>
+      {/* Crédits exigés par les licences des enregistrements (phase 11). */}
+      <h2>Cloches des rappels</h2>
+      <p>Enregistrements de Wikimedia Commons, raccourcis à 12 secondes :</p>
+      <ul className="a-propos-credits">
+        <li>Bourdon Marie de Notre-Dame de Paris, par NemesisIII (CC BY-SA 3.0) ;</li>
+        <li>cloche Marcel de Notre-Dame de Paris, par M4RC3LNOTES (CC0) ;</li>
+        <li>angélus de l’église Saint-Pierre de Saint-Pé-d’Ardet, par Tiasma31 (CC BY-SA 3.0).</li>
+      </ul>
     </main>
   )
 }

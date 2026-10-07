@@ -1,0 +1,180 @@
+.rappels {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--filet);
+}
+
+.rappel {
+  border-bottom: 1px solid var(--filet);
+}
+
+/* Le nom (et son son), l'heure, l'interrupteur : chacun se touche à part. */
+.rappel-ligne {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-sm);
+  min-height: 56px;
+}
+
+.rappel-nom {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  min-height: 48px;
+  padding: var(--esp-xs) 0;
+  border: none;
+  background: none;
+  font-family: var(--texte);
+  text-align: left;
+  color: var(--encre);
+  cursor: pointer;
+}
+
+.rappel-priere {
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.rappel-son {
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--sepia);
+}
+
+/* L'heure lisible ; le champ d'heure, invisible par-dessus, ouvre l'horloge. */
+.rappel-heure {
+  position: relative;
+  display: grid;
+  place-items: center end;
+  min-width: 76px;
+  min-height: 48px;
+  font-family: var(--texte);
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+  color: var(--encre);
+  cursor: pointer;
+}
+
+.rappel[data-actif='non'] .rappel-heure {
+  color: var(--sepia);
+}
+
+.rappel-heure input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.rappel-heure:focus-within {
+  outline: 2px solid var(--or);
+  outline-offset: 2px;
+}
+
+.rappel-bascule {
+  display: grid;
+  place-items: center end;
+  min-width: 56px;
+  min-height: 48px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.rappel-bascule[aria-checked='true'] .interrupteur-piste {
+  background: var(--encre);
+  border-color: var(--encre);
+}
+
+.rappel-bascule[aria-checked='true'] .interrupteur-curseur {
+  background: var(--velin);
+  transform: translateX(18px);
+}
+
+/* Le choix du son, déplié sous la ligne de la prière. */
+.choix-son {
+  margin: 0 0 var(--esp-sm) var(--esp-md);
+  padding-left: var(--esp-md);
+  border-left: 1px solid var(--filet);
+}
+
+.choix-son-titre {
+  margin: 0;
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.06em;
+  color: var(--sepia);
+}
+
+.choix-son-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-sm);
+}
+
+.choix-son-option label {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--esp-md);
+  min-height: 48px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.choix-son-option input {
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  accent-color: var(--or-fonce);
+}
+
+.choix-son-ecouter {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.choix-son-ecouter svg {
+  width: 12px;
+  height: 14px;
+  fill: var(--or-fonce);
+}
+
+.choix-son .interrupteur {
+  border-bottom: none;
+}
+
+/* Un refus d'Android : en brun brique, jamais en rouge (réservé aux rubriques). */
+.rappels-avis {
+  margin-top: var(--esp-md);
+  padding: var(--esp-md);
+  border-left: 3px solid var(--erreur);
+  background: var(--velin);
+}
+
+.rappels-avis p {
+  margin: 0 0 var(--esp-sm);
+  line-height: 1.5;
+  color: var(--erreur);
+  font-weight: 500;
+}
+
+.rappels-batterie {
+  margin-top: var(--esp-sm);
+  margin-left: calc(-1 * var(--esp-sm));
+}

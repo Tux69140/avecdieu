@@ -1,6 +1,14 @@
 import { AxeBuilder } from '@axe-core/playwright'
 import { expect, type Page } from '@playwright/test'
-import { avancer, commencer, deplierReglages, preparer, servirAelf, test } from './outils.ts'
+import {
+  avancer,
+  commencer,
+  deplierReglages,
+  preparer,
+  servirAelf,
+  simulerTelephone,
+  test,
+} from './outils.ts'
 
 // Contrôle automatique d'accessibilité (contrastes, titres, libellés ARIA) :
 // échoue sur toute violation grave ou critique. Le clavier et le lecteur
@@ -198,7 +206,38 @@ test('réglages dépliés, de jour puis de nuit', async ({ page }) => {
   expect(await violationsGraves(page)).toEqual([])
 })
 
+// Les fenêtres du premier rappel activé, et le choix du son déplié.
+async function fenetresDesRappels(page: Page) {
+  await simulerTelephone(page, { accord: 'prompt', exacte: false, fabricant: 'xiaomi' })
+  await preparer(page)
+  await page.goto('/reglages')
+  await deplierReglages(page, 'Rappels')
+  await page.getByRole('switch', { name: 'Laudes, rappel' }).click()
+  for (const [titre, bouton] of [
+    ['Recevoir les rappels', 'Continuer'],
+    ['À la minute près', 'Plus tard'],
+    ['Sur un Xiaomi', 'Plus tard'],
+  ]) {
+    const fenetre = page.getByRole('dialog', { name: titre })
+    await expect(fenetre).toBeVisible()
+    expect(await violationsGraves(page)).toEqual([])
+    await fenetre.getByRole('button', { name: bouton }).click()
+  }
+  await page.locator('.rappel-nom').nth(1).click()
+  await expect(page.getByRole('radiogroup', { name: 'Son, Laudes' })).toBeVisible()
+  await expect(page.locator('.rappels-avis')).toBeVisible()
+  expect(await violationsGraves(page)).toEqual([])
+}
+
+test('rappels : fenêtres d’autorisation, avis et choix du son', async ({ page }) => {
+  await fenetresDesRappels(page)
+})
+
 test.describe('de nuit', () => {
+  test('rappels : fenêtres d’autorisation, avis et choix du son', async ({ page }) => {
+    await fenetresDesRappels(page)
+  })
+
   test.beforeEach(async ({ page }) => {
     await page.emulateMedia({ colorScheme: 'dark' })
     await servirAelf(page)

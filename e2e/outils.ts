@@ -76,9 +76,10 @@ export async function servirAelf(page: Page) {
 // le parcours a besoin, toutes par défaut.
 export async function deplierReglages(
   page: Page,
-  ...rubriques: ('Affichage' | 'Chapelet' | 'Offices')[]
+  ...rubriques: ('Affichage' | 'Chapelet' | 'Offices' | 'Rappels')[]
 ) {
-  for (const nom of rubriques.length > 0 ? rubriques : ['Affichage', 'Chapelet', 'Offices']) {
+  const toutes = ['Affichage', 'Chapelet', 'Offices', 'Rappels']
+  for (const nom of rubriques.length > 0 ? rubriques : toutes) {
     const bouton = page.getByRole('button', { name: nom, exact: true })
     if ((await bouton.getAttribute('aria-expanded')) === 'false') await bouton.click()
     await expect(bouton).toHaveAttribute('aria-expanded', 'true')
@@ -176,3 +177,49 @@ export async function espionner(page: Page) {
 }
 
 export const journal = (page: Page) => page.evaluate(() => window.__journal)
+
+// Hors de l'APK, le téléphone est simulé (src/telephone/simulation.ts) : son
+// état d'origine se règle avant l'ouverture, ce que l'app lui a demandé se lit
+// ensuite.
+interface TelephoneSimule {
+  accord?: 'granted' | 'denied' | 'prompt'
+  reponse?: 'granted' | 'denied'
+  exacte?: boolean
+  reponseExacte?: boolean
+  fabricant?: 'xiaomi' | 'samsung' | 'autre'
+  affichees?: { id: number; route: string }[]
+}
+
+export async function simulerTelephone(page: Page, etat: TelephoneSimule) {
+  await page.addInitScript((etat) => {
+    ;(window as unknown as { __telephoneInitial: unknown }).__telephoneInitial = etat
+  }, etat)
+}
+
+export interface NotificationSimulee {
+  id: number
+  titre: string
+  texte: string
+  quand: string
+  route: string
+  canal: string
+  exacte: boolean
+}
+
+export const telephone = (page: Page) =>
+  page.evaluate(() => {
+    const t = (window as unknown as { __telephone?: Record<string, unknown> }).__telephone
+    return {
+      programmees: (t?.programmees ?? []) as NotificationSimulee[],
+      affichees: (t?.affichees ?? []) as { id: number; route: string }[],
+      canaux: (t?.canaux ?? []) as string[],
+      journal: (t?.journal ?? []) as string[],
+    }
+  })
+
+// Un toucher sur une notification affichée, qui ouvre cette route.
+export const toucherNotification = (page: Page, route: string) =>
+  page.evaluate((route) => {
+    const t = (window as unknown as { __telephone: { toucher: (r: string) => void } }).__telephone
+    t.toucher(route)
+  }, route)

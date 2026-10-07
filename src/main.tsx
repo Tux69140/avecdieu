@@ -9,6 +9,7 @@ import { EcranChapelet } from './ecrans/EcranChapelet'
 import { EcranMenu } from './ecrans/EcranMenu'
 import { EcranOffice } from './ecrans/EcranOffice'
 import { EcranReglages } from './ecrans/EcranReglages'
+import { entretenirRappels, ouvrirLesNotifications } from './rappels/entretien'
 import './styles/jetons.css'
 
 const routeur = createBrowserRouter([
@@ -27,6 +28,10 @@ const routeur = createBrowserRouter([
 suivreApparence()
 // Sept jours de textes d'avance, pour prier sans réseau (phase 9).
 entretenirReserve()
+// Une notification touchée ouvre sa prière, même app fermée ; les rappels du
+// mois à venir sont refaits à chaque ouverture (phase 11).
+ouvrirLesNotifications((route) => routeur.navigate(route))
+entretenirRappels()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

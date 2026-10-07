@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { ecrireHeure, heuresDesOffices } from './heures'
+import { modifierRappel } from '../rappels/reglages'
 
 describe('heures des offices', () => {
   it('par défaut : les heures fixes du PRD, l’office des lectures sans heure', () => {
@@ -18,5 +19,19 @@ describe('heures des offices', () => {
     expect(ecrireHeure({ heures: 7, minutes: 0 })).toBe('7 h')
     expect(ecrireHeure({ heures: 18, minutes: 30 })).toBe('18 h 30')
     expect(ecrireHeure({ heures: 21, minutes: 5 })).toBe('21 h 05')
+  })
+})
+
+describe('heures réglées avec les rappels', () => {
+  it('une heure changée est celle de l’office partout, même rappel coupé', () => {
+    localStorage.clear()
+    modifierRappel('laudes', { heure: { heures: 6, minutes: 30 } })
+    modifierRappel('lectures', { heure: { heures: 5, minutes: 45 } })
+    expect(heuresDesOffices()).toMatchObject({
+      lectures: { heures: 5, minutes: 45 },
+      laudes: { heures: 6, minutes: 30 },
+      vepres: { heures: 18, minutes: 30 },
+    })
+    localStorage.clear()
   })
 })
