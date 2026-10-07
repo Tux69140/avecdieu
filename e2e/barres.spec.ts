@@ -94,6 +94,29 @@ test('chapelet : rien sous les barres d’Android', async ({ page }) => {
   await verifierBarres(page)
 })
 
+test('office : le bandeau et le sommaire s’écartent des barres d’Android', async ({ page }) => {
+  await servirAelf(page)
+  await preparer(page)
+  await page.goto('/office/laudes/2026-10-06')
+  await expect(page.getByTestId('office')).toBeVisible()
+  await page.evaluate(() => window.scrollTo(0, 1500))
+  const bandeau = page.getByTestId('bandeau-office')
+  await expect(bandeau).toBeVisible()
+  await verifierBarres(page)
+  await page.evaluate(() => window.scrollTo(0, 1500))
+  await expect(bandeau).toBeVisible()
+  await expect.poll(() => page.evaluate(() => document.getAnimations().length)).toBe(0)
+  expect((await bandeau.boundingBox())!.y).toBeGreaterThanOrEqual(HAUT)
+
+  await bandeau.click()
+  const volet = page.getByRole('dialog', { name: 'Sommaire · Laudes' })
+  await expect(volet).toBeVisible()
+  await expect.poll(() => page.evaluate(() => document.getAnimations().length)).toBe(0)
+  const boite = (await volet.boundingBox())!
+  expect(boite.y).toBeGreaterThanOrEqual(HAUT)
+  expect(boite.y + boite.height).toBeLessThanOrEqual(page.viewportSize()!.height - BAS)
+})
+
 test('annonce d’un mystère : la grosse perle reste au-dessus de la barre du bas', async ({
   page,
 }) => {

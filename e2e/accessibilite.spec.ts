@@ -144,6 +144,24 @@ test('office : lien de l’invitatoire, prières courantes en entier, ajouts sig
   expect(await violationsGraves(page)).toEqual([])
 })
 
+// Phase 7 : le bandeau de l'étape en cours, puis le sommaire ouvert.
+async function bandeauPuisSommaire(page: Page) {
+  await preparer(page)
+  await page.goto('/office/laudes/2026-10-06')
+  await expect(page.getByTestId('office')).toBeVisible()
+  await page.evaluate(() => window.scrollTo(0, 1500))
+  await expect(page.getByTestId('bandeau-office')).toBeVisible()
+  expect(await violationsGraves(page)).toEqual([])
+  await page.getByTestId('bandeau-office').click()
+  await expect(page.getByRole('dialog', { name: 'Sommaire · Laudes' })).toBeVisible()
+  expect(await violationsGraves(page)).toEqual([])
+}
+
+test('office : bandeau et sommaire', async ({ page }) => {
+  await servirAelf(page)
+  await bandeauPuisSommaire(page)
+})
+
 test('office injoignable', async ({ page }) => {
   await page.route('https://api.aelf.org/**', (route) => route.abort())
   await preparer(page)
@@ -198,6 +216,10 @@ test.describe('de nuit', () => {
     await page.goto('/office/laudes/2026-10-06')
     await expect(page.getByTestId('office')).toBeVisible()
     expect(await violationsGraves(page)).toEqual([])
+  })
+
+  test('office : bandeau et sommaire', async ({ page }) => {
+    await bandeauPuisSommaire(page)
   })
 
   test('chapelet, seuil puis dizaine', async ({ page }) => {

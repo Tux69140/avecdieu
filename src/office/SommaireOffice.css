@@ -1,0 +1,131 @@
+/* Le volet se déroule depuis le haut, sous la barre d'état d'Android, et
+   laisse voir en bas le texte assombri, qu'un toucher referme. */
+.sommaire {
+  inset: var(--bord-haut) 0 auto 0;
+  width: 100%;
+  max-width: 100%;
+  max-height: calc(100dvh - var(--bord-haut) - var(--bord-bas) - var(--esp-3xl));
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--encre);
+  overflow: visible;
+}
+
+.sommaire[open] {
+  display: flex;
+  animation: sommaire-descend 0.25s ease-out;
+}
+
+.sommaire::backdrop {
+  background: var(--voile);
+  animation: ecran-fondu 0.25s ease-out;
+}
+
+@keyframes sommaire-descend {
+  from {
+    opacity: 0;
+    transform: translateY(-24px);
+  }
+}
+
+.sommaire-volet {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 0;
+  padding-left: var(--bord-gauche);
+  padding-right: var(--bord-droit);
+  background: var(--parchemin);
+  border-bottom: 1px solid var(--filet);
+  border-radius: 0 0 var(--r-lg) var(--r-lg);
+}
+
+.sommaire-tete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-sm);
+  width: 100%;
+  max-width: calc(34em + 2 * var(--gouttiere));
+  margin: 0 auto;
+  padding: var(--esp-xs) var(--esp-xs) var(--esp-xs) var(--gouttiere);
+  border-bottom: 1px solid var(--filet);
+}
+
+.sommaire-tete h2 {
+  margin: 0;
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: 0.08em;
+  color: var(--sepia);
+}
+
+.sommaire-fermer {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.sommaire svg {
+  width: 14px;
+  height: 9px;
+  fill: none;
+  stroke: var(--or-fonce);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sommaire-liste {
+  width: 100%;
+  max-width: calc(34em + 2 * var(--gouttiere));
+  margin: 0 auto;
+  padding: var(--esp-xs) 0 var(--esp-sm);
+  list-style: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.sommaire-liste button {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-md);
+  width: 100%;
+  min-height: 48px;
+  padding: var(--esp-xs) var(--gouttiere);
+  border: none;
+  background: none;
+  font-family: var(--texte);
+  font-size: 17px;
+  line-height: 1.3;
+  color: var(--encre);
+  text-align: left;
+  cursor: pointer;
+}
+
+.sommaire-liste button[aria-current='step'] {
+  background: var(--velin);
+  font-weight: 600;
+}
+
+/* La perle en cours est plus grosse : les libellés restent alignés. */
+.sommaire-liste .perle-etape:not([data-etat='courante']) {
+  margin: 0 1px;
+}
+
+.sommaire-precision {
+  font-weight: 400;
+  color: var(--sepia);
+}
+
+/* Volet ouvert : le texte de l'office ne défile pas dessous. */
+:root.sans-defilement {
+  overflow: hidden;
+}

@@ -11,9 +11,14 @@ import { useSuiteCachee } from '../composants/suiteCachee'
 import { dateLisible, estDate, periodeLisible } from '../office/dates'
 import { deplacerInvitatoire, ouvrirOffice } from '../office/journee'
 import { estNomOffice, NOMS_OFFICES, type NomOffice, type Partie } from '../office/modele'
+import { BandeauOffice } from '../office/BandeauOffice'
+import { etapesDe } from '../office/etapes'
 import { PartieOffice } from '../office/PartieOffice'
 import { Repere } from '../office/Repere'
 import { invitatoireDe, reconstituer } from '../office/rubriques'
+import { SommaireOffice } from '../office/SommaireOffice'
+import { useReperage } from '../office/useReperage'
+import { useSommaire } from '../office/useSommaire'
 import { garderEcranAllume } from '../telephone/retours'
 import './EcranOffice.css'
 
@@ -88,6 +93,14 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
 
   const clesDesParties = useMemo(() => cles(office?.parties ?? []), [office])
 
+  // Phase 7 : l'étape en cours, dans le bandeau et le sommaire.
+  const etapes = useMemo(() => etapesDe(office?.parties ?? []), [office])
+  const debuts = useMemo(() => new Map(etapes.map((e, k) => [e.debut, k])), [etapes])
+  const titre = useRef<HTMLHeadingElement>(null)
+  const bandeau = useRef<HTMLElement>(null)
+  const { bandeauVisible, courante, allerA } = useReperage({ titre, texte, bandeau }, etapes.length)
+  const sommaire = useSommaire(allerA)
+
   const peutRecevoirInvitatoire =
     etat.sorte === 'pret' &&
     !etat.premier &&
@@ -125,89 +138,115 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
   }, [enPanne])
 
   return (
-    <main
-      ref={pincer}
-      className="office"
-      data-accents={accents ? 'oui' : 'non'}
-      data-ajouts={signalerAjouts ? 'oui' : 'non'}
-    >
-      <button className="retour lien-discret" type="button" onClick={retour}>
-        ‹ Retour
-      </button>
-      <header className="office-entete">
-        <p className="office-date">{dateLisible(date)}</p>
-        <h1>{NOMS_OFFICES[nom]}</h1>
-        {peutRecevoirInvitatoire && (
-          <button className="lien-discret" type="button" onClick={recevoirInvitatoire}>
-            Dire l’invitatoire ici
-          </button>
-        )}
-      </header>
-
-      {etat.sorte === 'chargement' && (
-        <p className="office-chargement" role="status">
-          Chargement de l’office…
-        </p>
+    <>
+      {office && (
+        <BandeauOffice
+          ref={bandeau}
+          etapes={etapes}
+          courante={courante}
+          visible={bandeauVisible}
+          onOuvrir={sommaire.ouvrir}
+        />
       )}
-
-      {etat.sorte === 'erreur' && (
-        <div className="office-erreur" role="alert">
-          {etat.absent ? (
-            <>
-              <p className="office-erreur-titre">
-                <span aria-hidden="true">⚠ </span>Impossible de récupérer l’office.
-              </p>
-              {/* Réessayer n'y changerait rien : l'AELF n'a pas ce texte. */}
-              <p>L’AELF ne propose pas cet office pour ce jour.</p>
-            </>
-          ) : (
-            <>
-              {/* Textes validés par le porteur du projet le 2026-10-07. */}
-              {etat.enregistres ? (
-                <>
-                  <p className="office-erreur-titre">
-                    <span aria-hidden="true">⚠ </span>Cet office n’est pas enregistré sur le
-                    téléphone.
-                  </p>
-                  <p>
-                    Les textes enregistrés vont{' '}
-                    {periodeLisible(etat.enregistres.debut, etat.enregistres.fin)}. Pour ce jour-ci,
-                    connectez-vous à internet, puis réessayez.
-                  </p>
-                </>
-              ) : (
-                <>
-                  <p className="office-erreur-titre">
-                    <span aria-hidden="true">⚠ </span>Les offices demandent une première connexion à
-                    internet.
-                  </p>
-                  <p>
-                    Une fois connecté, l’app enregistre une semaine de textes d’avance. Le chapelet,
-                    lui, se prie dès maintenant.
-                  </p>
-                </>
-              )}
-              <button className="btn btn-secondaire" type="button" onClick={reessayer}>
-                Réessayer
-              </button>
-            </>
+      <main
+        ref={pincer}
+        className="office"
+        data-accents={accents ? 'oui' : 'non'}
+        data-ajouts={signalerAjouts ? 'oui' : 'non'}
+      >
+        <button className="retour lien-discret" type="button" onClick={retour}>
+          ‹ Retour
+        </button>
+        <header className="office-entete">
+          <p className="office-date">{dateLisible(date)}</p>
+          <h1 ref={titre}>{NOMS_OFFICES[nom]}</h1>
+          {office && (
+            <button className="lien-discret" type="button" onClick={sommaire.ouvrir}>
+              Sommaire
+            </button>
           )}
-        </div>
-      )}
+          {peutRecevoirInvitatoire && (
+            <button className="lien-discret" type="button" onClick={recevoirInvitatoire}>
+              Dire l’invitatoire ici
+            </button>
+          )}
+        </header>
 
-      {etat.sorte === 'pret' && office && (
-        <div ref={texte} className="office-texte" data-testid="office">
-          {office.parties.map((partie, i) => (
-            <Fragment key={clesDesParties[i]}>
-              {i > 0 && <Repere couleur={etat.lu.jour.couleurs[0]} />}
-              <PartieOffice partie={partie} replier={!prieresEntieres} />
-            </Fragment>
-          ))}
-        </div>
-      )}
+        {etat.sorte === 'chargement' && (
+          <p className="office-chargement" role="status">
+            Chargement de l’office…
+          </p>
+        )}
 
-      <div ref={fin} className="fin-ecran" />
-      <IndiceSuite visible={cachee && etat.sorte === 'pret'} />
-    </main>
+        {etat.sorte === 'erreur' && (
+          <div className="office-erreur" role="alert">
+            {etat.absent ? (
+              <>
+                <p className="office-erreur-titre">
+                  <span aria-hidden="true">⚠ </span>Impossible de récupérer l’office.
+                </p>
+                {/* Réessayer n'y changerait rien : l'AELF n'a pas ce texte. */}
+                <p>L’AELF ne propose pas cet office pour ce jour.</p>
+              </>
+            ) : (
+              <>
+                {/* Textes validés par le porteur du projet le 2026-10-07. */}
+                {etat.enregistres ? (
+                  <>
+                    <p className="office-erreur-titre">
+                      <span aria-hidden="true">⚠ </span>Cet office n’est pas enregistré sur le
+                      téléphone.
+                    </p>
+                    <p>
+                      Les textes enregistrés vont{' '}
+                      {periodeLisible(etat.enregistres.debut, etat.enregistres.fin)}. Pour ce
+                      jour-ci, connectez-vous à internet, puis réessayez.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="office-erreur-titre">
+                      <span aria-hidden="true">⚠ </span>Les offices demandent une première connexion
+                      à internet.
+                    </p>
+                    <p>
+                      Une fois connecté, l’app enregistre une semaine de textes d’avance. Le
+                      chapelet, lui, se prie dès maintenant.
+                    </p>
+                  </>
+                )}
+                <button className="btn btn-secondaire" type="button" onClick={reessayer}>
+                  Réessayer
+                </button>
+              </>
+            )}
+          </div>
+        )}
+
+        {etat.sorte === 'pret' && office && (
+          <div ref={texte} className="office-texte" data-testid="office">
+            {office.parties.map((partie, i) => (
+              <Fragment key={clesDesParties[i]}>
+                {i > 0 && <Repere couleur={etat.lu.jour.couleurs[0]} />}
+                {debuts.has(i) && <div className="ancre-etape" data-etape={debuts.get(i)} />}
+                <PartieOffice partie={partie} replier={!prieresEntieres} />
+              </Fragment>
+            ))}
+          </div>
+        )}
+
+        <div ref={fin} className="fin-ecran" />
+        <IndiceSuite visible={cachee && etat.sorte === 'pret'} />
+      </main>
+      {office && sommaire.ouvert && (
+        <SommaireOffice
+          office={NOMS_OFFICES[nom]}
+          etapes={etapes}
+          courante={courante}
+          onChoisir={sommaire.choisir}
+          onFermer={sommaire.fermer}
+        />
+      )}
+    </>
   )
 }

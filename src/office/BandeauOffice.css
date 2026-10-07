@@ -1,0 +1,66 @@
+/* Fixé sous la barre d'état d'Android (jeton --bord-haut), il glisse depuis
+   le haut, sous la bande de parchemin qui la cache. */
+.bandeau-office {
+  position: fixed;
+  top: var(--bord-haut);
+  left: var(--bord-gauche);
+  right: var(--bord-droit);
+  z-index: 50;
+  background: var(--parchemin);
+  border-bottom: 1px solid var(--filet);
+  transform: translateY(0);
+  transition:
+    transform 0.25s ease-out,
+    visibility 0s;
+}
+
+.bandeau-office[data-visible='non'] {
+  visibility: hidden;
+  transform: translateY(calc(-100% - var(--bord-haut)));
+  transition:
+    transform 0.25s ease-in,
+    visibility 0s 0.25s;
+}
+
+.bandeau-office-bouton {
+  display: block;
+  width: 100%;
+  max-width: calc(34em + 2 * var(--gouttiere));
+  margin: 0 auto;
+  padding: var(--esp-sm) var(--gouttiere) var(--esp-sm);
+  border: none;
+  background: none;
+  color: var(--sepia);
+  text-align: left;
+  cursor: pointer;
+}
+
+.bandeau-office-ligne {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-sm);
+  min-height: 28px;
+  margin-bottom: var(--esp-xs);
+}
+
+.bandeau-office-etape {
+  overflow: hidden;
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.bandeau-office svg {
+  flex: none;
+  width: 14px;
+  height: 9px;
+  fill: none;
+  stroke: var(--or-fonce);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
