@@ -68,7 +68,9 @@ export function Seuil({ serie, duJour, date, enCours, onCommencer, onRecommencer
         <ul className="seuil-series">
           {autres.map((autre) => (
             <li key={autre}>
-              <Link to={autre === duJour ? '/chapelet' : `/chapelet/${autre}`}>
+              {/* Changer de mystères remplace le seuil : le retour ramène d'où l'on
+                  venait, sans repasser par chaque série parcourue. */}
+              <Link to={autre === duJour ? '/chapelet' : `/chapelet/${autre}`} replace>
                 <span className="seuil-serie-nom">{SERIES[autre].titre}</span>
                 <span className="seuil-serie-jours">
                   {joursDeLaSerie(autre)}

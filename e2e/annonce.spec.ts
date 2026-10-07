@@ -210,6 +210,20 @@ test.describe('choix de la série', () => {
     await expect(page.getByText(/^Chapelet du jour · /)).toBeVisible()
   })
 
+  test('changer plusieurs fois de mystères n’empile pas les seuils : un retour suffit', async ({
+    page,
+  }) => {
+    await preparer(page)
+    await page.goto('/')
+    await page.goto('/chapelet')
+    for (const serie of [/Mystères glorieux/, /Mystères douloureux/, /Mystères lumineux/]) {
+      await page.getByRole('link', { name: serie }).click()
+      await expect(page.getByRole('heading', { level: 1 })).toHaveText(serie)
+    }
+    await page.goBack()
+    await expect(page).toHaveURL(/\/$/)
+  })
+
   test('le retour d’Android ramène du chapelet à son seuil', async ({ page }) => {
     await commencer(page)
     await toucher(page)
