@@ -106,6 +106,9 @@ test.describe('écran des réglages', () => {
     // Retirée de la page, elle a enregistré son choix (l'événement « close »
     // arrive après la fermeture : un changement d'écran trop prompt le perdrait).
     await expect(aide).toHaveCount(0)
+    await expect
+      .poll(() => page.evaluate(() => localStorage.getItem('avec-dieu.aide-gestes')))
+      .toBe('masquee')
 
     await page.goto('/reglages')
     await deplierReglages(page, 'Chapelet')

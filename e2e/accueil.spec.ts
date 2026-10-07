@@ -222,10 +222,13 @@ test('rien ne sort de l’app que les demandes à l’AELF', async ({ page }) =>
 test.describe('glisser sur le cadran', () => {
   // Le milieu du cadran, à l'écart des perles.
   const milieu = async (page: Page) => {
-    // Le jour change en redessinant l'accueil : attendre que le cadran soit là.
-    await expect(page.locator('.accueil-cadran')).toBeVisible()
-    const boite = (await page.locator('.accueil-cadran').boundingBox())!
-    return boite.y + boite.height / 2
+    // Le jour change en redessinant l'accueil : le cadran peut être remplacé
+    // entre deux lectures, redemander sa boîte jusqu'à l'avoir.
+    let boite: { y: number; height: number } | null = null
+    await expect
+      .poll(async () => (boite = await page.locator('.accueil-cadran').boundingBox()))
+      .not.toBeNull()
+    return boite!.y + boite!.height / 2
   }
 
   test('vers la gauche, le jour suivant ; vers la droite, le jour précédent', async ({ page }) => {

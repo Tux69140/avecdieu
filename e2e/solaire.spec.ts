@@ -159,6 +159,9 @@ test('« Me localiser » : la position du téléphone, nommée d’après la vil
   await page.goto('/lieu')
   await page.getByRole('button', { name: 'Me localiser' }).click()
   // Revenu à l'accueil (l'écran a été ouvert directement) : le lieu est retenu.
+  // Attendre ce retour, qui suit la position et la ville voisine : rouvrir
+  // l'écran avant, sur une machine chargée, perdrait le lieu en chemin.
+  await expect(page).not.toHaveURL(/\/lieu$/)
   await page.goto('/lieu')
   await expect(page.getByTestId('lieu-actuel')).toHaveText(/^Lieu actuel : Près de \S/)
 })
