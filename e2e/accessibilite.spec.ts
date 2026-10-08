@@ -241,7 +241,7 @@ async function fenetresDesRappels(page: Page) {
   await page.getByRole('switch', { name: 'Laudes, rappel' }).click()
   for (const [titre, bouton] of [
     ['Recevoir les rappels', 'Continuer'],
-    ['À la minute près', 'Plus tard'],
+    ['A la minute près', 'Plus tard'],
     ['Sur un Xiaomi', 'Plus tard'],
     ['Démarrage automatique', 'Plus tard'],
   ]) {

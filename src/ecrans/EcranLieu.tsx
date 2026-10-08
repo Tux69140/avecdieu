@@ -155,7 +155,7 @@ export function EcranLieu() {
           <p data-testid="lieu-actuel">Lieu actuel : {nommerLieu(lieu)}</p>
           <Interrupteur
             libelle="Actualiser à chaque ouverture"
-            aide="À plus de 50 km du lieu enregistré, l’app recalcule les heures. La position reste sur le téléphone."
+            aide="A plus de 50 km du lieu enregistré, l’app recalcule les heures. La position reste sur le téléphone."
             actif={actualiser}
             onBasculer={basculerActualisation}
           />

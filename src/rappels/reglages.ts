@@ -40,7 +40,7 @@ export type Rappels = Record<Priere, Rappel>
 
 // Ce que l'app a déjà demandé une fois, pour ne pas le redemander.
 export interface Demandes {
-  // « À la minute près » : l'autorisation « Alarmes et rappels ».
+  // « A la minute près » : l'autorisation « Alarmes et rappels ».
   minute: boolean
   // Le guide de batterie, sur Xiaomi et Samsung.
   batterie: boolean

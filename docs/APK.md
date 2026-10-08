@@ -5,7 +5,7 @@ dossier `Avec_Dieu/`.
 
 ## Une seule fois par téléphone : autoriser l'installation par câble
 
-1. **Paramètres › À propos du téléphone** : toucher 7 fois **Numéro de build** (Samsung :
+1. **Paramètres › A propos du téléphone** : toucher 7 fois **Numéro de build** (Samsung :
    dans **Informations sur le logiciel** ; Xiaomi : **Version de MIUI** ou **Version de
    HyperOS**). Le téléphone annonce que les options pour les développeurs sont activées.
 2. **Options pour les développeurs** (Samsung : en bas des Paramètres ; Xiaomi :

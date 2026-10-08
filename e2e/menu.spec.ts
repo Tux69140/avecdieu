@@ -15,12 +15,12 @@ test.beforeEach(async ({ page }) => {
 const accueil = (page: import('@playwright/test').Page) =>
   expect(page.getByTestId('moment')).toBeVisible()
 
-test('présente aujourd’hui, le chapelet, les réglages et « À propos »', async ({ page }) => {
+test('présente aujourd’hui, le chapelet, les réglages et « A propos »', async ({ page }) => {
   const menu = page.getByRole('navigation', { name: 'Menu' })
   await expect(menu.getByRole('button', { name: 'Aujourd’hui' })).toBeVisible()
   await expect(menu.getByRole('link', { name: 'Chapelet' })).toBeVisible()
   await expect(menu.getByRole('link', { name: 'Réglages' })).toBeVisible()
-  await expect(menu.getByRole('link', { name: 'À propos' })).toBeVisible()
+  await expect(menu.getByRole('link', { name: 'A propos' })).toBeVisible()
   await expect(menu.getByRole('link', { name: /Offices/ })).toHaveCount(0)
 })
 
@@ -60,8 +60,8 @@ test('depuis les réglages ouverts par le menu, le retour ramène à l’accueil
   await accueil(page)
 })
 
-test('« À propos » donne la version et les sources des textes', async ({ page }) => {
-  await page.getByRole('link', { name: 'À propos' }).click()
+test('« A propos » donne la version et les sources des textes', async ({ page }) => {
+  await page.getByRole('link', { name: 'A propos' }).click()
   await expect(page.getByText(/^Version \d+\.\d+$/)).toBeVisible()
   await expect(page.getByText('Rien ne quitte votre téléphone', { exact: false })).toBeVisible()
   await expect(page.getByText(/© AELF, Paris/)).toBeVisible()

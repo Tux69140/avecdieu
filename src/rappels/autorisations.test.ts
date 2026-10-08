@@ -18,7 +18,7 @@ describe('autorisations au premier rappel activé', () => {
     expect(await etapeSuivante('activation')).toBe('accord')
   })
 
-  it('puis « À la minute près », si Android ne l’a pas donnée', async () => {
+  it('puis « A la minute près », si Android ne l’a pas donnée', async () => {
     telephone({ accord: 'granted', exacte: false })
     expect(await etapeSuivante('accord')).toBe('minute')
     expect(await etapeSuivante('activation')).toBe('minute')
@@ -71,7 +71,7 @@ describe('autorisations au premier rappel activé', () => {
     expect(await etapeSuivante('accord')).toBeUndefined()
   })
 
-  it('« À la minute près » et les guides ne viennent qu’une fois', async () => {
+  it('« A la minute près » et les guides ne viennent qu’une fois', async () => {
     const bloque = { batterie: true, arrierePlan: false, demarrage: true }
     telephone({ accord: 'granted', exacte: false, fabricant: 'xiaomi', blocages: bloque })
     noterDemande('minute')

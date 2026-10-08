@@ -29,9 +29,9 @@ Décisions durables qui s'appliquent à toutes les phases :
 - **Recueil de textes figés** : prières, mystères (titres, fruits, références, passages), conclusions d'oraison et règles de rubriques vivent dans un recueil de données lisible, validé ligne par ligne par le porteur du projet. Un test d'empreinte échoue à toute modification non validée.
 - **Design** : jetons, polices et composants conformes à `docs/DESIGN.md`. Polices auto-hébergées pour fonctionner hors-ligne dès le premier lancement.
 - **Navigation et en-têtes**, décisions du porteur du projet :
-  - **Fermer, une croix partout** (2026-10-08) : la même croix fine (sépia, dessin de 18 px, cible de 48 px), en haut à gauche, nommée « Fermer », remplace « ‹ Retour » et le chevron ‹ sur le menu, les réglages, « À propos », le lieu, le seuil du chapelet et l'office (dans l'office, sur la ligne de la date) ; elle fait ce que fait le retour d'Android.
+  - **Fermer, une croix partout** (2026-10-08) : la même croix fine (sépia, dessin de 18 px, cible de 48 px), en haut à gauche, nommée « Fermer », remplace « ‹ Retour » et le chevron ‹ sur le menu, les réglages, « A propos », le lieu, le seuil du chapelet et l'office (dans l'office, sur la ligne de la date) ; elle fait ce que fait le retour d'Android.
   - **Chapelet pendant la prière** (2026-10-08) : la même croix, sur la ligne de la date, pendant la prière et sur l'écran de fin ; elle ramène au seuil, comme le retour d'Android, où l'on change de série ou reprend ; la croix du seuil ramène là d'où le chapelet a été ouvert. La progression reste gardée ; un toucher sur la croix ne fait jamais avancer le chapelet.
-  - **Titres centrés sur la ligne de la croix** (2026-10-08) : menu, réglages, « À propos » et lieu ; au seuil et au chapelet, la ligne de la croix porte la date (« Chapelet du jour · jeudi 8 octobre », coupée après le point sur un petit écran) et le titre de la série vient dessous.
+  - **Titres centrés sur la ligne de la croix** (2026-10-08) : menu, réglages, « A propos » et lieu ; au seuil et au chapelet, la ligne de la croix porte la date (« Chapelet du jour · jeudi 8 octobre », coupée après le point sur un petit écran) et le titre de la série vient dessous.
   - **Chevrons** (2026-10-08) : › veut toujours dire « ouvre un autre écran » ; une rubrique des réglages qui se déplie sur place porte une flèche vers le bas, retournée vers le haut une fois ouverte.
   - **Menu** (2026-10-08) : le chapelet forme son propre groupe sous les offices, séparé par un filet d'or comme sur l'accueil ; toutes les lignes à 48 px, noms en graisse normale (l'office d'où l'on vient reste marqué) ; à 360 × 780, le menu tient sur un seul écran ; › ne se lit pas dans le nom des lignes.
 
@@ -110,7 +110,7 @@ Au début de chaque dizaine, un écran d'annonce présente le titre, le fruit, l
 
 ### Ce qu'on livre
 
-Un premier écran de réglages pour le chapelet : annonce des mystères (oui ou non), « Ô mon Jésus » et Salve Regina en option (activés par défaut), affichage (texte complet ou compact), vibrations (oui ou non, pour la discrétion à l'église), prier à plusieurs (V/ et R/ marquent la part de celui qui mène et la réponse des autres). Les choix du moment (affichage, vibrations) sont aussi sur le seuil. Un menu ☰ en haut du seuil mène au chapelet, aux réglages et à « À propos » (version, sources des textes), et annonce les offices à venir. Un chapelet interrompu par un appel ou un changement d'app reprend au grain exact s'il est rouvert le jour même. Passé minuit, il est abandonné.
+Un premier écran de réglages pour le chapelet : annonce des mystères (oui ou non), « Ô mon Jésus » et Salve Regina en option (activés par défaut), affichage (texte complet ou compact), vibrations (oui ou non, pour la discrétion à l'église), prier à plusieurs (V/ et R/ marquent la part de celui qui mène et la réponse des autres). Les choix du moment (affichage, vibrations) sont aussi sur le seuil. Un menu ☰ en haut du seuil mène au chapelet, aux réglages et à « A propos » (version, sources des textes), et annonce les offices à venir. Un chapelet interrompu par un appel ou un changement d'app reprend au grain exact s'il est rouvert le jour même. Passé minuit, il est abandonné.
 
 ### Critères d'acceptation
 
@@ -230,7 +230,7 @@ L'écran d'accueil de l'app comprend :
 Décisions du porteur du projet (2026-10-06) :
 - **Ouverture** : l'app s'ouvre toujours sur l'accueil, même avec un chapelet en cours ; le chapelet s'ouvre par le menu ou par sa ligne de l'accueil, et son seuil propose la reprise. Pas de carte « Chapelet du jour » (US-6 retirée).
 - **Ligne du chapelet** (demande du porteur du projet après essai, 2026-10-07, revient en partie sur l'US-6) : sous les complies, séparée des offices par un filet d'or, la ligne `Chapelet · 20 h` ouvre le seuil du chapelet ; elle s'atténue une fois son heure passée.
-- **Menu** : le ☰ passe en haut de l'accueil ; le menu devient Aujourd'hui, Chapelet, Réglages, À propos. Le seuil du chapelet perd son ☰ au profit de « ‹ Retour » vers l'accueil. L'écran provisoire « Offices du jour » disparaît.
+- **Menu** : le ☰ passe en haut de l'accueil ; le menu devient Aujourd'hui, Chapelet, Réglages, A propos. Le seuil du chapelet perd son ☰ au profit de « ‹ Retour » vers l'accueil. L'écran provisoire « Offices du jour » disparaît.
 - **Cadran** : arc de 6 h à 22 h, complies au bout de l'arc (la maquette l'emporte sur l'ancien PRD), au sommet aplati (demande du porteur du projet après essai, 2026-10-07). Le soleil laisse place au croissant de lune entre le coucher et le lever, calculés pour la date du jour au centre de la France, sans demander de position (au lieu des heures solaires dès qu'il est choisi, phase 12).
 - **Prière du moment** : un office reste « du moment » pendant une heure après son heure, puis l'app passe au suivant et il devient « passé » (atténué). Les complies restent « du moment » jusqu'à minuit ; de minuit à 7 h, ce sont les laudes du nouveau jour. Tout office passé reste ouvrable d'un toucher, sur le cadran comme dans la liste.
 - **Prière du moment, sur sa ligne** (2026-10-07, remplace l'encadré d'origine, qui répétait l'office déjà marqué dans la liste) : la ligne de l'office du moment porte, après son nom et un peu d'air, un badge discret `Prière du moment` (cerclé de rouge, minuscules italiques, 11 px), sans délai ; toute la ligne ouvre l'office.
@@ -336,13 +336,13 @@ Décisions du porteur du projet (2026-10-07) :
 - **Office des lectures** : sans heure (et hors du cadran) tant qu'on n'en a pas choisi une ; activer son rappel ouvre l'horloge, proposée sur 6 h 30.
 - **Notification** : titre `C’est l’heure de l’office des lectures` / `des laudes` / `de tierce` / `de sexte` / `de none` / `des vêpres` / `des complies` / `du chapelet` ; texte : les premiers mots de la prière. `Seigneur, ouvre mes lèvres.` pour le premier office du matin (le plus matinal des rappels actifs entre lectures et laudes, R1), `Dieu, viens à mon aide.` pour les autres offices, `Je vous salue, Marie, pleine de grâce.` pour le chapelet.
 - **Son, prière par prière** : sous la ligne de la prière, son son et son vibreur (`Cloche du matin · vibreur`) ; toucher le nom de la prière ouvre le choix : plusieurs cloches fournies par l'app (écoutables, à faire écouter au porteur avant de les retenir), `Son du téléphone`, `Choisir un MP3…`, et l'interrupteur `Vibreur`. D'origine : une cloche, vibreur activé.
-- **Cloches retenues après écoute** (Wikimedia Commons, crédits dans À propos) : `Bourdon de Notre-Dame` (bourdon Marie, NemesisIII, CC BY-SA 3.0), `Cloche Marcel` (Notre-Dame de Paris, CC0), `Angélus de village` (Saint-Pé-d'Ardet, Tiasma31, CC BY-SA 3.0) ; extraits de 12 s. D'origine, selon l'heure : Cloche Marcel pour l'office des lectures et les laudes, Angélus de village pour tierce, sexte, none et le chapelet, Bourdon de Notre-Dame pour les vêpres et les complies.
+- **Cloches retenues après écoute** (Wikimedia Commons, crédits dans A propos) : `Bourdon de Notre-Dame` (bourdon Marie, NemesisIII, CC BY-SA 3.0), `Cloche Marcel` (Notre-Dame de Paris, CC0), `Angélus de village` (Saint-Pé-d'Ardet, Tiasma31, CC BY-SA 3.0) ; extraits de 12 s. D'origine, selon l'heure : Cloche Marcel pour l'office des lectures et les laudes, Angélus de village pour tierce, sexte, none et le chapelet, Bourdon de Notre-Dame pour les vêpres et les complies.
 - **Autorisations, au premier rappel activé** (textes validés) :
   1. `Recevoir les rappels` / `Pour vous prévenir à l’heure de la prière, l’app a besoin de votre accord. Android va vous le demander.` / `Continuer`, puis la fenêtre d'Android pour les notifications ;
-  2. si besoin, `À la minute près` / `Pour que le rappel arrive à l’heure exacte, autorisez « Alarmes et rappels » dans la page qui va s’ouvrir.` / `Ouvrir la page` · `Plus tard` ;
+  2. si besoin, `A la minute près` / `Pour que le rappel arrive à l’heure exacte, autorisez « Alarmes et rappels » dans la page qui va s’ouvrir.` / `Ouvrir la page` · `Plus tard` ;
   3. avis dans la rubrique en cas de refus : `⚠ Android bloque les notifications de l’app : aucun rappel ne s’affichera.` / `Ouvrir les Paramètres du téléphone`, et `⚠ Sans l’autorisation « Alarmes et rappels », les rappels peuvent arriver en retard.` / `Autoriser`.
 - **Guide de batterie**, Xiaomi et Samsung seulement, juste après les autorisations et seulement si l'app n'est pas exemptée d'économie de batterie, puis par la ligne `Rappels bloqués ? Régler la batterie ›` en bas de la rubrique (textes validés) :
-  - `Sur un Xiaomi` / `L’économiseur de batterie peut bloquer les rappels. Dans la page qui va s’ouvrir :` / `Économiseur de batterie : Aucune restriction` ;
+  - `Sur un Xiaomi` / `L’économiseur de batterie peut bloquer les rappels. Dans la page qui va s’ouvrir :` / `Economiseur de batterie : Aucune restriction` ;
   - `Sur un Samsung` / `La mise en veille des applis peut bloquer les rappels. Dans la page qui va s’ouvrir :` / `Batterie : Non restreinte` ;
   - boutons `Ouvrir la page` · `Plus tard`.
 - **Démarrage automatique**, Xiaomi seulement, après le guide de batterie et seulement s'il est désactivé (textes validés le 2026-10-07) : `Démarrage automatique` / `Si l’app est fermée, Xiaomi l’empêche de se réveiller pour vous prévenir. Dans la page qui va s’ouvrir, activez Avec Dieu.` / `Ouvrir la page` · `Plus tard`. La page est celle de la sécurité de Xiaomi : sous HyperOS 2, ce réglage n'est pas dans la fiche de l'app. Vu le 2026-10-07 : l'app fermée depuis les récentes, sans démarrage automatique, son alarme ne la réveille plus et le rappel est perdu.
@@ -355,7 +355,7 @@ Décisions du porteur du projet (2026-10-07) :
   - « bloqués » : tant qu'un rappel est activé, l'un des avis de blocage s'affiche (notifications refusées, arrière-plan interdit, démarrage automatique désactivé sur Xiaomi, économiseur de batterie sur Xiaomi et Samsung) ; l'avis « Alarmes et rappels » ne compte pas, un rappel en retard arrive quand même. Un seul calcul pour les avis, le résumé et l'accueil, relu à chaque retour dans l'app ;
   - résumé de la rubrique fermée : `⚠ Rappels bloqués par le téléphone`, en brun brique ; le lecteur d'écran entend `Rappels bloqués par le téléphone.` juste avant la rubrique ;
   - accueil : `⚠ Rappels bloqués par le téléphone ›` en brun brique, à droite du ☰ sur sa ligne (rien ne descend : les complies restent à l'écran à 360 × 780), sur l'accueil de chaque jour ; un toucher ouvre les Réglages, rubrique `Rappels` dépliée.
-- **Détails de forme codés sans validation, à montrer avec l'essai sur téléphones** : le titre `Son` au-dessus du choix du son, le lien `Changer` à côté d'un MP3 déjà choisi, le nom du MP3 affiché en clair, l'écoute du son du téléphone et du MP3, l'heure écrite `7 h 00`, la rédaction des crédits des cloches dans À propos.
+- **Détails de forme codés sans validation, à montrer avec l'essai sur téléphones** : le titre `Son` au-dessus du choix du son, le lien `Changer` à côté d'un MP3 déjà choisi, le nom du MP3 affiché en clair, l'écoute du son du téléphone et du MP3, l'heure écrite `7 h 00`, la rédaction des crédits des cloches dans A propos.
 
 ### Critères d'acceptation
 
@@ -397,9 +397,9 @@ Décisions du porteur du projet (2026-10-07, cadrage en cours) :
   - `⚠ Aucune ville de ce nom dans la liste. Essayez une ville voisine de plus de 15 000 habitants, ou « Me localiser ».` ;
   - `⚠ Android refuse l’accès à la position. Cherchez plutôt une ville, ou autorisez la position dans les Paramètres du téléphone.` / `Ouvrir les Paramètres du téléphone` ;
   - `⚠ La position n’a pas pu être trouvée. Vérifiez que la localisation du téléphone est allumée, ou cherchez une ville.`
-- **Voyage** : sur l'écran du lieu, `Actualiser à chaque ouverture` (désactivé d'origine), aide `À plus de 50 km du lieu enregistré, l’app recalcule les heures. La position reste sur le téléphone.` Le recalcul est silencieux : seule la ligne `Lieu :` change.
+- **Voyage** : sur l'écran du lieu, `Actualiser à chaque ouverture` (désactivé d'origine), aide `A plus de 50 km du lieu enregistré, l’app recalcule les heures. La position reste sur le téléphone.` Le recalcul est silencieux : seule la ligne `Lieu :` change.
 - **Cadran solaire** : arc doré du lever au coucher, prolongé en pointillés aux deux bouts pour les offices de la nuit (complies au bout). Repères `LEVER 7 H 52` · `MIDI` · `COUCHER 18 H 40`.
-- **À propos**, nouvelle rubrique `Heures solaires` : `Liste des villes de plus de 15 000 habitants : GeoNames (CC BY 4.0). Lever et coucher du soleil calculés sur le téléphone.`
+- **A propos**, nouvelle rubrique `Heures solaires` : `Liste des villes de plus de 15 000 habitants : GeoNames (CC BY 4.0). Lever et coucher du soleil calculés sur le téléphone.`
 
 ### Critères d'acceptation
 
@@ -433,7 +433,7 @@ L'app est mise à l'épreuve dans la vraie vie du porteur du projet, sur ses deu
 
 Points laissés pour la recette au fil des phases :
 - l'icône de l'app sur l'écran d'accueil du Xiaomi et du Samsung (dépend de leur lanceur, phase 2) ;
-- l'écran « À propos », validé « on peaufinera plus tard » (phase 4) ;
+- l'écran « A propos », validé « on peaufinera plus tard » (phase 4) ;
 - la structure des offices AELF reste la même au fil de l'année (hypothèse du PRD) : tout office qui s'affiche mal pendant la recette est enregistré et ajouté au jeu de référence de la phase 6.
 
 ## Bloquée par

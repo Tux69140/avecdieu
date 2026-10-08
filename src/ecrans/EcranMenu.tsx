@@ -78,7 +78,7 @@ export function EcranMenu() {
           </li>
           <li>
             <Link to="/a-propos" replace>
-              À propos
+              A propos
             </Link>
           </li>
         </ul>

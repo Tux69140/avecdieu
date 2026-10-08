@@ -18,7 +18,7 @@ const GUIDES: Record<'xiaomi' | 'samsung', { titre: string; texte: string; regla
   xiaomi: {
     titre: 'Sur un Xiaomi',
     texte: 'L’économiseur de batterie peut bloquer les rappels. Dans la page qui va s’ouvrir :',
-    reglages: ['Économiseur de batterie : Aucune restriction'],
+    reglages: ['Economiseur de batterie : Aucune restriction'],
   },
   samsung: {
     titre: 'Sur un Samsung',
@@ -38,7 +38,7 @@ function contenu(etape: Etape, marque: Fabricant) {
     }
   if (etape === 'minute')
     return {
-      titre: 'À la minute près',
+      titre: 'A la minute près',
       texte:
         'Pour que le rappel arrive à l’heure exacte, autorisez « Alarmes et rappels » dans la page qui va s’ouvrir.',
       accepter: 'Ouvrir la page',

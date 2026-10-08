@@ -75,7 +75,7 @@ test('activer les laudes : l’accord, la minute près, puis un mois de rappels'
   )
   await accord.getByRole('button', { name: 'Continuer' }).click()
 
-  const minute = dialogue(page, 'À la minute près')
+  const minute = dialogue(page, 'A la minute près')
   await expect(minute).toContainText(
     'Pour que le rappel arrive à l’heure exacte, autorisez « Alarmes et rappels » dans la page qui va s’ouvrir.',
   )
@@ -199,7 +199,7 @@ test('« Alarmes et rappels » refusée : un avis, et des rappels sans exactitud
   await simulerTelephone(page, { accord: 'granted', exacte: false, reponseExacte: false })
   await ouvrirRappels(page)
   await interrupteur(page, 'Complies').click()
-  await dialogue(page, 'À la minute près').getByRole('button', { name: 'Plus tard' }).click()
+  await dialogue(page, 'A la minute près').getByRole('button', { name: 'Plus tard' }).click()
   const avis = page.locator('.rappels-avis')
   await expect(avis).toHaveText(
     /⚠ Sans l’autorisation « Alarmes et rappels », les rappels peuvent arriver en retard\./,
@@ -210,7 +210,7 @@ test('« Alarmes et rappels » refusée : un avis, et des rappels sans exactitud
   await expect
     .poll(async () => (await telephone(page)).journal)
     .toContain('page « Alarmes et rappels »')
-  // « À la minute près » ne revient pas au rappel suivant.
+  // « A la minute près » ne revient pas au rappel suivant.
   await interrupteur(page, 'Vêpres').click()
   await expect(interrupteur(page, 'Vêpres')).toHaveAttribute('aria-checked', 'true')
   await expect(page.getByRole('dialog')).toHaveCount(0)
@@ -230,7 +230,7 @@ test('guide de batterie puis démarrage automatique sur un Xiaomi, puis les avis
   await expect(guide).toContainText(
     'L’économiseur de batterie peut bloquer les rappels. Dans la page qui va s’ouvrir :',
   )
-  await expect(guide).toContainText('Économiseur de batterie : Aucune restriction')
+  await expect(guide).toContainText('Economiseur de batterie : Aucune restriction')
   await expect(guide).not.toContainText('Démarrage automatique')
   await guide.getByRole('button', { name: 'Ouvrir la page' }).click()
   expect((await telephone(page)).journal).toContain('fiche de l’app')
@@ -331,7 +331,7 @@ test('choisir le son : écouter une cloche, le son du téléphone, un MP3, le vi
   const sons = page.getByRole('radiogroup', { name: 'Son, Chapelet' })
   await expect(sons.getByRole('radio', { name: 'Angélus de village' })).toBeChecked()
 
-  await sons.getByRole('button', { name: 'Écouter Bourdon de Notre-Dame' }).click()
+  await sons.getByRole('button', { name: 'Ecouter Bourdon de Notre-Dame' }).click()
   await expect
     .poll(async () => (await telephone(page)).journal)
     .toContain('écouter bourdon_notre_dame')

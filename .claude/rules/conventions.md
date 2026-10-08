@@ -18,7 +18,7 @@
 - **Plomberie technique en anglais** quand c'est l'idiome (`useEffect`, `onPointerDown`, `props`).
 - **Interdit : mélanger les deux langues pour le même genre de nom dans un fichier.** Suivre le
   fichier où l'on écrit. Aucune campagne de renommage.
-- Libellés d'écran en français avec tous les accents et l'apostrophe typographique `’`.
+- Libellés d'écran en français avec tous les accents, **sauf sur les majuscules** (« A propos », choix du porteur du projet, 2026-10-08), et l'apostrophe typographique `’`.
 - Commentaires en français, denses comme ceux du voisinage : ils disent **pourquoi**, pas quoi.
 
 ## Nommage

@@ -52,7 +52,7 @@ export function ChoixSon({ id, nom, rappel, vibreurPossible, onChanger }: Props)
     <button
       className="choix-son-ecouter"
       type="button"
-      aria-label={`Écouter ${libelle}`}
+      aria-label={`Ecouter ${libelle}`}
       onClick={() => ecouter(valeur)}
     >
       <svg viewBox="0 0 12 14" aria-hidden="true">

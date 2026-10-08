@@ -53,7 +53,7 @@ export function AideGestes({ onFermer }: { onFermer: () => void }) {
             <circle cx="20" cy="20" r="11" className="soleil" />
           </svg>
           <span>
-            À l’annonce d’un mystère, <strong>touchez la grosse perle</strong> pour commencer la
+            A l’annonce d’un mystère, <strong>touchez la grosse perle</strong> pour commencer la
             dizaine.
           </span>
         </li>
