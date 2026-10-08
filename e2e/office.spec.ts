@@ -52,9 +52,19 @@ test('ouvrir les laudes depuis l’accueil et les lire d’un trait', async ({ p
     'Oraison',
     'Bénédiction',
   ])
-  // Entre deux parties, une perle verte : la couleur du jour.
+  // Entre deux étapes, une perle verte : la couleur du jour. Aucune entre une
+  // antienne et le psaume qu'elle ouvre (2026-10-08).
   const reperes = page.getByTestId('repere')
-  await expect(reperes).toHaveCount(17)
+  await expect(reperes).toHaveCount(12)
+  const avantLesPsaumes = await page.evaluate(() =>
+    [...document.querySelectorAll('[data-testid=office] section')]
+      .filter((s) =>
+        s.previousElementSibling?.querySelector('h2')?.textContent?.startsWith('Antienne'),
+      )
+      .map((s) => s.previousElementSibling!.matches('section')),
+  )
+  // Les trois antiennes des psaumes et celle du Benedictus.
+  expect(avantLesPsaumes).toEqual([true, true, true, true])
   await expect(reperes.first().locator('.repere-perle')).toHaveAttribute('data-couleur', 'vert')
 
   // Rien n'est demandé deux fois, pas même par la réserve des jours à venir.

@@ -1,5 +1,11 @@
 /* Une partie de l'office : son libellé en rubrique, puis le texte. Tailles en
    em : tout suit la taille du texte à prier (18 px d'origine). */
+/* Deux parties d'une même étape (l'antienne et son psaume), sans repère
+   entre elles : un espace, plus large que celui entre deux blocs. */
+.partie + .partie {
+  margin-top: var(--esp-lg);
+}
+
 .partie .partie-libelle {
   font-size: 0.833em;
   margin-bottom: var(--esp-sm);

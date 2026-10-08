@@ -284,7 +284,9 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
           <div ref={texte} className="office-texte" data-testid="office">
             {office.parties.map((partie, i) => (
               <Fragment key={clesDesParties[i]}>
-                {i > 0 && <Repere couleur={etat.lu.jour.couleurs[0]} />}
+                {/* Un repère entre deux étapes seulement : l'antienne reste
+                    avec le psaume qu'elle ouvre (2026-10-08). */}
+                {i > 0 && debuts.has(i) && <Repere couleur={etat.lu.jour.couleurs[0]} />}
                 {debuts.has(i) && <div className="ancre-etape" data-etape={debuts.get(i)} />}
                 <PartieOffice partie={partie} replier={!prieresEntieres} />
               </Fragment>
