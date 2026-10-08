@@ -2,8 +2,8 @@ import { expect, type Page } from '@playwright/test'
 import { preparer, servirAelf, simulerTelephone, test } from './outils.ts'
 
 // Un rappel que le téléphone bloque en silence (batterie, arrière-plan,
-// démarrage automatique, notifications refusées) se voit sans déplier la
-// rubrique : son résumé et une ligne de l'accueil le disent (décisions du
+// démarrage automatique, notifications refusées) se voit sans ouvrir sa
+// page : le résumé de sa ligne et une ligne de l'accueil le disent (décisions du
 // porteur du projet, 2026-10-08).
 
 const MAINTENANT = new Date(2026, 9, 6, 10, 0)
@@ -15,8 +15,9 @@ test.beforeEach(async ({ page }) => {
   await servirAelf(page)
 })
 
-const boutonRappels = (page: Page) => page.getByRole('button', { name: 'Rappels', exact: true })
-const resume = (page: Page) => page.locator('.reglages-rappels .rubrique-resume')
+const ligneRappels = (page: Page) => page.getByRole('link', { name: 'Rappels', exact: true })
+const resume = (page: Page) => page.locator('.reglages-rappels .ligne-page-resume')
+const titre = (page: Page) => page.getByRole('heading', { level: 1 })
 const ligneAlerte = (page: Page) =>
   page.getByRole('link', { name: 'Rappels bloqués par le téléphone' })
 
@@ -35,15 +36,14 @@ test('bloqués : le résumé le dit en brun brique, et le lecteur d’écran l�
 }) => {
   await xiaomiBloque(page)
   await page.goto('/reglages')
-  await expect(boutonRappels(page)).toHaveAttribute('aria-expanded', 'false')
   await expect(resume(page)).toHaveText('⚠ Rappels bloqués par le téléphone')
   await expect(resume(page)).toHaveCSS('color', BRUN_BRIQUE)
   // Le résumé est caché au lecteur d'écran : une phrase cachée à l'œil le dit.
   await expect(page.locator('.reglages-rappels .cache-a-l-oeil')).toHaveText(
     'Rappels bloqués par le téléphone.',
   )
-  // Une fois dépliée, la rubrique montre l'avis du démarrage automatique.
-  await boutonRappels(page).click()
+  // Sa page montre l'avis du démarrage automatique.
+  await ligneRappels(page).click()
   await expect(page.locator('.rappels-avis')).toHaveText([/Le démarrage automatique est désactivé/])
 })
 
@@ -92,7 +92,7 @@ for (const [cas, telephone, rappels, attendu] of [
   })
 }
 
-test('l’accueil le signale, sans cacher les complies ; un toucher ouvre la rubrique', async ({
+test('l’accueil le signale, sans cacher les complies ; un toucher ouvre les Rappels', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 360, height: 780 })
@@ -110,11 +110,22 @@ test('l’accueil le signale, sans cacher les complies ; un toucher ouvre la rub
   expect(boite.y + boite.height).toBeLessThanOrEqual(780)
 
   await ligne.click()
-  await expect(page).toHaveURL('/reglages')
-  await expect(boutonRappels(page)).toHaveAttribute('aria-expanded', 'true')
+  await expect(page).toHaveURL('/reglages/rappels')
+  await expect(titre(page)).toHaveText('Rappels')
   await expect(page.locator('.rappels-avis')).toHaveCount(1)
-  // Le retour ramène à l'accueil.
+  // Le retour d'Android remonte aux Réglages, puis à l'accueil.
   await page.goBack()
+  await expect(page).toHaveURL('/reglages')
+  await expect(titre(page)).toHaveText('Réglages')
+  await page.goBack()
+  await expect(page).toHaveURL('/')
+
+  // La croix aussi : Rappels, Réglages, puis l'accueil.
+  await ligne.click()
+  await expect(page).toHaveURL('/reglages/rappels')
+  await page.getByRole('button', { name: 'Fermer', exact: true }).click()
+  await expect(page).toHaveURL('/reglages')
+  await page.getByRole('button', { name: 'Fermer', exact: true }).click()
   await expect(page).toHaveURL('/')
 })
 

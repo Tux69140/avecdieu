@@ -1,9 +1,0 @@
-/* Sous les rubriques, à l'écart : rien qu'on touche par mégarde. */
-.reinitialiser {
-  margin-top: var(--esp-2xl);
-  text-align: center;
-}
-
-.reinitialiser > .lien-discret {
-  color: var(--sepia);
-}

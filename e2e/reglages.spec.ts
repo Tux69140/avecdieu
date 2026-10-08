@@ -2,7 +2,6 @@ import { expect, type Page } from '@playwright/test'
 import {
   avancer,
   commencer,
-  deplierReglages,
   journal,
   toucher,
   type Reglages,
@@ -30,12 +29,18 @@ const SANS_CLOTURE: Reglages = {
 const titrePriere = (page: Page) => page.getByTestId('priere').getByRole('heading', { level: 2 })
 const reglage = (page: Page, nom: string | RegExp) => page.getByRole('switch', { name: nom })
 
-// Les réglages s'ouvrent par le menu ☰ de l'accueil.
-async function ouvrirReglages(page: Page) {
+// Les réglages s'ouvrent par le menu ☰ de l'accueil, puis page par page.
+async function ouvrirReglages(page: Page, ...lignes: string[]) {
   await page.getByRole('link', { name: 'Menu' }).click()
   await page.getByRole('link', { name: 'Réglages' }).click()
-  await deplierReglages(page)
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Réglages')
+  for (const ligne of lignes) await page.getByRole('link', { name: ligne, exact: true }).click()
 }
+
+// Les réglages du chapelet sont sur deux pages : Chapelet et Prières du chapelet.
+const CHAPELET = '/reglages/chapelet'
+const PRIERES = '/reglages/chapelet/prieres'
+const fermer = (page: Page) => page.getByRole('button', { name: 'Fermer', exact: true }).click()
 
 // Du seuil ou de l'accueil, le chapelet par le menu.
 async function ouvrirChapelet(page: Page) {
@@ -56,69 +61,52 @@ test.describe('écran des réglages', () => {
   }) => {
     await preparer(page)
     await page.goto('/')
-    await ouvrirReglages(page)
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Réglages')
-    await expect(reglage(page, 'Annonce des mystères')).toHaveAttribute('aria-checked', 'true')
-    await expect(reglage(page, /Ô mon Jésus/)).toHaveAttribute('aria-checked', 'true')
-    await expect(reglage(page, 'Salve Regina')).toHaveAttribute('aria-checked', 'true')
+    await ouvrirReglages(page, 'Chapelet')
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chapelet')
     await expect(reglage(page, 'Prier à plusieurs')).toHaveAttribute('aria-checked', 'false')
     await expect(page.getByRole('radio', { name: 'Texte complet' })).toHaveAttribute(
       'aria-checked',
       'true',
     )
     await expect(reglage(page, 'Vibrations')).toHaveAttribute('aria-checked', 'true')
+    await page.getByRole('link', { name: 'Prières du chapelet' }).click()
+    await expect(reglage(page, 'Annonce des mystères')).toHaveAttribute('aria-checked', 'true')
+    await expect(reglage(page, /Ô mon Jésus/)).toHaveAttribute('aria-checked', 'true')
+    await expect(reglage(page, 'Salve Regina')).toHaveAttribute('aria-checked', 'true')
 
-    await page.getByRole('button', { name: 'Fermer', exact: true }).click()
+    // La croix remonte d'un niveau à chaque fois, jusqu'à l'accueil.
+    await fermer(page)
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chapelet')
+    await fermer(page)
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Réglages')
+    await fermer(page)
     await accueil(page)
-  })
-
-  // › veut dire « ouvre un autre écran » ; une rubrique qui se déplie sur
-  // place porte une flèche vers le bas, retournée une fois ouverte (décision
-  // du porteur du projet, 2026-10-08).
-  test('une rubrique porte une flèche dessinée, retournée une fois ouverte', async ({ page }) => {
-    await preparer(page)
-    await page.goto('/reglages')
-    const bouton = page.getByRole('button', { name: 'Affichage', exact: true })
-    const fleche = bouton.locator('svg')
-    await expect(fleche).toHaveCount(1)
-    await expect(bouton).not.toContainText('›')
-    // Le sens de la flèche : 1 vers le bas, -1 retournée vers le haut.
-    const sens = () =>
-      fleche.evaluate((svg) => {
-        const t = getComputedStyle(svg.closest('.rubrique-chevron')!).transform
-        return Math.round(new DOMMatrix(t === 'none' ? undefined : t).d)
-      })
-    await expect.poll(() => page.evaluate(() => document.getAnimations().length)).toBe(0)
-    expect(await sens()).toBe(1)
-    await bouton.click()
-    await expect.poll(() => page.evaluate(() => document.getAnimations().length)).toBe(0)
-    expect(await sens()).toBe(-1)
   })
 
   test('chaque réglage se retient après redémarrage de l’app', async ({ page }) => {
     await preparer(page)
-    await page.goto('/reglages')
-    await deplierReglages(page)
+    await page.goto(PRIERES)
     await reglage(page, 'Annonce des mystères').click()
     await reglage(page, /Ô mon Jésus/).click()
     await reglage(page, 'Salve Regina').click()
+    await page.goto(CHAPELET)
     await reglage(page, 'Prier à plusieurs').click()
     await page.getByRole('radio', { name: 'Compact' }).click()
     await reglage(page, 'Vibrations').click()
 
     await page.reload()
-    await deplierReglages(page)
-    for (const nom of ['Annonce des mystères', /Ô mon Jésus/, 'Salve Regina'])
-      await expect(reglage(page, nom)).toHaveAttribute('aria-checked', 'false')
     await expect(reglage(page, 'Prier à plusieurs')).toHaveAttribute('aria-checked', 'true')
     await expect(page.getByRole('radio', { name: 'Compact' })).toHaveAttribute(
       'aria-checked',
       'true',
     )
     await expect(reglage(page, 'Vibrations')).toHaveAttribute('aria-checked', 'false')
+    await page.goto(PRIERES)
+    for (const nom of ['Annonce des mystères', /Ô mon Jésus/, 'Salve Regina'])
+      await expect(reglage(page, nom)).toHaveAttribute('aria-checked', 'false')
 
     // Le seuil partage la même mémoire.
-    await page.getByRole('button', { name: 'Fermer', exact: true }).click()
+    await page.goto('/')
     await ouvrirChapelet(page)
     await expect(page.getByRole('radio', { name: 'Compact' })).toHaveAttribute(
       'aria-checked',
@@ -140,8 +128,7 @@ test.describe('écran des réglages', () => {
       .poll(() => page.evaluate(() => localStorage.getItem('avec-dieu.aide-gestes')))
       .toBe('masquee')
 
-    await page.goto('/reglages')
-    await deplierReglages(page, 'Chapelet')
+    await page.goto(CHAPELET)
     await expect(reglage(page, 'Aide aux gestes')).toHaveAttribute('aria-checked', 'false')
     await reglage(page, 'Aide aux gestes').click()
     await expect(reglage(page, 'Aide aux gestes')).toHaveAttribute('aria-checked', 'true')
@@ -155,28 +142,33 @@ test.describe('écran des réglages', () => {
     page,
   }) => {
     await preparer(page)
-    await page.goto('/reglages')
-    await deplierReglages(page, 'Chapelet')
+    await page.goto(PRIERES)
     await reglage(page, 'Annonce des mystères').click()
 
-    const confirmation = page.getByRole('dialog', { name: 'Réinitialiser l’app ?' })
-    await page.getByRole('button', { name: 'Réinitialiser l’app' }).click()
-    await expect(confirmation).toContainText(
+    // Plus de fenêtre : la page explique, le bouton est dessous.
+    await page.goto('/reglages')
+    await page.getByRole('link', { name: 'Réinitialiser l’app' }).click()
+    await expect(page).toHaveURL('/reglages/reinitialiser')
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Réinitialiser l’app ?')
+    await expect(page.locator('main')).toContainText(
       'Réglages, rappels, lieu et chapelet en cours sont effacés : l’app revient comme au premier lancement. Les textes enregistrés pour la semaine sont gardés.',
     )
-    await confirmation.getByRole('button', { name: 'Annuler' }).click()
-    await expect(confirmation).toBeHidden()
+    await expect(page.getByRole('dialog')).toHaveCount(0)
+    await page.getByRole('button', { name: 'Annuler' }).click()
+    await expect(page).toHaveURL('/reglages')
+    await page.goto(PRIERES)
     await expect(reglage(page, 'Annonce des mystères')).toHaveAttribute('aria-checked', 'false')
 
-    await page.getByRole('button', { name: 'Réinitialiser l’app' }).click()
-    await confirmation.getByRole('button', { name: 'Réinitialiser', exact: true }).click()
+    await page.goto('/reglages/reinitialiser')
+    await page.getByRole('button', { name: 'Réinitialiser', exact: true }).click()
     await accueil(page)
     await expect(page).toHaveURL(/\/$/)
 
-    await ouvrirReglages(page)
-    await expect(reglage(page, 'Annonce des mystères')).toHaveAttribute('aria-checked', 'true')
+    await ouvrirReglages(page, 'Chapelet')
     // L'aide aux gestes, écartée au départ du parcours, revient elle aussi.
     await expect(reglage(page, 'Aide aux gestes')).toHaveAttribute('aria-checked', 'true')
+    await page.getByRole('link', { name: 'Prières du chapelet' }).click()
+    await expect(reglage(page, 'Annonce des mystères')).toHaveAttribute('aria-checked', 'true')
   })
 })
 
@@ -309,8 +301,7 @@ test.describe('prier à plusieurs', () => {
       'font-weight',
       '600',
     )
-    await page.goto('/reglages')
-    await deplierReglages(page)
+    await page.goto(CHAPELET)
     await expect(reglage(page, 'Prier à plusieurs')).toBeChecked()
   })
 
@@ -349,8 +340,7 @@ test.describe('vibrations', () => {
     await expect(page.getByRole('button', { name: 'Commencer le chapelet' })).toBeVisible()
     await expect(page.getByRole('radio', { name: 'Compact' })).toBeVisible()
     await expect(reglage(page, 'Vibrations')).toHaveCount(0)
-    await page.goto('/reglages')
-    await deplierReglages(page)
+    await page.goto(CHAPELET)
     await expect(reglage(page, 'Prier à plusieurs')).toBeVisible()
     await expect(reglage(page, 'Vibrations')).toHaveCount(0)
   })
@@ -442,10 +432,10 @@ test.describe('reprise d’un chapelet interrompu', () => {
     await avancer(page, AVE_3_4)
     await page.goBack()
     await page.getByRole('button', { name: 'Fermer', exact: true }).click()
-    await ouvrirReglages(page)
+    await ouvrirReglages(page, 'Chapelet', 'Prières du chapelet')
     // Sans « Ô mon Jésus », les deux premières dizaines ont une prière de moins.
     await reglage(page, /Ô mon Jésus/).click()
-    await page.getByRole('button', { name: 'Fermer', exact: true }).click()
+    for (let i = 0; i < 3; i++) await fermer(page)
     await ouvrirChapelet(page)
     const reprendre = page.getByRole('button', { name: 'Reprendre à la 3e dizaine' })
     // L'ordinal en exposant, comme partout dans l'app (« 3ᵉ »).

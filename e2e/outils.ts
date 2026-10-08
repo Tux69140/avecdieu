@@ -79,20 +79,6 @@ export async function servirAelf(page: Page) {
   return demandes
 }
 
-// Les réglages s'ouvrent rubriques fermées (phase 10) : on déplie celles dont
-// le parcours a besoin, toutes par défaut.
-export async function deplierReglages(
-  page: Page,
-  ...rubriques: ('Affichage' | 'Chapelet' | 'Offices' | 'Rappels')[]
-) {
-  const toutes = ['Affichage', 'Chapelet', 'Offices', 'Rappels']
-  for (const nom of rubriques.length > 0 ? rubriques : toutes) {
-    const bouton = page.getByRole('button', { name: nom, exact: true })
-    if ((await bouton.getAttribute('aria-expanded')) === 'false') await bouton.click()
-    await expect(bouton).toHaveAttribute('aria-expanded', 'true')
-  }
-}
-
 interface Ouverture {
   // L'aide aux gestes du chapelet et l'aide à la lecture de l'office
   // s'affichent-elles ? Masquées par défaut dans les parcours.

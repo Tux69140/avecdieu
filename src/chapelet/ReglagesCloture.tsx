@@ -12,7 +12,7 @@ interface Props {
 export function ReglagesCloture({ reglages, onModifier }: Props) {
   return (
     <>
-      <h3>Fin du chapelet</h3>
+      <h2>Fin du chapelet</h2>
       <Interrupteur
         libelle="Salve Regina"
         actif={reglages.salveRegina}

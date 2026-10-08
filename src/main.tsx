@@ -12,7 +12,16 @@ import { EcranLieu } from './ecrans/EcranLieu'
 import { EcranMenu } from './ecrans/EcranMenu'
 import { EcranOffice } from './ecrans/EcranOffice'
 import { EcranPriere } from './ecrans/EcranPriere'
+import { EcranBatterie } from './ecrans/EcranBatterie'
+import { EcranPrieresChapelet } from './ecrans/EcranPrieresChapelet'
+import { EcranRappel } from './ecrans/EcranRappel'
 import { EcranReglages } from './ecrans/EcranReglages'
+import { EcranReglagesAffichage } from './ecrans/EcranReglagesAffichage'
+import { EcranReglagesChapelet } from './ecrans/EcranReglagesChapelet'
+import { EcranReglagesOffices } from './ecrans/EcranReglagesOffices'
+import { EcranReglagesRappels } from './ecrans/EcranReglagesRappels'
+import { EcranReinitialiser } from './ecrans/EcranReinitialiser'
+import { EcranZone } from './ecrans/EcranZone'
 import { suivreLesVoyages } from './lieu/voyage'
 import { entretenirRappels, ouvrirLesNotifications } from './rappels/entretien'
 import './styles/jetons.css'
@@ -27,7 +36,17 @@ const routeur = createBrowserRouter([
       { path: '/chapelet/:serie', element: <EcranChapelet /> },
       { path: '/office/:office/:date', element: <EcranOffice /> },
       { path: '/priere/:priere', element: <EcranPriere /> },
+      // Les réglages en pages emboîtées (2026-10-08).
       { path: '/reglages', element: <EcranReglages /> },
+      { path: '/reglages/rappels', element: <EcranReglagesRappels /> },
+      { path: '/reglages/rappels/batterie', element: <EcranBatterie /> },
+      { path: '/reglages/rappels/:priere', element: <EcranRappel /> },
+      { path: '/reglages/chapelet', element: <EcranReglagesChapelet /> },
+      { path: '/reglages/chapelet/prieres', element: <EcranPrieresChapelet /> },
+      { path: '/reglages/offices', element: <EcranReglagesOffices /> },
+      { path: '/reglages/offices/zone', element: <EcranZone /> },
+      { path: '/reglages/affichage', element: <EcranReglagesAffichage /> },
+      { path: '/reglages/reinitialiser', element: <EcranReinitialiser /> },
       { path: '/lieu', element: <EcranLieu /> },
       { path: '/menu', element: <EcranMenu /> },
       { path: '/a-propos', element: <EcranAPropos /> },

@@ -1,14 +1,7 @@
-/* Le volet d'un office solaire, dans la fenêtre des rappels. */
+/* L'heure d'un office solaire, sur la page de sa prière. */
 .volet-sous-titre {
-  color: var(--sepia);
-}
-
-.volet-solaire h3 {
-  margin: var(--esp-md) 0 var(--esp-xs);
-  font-family: var(--sc);
-  font-weight: 600;
-  font-size: 16px;
-  letter-spacing: 0.06em;
+  margin: 0;
+  font-size: 17px;
   color: var(--sepia);
 }
 
@@ -84,11 +77,14 @@
   outline-offset: 2px;
 }
 
-.volet-solaire .volet-resultat {
-  margin-top: var(--esp-md);
+.volet-resultat {
+  margin: var(--esp-md) 0 0;
+  font-size: 17px;
   font-weight: 500;
 }
 
 .volet-astre {
+  margin: var(--esp-xs) 0 0;
+  font-size: 17px;
   color: var(--sepia);
 }

@@ -70,6 +70,9 @@ async function verifierCentre(page: Page, texte: Locator) {
 for (const [nom, chemin, titre] of [
   ['menu', '/menu', 'Avec Dieu'],
   ['réglages', '/reglages', 'Réglages'],
+  ['réglages · rappels', '/reglages/rappels', 'Rappels'],
+  ['réglages · prières du chapelet', '/reglages/chapelet/prieres', 'Prières du chapelet'],
+  ['réglages · zone liturgique', '/reglages/offices/zone', 'Zone liturgique'],
   ['à propos', '/a-propos', 'Avec Dieu'],
   ['lieu des heures solaires', '/lieu', 'Lieu des heures solaires'],
 ] as const) {

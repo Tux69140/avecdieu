@@ -1,12 +1,5 @@
 import { expect, type Page } from '@playwright/test'
-import {
-  deplierReglages,
-  preparer,
-  servirAelf,
-  simulerTelephone,
-  telephone,
-  test,
-} from './outils.ts'
+import { preparer, servirAelf, simulerTelephone, telephone, test } from './outils.ts'
 
 // Phase 12 : les heures solaires. Lyon, mercredi 7 octobre 2026 : lever vers
 // 7 h 47, coucher vers 19 h 12 ; midi solaire vers 13 h 30.
@@ -61,20 +54,24 @@ test('le cadran solaire va du lever au coucher, les complies au bout des pointil
   await expect(perle(page, 'sexte')).toHaveAccessibleName(/^Sexte, 13 h \d\d$/)
 })
 
+// Réglages, puis la ligne Rappels, comme le priant.
 const ouvrirRappels = async (page: Page) => {
   await page.goto('/reglages')
-  await deplierReglages(page, 'Rappels')
+  await ligneRappels(page).click()
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Rappels')
 }
 const heures = (page: Page) => page.getByRole('radiogroup', { name: 'Heures des prières' })
-const rubriqueRappels = (page: Page) => page.getByRole('button', { name: 'Rappels', exact: true })
+const ligneRappels = (page: Page) => page.getByRole('link', { name: 'Rappels', exact: true })
+const fermer = (page: Page) => page.getByRole('button', { name: 'Fermer', exact: true }).click()
 
 test('passer aux heures solaires : choisir une ville, puis les heures suivent le soleil', async ({
   page,
 }) => {
   const requetes: string[] = []
   page.on('request', (r) => requetes.push(r.url()))
+  await page.goto('/reglages')
+  await expect(ligneRappels(page)).toContainText('Aucun rappel')
   await ouvrirRappels(page)
-  await expect(rubriqueRappels(page)).toContainText('Aucun rappel')
   await heures(page).getByRole('radio', { name: 'Solaires' }).click()
 
   // Sans lieu connu, l'écran du lieu s'ouvre d'abord.
@@ -91,8 +88,8 @@ test('passer aux heures solaires : choisir une ville, puis les heures suivent le
     .first()
     .click()
 
-  // Retour aux réglages, en heures solaires.
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Réglages')
+  // Retour aux rappels, en heures solaires.
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Rappels')
   await expect(heures(page).getByRole('radio', { name: 'Solaires' })).toHaveAttribute(
     'aria-checked',
     'true',
@@ -101,7 +98,6 @@ test('passer aux heures solaires : choisir une ville, puis les heures suivent le
     page.getByText('Selon la course du soleil à Lyon, du lever au coucher.'),
   ).toBeVisible()
   await expect(page.getByRole('link', { name: 'Lieu : Lyon ›' })).toBeVisible()
-  await expect(rubriqueRappels(page)).toContainText('Heures solaires · Aucun rappel')
   await expect(page.locator('.rappel-priere')).toContainText([
     'Office des lectures',
     'Laudes · lever',
@@ -112,12 +108,13 @@ test('passer aux heures solaires : choisir une ville, puis les heures suivent le
     'Complies',
     'Chapelet',
   ])
-  await expect(page.getByRole('button', { name: /^Laudes, heure solaire, 7 h 4\d$/ })).toBeVisible()
-  await expect(
-    page.getByRole('button', { name: /^Sexte, heure solaire, 13 h \d\d$/ }),
-  ).toBeVisible()
+  await expect(page.getByRole('link', { name: /^Laudes, heure solaire, 7 h 4\d$/ })).toBeVisible()
+  await expect(page.getByRole('link', { name: /^Sexte, heure solaire, 13 h \d\d$/ })).toBeVisible()
   // Les complies gardent l'horloge d'Android.
   await expect(page.getByLabel('Complies, heure')).toHaveValue('21:30')
+  // La croix remonte aux Réglages, qui le résument.
+  await fermer(page)
+  await expect(ligneRappels(page)).toContainText('Heures solaires · Aucun rappel')
 
   // La liste des villes est dans l'app : rien n'est parti ailleurs.
   const ailleurs = requetes.filter(
@@ -133,8 +130,8 @@ test('passer aux heures solaires : choisir une ville, puis les heures suivent le
 test('revenir de l’écran du lieu sans choisir garde les heures fixes', async ({ page }) => {
   await ouvrirRappels(page)
   await heures(page).getByRole('radio', { name: 'Solaires' }).click()
-  await page.getByRole('button', { name: 'Fermer', exact: true }).click()
-  await deplierReglages(page, 'Rappels')
+  await fermer(page)
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Rappels')
   await expect(heures(page).getByRole('radio', { name: 'Fixes' })).toHaveAttribute(
     'aria-checked',
     'true',
@@ -195,12 +192,18 @@ test('position introuvable : le message le dit', async ({ page }) => {
   )
 })
 
-test('le volet d’un office solaire : décalage, limite, et l’heure du jour', async ({ page }) => {
+test('la page d’un office solaire : décalage, limite, et l’heure du jour', async ({ page }) => {
   await enHeuresSolaires(page)
   await ouvrirRappels(page)
-  await page.getByRole('button', { name: /^Laudes, heure solaire/ }).click()
-  const volet = page.getByRole('dialog', { name: 'Laudes' })
+  // L'heure solaire ouvre la page de la prière, plus de fenêtre.
+  await page.getByRole('link', { name: /^Laudes, heure solaire/ }).click()
+  await expect(page).toHaveURL('/reglages/rappels/laudes')
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+  const volet = page.locator('main')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Laudes')
   await expect(volet).toContainText('Au lever du soleil')
+  // En heures solaires, ni horloge pour l'heure : le soleil la donne.
+  await expect(page.getByLabel('Laudes, heure')).toHaveCount(0)
   await expect(volet.getByLabel('Décalage')).toHaveText('0 min')
   const aujourdhui = volet.getByTestId('volet-aujourdhui')
   const avant = await aujourdhui.textContent()
@@ -217,14 +220,15 @@ test('le volet d’un office solaire : décalage, limite, et l’heure du jour',
   await expect(aujourdhui).toHaveText('Aujourd’hui : 8 h 30')
   await volet.getByRole('switch', { name: 'Pas avant, limite' }).click()
   await expect(aujourdhui).not.toHaveText('Aujourd’hui : 8 h 30')
-  await volet.getByRole('button', { name: 'Fermer' }).click()
-  await expect(volet).toBeHidden()
+  // Le son se choisit sur la même page.
+  await expect(page.getByRole('radiogroup', { name: 'Son, Laudes' })).toBeVisible()
+  await fermer(page)
+  await expect(page).toHaveURL('/reglages/rappels')
 
-  // Le volet de tierce n'a pas de limite.
-  await page.getByRole('button', { name: /^Tierce, heure solaire/ }).click()
-  const tierce = page.getByRole('dialog', { name: 'Tierce' })
-  await expect(tierce).toContainText('Fin de la 3e heure du jour')
-  await expect(tierce.getByRole('switch')).toHaveCount(0)
+  // La page de tierce n'a pas de limite.
+  await page.getByRole('link', { name: /^Tierce, heure solaire/ }).click()
+  await expect(page.locator('main')).toContainText('Fin de la 3e heure du jour')
+  await expect(page.getByRole('switch', { name: /limite/ })).toHaveCount(0)
 })
 
 test('les rappels sonnent à l’heure du soleil de chaque jour', async ({ page }) => {

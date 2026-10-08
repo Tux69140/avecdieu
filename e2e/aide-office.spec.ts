@@ -1,5 +1,5 @@
 import { expect, type Page } from '@playwright/test'
-import { deplierReglages, preparer, servirAelf, test } from './outils.ts'
+import { preparer, servirAelf, test } from './outils.ts'
 
 // Pour qui découvre l'office (2026-10-08) : le répons de l'intercession redit
 // après chaque intention (R12), les consignes en rouge (R13) et la fenêtre
@@ -46,8 +46,7 @@ test('les consignes en rouge, et le réglage qui les masque', async ({ page }) =
   ])
   await expect(consignes(page).first()).toHaveCSS('color', ROUGE_RUBRIQUE)
 
-  await page.goto('/reglages')
-  await deplierReglages(page, 'Offices')
+  await page.goto('/reglages/offices')
   await page.getByRole('switch', { name: 'Consignes pour débuter' }).click()
   await page.goto('/office/vepres/2026-10-06')
   await expect(page.getByTestId('office')).toBeVisible()
@@ -80,8 +79,7 @@ test('« Lire un office » s’ouvre à l’office, et « Ne plus afficher » l�
   await expect(aide(page)).toHaveCount(0)
 
   // Le réglage la rétablit.
-  await page.goto('/reglages')
-  await deplierReglages(page, 'Offices')
+  await page.goto('/reglages/offices')
   const reglage = page.getByRole('switch', { name: 'Aide à la lecture' })
   await expect(reglage).toHaveAttribute('aria-checked', 'false')
   await reglage.click()

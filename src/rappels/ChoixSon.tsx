@@ -21,7 +21,7 @@ const memeSon = (a: Son, b: Son) =>
   (a.sorte !== 'cloche' || (b.sorte === 'cloche' && a.cloche === b.cloche)) &&
   (a.sorte !== 'mp3' || (b.sorte === 'mp3' && a.uri === b.uri))
 
-// Le son d'un rappel : une des cloches de l'app (à écouter), le son de
+// Le son d'un rappel, sur la page de sa prière : une des cloches de l'app (à écouter), le son de
 // notification du téléphone ou un MP3 pris sur le téléphone ; et le vibreur.
 export function ChoixSon({ id, nom, rappel, vibreurPossible, onChanger }: Props) {
   const { son } = rappel
@@ -63,10 +63,8 @@ export function ChoixSon({ id, nom, rappel, vibreurPossible, onChanger }: Props)
 
   return (
     <div id={id} className="choix-son">
+      <h2>Son</h2>
       <div role="radiogroup" aria-label={`Son, ${nom}`}>
-        <p className="choix-son-titre" aria-hidden="true">
-          Son
-        </p>
         {CLOCHES.map((cloche) => {
           const valeur: Son = { sorte: 'cloche', cloche }
           return option(valeur, NOMS_CLOCHES[cloche], ecoute(valeur, NOMS_CLOCHES[cloche]))

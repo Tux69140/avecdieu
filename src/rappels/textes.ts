@@ -3,6 +3,7 @@ import { PRIERES } from '../recueil/prieres'
 import type { LieuChoisi } from '../lieu/lieu'
 import type { Heure } from '../office/heures'
 import type { OfficeSolaire } from '../office/heuresSolaires'
+import type { Fabricant } from '../telephone/sonnerie'
 import { NOMS_OFFICES } from '../office/modele'
 import { NOMS_CLOCHES, PRIERES_RAPPELEES, type Priere, type Rappels, type Son } from './reglages'
 
@@ -72,7 +73,7 @@ export const REPERES_SOLAIRES: Partial<Record<OfficeSolaire, string>> = {
   vepres: 'coucher',
 }
 
-// Le sous-titre du volet de chaque office ; « e » se met en exposant.
+// Le sous-titre de chaque office solaire, sur la page de sa prière ; « e » se met en exposant.
 export const SOUS_TITRES_SOLAIRES: Record<OfficeSolaire, [string, string?]> = {
   laudes: ['Au lever du soleil'],
   tierce: ['Fin de la 3', 'e heure du jour'],
@@ -91,3 +92,24 @@ export function ecrireDecalage(minutes: number): string {
 
 // « à Lyon », « près de Lyon » : le lieu dans une phrase.
 export const dansLeLieu = ({ nom, pres }: LieuChoisi) => (pres ? `près de ${nom}` : `à ${nom}`)
+
+// Le guide de batterie, en fenêtre au premier rappel activé ou en page
+// (Rappels › Régler la batterie). Textes validés par le porteur du projet
+// (2026-10-07 ; démarrage automatique à part, sa page n'étant pas dans la
+// fiche de l'app sous HyperOS).
+const GUIDES: Record<'xiaomi' | 'samsung', { titre: string; texte: string; reglages: string[] }> = {
+  xiaomi: {
+    titre: 'Sur un Xiaomi',
+    texte: 'L’économiseur de batterie peut bloquer les rappels. Dans la page qui va s’ouvrir :',
+    reglages: ['Economiseur de batterie : Aucune restriction'],
+  },
+  samsung: {
+    titre: 'Sur un Samsung',
+    texte: 'La mise en veille des applis peut bloquer les rappels. Dans la page qui va s’ouvrir :',
+    reglages: ['Batterie : Non restreinte'],
+  },
+}
+
+// Le guide de batterie du téléphone : celui de Samsung, sinon celui de Xiaomi.
+export const guideBatterie = (marque: Fabricant) =>
+  GUIDES[marque === 'samsung' ? 'samsung' : 'xiaomi']

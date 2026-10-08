@@ -1,6 +1,5 @@
-import { useEffect, useId, useRef } from 'react'
 import type { LieuChoisi } from '../lieu/lieu'
-import { ecrireHeure, type Heure } from '../office/heures'
+import { ecrireHeure } from '../office/heures'
 import {
   DECALAGE_MAX,
   heuresSolaires,
@@ -9,11 +8,10 @@ import {
   type OfficeSolaire,
   type ReglagesSolaires,
 } from '../office/heuresSolaires'
-import { NOMS_OFFICES } from '../office/modele'
 import { leverEtCoucher } from '../office/soleil'
 import { dansLeLieu, ecrireDecalage, ecrireHeureRappel, SOUS_TITRES_SOLAIRES } from './textes'
-import '../composants/Dialogue.css'
-import './VoletSolaire.css'
+import { versChamp, versHeure } from './basculer'
+import './ReglageSolaire.css'
 
 interface Props {
   office: OfficeSolaire
@@ -21,15 +19,6 @@ interface Props {
   lieu: LieuChoisi
   maintenant: Date
   onChanger: (changement: Partial<ReglagesSolaires>) => void
-  onFermer: () => void
-}
-
-const versChamp = ({ heures, minutes }: Heure) =>
-  `${String(heures).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`
-
-const versHeure = (valeur: string): Heure | undefined => {
-  const [heures, minutes] = valeur.split(':').map(Number)
-  return Number.isInteger(heures) && Number.isInteger(minutes) ? { heures, minutes } : undefined
 }
 
 const arrondie = (date: Date) => {
@@ -37,16 +26,13 @@ const arrondie = (date: Date) => {
   return { heures: minute.getHours(), minutes: minute.getMinutes() }
 }
 
-// Le volet d'un office solaire, ouvert en touchant son heure (textes validés
-// par le porteur du projet, 2026-10-07) : le décalage, la limite pour les
-// laudes et les vêpres, et l'heure que cela donne aujourd'hui.
-export function VoletSolaire({ office, reglages, lieu, maintenant, onChanger, onFermer }: Props) {
-  const fenetre = useRef<HTMLDialogElement>(null)
-  const titre = useId()
+// L'heure d'un office solaire, sur la page de sa prière (textes validés par
+// le porteur du projet, 2026-10-07) : le décalage, la limite pour les laudes
+// et les vêpres, et l'heure que cela donne aujourd'hui.
+export function ReglageSolaire({ office, reglages, lieu, maintenant, onChanger }: Props) {
   const decalage = reglages.decalages[office]
   const aujourdhui = heuresSolaires(maintenant, lieu, reglages)?.[office]
   const soleil = leverEtCoucher(maintenant, lieu)
-  const [debut, exposant] = SOUS_TITRES_SOLAIRES[office]
   const midi = new Date((soleil.lever.getTime() + soleil.coucher.getTime()) / 2)
   const astre = {
     laudes: { nom: 'Lever du soleil', quand: soleil.lever },
@@ -55,37 +41,12 @@ export function VoletSolaire({ office, reglages, lieu, maintenant, onChanger, on
   }[office as 'laudes' | 'sexte' | 'vepres'] as { nom: string; quand: Date } | undefined
   const limite = office === 'laudes' ? 'pasAvant' : office === 'vepres' ? 'pasApres' : undefined
 
-  useEffect(() => {
-    const dialogue = fenetre.current
-    if (dialogue && !dialogue.open) dialogue.showModal?.()
-    return () => dialogue?.close()
-  }, [])
-
   const decaler = (pas: number) =>
     onChanger({ decalages: { ...reglages.decalages, [office]: decalage + pas } })
 
   return (
-    <dialog
-      ref={fenetre}
-      className="dialogue volet-solaire"
-      aria-labelledby={titre}
-      onCancel={(e) => {
-        e.preventDefault()
-        onFermer()
-      }}
-    >
-      <h2 id={titre}>{NOMS_OFFICES[office]}</h2>
-      <p className="volet-sous-titre">
-        {debut}
-        {exposant && (
-          <>
-            <sup>e</sup>
-            {exposant.slice(1)}
-          </>
-        )}
-      </p>
-
-      <h3>Décalage</h3>
+    <div className="volet-solaire">
+      <h2>Décalage</h2>
       <div className="volet-decalage">
         <button
           type="button"
@@ -126,12 +87,23 @@ export function VoletSolaire({ office, reglages, lieu, maintenant, onChanger, on
           {astre.nom} {dansLeLieu(lieu)} : {ecrireHeure(arrondie(astre.quand))}
         </p>
       )}
-      <div className="dialogue-boutons">
-        <button className="btn btn-principal" type="button" onClick={onFermer}>
-          Fermer
-        </button>
-      </div>
-    </dialog>
+    </div>
+  )
+}
+
+// Sous le nom de l'office : « Au lever du soleil », « Fin de la 3e heure du jour ».
+export function SousTitreSolaire({ office }: { office: OfficeSolaire }) {
+  const [debut, exposant] = SOUS_TITRES_SOLAIRES[office]
+  return (
+    <p className="volet-sous-titre">
+      {debut}
+      {exposant && (
+        <>
+          <sup>e</sup>
+          {exposant.slice(1)}
+        </>
+      )}
+    </p>
   )
 }
 

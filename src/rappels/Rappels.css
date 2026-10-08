@@ -30,6 +30,7 @@
   font-family: var(--texte);
   text-align: left;
   color: var(--encre);
+  text-decoration: none;
   cursor: pointer;
 }
 
@@ -37,6 +38,14 @@
   font-size: 17px;
   font-weight: 500;
   line-height: 1.3;
+}
+
+/* Le nom ouvre la page de la prière : › le dit, sans se lire. */
+.rappel-priere::after {
+  content: '\00a0›' / '';
+  font-size: 22px;
+  line-height: 1;
+  color: var(--or-fonce);
 }
 
 .rappel-son {
@@ -89,23 +98,13 @@
   cursor: pointer;
 }
 
-/* Le choix du son, déplié sous la ligne de la prière. */
-.choix-son {
-  margin: 0 0 var(--esp-sm) var(--esp-md);
-  padding-left: var(--esp-md);
-  border-left: 1px solid var(--filet);
-}
-
-.choix-son-titre {
-  margin: 0;
-  font-family: var(--sc);
-  font-weight: 600;
-  font-size: 16px;
-  letter-spacing: 0.06em;
-  color: var(--sepia);
+/* Le choix du son, sur la page de la prière : une option par ligne. */
+.choix-son [role='radiogroup'] {
+  border-top: 1px solid var(--filet);
 }
 
 .choix-son-option {
+  border-bottom: 1px solid var(--filet);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -145,12 +144,8 @@
   fill: var(--or-fonce);
 }
 
-.choix-son .interrupteur {
-  border-bottom: none;
-}
-
 /* Un refus d'Android : en brun brique, jamais en rouge (réservé aux rubriques). */
-/* En tête de la rubrique : un encadré brun brique, entier, avant les heures. */
+/* En tête de la page : un encadré brun brique, entier, avant les heures. */
 .rappels-avis {
   margin: var(--esp-xs) 0 var(--esp-md);
   padding: var(--esp-md);
@@ -171,11 +166,9 @@
   margin-left: calc(-1 * var(--esp-sm));
 }
 
-/* En heures solaires, l'heure ouvre le volet du décalage. */
-button.rappel-heure {
-  padding: 0;
-  border: none;
-  background: none;
+/* En heures solaires, l'heure ouvre la page de la prière (décalage). */
+a.rappel-heure {
+  text-decoration: none;
 }
 
 /* « Heures des prières » : fixes ou solaires, et le lieu du soleil. */
@@ -183,7 +176,7 @@ button.rappel-heure {
   margin-bottom: var(--esp-md);
 }
 
-.rubrique-contenu .rappels-heures h3 {
+.reglages .rappels-heures h2 {
   margin-top: 0;
 }
 
@@ -192,4 +185,48 @@ button.rappel-heure {
   align-items: center;
   min-height: 48px;
   margin-left: calc(-1 * var(--esp-sm));
+}
+
+/* La page d'une prière : l'heure se lit à droite ; le champ d'heure,
+   invisible par-dessus toute la ligne, ouvre l'horloge d'Android. */
+.rappel-page-heure {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-md);
+  min-height: 56px;
+  border-bottom: 1px solid var(--filet);
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.rappel-page-libelle {
+  font-weight: 500;
+}
+
+.rappel-page-heure[data-actif='non'] > span:not(.rappel-page-libelle) {
+  color: var(--sepia);
+}
+
+.rappel-page-heure input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.rappel-page-heure:focus-within {
+  outline: 2px solid var(--or);
+  outline-offset: 2px;
+}
+
+/* Sous le titre d'un office solaire, son repère, centré comme lui. */
+.reglages .volet-sous-titre {
+  margin: calc(-1 * var(--esp-md)) 0 var(--esp-lg);
+  text-align: center;
 }

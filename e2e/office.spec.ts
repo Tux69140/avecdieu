@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { expect, type Page } from '@playwright/test'
-import { deplierReglages, espionner, journal, preparer, servirAelf, test } from './outils.ts'
+import { espionner, journal, preparer, servirAelf, test } from './outils.ts'
 
 // À l'écran, un liant invisible suit le trait d'union d'un mot composé.
 const lie = (texte: string) => texte.replace(/(?<=\p{L})-(?=\p{L})/gu, '-\u2060')
@@ -122,8 +122,7 @@ test('versets, V/ R/, astérisques et accents en rouge rubrique', async ({ page 
 test('les accents de psalmodie se masquent dans les réglages', async ({ page }) => {
   await servirAelf(page)
   await preparer(page)
-  await page.goto('/reglages')
-  await deplierReglages(page, 'Offices')
+  await page.goto('/reglages/offices')
   const bascule = page.getByRole('switch', { name: 'Accents de psalmodie' })
   await expect(bascule).toHaveAttribute('aria-checked', 'true')
   await bascule.click()

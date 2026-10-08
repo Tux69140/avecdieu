@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef } from 'react'
 import type { Fabricant } from '../telephone/sonnerie'
 import type { Etape } from './autorisations'
+import { guideBatterie } from './textes'
 import '../composants/Dialogue.css'
 
 interface Props {
@@ -10,21 +11,6 @@ interface Props {
   onAccepter: () => void
   // « Plus tard », Échap ou le bouton retour.
   onRenoncer: () => void
-}
-
-// Textes validés par le porteur du projet (2026-10-07 ; démarrage automatique
-// à part, sa page n'étant pas dans la fiche de l'app sous HyperOS).
-const GUIDES: Record<'xiaomi' | 'samsung', { titre: string; texte: string; reglages: string[] }> = {
-  xiaomi: {
-    titre: 'Sur un Xiaomi',
-    texte: 'L’économiseur de batterie peut bloquer les rappels. Dans la page qui va s’ouvrir :',
-    reglages: ['Economiseur de batterie : Aucune restriction'],
-  },
-  samsung: {
-    titre: 'Sur un Samsung',
-    texte: 'La mise en veille des applis peut bloquer les rappels. Dans la page qui va s’ouvrir :',
-    reglages: ['Batterie : Non restreinte'],
-  },
 }
 
 function contenu(etape: Etape, marque: Fabricant) {
@@ -52,8 +38,7 @@ function contenu(etape: Etape, marque: Fabricant) {
       accepter: 'Ouvrir la page',
       renoncer: 'Plus tard',
     }
-  const guide = GUIDES[marque === 'samsung' ? 'samsung' : 'xiaomi']
-  return { ...guide, accepter: 'Ouvrir la page', renoncer: 'Plus tard' }
+  return { ...guideBatterie(marque), accepter: 'Ouvrir la page', renoncer: 'Plus tard' }
 }
 
 // Une fenêtre au milieu de l'écran, par-dessus les réglages assombris.

@@ -1,5 +1,5 @@
 import { expect, type Page } from '@playwright/test'
-import { commencer, deplierReglages, preparer, servirAelf, test } from './outils.ts'
+import { commencer, preparer, servirAelf, test } from './outils.ts'
 
 // À l'écran, un liant invisible suit le trait d'union d'un mot composé.
 const lie = (texte: string) => texte.replace(/(?<=\p{L})-(?=\p{L})/gu, '-\u2060')
@@ -68,8 +68,7 @@ test('une nouvelle ouverture ne redemande rien de ce qui est enregistré', async
 
 test('les réglages disent jusqu’à quand on peut prier sans réseau', async ({ page }) => {
   await remplirPuisCouper(page)
-  await page.goto('/reglages')
-  await deplierReglages(page, 'Offices')
+  await page.goto('/reglages/offices')
   await expect(page.getByTestId('hors-connexion')).toHaveText(
     'Textes disponibles hors connexion jusqu’au mardi 13 octobre.',
   )
@@ -101,8 +100,7 @@ test('l’accueil d’un jour non enregistré le dit, sans les dates', async ({ 
 test('premier lancement sans réseau : rien d’enregistré, le chapelet se prie', async ({ page }) => {
   await page.route('https://api.aelf.org/**', (route) => route.abort('internetdisconnected'))
   await preparer(page)
-  await page.goto('/reglages')
-  await deplierReglages(page, 'Offices')
+  await page.goto('/reglages/offices')
   await expect(page.getByTestId('hors-connexion')).toHaveText(
     'Aucun texte enregistré pour l’instant.',
   )

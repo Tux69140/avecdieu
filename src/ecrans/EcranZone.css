@@ -1,0 +1,33 @@
+/* Une zone par ligne, toute la ligne se touche, sous les filets des réglages. */
+.zone-liste {
+  border-top: 1px solid var(--filet);
+}
+
+.zone-option {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-md);
+  min-height: 48px;
+  border-bottom: 1px solid var(--filet);
+  font-size: 17px;
+  cursor: pointer;
+}
+
+.zone-option input {
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  accent-color: var(--or-fonce);
+}
+
+/* L'avertissement, sous la liste, avant de valider. */
+.zone-avertissement {
+  margin-top: var(--esp-lg);
+}
+
+.reglages .zone-avertissement h2 {
+  margin-top: 0;
+  font-size: 21px;
+  letter-spacing: 0.05em;
+  color: var(--encre);
+}

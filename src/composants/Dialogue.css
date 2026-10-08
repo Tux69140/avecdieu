@@ -1,5 +1,5 @@
 /* Une fenêtre sobre au milieu de l’écran, dans les marges des barres d’Android :
-   les autorisations des rappels, le volet solaire, la réinitialisation. */
+   les autorisations des rappels (les seules fenêtres des réglages). */
 .dialogue {
   width: calc(100% - 2 * var(--esp-md) - var(--bord-gauche) - var(--bord-droit));
   max-width: 26em;

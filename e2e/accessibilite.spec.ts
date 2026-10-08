@@ -4,7 +4,6 @@ import {
   faireRevenirBandeau,
   avancer,
   commencer,
-  deplierReglages,
   preparer,
   servirAelf,
   simulerTelephone,
@@ -97,7 +96,6 @@ test('écran de fin du chapelet', async ({ page }) => {
 test('écran des réglages', async ({ page }) => {
   await preparer(page)
   await page.goto('/reglages')
-  await deplierReglages(page)
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Réglages')
   expect(await violationsGraves(page)).toEqual([])
 })
@@ -253,34 +251,49 @@ test('premier lancement sans réseau : accueil et office', async ({ page }) => {
   expect(await violationsGraves(page)).toEqual([])
 })
 
-test('réglages dépliés, de jour puis de nuit', async ({ page }) => {
-  await preparer(page)
-  await page.goto('/reglages')
-  await deplierReglages(page)
-  expect(await violationsGraves(page)).toEqual([])
-  await page.emulateMedia({ colorScheme: 'dark' })
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'nuit')
-  expect(await violationsGraves(page)).toEqual([])
-})
+// Chaque page des réglages (2026-10-08), de jour puis de nuit.
+for (const chemin of [
+  '/reglages',
+  '/reglages/rappels',
+  '/reglages/rappels/laudes',
+  '/reglages/rappels/batterie',
+  '/reglages/chapelet',
+  '/reglages/chapelet/prieres',
+  '/reglages/offices',
+  '/reglages/offices/zone',
+  '/reglages/affichage',
+  '/reglages/reinitialiser',
+]) {
+  test(`réglages ${chemin}, de jour puis de nuit`, async ({ page }) => {
+    await preparer(page, { rappels: ['laudes'] })
+    await page.emulateMedia({ colorScheme: 'light' })
+    await page.goto(chemin)
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+    await expect.poll(() => page.evaluate(() => document.getAnimations().length)).toBe(0)
+    expect(await violationsGraves(page)).toEqual([])
+    await page.emulateMedia({ colorScheme: 'dark' })
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'nuit')
+    expect(await violationsGraves(page)).toEqual([])
+  })
+}
 
-test('choix de la zone liturgique, puis sa confirmation', async ({ page }) => {
+test('page de la zone liturgique, puis son avertissement', async ({ page }) => {
   // La confirmation ne vient que si des textes sont gardés : on attend la réserve.
   const demandes = await servirAelf(page)
   await preparer(page)
   await page.goto('/')
   await expect.poll(() => demandes.length).toBe(72)
-  await page.goto('/reglages')
-  await deplierReglages(page, 'Offices')
+  await page.goto('/reglages/offices')
   await expect(page.getByTestId('hors-connexion')).toContainText('jusqu’au')
-  await page.getByRole('button', { name: /^Zone liturgique/ }).click()
-  await expect(page.getByRole('dialog', { name: 'Zone liturgique' })).toBeVisible()
+  await page.getByRole('link', { name: /^Zone liturgique/ }).click()
+  await expect(page.getByRole('radiogroup', { name: 'Zone liturgique' })).toBeVisible()
   expect(await violationsGraves(page)).toEqual([])
   await page.getByRole('radio', { name: 'Suisse' }).click()
-  await expect(page.getByRole('dialog', { name: 'Changer de zone ?' })).toBeVisible()
+  await expect(page.getByRole('region', { name: 'Changer de zone ?' })).toBeVisible()
   expect(await violationsGraves(page)).toEqual([])
 })
 
-// Les fenêtres du premier rappel activé, et le choix du son déplié.
+// Les fenêtres du premier rappel activé, puis la page de la prière (le son).
 async function fenetresDesRappels(page: Page) {
   await simulerTelephone(page, {
     accord: 'prompt',
@@ -289,8 +302,7 @@ async function fenetresDesRappels(page: Page) {
     blocages: { batterie: true, arrierePlan: true, demarrage: true },
   })
   await preparer(page)
-  await page.goto('/reglages')
-  await deplierReglages(page, 'Rappels')
+  await page.goto('/reglages/rappels')
   await page.getByRole('switch', { name: 'Laudes, rappel' }).click()
   for (const [titre, bouton] of [
     ['Recevoir les rappels', 'Continuer'],
@@ -303,9 +315,10 @@ async function fenetresDesRappels(page: Page) {
     expect(await violationsGraves(page)).toEqual([])
     await fenetre.getByRole('button', { name: bouton }).click()
   }
+  await expect(page.locator('.rappels-avis')).toHaveCount(4)
+  expect(await violationsGraves(page)).toEqual([])
   await page.locator('.rappel-nom').nth(1).click()
   await expect(page.getByRole('radiogroup', { name: 'Son, Laudes' })).toBeVisible()
-  await expect(page.locator('.rappels-avis')).toHaveCount(4)
   expect(await violationsGraves(page)).toEqual([])
 }
 
@@ -407,18 +420,18 @@ test('lieu des heures solaires, villes trouvées et erreur', async ({ page }) =>
   expect(await violationsGraves(page)).toEqual([])
 })
 
-test('heures solaires : rubrique et volet, de jour puis de nuit', async ({ page }) => {
+test('heures solaires : rappels et page de la prière, de jour puis de nuit', async ({ page }) => {
   await preparer(page)
   await page.addInitScript(() => {
     const lieu = { nom: 'Lyon', pres: false, latitude: 45.75, longitude: 4.85 }
     localStorage.setItem('avec-dieu.lieu', JSON.stringify({ lieu }))
     localStorage.setItem('avec-dieu.heures-solaires', JSON.stringify({ actives: true }))
   })
-  await page.goto('/reglages')
-  await deplierReglages(page, 'Rappels')
+  await page.goto('/reglages/rappels')
   expect(await violationsGraves(page)).toEqual([])
-  await page.getByRole('button', { name: /^Vêpres, heure solaire/ }).click()
-  await expect(page.getByRole('dialog', { name: 'Vêpres' })).toBeVisible()
+  await page.getByRole('link', { name: /^Vêpres, heure solaire/ }).click()
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Vêpres')
+  await expect(page.getByLabel('Décalage')).toBeVisible()
   await page.waitForFunction(() => document.getAnimations().length === 0)
   expect(await violationsGraves(page)).toEqual([])
   await page.emulateMedia({ colorScheme: 'dark' })

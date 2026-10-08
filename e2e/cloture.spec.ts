@@ -4,7 +4,6 @@ import {
   commencer,
   defilementArrete,
   derniereLigneVisible,
-  deplierReglages,
   glisser,
   preparer,
   test,
@@ -189,26 +188,27 @@ test('le glissement recule toujours, même au milieu des Litanies', async ({ pag
 test.describe('réglages de la fin du chapelet', () => {
   test('libellés, ordre et valeurs de départ, retenus après redémarrage', async ({ page }) => {
     await preparer(page)
+    // Réglages › Chapelet › Prières du chapelet, dans l'ordre où elles se disent.
     await page.goto('/reglages')
-    await deplierReglages(page, 'Chapelet')
-    const rubrique = page.locator('.rubrique').filter({ hasText: 'Fin du chapelet' })
+    await page.getByRole('link', { name: 'Chapelet' }).click()
+    await page.getByRole('link', { name: 'Prières du chapelet' }).click()
+    await expect(page).toHaveURL('/reglages/chapelet/prieres')
+    const rubrique = page.locator('main')
     const noms = await rubrique
-      .locator('.interrupteur-libelle, .choix-frequence-libelle, h3')
+      .locator('.interrupteur-libelle, .choix-frequence-libelle, h2')
       .allTextContents()
     expect(noms).toEqual([
+      'Ouverture',
+      'Intentions des trois premiers Je vous salue Marie',
+      'Chaque dizaine',
       'Annonce des mystères',
       '« Ô mon Jésus » après chaque dizaine',
-      'Intentions des trois premiers Je vous salue Marie',
-      'Prier à plusieurs',
       'Fin du chapelet',
       'Salve Regina',
       'Litanies de la Sainte Vierge',
       'Oraison du Rosaire',
       'Sous l’abri de votre miséricorde',
       'Prière à saint Joseph',
-      'Affichage des prières',
-      'Vibrations',
-      'Aide aux gestes',
     ])
     const interrupteur = (nom: string) => page.getByRole('switch', { name: nom, exact: true })
     const choix = (nom: string) => page.getByRole('radiogroup', { name: nom })
@@ -240,7 +240,6 @@ test.describe('réglages de la fin du chapelet', () => {
     await interrupteur('Sous l’abri de votre miséricorde').click()
     await interrupteur('Intentions des trois premiers Je vous salue Marie').click()
     await page.reload()
-    await deplierReglages(page, 'Chapelet')
     await expect(
       choix('Litanies de la Sainte Vierge').getByRole('radio', { name: 'Toujours' }),
     ).toHaveAttribute('aria-checked', 'true')

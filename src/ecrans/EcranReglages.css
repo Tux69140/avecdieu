@@ -1,3 +1,4 @@
+/* Les réglages et leurs pages emboîtées partagent cette mise en page. */
 .reglages {
   max-width: calc(34em + 2 * var(--gouttiere));
   margin: 0 auto;
@@ -11,13 +12,23 @@
   line-height: 1.1;
 }
 
-.reglages-rubriques {
-  margin-top: var(--esp-lg);
+.reglages .ligne-fermer {
+  margin-bottom: var(--esp-lg);
+}
+
+/* Une liste de lignes sous un filet, chaque ligne fermée par le sien. */
+.reglages-liste {
   border-top: 1px solid var(--filet);
 }
 
-.rubrique-contenu h3 {
-  margin: var(--esp-lg) 0 var(--esp-sm);
+/* Réinitialiser, à l'écart sous les autres lignes. */
+.reglages-reinitialiser {
+  margin-top: var(--esp-2xl);
+}
+
+/* Les petits titres d'une page (« Thème », « Fin du chapelet »). */
+.reglages h2 {
+  margin: var(--esp-xl) 0 var(--esp-sm);
   font-family: var(--sc);
   font-weight: 600;
   font-size: 17px;
@@ -25,22 +36,19 @@
   color: var(--sepia);
 }
 
-.rubrique-contenu h3:first-child {
-  margin-top: var(--esp-xs);
+.reglages .ligne-fermer + h2 {
+  margin-top: 0;
 }
 
-.rubrique-contenu > .interrupteur:first-child {
-  border-top: 1px solid var(--filet);
-}
-
-.reglages-gestes {
-  margin-top: var(--esp-lg);
+/* Sous un petit titre, la première ligne ouvre la liste par un filet. */
+.reglages h2 + .interrupteur,
+.reglages h2 + .choix-frequence {
   border-top: 1px solid var(--filet);
 }
 
 /* Ce que l'app garde pour prier sans réseau : une information, pas un réglage. */
 .reglages-note {
-  margin: var(--esp-sm) 0 0;
+  margin: var(--esp-md) 0 0;
   font-size: 15px;
   line-height: 1.45;
   color: var(--sepia);
@@ -48,6 +56,46 @@
 
 /* Le téléphone bloque les rappels : le résumé le dit en brun brique, la
    couleur des erreurs (le rouge est réservé aux rubriques liturgiques). */
-.reglages-rappels[data-bloques='oui'] .rubrique-resume {
+.reglages-rappels[data-bloques='oui'] .ligne-page-resume {
   color: var(--erreur);
+}
+
+/* Un texte d'explication sur toute la largeur (batterie, réinitialisation,
+   changement de zone), comme celui des fenêtres qu'il remplace. */
+.reglages-texte {
+  margin: 0 0 var(--esp-sm);
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.reglages-boutons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-sm) var(--esp-md);
+  margin-top: var(--esp-lg);
+}
+
+.reglages-gestes {
+  margin-top: var(--esp-lg);
+}
+
+/* La zone liturgique : sa ligne, et l'aide dessous, sous un seul filet. */
+.reglages-zone {
+  padding-bottom: var(--esp-sm);
+  border-bottom: 1px solid var(--filet);
+}
+
+.reglages-zone .ligne-page {
+  border-bottom: none;
+}
+
+.reglages-zone .choix-aide {
+  margin: 0;
+  padding-right: 62px;
+}
+
+/* Le réglage à choisir dans la page du téléphone, comme dans les fenêtres. */
+.reglages-batterie {
+  font-weight: 500;
 }

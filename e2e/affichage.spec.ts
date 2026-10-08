@@ -1,15 +1,7 @@
 import { expect, type Page } from '@playwright/test'
-import {
-  avancer,
-  commencer,
-  deplierReglages,
-  pincer,
-  preparer,
-  servirAelf,
-  test,
-} from './outils.ts'
+import { avancer, commencer, pincer, preparer, servirAelf, test } from './outils.ts'
 
-// Phase 10 : réglages en rubriques, zone liturgique, taille du texte (réglée
+// Phase 10 : réglages en pages (2026-10-08), zone liturgique, taille du texte (réglée
 // ou pincée), thème nuit, animations réduites. Décisions du 2026-10-07.
 
 const MARDI = (heures: number, minutes = 0) => new Date(2026, 9, 6, heures, minutes)
@@ -26,43 +18,42 @@ const taille = (page: Page, selecteur: string) =>
     .first()
     .evaluate((e) => getComputedStyle(e).fontSize)
 
-test.describe('les rubriques des réglages', () => {
-  test('toutes fermées à l’ouverture, chacune se déplie et se replie', async ({ page }) => {
+test.describe('la page des réglages', () => {
+  // En pages emboîtées, comme les Paramètres d'Android (2026-10-08) : une
+  // ligne par page, son résumé dessous, le chevron qui dit « autre écran ».
+  test('une ligne par page, dans l’ordre, avec son résumé', async ({ page }) => {
     await preparer(page)
     await page.goto('/reglages')
-    // Les rappels en tête : le téléphone peut les bloquer en silence (2026-10-08).
-    await expect(page.locator('.rubrique-nom')).toHaveText([
+    await expect(page.locator('.ligne-page-nom')).toHaveText([
       'Rappels',
-      'Affichage',
       'Chapelet',
       'Offices',
+      'Affichage',
+      'Réinitialiser l’app',
     ])
     for (const [nom, resume] of [
       ['Rappels', 'Aucun rappel'],
-      ['Affichage', 'Taille du texte, thème'],
       ['Chapelet', 'Annonce, prières, vibrations'],
       ['Offices', 'Zone, accents, textes hors connexion'],
+      ['Affichage', 'Taille du texte, thème'],
     ]) {
-      const bouton = page.getByRole('button', { name: nom, exact: true })
-      await expect(bouton).toHaveAttribute('aria-expanded', 'false')
-      await expect(bouton).toContainText(resume)
+      const ligne = page.getByRole('link', { name: nom, exact: true })
+      await expect(ligne).toContainText(resume)
+      // 48 px au moins, le chevron à droite, rien de replié.
+      expect((await ligne.boundingBox())!.height).toBeGreaterThanOrEqual(48)
+      expect(
+        await ligne.evaluate((e) => getComputedStyle(e, '::after').content.startsWith('"›"')),
+      ).toBe(true)
     }
-    await expect(page.getByRole('switch', { name: 'Prier à plusieurs' })).toBeHidden()
-    await page.getByRole('button', { name: 'Chapelet', exact: true }).click()
-    await expect(page.getByRole('switch', { name: 'Prier à plusieurs' })).toBeVisible()
-    // Plusieurs à la fois.
-    await page.getByRole('button', { name: 'Offices', exact: true }).click()
-    await expect(page.getByRole('switch', { name: 'Prier à plusieurs' })).toBeVisible()
-    await expect(page.getByRole('switch', { name: 'Accents de psalmodie' })).toBeVisible()
-    await page.getByRole('button', { name: 'Chapelet', exact: true }).click()
-    await expect(page.getByRole('switch', { name: 'Prier à plusieurs' })).toBeHidden()
+    await expect(page.locator('[aria-expanded]')).toHaveCount(0)
+    await expect(page.getByRole('switch')).toHaveCount(0)
   })
 })
 
 test.describe('zone liturgique', () => {
-  const ligneZone = (page: Page) => page.getByRole('button', { name: /^Zone liturgique/ })
-  const fenetreZone = (page: Page) => page.getByRole('dialog', { name: 'Zone liturgique' })
-  const confirmation = (page: Page) => page.getByRole('dialog', { name: 'Changer de zone ?' })
+  const ligneZone = (page: Page) => page.getByRole('link', { name: /^Zone liturgique/ })
+  const zones = (page: Page) => page.getByRole('radiogroup', { name: 'Zone liturgique' })
+  const avertissement = (page: Page) => page.getByRole('region', { name: 'Changer de zone ?' })
 
   test('France par défaut ; une autre zone, confirmée, oublie les textes et les redemande', async ({
     page,
@@ -71,30 +62,34 @@ test.describe('zone liturgique', () => {
     await preparer(page)
     await page.goto('/')
     await expect.poll(() => demandes.length).toBe(72)
-    await page.goto('/reglages')
-    await deplierReglages(page, 'Offices')
-    // Une seule ligne dans la rubrique : la liste des zones n'y est plus.
+    await page.goto('/reglages/offices')
+    // Une seule ligne dans la page Offices : la liste des zones a sa page.
     await expect(page.getByRole('radio')).toHaveCount(0)
     await expect(ligneZone(page)).toHaveText(/France/)
     await ligneZone(page).click()
-    const zones = fenetreZone(page).getByRole('radio')
-    await expect(zones).toHaveCount(8)
-    await expect(fenetreZone(page).getByRole('radio', { name: 'France' })).toBeChecked()
+    await expect(page).toHaveURL('/reglages/offices/zone')
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Zone liturgique')
+    await expect(zones(page).getByRole('radio')).toHaveCount(8)
+    await expect(zones(page).getByRole('radio', { name: 'France' })).toBeChecked()
+    await expect(avertissement(page)).toHaveCount(0)
 
-    // Annuler la confirmation : rien ne change, les textes restent.
-    await fenetreZone(page).getByRole('radio', { name: 'Belgique' }).click()
-    await expect(confirmation(page)).toContainText(
+    // Une zone touchée : l'avertissement, sur la page même, avant de valider.
+    // Annuler : rien ne change, les textes restent.
+    await zones(page).getByRole('radio', { name: 'Belgique' }).click()
+    await expect(avertissement(page)).toContainText(
       'Les textes gardés pour prier sans connexion seront effacés et remplacés par ceux de la zone Belgique. Il faudra une connexion pour les recharger, sinon aucun texte ne sera disponible.',
     )
-    await confirmation(page).getByRole('button', { name: 'Annuler' }).click()
+    await expect(avertissement(page)).toBeInViewport()
     await expect(page.getByRole('dialog')).toHaveCount(0)
+    await avertissement(page).getByRole('button', { name: 'Annuler' }).click()
+    await expect(page).toHaveURL('/reglages/offices')
     await expect(ligneZone(page)).toHaveText(/France/)
     await expect(page.getByTestId('hors-connexion')).toContainText('hors connexion jusqu’au')
 
     await ligneZone(page).click()
-    await fenetreZone(page).getByRole('radio', { name: 'Belgique' }).click()
-    await confirmation(page).getByRole('button', { name: 'Changer' }).click()
-    await expect(page.getByRole('dialog')).toHaveCount(0)
+    await zones(page).getByRole('radio', { name: 'Belgique' }).click()
+    await avertissement(page).getByRole('button', { name: 'Changer' }).click()
+    await expect(page).toHaveURL('/reglages/offices')
     await expect(ligneZone(page)).toHaveText(/Belgique/)
     await expect(page.getByTestId('hors-connexion')).toHaveText(
       'Aucun texte enregistré pour l’instant.',
@@ -106,25 +101,23 @@ test.describe('zone liturgique', () => {
     expect(cles.filter((c) => c.startsWith('avec-dieu.aelf.belgique.'))).toHaveLength(72)
 
     await page.reload()
-    await deplierReglages(page, 'Offices')
     await expect(ligneZone(page)).toHaveText(/Belgique/)
     await page.goto('/office/laudes/2026-10-06')
     await expect(page.getByTestId('office')).toBeVisible()
   })
 
-  test('sans texte gardé, la zone change sans confirmation ; Annuler referme le choix', async ({
+  test('sans texte gardé, la zone change sans avertissement ; la croix remonte', async ({
     page,
   }) => {
     await page.route('https://api.aelf.org/**', (route) => route.abort())
     await preparer(page)
-    await page.goto('/reglages')
-    await deplierReglages(page, 'Offices')
+    await page.goto('/reglages/offices')
     await ligneZone(page).click()
-    await fenetreZone(page).getByRole('button', { name: 'Annuler' }).click()
-    await expect(page.getByRole('dialog')).toHaveCount(0)
+    await page.getByRole('button', { name: 'Fermer', exact: true }).click()
+    await expect(page).toHaveURL('/reglages/offices')
     await ligneZone(page).click()
-    await fenetreZone(page).getByRole('radio', { name: 'Calendrier romain général' }).click()
-    await expect(page.getByRole('dialog')).toHaveCount(0)
+    await zones(page).getByRole('radio', { name: 'Calendrier romain général' }).click()
+    await expect(page).toHaveURL('/reglages/offices')
     await expect(ligneZone(page)).toHaveText(/Calendrier romain général/)
   })
 })
@@ -134,8 +127,7 @@ test.describe('taille du texte', () => {
     page,
   }) => {
     await preparer(page)
-    await page.goto('/reglages')
-    await deplierReglages(page, 'Affichage')
+    await page.goto('/reglages/affichage')
     const reduire = page.getByRole('button', { name: 'Réduire le texte' })
     const agrandir = page.getByRole('button', { name: 'Agrandir le texte' })
     await expect(page.getByRole('img', { name: 'Taille 2 sur 5' })).toBeVisible()
@@ -160,8 +152,7 @@ test.describe('taille du texte', () => {
     await commencer(page)
     expect(await taille(page, '.priere-texte')).toBe('22px')
 
-    await page.goto('/reglages')
-    await deplierReglages(page, 'Affichage')
+    await page.goto('/reglages/affichage')
     await page.getByRole('button', { name: 'Taille d’origine' }).click()
     await expect(page.getByRole('img', { name: 'Taille 2 sur 5' })).toBeVisible()
     expect(await taille(page, '[data-testid="exemple-taille"]')).toBe('18px')
@@ -178,8 +169,7 @@ test.describe('taille du texte', () => {
     await pincer(page, 200, 150)
     await expect.poll(() => taille(page, '.office-texte')).toBe('22px')
     // Retenue : l'écran des réglages la montre.
-    await page.goto('/reglages')
-    await deplierReglages(page, 'Affichage')
+    await page.goto('/reglages/affichage')
     await expect(page.getByRole('img', { name: 'Taille 4 sur 5' })).toBeVisible()
   })
 
@@ -217,8 +207,7 @@ test.describe('thème', () => {
   test('« Jour » et « Nuit » forcent le thème', async ({ page }) => {
     await page.emulateMedia({ colorScheme: 'dark' })
     await preparer(page)
-    await page.goto('/reglages')
-    await deplierReglages(page, 'Affichage')
+    await page.goto('/reglages/affichage')
     await expect(page.getByRole('radio', { name: 'Automatique' })).toHaveAttribute(
       'aria-checked',
       'true',
@@ -239,8 +228,9 @@ test('avec « réduire les animations », aucune transition ne joue', async ({ p
   await avancer(page, 7)
   await expect(page.getByTestId('annonce')).toBeVisible()
   expect(await page.evaluate(() => document.getAnimations().length)).toBe(0)
-  await page.goto('/reglages')
-  await page.getByRole('button', { name: 'Affichage', exact: true }).click()
+  // Les rubriques repliées d'« A propos » : la flèche se retourne sans transition.
+  await page.goto('/a-propos')
+  await page.getByRole('button', { name: 'Textes', exact: true }).click()
   expect(await page.evaluate(() => document.getAnimations().length)).toBe(0)
   const chevron = page.locator('.rubrique-chevron').first()
   await expect(chevron).toHaveCSS('transition-duration', '0s')

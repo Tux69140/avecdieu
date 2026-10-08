@@ -1,27 +1,29 @@
-import { useId, useRef, useState } from 'react'
-import { ChoixSon } from './ChoixSon'
+import { useRef } from 'react'
+import { Link, useLocation } from 'react-router'
+import type { DepuisParente } from '../composants/retour'
 import type { Heure } from '../office/heures'
-import { HEURE_PROPOSEE_LECTURES, type Rappel } from './reglages'
+import { basculerRappel, versChamp, versHeure } from './basculer'
+import type { Priere, Rappel } from './reglages'
 import { ecrireHeureRappel, nomDuSon } from './textes'
 
 interface Props {
+  priere: Priere
   nom: string
   rappel: Rappel
   vibreurPossible: boolean
   onChanger: (changement: Partial<Rappel>) => void
   // Un rappel vient d'être activé : l'app demande ce qu'il lui faut.
   onActiver: () => void
-  // En heures solaires : l'heure du jour, que l'on touche pour ouvrir le volet
-  // du décalage, et le repère du soleil (« lever »).
-  solaire?: { heure?: Heure; repere?: string; onOuvrir: () => void }
+  // En heures solaires : l'heure du jour, que l'on touche pour ouvrir la page
+  // de la prière (décalage), et le repère du soleil (« lever »).
+  solaire?: { heure?: Heure; repere?: string }
 }
 
-const versChamp = (heure?: { heures: number; minutes: number }) =>
-  heure ? `${String(heure.heures).padStart(2, '0')}:${String(heure.minutes).padStart(2, '0')}` : ''
-
-// Une prière à rappeler : son nom (qu'on touche pour choisir le son), son
-// heure (qu'on touche pour ouvrir l'horloge d'Android) et son interrupteur.
+// Une prière à rappeler : son nom (qui ouvre la page de la prière : son,
+// vibreur, décalage solaire), son heure (qui ouvre l'horloge d'Android) et
+// son interrupteur.
 export function LigneRappel({
+  priere,
   nom,
   rappel,
   vibreurPossible,
@@ -29,42 +31,18 @@ export function LigneRappel({
   onActiver,
   solaire,
 }: Props) {
-  const [ouvert, setOuvert] = useState(false)
   const champ = useRef<HTMLInputElement>(null)
-  const choix = useId()
+  const { pathname } = useLocation()
   const { actif, heure, son, vibreur } = rappel
-
-  const basculer = () => {
-    if (actif) return onChanger({ actif: false })
-    // L'office des lectures n'a pas d'heure : on lui propose 6 h 30, que
-    // l'horloge ouverte aussitôt permet de changer.
-    if (!heure) {
-      onChanger({ actif: true, heure: HEURE_PROPOSEE_LECTURES })
-      try {
-        champ.current?.showPicker()
-      } catch {
-        // Sans horloge (navigateur ancien), l'heure se règle en touchant « 6 h 30 ».
-      }
-    } else onChanger({ actif: true })
-    onActiver()
-  }
-
-  const changerHeure = (valeur: string) => {
-    const [heures, minutes] = valeur.split(':').map(Number)
-    if (Number.isInteger(heures) && Number.isInteger(minutes))
-      onChanger({ heure: { heures, minutes } })
+  const page = {
+    to: `/reglages/rappels/${priere}`,
+    state: { parente: pathname } satisfies DepuisParente,
   }
 
   return (
     <li className="rappel" data-actif={actif ? 'oui' : 'non'}>
       <div className="rappel-ligne">
-        <button
-          className="rappel-nom"
-          type="button"
-          aria-expanded={ouvert}
-          aria-controls={ouvert ? choix : undefined}
-          onClick={() => setOuvert(!ouvert)}
-        >
+        <Link className="rappel-nom" {...page}>
           <span className="rappel-priere">
             {nom}
             {solaire?.repere && ` · ${solaire.repere}`}
@@ -73,19 +51,18 @@ export function LigneRappel({
             <span className="rappel-son">
               {nomDuSon(son)}
               {/* Insécables : le point médian ne reste jamais seul en fin de ligne. */}
-              {vibreurPossible && (vibreur ? ' · vibreur' : ' · sans vibreur')}
+              {vibreurPossible && (vibreur ? ' · vibreur' : ' · sans vibreur')}
             </span>
           )}
-        </button>
+        </Link>
         {solaire ? (
-          <button
+          <Link
             className="rappel-heure"
-            type="button"
+            {...page}
             aria-label={`${nom}, heure solaire${solaire.heure ? `, ${ecrireHeureRappel(solaire.heure)}` : ''}`}
-            onClick={solaire.onOuvrir}
           >
             {solaire.heure ? ecrireHeureRappel(solaire.heure) : '—'}
-          </button>
+          </Link>
         ) : (
           <label className="rappel-heure">
             <span aria-hidden="true">{heure ? ecrireHeureRappel(heure) : '—'}</span>
@@ -94,7 +71,10 @@ export function LigneRappel({
               type="time"
               aria-label={`${nom}, heure`}
               value={versChamp(heure)}
-              onChange={(e) => changerHeure(e.target.value)}
+              onChange={(e) => {
+                const choisie = versHeure(e.target.value)
+                if (choisie) onChanger({ heure: choisie })
+              }}
             />
           </label>
         )}
@@ -104,22 +84,13 @@ export function LigneRappel({
           role="switch"
           aria-checked={actif}
           aria-label={`${nom}, rappel`}
-          onClick={basculer}
+          onClick={() => basculerRappel(rappel, onChanger, onActiver, champ.current)}
         >
           <span className="interrupteur-piste" aria-hidden="true">
             <span className="interrupteur-curseur" />
           </span>
         </button>
       </div>
-      {ouvert && (
-        <ChoixSon
-          id={choix}
-          nom={nom}
-          rappel={rappel}
-          vibreurPossible={vibreurPossible}
-          onChanger={onChanger}
-        />
-      )}
     </li>
   )
 }

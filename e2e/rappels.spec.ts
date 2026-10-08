@@ -1,6 +1,5 @@
 import { expect, type Page } from '@playwright/test'
 import {
-  deplierReglages,
   preparer,
   servirAelf,
   simulerTelephone,
@@ -22,22 +21,24 @@ test.beforeEach(async ({ page }) => {
 })
 
 async function ouvrirRappels(page: Page) {
-  await page.goto('/reglages')
-  await deplierReglages(page, 'Rappels')
+  await page.goto('/reglages/rappels')
 }
 
 const interrupteur = (page: Page, nom: string) =>
   page.getByRole('switch', { name: `${nom}, rappel` })
 const programmees = async (page: Page) => (await telephone(page)).programmees
 const dialogue = (page: Page, titre: string) => page.getByRole('dialog', { name: titre })
+const ligneRappels = (page: Page) => page.getByRole('link', { name: /^Rappels/ })
+const fermer = (page: Page) => page.getByRole('button', { name: 'Fermer', exact: true }).click()
 
 test('par défaut : aucun rappel, les heures du PRD, l’office des lectures sans heure', async ({
   page,
 }) => {
   await simulerTelephone(page, { accord: 'granted' })
   await page.goto('/reglages')
-  await expect(page.getByRole('button', { name: /^Rappels/ })).toContainText('Aucun rappel')
-  await deplierReglages(page, 'Rappels')
+  await expect(ligneRappels(page)).toContainText('Aucun rappel')
+  await ligneRappels(page).click()
+  await expect(page).toHaveURL('/reglages/rappels')
   const lignes = page.locator('.rappel')
   await expect(lignes.locator('.rappel-priere')).toHaveText([
     'Office des lectures',
@@ -96,8 +97,11 @@ test('activer les laudes : l’accord, la minute près, puis un mois de rappels'
     'demande d’accord',
     'page « Alarmes et rappels »',
   ])
-  await expect(page.getByRole('button', { name: /^Rappels/ })).toContainText('Laudes')
   await expect(page.locator('.rappel').nth(1)).toContainText('Cloche Marcel · vibreur')
+  // Ouverte directement, la page Rappels remonte aux Réglages, qui la résument.
+  await fermer(page)
+  await expect(page).toHaveURL('/reglages')
+  await expect(ligneRappels(page)).toContainText('Laudes')
 })
 
 test('l’office des lectures, activé, propose 6 h 30 et ouvre la journée avant les laudes', async ({
@@ -258,7 +262,7 @@ test('guide de batterie puis démarrage automatique sur un Xiaomi, puis les avis
     .poll(async () => (await telephone(page)).journal.filter((j) => j === 'démarrage automatique'))
     .toHaveLength(2)
   // L'avis de batterie remplace le lien du guide.
-  await expect(page.getByRole('button', { name: /Rappels bloqués/ })).toHaveCount(0)
+  await expect(page.getByRole('link', { name: /Rappels bloqués/ })).toHaveCount(0)
 })
 
 test('Xiaomi bien réglé : ni guide ni avis, le lien reste', async ({ page }) => {
@@ -272,9 +276,22 @@ test('Xiaomi bien réglé : ni guide ni avis, le lien reste', async ({ page }) =
   await expect.poll(async () => (await programmees(page)).length).toBe(30)
   await expect(page.getByRole('dialog')).toHaveCount(0)
   await expect(page.locator('.rappels-avis')).toHaveCount(0)
-  await page.getByRole('button', { name: 'Rappels bloqués ? Régler la batterie ›' }).click()
-  await dialogue(page, 'Sur un Xiaomi').getByRole('button', { name: 'Plus tard' }).click()
+  // Le guide de batterie est une page (2026-10-08), même texte que la fenêtre.
+  await page.getByRole('link', { name: 'Rappels bloqués ? Régler la batterie ›' }).click()
+  await expect(page).toHaveURL('/reglages/rappels/batterie')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sur un Xiaomi')
+  await expect(page.locator('main')).toContainText(
+    'L’économiseur de batterie peut bloquer les rappels. Dans la page qui va s’ouvrir :',
+  )
+  await expect(page.locator('main')).toContainText('Economiseur de batterie : Aucune restriction')
   await expect(page.getByRole('dialog')).toHaveCount(0)
+  await page.getByRole('button', { name: 'Plus tard' }).click()
+  await expect(page).toHaveURL('/reglages/rappels')
+  // « Ouvrir la page » ouvre la fiche de l'app, puis ramène aux rappels.
+  await page.getByRole('link', { name: 'Rappels bloqués ? Régler la batterie ›' }).click()
+  await page.getByRole('button', { name: 'Ouvrir la page' }).click()
+  await expect(page).toHaveURL('/reglages/rappels')
+  expect((await telephone(page)).journal).toContain('fiche de l’app')
 })
 
 test('arrière-plan interdit, sur toute marque : un avis', async ({ page }) => {
@@ -316,37 +333,57 @@ test('ni guide ni lien de batterie sur une autre marque', async ({ page }) => {
   await interrupteur(page, 'Laudes').click()
   await expect.poll(async () => (await programmees(page)).length).toBe(30)
   await expect(page.getByRole('dialog')).toHaveCount(0)
-  await expect(page.getByRole('button', { name: /Régler la batterie/ })).toHaveCount(0)
+  await expect(page.getByRole('link', { name: /Régler la batterie/ })).toHaveCount(0)
 })
 
-test('choisir le son : écouter une cloche, le son du téléphone, un MP3, le vibreur', async ({
-  page,
-}) => {
-  await simulerTelephone(page, { accord: 'granted' })
+test('la page de la prière : le rappel, l’heure, le son, le vibreur', async ({ page }) => {
+  await simulerTelephone(page, { accord: 'prompt', reponse: 'granted' })
   await ouvrirRappels(page)
-  await interrupteur(page, 'Chapelet').click()
+  // Le nom de la prière ouvre sa page ; › le dit.
   const ligne = page.locator('.rappel').last()
-  await expect(ligne).toContainText('Angélus de village · vibreur')
-  await ligne.locator('.rappel-nom').click()
+  await ligne.getByRole('link', { name: /^Chapelet/ }).click()
+  await expect(page).toHaveURL('/reglages/rappels/chapelet')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chapelet')
+
+  // Activé ici, le rappel demande l'accord d'Android, comme sur sa ligne.
+  const rappel = page.getByRole('switch', { name: 'Rappel', exact: true })
+  await expect(rappel).toHaveAttribute('aria-checked', 'false')
+  await rappel.click()
+  await dialogue(page, 'Recevoir les rappels').getByRole('button', { name: 'Continuer' }).click()
+  await expect(rappel).toHaveAttribute('aria-checked', 'true')
+  await page.getByLabel('Chapelet, heure').fill('20:45')
+
   const sons = page.getByRole('radiogroup', { name: 'Son, Chapelet' })
   await expect(sons.getByRole('radio', { name: 'Angélus de village' })).toBeChecked()
-
   await sons.getByRole('button', { name: 'Ecouter Bourdon de Notre-Dame' }).click()
   await expect
     .poll(async () => (await telephone(page)).journal)
     .toContain('écouter bourdon_notre_dame')
-
   await sons.getByRole('radio', { name: 'Son du téléphone' }).check()
-  await expect(ligne.locator('.rappel-son')).toHaveText('Son du téléphone · vibreur')
-
   await sons.getByRole('radio', { name: 'Choisir un MP3…' }).click()
   await expect(sons.getByRole('radio', { name: 'Mon MP3.mp3' })).toBeChecked()
-  await ligne.getByRole('switch', { name: 'Vibreur' }).click()
-  await expect(ligne.locator('.rappel-son')).toHaveText('Mon MP3.mp3 · sans vibreur')
+  await page.getByRole('switch', { name: 'Vibreur' }).click()
   await expect
     .poll(async () => (await programmees(page))[0]?.canal)
     .toMatch(/^rappel-mp3-[a-z0-9]+-sans-vibreur$/)
   expect((await telephone(page)).canaux).toEqual([(await programmees(page))[0].canal])
+  expect(new Date((await programmees(page))[0].quand)).toEqual(new Date(2026, 9, 7, 20, 45))
+
+  // La croix remonte aux rappels : la ligne dit le son, l'heure et l'état.
+  await fermer(page)
+  await expect(page).toHaveURL('/reglages/rappels')
+  await expect(ligne.locator('.rappel-son')).toHaveText('Mon MP3.mp3 · sans vibreur')
+  await expect(ligne.locator('.rappel-heure span')).toHaveText('20 h 45')
+  await expect(interrupteur(page, 'Chapelet')).toHaveAttribute('aria-checked', 'true')
+})
+
+test('l’office des lectures, activé sur sa page, propose 6 h 30', async ({ page }) => {
+  await simulerTelephone(page, { accord: 'granted' })
+  await page.goto('/reglages/rappels/lectures')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Office des lectures')
+  await expect(page.locator('.rappel-page-heure')).toContainText('—')
+  await page.getByRole('switch', { name: 'Rappel', exact: true }).click()
+  await expect(page.locator('.rappel-page-heure')).toContainText('6 h 30')
 })
 
 test('réinitialiser l’app annule les rappels confiés à Android', async ({ page }) => {
@@ -368,10 +405,9 @@ test('réinitialiser l’app annule les rappels confiés à Android', async ({ p
       ),
     ),
   )
-  await page.getByRole('button', { name: 'Réinitialiser l’app' }).click()
-  await dialogue(page, 'Réinitialiser l’app ?')
-    .getByRole('button', { name: 'Réinitialiser', exact: true })
-    .click()
+  await fermer(page)
+  await page.getByRole('link', { name: 'Réinitialiser l’app' }).click()
+  await page.getByRole('button', { name: 'Réinitialiser', exact: true }).click()
   await expect(page.getByRole('link', { name: 'Menu' })).toBeVisible()
   expect(await page.evaluate(() => sessionStorage.getItem('programmees-au-depart'))).toBe('0')
 })

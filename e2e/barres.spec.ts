@@ -6,7 +6,6 @@ import {
   commencer,
   defilementArrete,
   derniereLigneVisible,
-  deplierReglages,
   preparer,
   servirAelf,
   simulerTelephone,
@@ -85,6 +84,15 @@ for (const [nom, chemin] of [
   ['seuil', '/chapelet'],
   ['menu', '/menu'],
   ['réglages', '/reglages'],
+  ['réglages · rappels', '/reglages/rappels'],
+  ['réglages · page d’une prière', '/reglages/rappels/laudes'],
+  ['réglages · batterie', '/reglages/rappels/batterie'],
+  ['réglages · chapelet', '/reglages/chapelet'],
+  ['réglages · prières du chapelet', '/reglages/chapelet/prieres'],
+  ['réglages · offices', '/reglages/offices'],
+  ['réglages · zone liturgique', '/reglages/offices/zone'],
+  ['réglages · affichage', '/reglages/affichage'],
+  ['réglages · réinitialiser', '/reglages/reinitialiser'],
   ['à propos', '/a-propos'],
   ['lieu des heures solaires', '/lieu'],
   ['accueil', '/'],
@@ -237,8 +245,7 @@ test('Litanies : rien sous les barres, le toucher descend entre elles', async ({
 test('rappels : la fenêtre d’autorisation s’écarte des barres d’Android', async ({ page }) => {
   await simulerTelephone(page, { accord: 'prompt' })
   await preparer(page)
-  await page.goto('/reglages')
-  await deplierReglages(page, 'Rappels')
+  await page.goto('/reglages/rappels')
   await verifierBarres(page)
   await page.getByRole('switch', { name: 'Laudes, rappel' }).click()
   const fenetre = page.getByRole('dialog', { name: 'Recevoir les rappels' })
