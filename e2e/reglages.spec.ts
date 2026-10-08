@@ -190,7 +190,7 @@ test.describe('déroulé selon les réglages', () => {
     await expect(titrePriere(page)).toHaveText('Salve Regina')
     await expect(page.getByTestId('mystere')).toHaveCount(0)
     await toucher(page)
-    await expect(page.getByRole('heading', { level: 2 })).toHaveText('Chapelet terminé')
+    await expect(page.getByTestId('fin-chapelet')).toBeVisible()
   })
 
   test('sans « Ô mon Jésus », le Gloire au Père mène à la dizaine suivante', async ({ page }) => {
@@ -206,7 +206,7 @@ test.describe('déroulé selon les réglages', () => {
     await avancer(page, dizaine(6) - 1)
     await expect(titrePriere(page)).toHaveText('Ô mon Jésus')
     await toucher(page)
-    await expect(page.getByRole('heading', { level: 2 })).toHaveText('Chapelet terminé')
+    await expect(page.getByTestId('fin-chapelet')).toBeVisible()
   })
 
   // Prières vocales seules : rien du mystère (choix du porteur du projet, 2026-10-06).
@@ -243,7 +243,7 @@ test.describe('déroulé selon les réglages', () => {
     await avancer(page, attendu(combinaison) - 1)
     await expect(titrePriere(page)).toHaveText('Salve Regina')
     await toucher(page)
-    await expect(page.getByRole('heading', { level: 2 })).toHaveText('Chapelet terminé')
+    await expect(page.getByTestId('fin-chapelet')).toBeVisible()
   })
 })
 
@@ -404,7 +404,7 @@ test.describe('reprise d’un chapelet interrompu', () => {
   test('un chapelet terminé ne se reprend pas', async ({ page }) => {
     await commencer(page, '/chapelet', { reglages: { salveRegina: false } })
     await avancer(page, dizaine(6))
-    await expect(page.getByRole('heading', { level: 2 })).toHaveText('Chapelet terminé')
+    await expect(page.getByTestId('fin-chapelet')).toBeVisible()
     await page.goBack()
     await expect(page.getByRole('button', { name: 'Commencer le chapelet' })).toBeVisible()
   })

@@ -4,7 +4,6 @@ import { usePincement } from '../affichage/usePincement'
 import { AideGestes } from '../chapelet/AideGestes'
 import { Annonce } from '../chapelet/Annonce'
 import { ChapeletDessine } from '../chapelet/ChapeletDessine'
-import { etiquetteDuChapelet } from '../chapelet/libelles'
 import { CHAPELET_MARIAL } from '../chapelet/definition'
 import { derouler, type Pas } from '../chapelet/deroule'
 import { disposer } from '../chapelet/disposition'
@@ -18,10 +17,14 @@ import { dizaineCommencee, rangDuPassage } from '../chapelet/rotation'
 import { Seuil } from '../chapelet/Seuil'
 import { serieDuJour } from '../chapelet/serieDuJour'
 import { vibrationEntre } from '../chapelet/vibration'
+import { BoutonAide } from '../composants/BoutonAide'
+import { avecExposants } from '../composants/Exposants'
 import { IndiceSuite } from '../composants/IndiceSuite'
 import { LigneFermer } from '../composants/LigneFermer'
-import { useRetour } from '../composants/retour'
+import { useRetour, useRetourAccueil } from '../composants/retour'
 import { useSuiteCachee } from '../composants/suiteCachee'
+import { dateDuJour, dateLisible } from '../office/dates'
+import { Repere } from '../office/Repere'
 import { SERIES, type SerieId } from '../recueil/mysteres'
 import { PASSAGES } from '../recueil/passages'
 import type { PriereId } from '../recueil/prieres'
@@ -69,10 +72,10 @@ export function EcranChapelet() {
         }}
       />
     )
-  return <Chapelet key={serie} serie={serie} date={aujourdhui} choisie={serie !== duJour} />
+  return <Chapelet key={serie} serie={serie} date={aujourdhui} />
 }
 
-function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisie: boolean }) {
+function Chapelet({ serie, date }: { serie: SerieId; date: Date }) {
   const [reglages] = useState(lireReglages)
   const compact = reglages.affichage === 'compact'
   const deroule = useMemo(() => derouler(CHAPELET_MARIAL, optionsDuDeroule(reglages)), [reglages])
@@ -96,6 +99,7 @@ function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisi
   const { fin, cachee } = useSuiteCachee()
   const pincer = usePincement<HTMLElement>()
   const retour = useRetour()
+  const revenirAccueil = useRetourAccueil()
 
   const nombre = deroule.pas.length
   const termine = index === nombre
@@ -173,7 +177,10 @@ function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisi
             série ou on reprend (décision du porteur du projet, 2026-10-08). Un
             toucher sur elle n'avance pas le chapelet (estInteractif). */}
         <LigneFermer onFermer={retour}>
-          <p className="etiquette">{etiquetteDuChapelet(!choisie, date)}</p>
+          <p className="ligne-date">{avecExposants(dateLisible(dateDuJour(date)))}</p>
+          {/* En face de la croix, « ? » rouvre l'aide aux gestes, comme dans
+              l'office (2026-10-08). */}
+          <BoutonAide libelle="Aide aux gestes" onClick={() => setAideOuverte(true)} />
         </LigneFermer>
         <h1>{SERIES[serie].titre}</h1>
       </header>
@@ -190,11 +197,13 @@ function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisi
       )}
 
       {!pas ? (
-        <section className="fin" data-testid="priere">
-          <h2>Chapelet terminé</h2>
-          <p className="fin-texte">{SERIES[serie].titre} · cinq dizaines</p>
-          <button className="btn btn-secondaire" type="button" onClick={() => setIndex(0)}>
-            Recommencer
+        // La fin comme celle de l'office : une perle d'or qui ferme, puis le
+        // chemin de l'accueil, sans mot de plus ni « Recommencer » qu'un
+        // toucher machinal relancerait (choix du porteur du projet, 2026-10-08).
+        <section className="fin" data-testid="fin-chapelet" aria-label="Fin du chapelet">
+          <Repere />
+          <button className="lien-discret" type="button" onClick={revenirAccueil}>
+            Revenir à l’accueil
           </button>
         </section>
       ) : estPriere(pas) ? (

@@ -88,7 +88,7 @@ test('mode compact, prière et passage dépliés', async ({ page }) => {
 test('écran de fin du chapelet', async ({ page }) => {
   await commencer(page)
   await avancer(page, 78)
-  await expect(page.getByRole('heading', { level: 2 })).toHaveText('Chapelet terminé')
+  await expect(page.getByTestId('fin-chapelet')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Fermer', exact: true })).toBeVisible()
   expect(await violationsGraves(page)).toEqual([])
 })

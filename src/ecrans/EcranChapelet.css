@@ -24,12 +24,20 @@
   margin: var(--esp-xs) 0 0;
 }
 
-.priere,
-.fin {
+.priere {
   text-align: center;
   margin-top: var(--esp-md);
   padding-top: var(--esp-md);
   border-top: 1px solid var(--filet);
+  animation: fondu 0.22s ease-out;
+}
+
+/* La fin : la perle d'or entre ses deux filets tient lieu du filet de la
+   prière, puis « Revenir à l’accueil » au centre, comme à la fin d'un office. */
+.fin {
+  margin-top: var(--esp-lg);
+  text-align: center;
+  cursor: default;
   animation: fondu 0.22s ease-out;
 }
 
@@ -80,8 +88,7 @@
   justify-self: end;
 }
 
-.priere-tete h2,
-.fin h2 {
+.priere-tete h2 {
   font-family: var(--display);
   font-weight: 400;
   font-size: 28px;
@@ -138,16 +145,6 @@
   margin: var(--esp-xl) 0 0;
   text-align: center;
   font-size: 16px;
-  font-style: italic;
-  color: var(--sepia);
-}
-
-.fin {
-  cursor: default;
-}
-
-.fin-texte {
-  margin: var(--esp-xs) 0 var(--esp-lg);
   font-style: italic;
   color: var(--sepia);
 }

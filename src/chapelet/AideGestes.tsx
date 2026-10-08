@@ -4,7 +4,7 @@ import './AideGestes.css'
 
 // L'aide aux gestes, par-dessus le signe de croix, pour qu'un nouveau priant
 // sache avancer et revenir. Elle revient à chaque chapelet tant que « Ne plus
-// afficher » n'est pas coché.
+// afficher » n'est pas coché ; « ? », en face de la croix, la rouvre.
 export function AideGestes({ onFermer }: { onFermer: () => void }) {
   const fenetre = useRef<HTMLDialogElement>(null)
   const compris = useRef<HTMLButtonElement>(null)
@@ -59,6 +59,14 @@ export function AideGestes({ onFermer }: { onFermer: () => void }) {
           <span>
             A l’annonce d’un mystère, <strong>touchez la grosse perle</strong> pour commencer la
             dizaine.
+          </span>
+        </li>
+        <li>
+          <svg viewBox="0 0 40 40" aria-hidden="true">
+            <path d="M17 17L7 7M7 15V7h8M23 23l10 10M33 25v8h-8" />
+          </svg>
+          <span>
+            <strong>Ecartez deux doigts</strong> pour agrandir le texte.
           </span>
         </li>
       </ul>

@@ -20,7 +20,7 @@
   align-self: start;
 }
 
-/* L'étiquette du chapelet, coupée en deux lignes à côté de la croix : serrée. */
-.ligne-fermer > .etiquette {
-  line-height: 1.35;
+/* Au chapelet, « ? » occupe la colonne de droite, en face de la croix. */
+.ligne-fermer > .bouton-aide {
+  grid-column: 3;
 }

@@ -50,6 +50,7 @@ export interface Reglages {
   accents?: boolean
   prieresEntieres?: boolean
   signalerAjouts?: boolean
+  tailleTexte?: number
 }
 
 // Les parcours ne dépendent pas du réseau : l'AELF est remplacée par ses

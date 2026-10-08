@@ -191,7 +191,6 @@ test.describe('choix de la série', () => {
       await expect(lien).toContainText(jours)
       await lien.click()
       await expect(page.getByRole('heading', { level: 1 })).toHaveText(serie)
-      await expect(page.getByText(/^Chapelet\s·\s/)).toBeVisible()
       await page.getByRole('button', { name: 'Commencer le chapelet' }).click()
       // Une touche pressée avant que l'écran soit prêt serait perdue.
       await expect(titrePriere(page)).toHaveText('Signe de croix')
@@ -207,7 +206,7 @@ test.describe('choix de la série', () => {
     await expect(lien).toContainText('Le lundi et le samedi · aujourd’hui')
     await lien.click()
     await expect(page).toHaveURL(/\/chapelet$/)
-    await expect(page.getByText(/^Chapelet\sdu\sjour\s·\s/)).toBeVisible()
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mystères joyeux')
   })
 
   test('changer plusieurs fois de mystères n’empile pas les seuils : un retour suffit', async ({
@@ -263,6 +262,24 @@ test.describe('aide aux gestes', () => {
     await page.reload()
     await expect(titrePriere(page)).toHaveText('Je crois en Dieu')
     await expect(page.getByRole('dialog')).toHaveCount(0)
+  })
+
+  // Comme l'office : « ? » en haut à droite rouvre l'aide, qui suit la taille
+  // du texte et dit le pincement (choix du porteur du projet, 2026-10-08).
+  test('« ? » la rouvre, même écartée, à la taille du texte', async ({ page }) => {
+    await commencer(page, '/chapelet', { reglages: { tailleTexte: 24 } })
+    const aide = page.getByRole('dialog', { name: 'Prier avec l’app' })
+    await expect(aide).toHaveCount(0)
+    await page.getByRole('button', { name: 'Aide aux gestes' }).click()
+    await expect(aide).toBeVisible()
+    await expect(aide.getByRole('button', { name: 'J’ai compris' })).toBeFocused()
+    await expect(aide.getByRole('listitem')).toHaveCount(5)
+    await expect(aide).toContainText('Ecartez deux doigts pour agrandir le texte.')
+    await expect(aide.getByRole('listitem').first()).toHaveCSS('font-size', '19px')
+    await aide.getByRole('button', { name: 'J’ai compris' }).click()
+    await expect(aide).toHaveCount(0)
+    // Toucher « ? » n'a pas fait avancer le chapelet.
+    await expect(titrePriere(page)).toHaveText('Signe de croix')
   })
 })
 

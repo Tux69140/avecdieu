@@ -1,14 +1,16 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
+import { avecExposants } from '../composants/Exposants'
 import { IndiceSuite } from '../composants/IndiceSuite'
 import { Interrupteur } from '../composants/Interrupteur'
 import { LigneFermer } from '../composants/LigneFermer'
 import { useRetour } from '../composants/retour'
 import { useSuiteCachee } from '../composants/suiteCachee'
+import { dateDuJour, dateLisible } from '../office/dates'
 import { usePeutVibrer } from '../telephone/retours'
 import { SERIES, type SerieId } from '../recueil/mysteres'
 import { ChoixAffichage } from './ChoixAffichage'
-import { AIDE_VIBRATIONS, etiquetteDuChapelet } from './libelles'
+import { AIDE_VIBRATIONS } from './libelles'
 import { lireReglages, modifierReglages, type Reglages } from './reglages'
 import { libelleReprise, type ChapeletEnCours } from './reprise'
 import { joursDeLaSerie } from './serieDuJour'
@@ -42,7 +44,7 @@ export function Seuil({ serie, duJour, date, enCours, onCommencer, onRecommencer
         {/* La croix sur la ligne de la date, comme dans un office : le titre
             de la série garde sa place, juste dessous. */}
         <LigneFermer onFermer={retour}>
-          <p className="etiquette">{etiquetteDuChapelet(serie === duJour, date)}</p>
+          <p className="ligne-date">{avecExposants(dateLisible(dateDuJour(date)))}</p>
         </LigneFermer>
         <h1>{SERIES[serie].titre}</h1>
       </header>

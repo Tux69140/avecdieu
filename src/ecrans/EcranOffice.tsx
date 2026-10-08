@@ -6,6 +6,7 @@ import { textesEnregistres } from '../aelf/reserve'
 import { usePincement } from '../affichage/usePincement'
 import { lireReglages } from '../chapelet/reglages'
 import { saintDuJour } from '../accueil/bandeau'
+import { BoutonAide } from '../composants/BoutonAide'
 import { positionRetenue } from '../composants/defilement'
 import { avecExposants } from '../composants/Exposants'
 import { BoutonFermer, LienMenu } from '../composants/Icones'
@@ -204,7 +205,7 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
               le menu : la prière commence haut sur l'écran. */}
           <div className="office-barre">
             <BoutonFermer onClick={retour} />
-            <p className="office-date">{avecExposants(dateLisible(date))}</p>
+            <p className="office-date ligne-date">{avecExposants(dateLisible(date))}</p>
             <LienMenu depuis={date} office={nom} />
           </div>
           {/* Le saint du jour en petit à gauche du titre, qui reste centré, et
@@ -218,15 +219,11 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
               </p>
             )}
             {office && (
-              <button
+              <BoutonAide
                 className="office-aide"
-                type="button"
-                aria-haspopup="dialog"
-                aria-label="Aide à la lecture"
+                libelle="Aide à la lecture"
                 onClick={() => setAideOuverte(true)}
-              >
-                <span aria-hidden="true">?</span>
-              </button>
+              />
             )}
           </div>
           {/* Les perles, comme dans le bandeau : un toucher ouvre le sommaire. */}

@@ -18,7 +18,7 @@ test('chaque prière vibre court ; chaque annonce, le Salve Regina et la fin vib
   page,
 }) => {
   for (let i = 0; i < PRIERES; i++) await suivant(page)
-  await expect(page.getByRole('heading', { level: 2 })).toHaveText('Chapelet terminé')
+  await expect(page.getByTestId('fin-chapelet')).toBeVisible()
 
   const vibrations = (await journal(page)).filter((e) => e.startsWith('vibre'))
   // La i-ième vibration marque l'arrivée sur la prière d'index i + 1.
@@ -48,10 +48,11 @@ test('l’écran reste allumé pendant le chapelet et redevient libre à la fin'
   await expect.poll(() => journal(page)).toEqual(['écran allumé'])
 
   for (let i = 0; i < PRIERES; i++) await suivant(page)
-  await expect(page.getByRole('heading', { level: 2 })).toHaveText('Chapelet terminé')
+  await expect(page.getByTestId('fin-chapelet')).toBeVisible()
   await expect.poll(() => journal(page).then((j) => j.at(-1))).toBe('écran libre')
 
-  await page.getByRole('button', { name: 'Recommencer' }).click()
+  // Revenir au Salve Regina rallume l'écran.
+  await page.keyboard.press('ArrowLeft')
   await expect.poll(() => journal(page).then((j) => j.at(-1))).toBe('écran allumé')
   const etats = (await journal(page)).filter((e) => !e.startsWith('vibre'))
   expect(etats).toEqual(['écran allumé', 'écran libre', 'écran allumé'])

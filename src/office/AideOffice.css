@@ -12,11 +12,8 @@
   gap: 10px;
 }
 
-/* La taille suit celle du texte à prier, d'un cran plus petite, jusqu'à
-   19 px : qui a agrandi le texte doit pouvoir lire l'aide. Au-delà d'un
-   écran, la fenêtre défile. */
+/* La taille suit celle du texte à prier, comme au chapelet (AideGestes.css). */
 .aide-office li {
-  font-size: clamp(15px, calc(var(--taille-priere) - 3px), 19px);
   line-height: 1.35;
 }
 

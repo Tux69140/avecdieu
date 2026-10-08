@@ -93,10 +93,10 @@ test('réciter un chapelet complet, toucher par toucher, sans quitter l’app', 
     await suivant(page)
   }
 
-  await expect(page.getByRole('heading', { level: 2 })).toHaveText('Chapelet terminé')
+  await expect(page.getByTestId('fin-chapelet')).toBeVisible()
   // Toucher l'écran de fin ne fait rien.
   await toucher(page)
-  await expect(page.getByRole('heading', { level: 2 })).toHaveText('Chapelet terminé')
+  await expect(page.getByTestId('fin-chapelet')).toBeVisible()
   expect(requetesExternes).toEqual([])
 })
 
@@ -126,24 +126,31 @@ test('glisser au tout début ne fait rien', async ({ page }) => {
 test('glisser depuis l’écran de fin revient au Salve Regina', async ({ page }) => {
   await commencer(page)
   for (let i = 0; i < DEROULE.length; i++) await suivant(page)
-  await expect(page.getByRole('heading', { level: 2 })).toHaveText('Chapelet terminé')
+  await expect(page.getByTestId('fin-chapelet')).toBeVisible()
   await glisser(page, 160)
   await verifierPas(page, DEROULE.at(-1)!, DEROULE.length - 1)
 })
 
-test('glisser en partant du bouton Recommencer revient aussi en arrière', async ({ page }) => {
+test('glisser en partant de « Revenir à l’accueil » revient aussi en arrière', async ({ page }) => {
   await commencer(page)
   for (let i = 0; i < DEROULE.length; i++) await suivant(page)
-  const bouton = (await page.getByRole('button', { name: 'Recommencer' }).boundingBox())!
-  await glisser(page, 160, bouton.y + bouton.height / 2)
+  const lien = (await page.getByRole('button', { name: 'Revenir à l’accueil' }).boundingBox())!
+  await glisser(page, 160, lien.y + lien.height / 2)
   await verifierPas(page, DEROULE.at(-1)!, DEROULE.length - 1)
 })
 
-test('le bouton Recommencer repart du signe de croix', async ({ page }) => {
+// La fin comme celle de l'office : une perle d'or, puis le chemin de
+// l'accueil, sans titre ni « Recommencer » (choix du porteur du projet, 2026-10-08).
+test('la fin du chapelet : une perle d’or, puis « Revenir à l’accueil »', async ({ page }) => {
   await commencer(page)
   for (let i = 0; i < DEROULE.length; i++) await suivant(page)
-  await page.getByRole('button', { name: 'Recommencer' }).click()
-  await verifierPas(page, DEROULE[0], 0)
+  const fin = page.getByTestId('fin-chapelet')
+  await expect(fin.locator('.repere-perle')).toHaveAttribute('data-couleur', 'or')
+  await expect(fin.getByRole('heading')).toHaveCount(0)
+  await expect(page.getByRole('button', { name: /Recommencer/ })).toHaveCount(0)
+  await page.getByRole('button', { name: 'Revenir à l’accueil' }).click()
+  await expect(page).toHaveURL('/')
+  await expect(page.getByTestId('bandeau')).toBeVisible()
 })
 
 test('le Credo s’affiche en strophes, comme dans le recueil', async ({ page }) => {

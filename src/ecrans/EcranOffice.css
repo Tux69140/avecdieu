@@ -18,15 +18,6 @@
   margin: 0 calc(-1 * var(--esp-sm));
 }
 
-.office-date {
-  margin: 0;
-  font-family: var(--sc);
-  font-weight: 600;
-  font-size: 15px;
-  letter-spacing: 0.06em;
-  color: var(--sepia);
-}
-
 /* Le titre au centre, le saint du jour en petit à gauche, « ? » à droite,
    qui rouvre l'aide (choix du porteur du projet, 2026-10-08). Les deux
    colonnes de côté, de même largeur, gardent le titre centré. */
@@ -57,34 +48,12 @@
   text-wrap: balance;
 }
 
-/* Un petit « ? » cerclé de sépia, 48 px à toucher, sous le ☰. */
+/* « ? » sous le ☰. */
 .office-aide {
   grid-row: 1;
   grid-column: 3;
   justify-self: end;
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
   margin-right: calc(-1 * var(--esp-sm));
-  padding: 0;
-  border: none;
-  background: none;
-  cursor: pointer;
-}
-
-.office-aide span {
-  display: grid;
-  place-items: center;
-  width: 20px;
-  height: 20px;
-  border: 1.5px solid var(--sepia);
-  border-radius: 9999px;
-  font-family: var(--texte);
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1;
-  color: var(--sepia);
 }
 
 /* « Office des lectures » prend toute la ligne : le saint passe dessous, au

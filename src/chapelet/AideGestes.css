@@ -40,7 +40,10 @@
   grid-template-columns: 40px 1fr;
   gap: var(--esp-md);
   align-items: center;
-  font-size: 16px;
+  /* La taille suit celle du texte à prier, d'un cran plus petite, jusqu'à
+     19 px : qui a agrandi le texte doit pouvoir lire l'aide. Au-delà d'un
+     écran, la fenêtre défile. */
+  font-size: clamp(15px, calc(var(--taille-priere) - 3px), 19px);
   line-height: 1.4;
 }
 

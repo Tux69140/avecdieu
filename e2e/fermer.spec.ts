@@ -87,7 +87,12 @@ test('seuil du chapelet : la croix sur la ligne de la date, le titre dessous', a
   await preparer(page)
   await page.goto('/chapelet')
   await verifierCroix(page)
-  await verifierCentre(page, page.locator('.seuil-entete .etiquette'))
+  await verifierCentre(page, page.locator('.seuil-entete .ligne-date'))
+  // La date seule, sur une ligne, en sépia, comme dans l'office (2026-10-08).
+  const date = page.locator('.seuil-entete .ligne-date')
+  await expect(date).toHaveText('lundi 5 octobre')
+  await expect(date).toHaveCSS('color', 'rgb(107, 90, 72)')
+  expect((await date.boundingBox())!.height).toBeLessThan(30)
 })
 
 test('la même croix partout, office et chapelet compris', async ({ page }) => {
@@ -121,7 +126,7 @@ test('chapelet : la croix ramène au seuil, puis celle du seuil d’où il a ét
   const chapelet = page.locator('main.chapelet')
   await expect(chapelet).toHaveAttribute('data-pas', '0')
   await verifierCroix(page)
-  await verifierCentre(page, page.locator('.chapelet-entete .etiquette'))
+  await verifierCentre(page, page.locator('.chapelet-entete .ligne-date'))
   // Le toucher sur la croix ramène au seuil sans faire avancer le chapelet.
   const boite = (await croix(page).boundingBox())!
   await page.touchscreen.tap(boite.x + boite.width / 2, boite.y + boite.height / 2)
@@ -140,7 +145,7 @@ test('chapelet : la croix ramène au seuil, puis celle du seuil d’où il a ét
 test('écran de fin du chapelet : la croix ramène au seuil', async ({ page }) => {
   await commencer(page)
   await avancer(page, 78)
-  await expect(page.getByRole('heading', { level: 2 })).toHaveText('Chapelet terminé')
+  await expect(page.getByTestId('fin-chapelet')).toBeVisible()
   await croix(page).click()
   await expect(page.getByRole('button', { name: 'Commencer le chapelet' })).toBeVisible()
 })
