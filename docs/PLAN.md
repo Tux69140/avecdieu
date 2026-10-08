@@ -12,7 +12,7 @@ Décisions durables qui s'appliquent à toutes les phases :
   - `/office/<office>/<AAAA-MM-JJ>` : avec `<office>` ∈ `lectures | laudes | tierce | sexte | none | vepres | complies` (mêmes noms que l'API AELF)
   - `/chapelet` : chapelet du jour ; `/chapelet/<série>` : avec `<série>` ∈ `joyeux | lumineux | douloureux | glorieux` ; `/rosaire` : les quatre séries à la suite (phase 17)
   - `/priere/<prière>` : une prière seule ouverte par le menu (2026-10-08), avec `<prière>` ∈ `je-vous-salue-marie | notre-pere | credo | gloire-au-pere | salve-regina | je-confesse`
-  - `/reglages` ; `/lieu` (lieu des heures solaires, phase 12) ; `/menu` (ouvert par ☰ depuis le seuil) ; `/a-propos`
+  - `/reglages`, en pages emboîtées (2026-10-08) : `/reglages/rappels`, `/reglages/rappels/<prière>`, `/reglages/rappels/batterie`, `/reglages/chapelet`, `/reglages/chapelet/prieres`, `/reglages/offices`, `/reglages/offices/zone`, `/reglages/affichage`, `/reglages/reinitialiser` ; `/lieu` (lieu des heures solaires, phase 12) ; `/menu` (ouvert par ☰ depuis le seuil) ; `/a-propos`
   - Les notifications de rappel ouvrent directement ces routes.
 - **Modèles clés** :
   - `JourLiturgique` : date, zone, temps liturgique, semaine, fête, rang, couleur(s)
@@ -461,6 +461,14 @@ Décisions du porteur du projet (2026-10-08) :
 - Textes rédigés et validés le 2026-10-08, à figer tels quels.
 - **Litanies sur une seule page** qu'on fait défiler, une invocation par ligne, la réponse écrite seulement quand elle change (« — priez pour nous »).
 - **Réglages › Chapelet** : après « Ô mon Jésus », l'interrupteur « Intentions des trois premiers Je vous salue Marie » (aide « La foi, l’espérance, la charité. ») ; puis le sous-titre **Fin du chapelet**, dans l'ordre de la clôture : « Salve Regina » (interrupteur, ancien « Salve Regina à la fin ») ; « Litanies de la Sainte Vierge » (*En octobre · Toujours · Jamais*, aide « Octobre est le mois du Rosaire. ») ; « Oraison du Rosaire » (aide « Précédée du verset “Priez pour nous, sainte Mère de Dieu”. ») ; « Sous l’abri de votre miséricorde » ; « Prière à saint Joseph » (*En octobre · Toujours · Jamais*, aide « Demandée par Léon XIII pour le mois du Rosaire. »).
+- **Réglages en pages emboîtées** (le porteur refuse les rubriques repliées et les fenêtres dans les Réglages, 2026-10-08) : chaque › ouvre une page, la croix remonte d'un niveau (comme le retour d'Android). Arborescence validée :
+  - **Réglages** : Rappels › (résumé gardé, « ⚠ Rappels bloqués… »), Chapelet ›, Offices ›, Affichage ›, Réinitialiser l’app › (page avec l'explication complète et le bouton en bas, plus de fenêtre).
+  - **Rappels** : avis de blocage en tête ; Heures des prières *Fixes · Solaires* + « Lieu : … › » ; une ligne par prière (nom, heure, interrupteur), le nom ouvre la **page de la prière** (rappel, heure par l'horloge d'Android ou, en solaire, décalage et « Pas avant / Pas après », son, vibreur) ; « Rappels bloqués ? Régler la batterie › » devient une page.
+  - **Chapelet** : Prières du chapelet ›, Affichage des prières, Prier à plusieurs, Vibrations, Aide aux gestes.
+  - **Prières du chapelet** : Ouverture (intentions) ; Chaque dizaine (annonce, « Ô mon Jésus ») ; Fin du chapelet (Salve Regina, Litanies, Oraison du Rosaire, Sous l’abri, saint Joseph).
+  - **Offices** : Zone liturgique : France › (page : liste des zones, puis l'avertissement complet avant de valider) ; Accents, Prières courantes en entier, Signaler les ajouts, Consignes pour débuter, Aide à la lecture ; note hors connexion.
+  - **Affichage** : Taille du texte, Thème.
+  - Seule exception : les deux explications qui précèdent une autorisation d'Android (alarmes exactes, notifications) restent des fenêtres.
 - **« A propos »** : l'en-tête reste ouvert (version, deux phrases) ; dessous, quatre rubriques repliées comme les Réglages : Textes, **Chapelet et Rosaire** (nouvelle, texte validé : ordre de la fin = feuillets en usage en France, aucune règle officielle ; Litanies = texte du Saint-Siège avec les ajouts de 2018 et 2020, au vous ; en octobre, Litanies demandées par Léon XIII en 1883, *Supremi apostolatus officio*, et prière à saint Joseph en 1889, *Quamquam pluries*), Cloches des rappels, Heures solaires.
 - **Prières longues (Litanies, Salve Regina, saint Joseph…)** : un toucher qui arrête un défilement ne compte jamais ; tant que le bas de la page n'est pas affiché, un toucher fait descendre d'un écran (deux lignes gardées) ; le bas affiché, il passe à la prière suivante.
 
