@@ -59,6 +59,10 @@ export function resumerRappels(rappels: Rappels, solaires = false): string {
   return solaires ? `Heures solaires · ${resume}` : resume
 }
 
+// Le téléphone empêchera les rappels d'arriver : le résumé de la rubrique et
+// la ligne de l'accueil le disent, précédés de ⚠ (validé le 2026-10-08).
+export const RAPPELS_BLOQUES = 'Rappels bloqués par le téléphone'
+
 // Heures solaires (phase 12), libellés validés le 2026-10-07.
 
 // Ce qui suit le nom de l'office sur sa ligne : « Laudes · lever ».

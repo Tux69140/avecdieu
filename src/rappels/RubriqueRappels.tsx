@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { Bascule } from '../composants/Bascule'
 import { nommerLieu, type LieuChoisi } from '../lieu/lieu'
@@ -9,32 +9,16 @@ import {
   type ReglagesSolaires,
 } from '../office/heuresSolaires'
 import { dateDuJour } from '../office/dates'
-import {
-  accordNotifications,
-  demanderAccord,
-  minuteExacte,
-  ouvrirPageMinute,
-} from '../telephone/notifications'
+import { demanderAccord, ouvrirPageMinute } from '../telephone/notifications'
 import { usePeutVibrer } from '../telephone/retours'
-import {
-  blocages,
-  fabricant,
-  ouvrirDemarrageAutomatique,
-  ouvrirFicheApp,
-} from '../telephone/sonnerie'
+import { ouvrirDemarrageAutomatique, ouvrirFicheApp } from '../telephone/sonnerie'
 import { etapeSuivante, type Etape } from './autorisations'
-import { AvisRappels, type EtatAndroid } from './AvisRappels'
+import { AvisRappels } from './AvisRappels'
+import { avisDesRappels, type EtatAndroid } from './blocage'
 import { DialogueRappels } from './DialogueRappels'
 import { reprogrammerBientot } from './entretien'
 import { LigneRappel } from './LigneRappel'
-import {
-  aucunRappelActif,
-  noterDemande,
-  PRIERES_RAPPELEES,
-  type Priere,
-  type Rappel,
-  type Rappels,
-} from './reglages'
+import { noterDemande, PRIERES_RAPPELEES, type Priere, type Rappel, type Rappels } from './reglages'
 import { dansLeLieu, NOMS_PRIERES, REPERES_SOLAIRES } from './textes'
 import { VoletSolaire } from './VoletSolaire'
 import './RubriqueRappels.css'
@@ -45,6 +29,9 @@ interface Props {
   solaire: ReglagesSolaires
   lieu?: LieuChoisi
   onChangerSolaire: (changement: Partial<ReglagesSolaires>) => void
+  // Lu par l'écran des réglages, qui en tire aussi le résumé de la rubrique.
+  android?: EtatAndroid
+  relire: () => void
 }
 
 const HEURES = [
@@ -55,30 +42,20 @@ const HEURES = [
 const estSolaire = (priere: Priere): priere is OfficeSolaire =>
   (OFFICES_SOLAIRES as readonly string[]).includes(priere)
 
-// Ce qu'Android accorde, relu à l'ouverture et au retour de ses réglages.
-function useEtatAndroid(): [EtatAndroid | undefined, () => void] {
-  const [etat, setEtat] = useState<EtatAndroid>()
-  const relire = useCallback(() => {
-    Promise.all([accordNotifications(), minuteExacte(), fabricant(), blocages()]).then(
-      ([accord, exacte, marque, bloque]) => setEtat({ accord, exacte, marque, bloque }),
-    )
-  }, [])
-  useEffect(() => {
-    relire()
-    const auRetour = () => document.visibilityState === 'visible' && relire()
-    document.addEventListener('visibilitychange', auRetour)
-    return () => document.removeEventListener('visibilitychange', auRetour)
-  }, [relire])
-  return [etat, relire]
-}
-
 // La rubrique « Rappels » des réglages (phase 11) : une ligne par prière, les
 // avis quand Android ou la surcouche du fabricant bloque, et le guide de
 // batterie sur Xiaomi et Samsung.
 // En tête, le choix des heures fixes ou solaires (phase 12).
-export function RubriqueRappels({ rappels, onChanger, solaire, lieu, onChangerSolaire }: Props) {
+export function RubriqueRappels({
+  rappels,
+  onChanger,
+  solaire,
+  lieu,
+  onChangerSolaire,
+  android,
+  relire,
+}: Props) {
   const vibreurPossible = usePeutVibrer()
-  const [android, relire] = useEtatAndroid()
   const [etape, setEtape] = useState<Etape>()
   const [volet, setVolet] = useState<OfficeSolaire>()
   const naviguer = useNavigate()
@@ -112,11 +89,10 @@ export function RubriqueRappels({ rappels, onChanger, solaire, lieu, onChangerSo
     if (etape) await avancer(etape)
   }
 
-  const actifs = !aucunRappelActif(rappels)
+  const avis = avisDesRappels(rappels, android)
   // Le lien du guide, sauf quand l'avis de batterie le dit déjà.
   const guide =
-    (android?.marque === 'xiaomi' || android?.marque === 'samsung') &&
-    !(actifs && android.accord === 'accorde' && android.bloque.batterie)
+    (android?.marque === 'xiaomi' || android?.marque === 'samsung') && !avis.includes('batterie')
 
   return (
     <>
@@ -173,9 +149,9 @@ export function RubriqueRappels({ rappels, onChanger, solaire, lieu, onChangerSo
         />
       )}
 
-      {actifs && android && (
+      {avis.length > 0 && (
         <AvisRappels
-          android={android}
+          avis={avis}
           onMinuteOuverte={() => {
             relire()
             reprogrammerBientot()

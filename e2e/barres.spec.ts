@@ -99,6 +99,19 @@ for (const [nom, chemin] of [
   })
 }
 
+test('accueil, rappels bloqués : l’alerte, sur la ligne du ☰, reste sous la barre du haut', async ({
+  page,
+}) => {
+  await servirAelf(page)
+  await simulerTelephone(page, { accord: 'denied' })
+  await preparer(page, { rappels: ['laudes'] })
+  await page.goto('/')
+  const alerte = page.getByRole('link', { name: 'Rappels bloqués par le téléphone' })
+  await expect(alerte).toBeVisible()
+  await verifierBarres(page)
+  expect((await alerte.boundingBox())!.y).toBeGreaterThanOrEqual(HAUT)
+})
+
 test('chapelet : rien sous les barres d’Android', async ({ page }) => {
   await commencer(page)
   await verifierBarres(page)

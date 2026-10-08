@@ -47,3 +47,9 @@
   line-height: 1.45;
   color: var(--sepia);
 }
+
+/* Le téléphone bloque les rappels : le résumé le dit en brun brique, la
+   couleur des erreurs (le rouge est réservé aux rubriques liturgiques). */
+.reglages-rappels[data-bloques='oui'] .rubrique-resume {
+  color: var(--erreur);
+}

@@ -30,7 +30,15 @@ test.describe('les rubriques des réglages', () => {
   test('toutes fermées à l’ouverture, chacune se déplie et se replie', async ({ page }) => {
     await preparer(page)
     await page.goto('/reglages')
+    // Les rappels en tête : le téléphone peut les bloquer en silence (2026-10-08).
+    await expect(page.locator('.rubrique-nom')).toHaveText([
+      'Rappels',
+      'Affichage',
+      'Chapelet',
+      'Offices',
+    ])
     for (const [nom, resume] of [
+      ['Rappels', 'Aucun rappel'],
       ['Affichage', 'Taille du texte, thème'],
       ['Chapelet', 'Annonce, prières, vibrations'],
       ['Offices', 'Zone, accents, textes hors connexion'],

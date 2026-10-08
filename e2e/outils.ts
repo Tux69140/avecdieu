@@ -92,16 +92,18 @@ interface Ouverture {
   affichage?: 'complet' | 'compact'
   reglages?: Reglages
   lectures?: Record<string, number>
+  // Les prières dont le rappel est déjà activé.
+  rappels?: string[]
 }
 
 // Prépare la mémoire du téléphone avant le premier chargement de la page.
 export async function preparer(
   page: Page,
-  { aide = false, affichage, reglages = {}, lectures }: Ouverture = {},
+  { aide = false, affichage, reglages = {}, lectures, rappels }: Ouverture = {},
 ) {
   const tous = affichage ? { ...reglages, affichage } : reglages
   await page.addInitScript(
-    ({ aide, tous, lectures }) => {
+    ({ aide, tous, lectures, rappels }) => {
       // Seulement au premier chargement : un rechargement garde ce que l'app a retenu.
       if (sessionStorage.getItem('parcours-prepare')) return
       sessionStorage.setItem('parcours-prepare', 'oui')
@@ -109,8 +111,13 @@ export async function preparer(
       if (Object.keys(tous).length > 0)
         localStorage.setItem('avec-dieu.reglages', JSON.stringify(tous))
       if (lectures) localStorage.setItem('avec-dieu.lectures', JSON.stringify(lectures))
+      if (rappels)
+        localStorage.setItem(
+          'avec-dieu.rappels',
+          JSON.stringify(Object.fromEntries(rappels.map((priere) => [priere, { actif: true }]))),
+        )
     },
-    { aide, tous, lectures },
+    { aide, tous, lectures, rappels },
   )
 }
 

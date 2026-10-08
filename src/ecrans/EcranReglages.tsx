@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useLocation } from 'react-router'
 import { changerDeZone, textesEnregistres } from '../aelf/reserve'
 import { type Zone } from '../aelf/zones'
 import { ChoixTaille } from '../affichage/ChoixTaille'
@@ -12,12 +13,14 @@ import { useRetour } from '../composants/retour'
 import { Rubrique } from '../composants/Rubrique'
 import { dateLisible } from '../office/dates'
 import { useLieu } from '../lieu/useLieu'
+import { rappelsBloques } from '../rappels/blocage'
 import { lireRappels, modifierRappel } from '../rappels/reglages'
 import { lireSolaire, modifierSolaire } from '../rappels/solaire'
 import { RubriqueRappels } from '../rappels/RubriqueRappels'
 import { ChoixZone } from '../reglages/ChoixZone'
 import { Reinitialiser } from '../reglages/Reinitialiser'
-import { resumerRappels } from '../rappels/textes'
+import { RAPPELS_BLOQUES, resumerRappels } from '../rappels/textes'
+import { useEtatAndroid } from '../rappels/useEtatAndroid'
 import { usePeutVibrer } from '../telephone/retours'
 import './EcranReglages.css'
 
@@ -40,18 +43,23 @@ const THEMES = [
   ['nuit', 'Nuit'],
 ] as const satisfies readonly (readonly [Theme, string])[]
 
-type NomRubrique = 'affichage' | 'chapelet' | 'offices' | 'rappels'
+export type NomRubrique = 'affichage' | 'chapelet' | 'offices' | 'rappels'
 
 // Les rubriques ouvertes, retenues tant que l'app reste ouverte : toutes
 // fermées au lancement (décision du porteur du projet, 2026-10-07).
 const ouvertes = new Set<NomRubrique>()
 
-// Les réglages, retenus sur le téléphone, en quatre rubriques : l'affichage,
-// le chapelet, les offices et les rappels, en dernier (libellés validés le
-// 2026-10-07).
+// Les réglages, retenus sur le téléphone, en quatre rubriques : les rappels en
+// tête, car le téléphone peut les bloquer en silence (2026-10-08), puis
+// l'affichage, le chapelet et les offices (libellés validés le 2026-10-07).
+// Un écran qui y mène peut demander d'ouvrir une rubrique (`state.rubrique`).
 export function EcranReglages() {
   const [reglages, setReglages] = useState(lireReglages)
-  const [, setOuvertes] = useState(() => new Set(ouvertes))
+  const demandee = (useLocation().state as { rubrique?: NomRubrique } | null)?.rubrique
+  const [, setOuvertes] = useState(() => {
+    if (demandee) ouvertes.add(demandee)
+    return new Set(ouvertes)
+  })
   const retour = useRetour()
   // Sans vibreur (tablette), le réglage n'a pas lieu d'être.
   const vibreur = usePeutVibrer()
@@ -62,6 +70,8 @@ export function EcranReglages() {
   const [aide, setAide] = useState(aideAMontrer)
   // Le lieu se choisit sur son propre écran ; en voyage, il change seul.
   const { lieu } = useLieu()
+  const [android, relireAndroid] = useEtatAndroid()
+  const bloques = rappelsBloques(rappels, android)
 
   const rubrique = (nom: NomRubrique) => ({
     ouverte: ouvertes.has(nom),
@@ -85,6 +95,29 @@ export function EcranReglages() {
       <h1>Réglages</h1>
 
       <div className="reglages-rubriques">
+        {/* Le résumé, en brun brique quand le téléphone bloque les rappels,
+            est caché au lecteur d'écran ; la phrase cachée le lui dit. */}
+        <div className="reglages-rappels" data-bloques={bloques ? 'oui' : undefined}>
+          {bloques && <p className="cache-a-l-oeil">{RAPPELS_BLOQUES}.</p>}
+          <Rubrique
+            titre="Rappels"
+            resume={
+              bloques ? `⚠ ${RAPPELS_BLOQUES}` : resumerRappels(rappels, solaire.actives && !!lieu)
+            }
+            {...rubrique('rappels')}
+          >
+            <RubriqueRappels
+              rappels={rappels}
+              onChanger={(priere, changement) => setRappels(modifierRappel(priere, changement))}
+              solaire={solaire}
+              lieu={lieu}
+              onChangerSolaire={(changement) => setSolaire(modifierSolaire(changement))}
+              android={android}
+              relire={relireAndroid}
+            />
+          </Rubrique>
+        </div>
+
         <Rubrique titre="Affichage" resume="Taille du texte, thème" {...rubrique('affichage')}>
           <h3 id="reglages-taille">Taille du texte</h3>
           <ChoixTaille
@@ -171,20 +204,6 @@ export function EcranReglages() {
               ? `Textes disponibles hors connexion jusqu’au ${dateLisible(enregistres.fin)}.`
               : 'Aucun texte enregistré pour l’instant.'}
           </p>
-        </Rubrique>
-
-        <Rubrique
-          titre="Rappels"
-          resume={resumerRappels(rappels, solaire.actives && !!lieu)}
-          {...rubrique('rappels')}
-        >
-          <RubriqueRappels
-            rappels={rappels}
-            onChanger={(priere, changement) => setRappels(modifierRappel(priere, changement))}
-            solaire={solaire}
-            lieu={lieu}
-            onChangerSolaire={(changement) => setSolaire(modifierSolaire(changement))}
-          />
         </Rubrique>
       </div>
       <Reinitialiser />

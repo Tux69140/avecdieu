@@ -324,7 +324,7 @@ Décisions du porteur du projet (2026-10-07) :
 Dans les réglages, une liste des offices et du chapelet à rappeler, chacun avec son heure. Les valeurs par défaut sont celles du PRD : aucun rappel activé. Les notifications sont programmées environ un mois à l'avance et arrivent même si l'app n'est pas ouverte. Un toucher sur la notification ouvre l'office ou le chapelet du jour. L'autorisation « Alarmes et rappels » est demandée au premier rappel activé, avec une explication. Sur Xiaomi et Samsung, l'app guide vers le réglage de batterie qui évite le blocage des rappels.
 
 Décisions du porteur du projet (2026-10-07) :
-- **Rubrique `Rappels`, la dernière des Réglages** : une ligne par prière dans l'ordre du jour (office des lectures, laudes, tierce, sexte, none, vêpres, complies, chapelet), avec son interrupteur et son heure ; toucher l'heure ouvre l'horloge d'Android. Résumé : les prières rappelées (`Laudes, vêpres, complies`), ou `Aucun rappel`.
+- **Rubrique `Rappels`, la dernière des Réglages** (passée en tête le 2026-10-08, voir plus bas) : une ligne par prière dans l'ordre du jour (office des lectures, laudes, tierce, sexte, none, vêpres, complies, chapelet), avec son interrupteur et son heure ; toucher l'heure ouvre l'horloge d'Android. Résumé : les prières rappelées (`Laudes, vêpres, complies`), ou `Aucun rappel`.
 - **App muette par défaut** : aucun rappel activé d'origine (le PRD est corrigé en ce sens).
 - **Une seule heure partout** : l'heure réglée devient celle de l'office sur le cadran, dans la liste et pour la prière du moment, même rappel coupé.
 - **Office des lectures** : sans heure (et hors du cadran) tant qu'on n'en a pas choisi une ; activer son rappel ouvre l'horloge, proposée sur 6 h 30.
@@ -344,6 +344,11 @@ Décisions du porteur du projet (2026-10-07) :
   - toute marque, arrière-plan interdit : `⚠ Android interdit à l’app de travailler en arrière-plan : aucun rappel ne viendra.` / `Ouvrir les Paramètres du téléphone` ;
   - Xiaomi, démarrage automatique désactivé : `⚠ Le démarrage automatique est désactivé : si l’app est fermée, le téléphone ne la réveille pas et le rappel ne vient pas.` / `Ouvrir la page` ;
   - Xiaomi et Samsung, économie de batterie : `⚠ L’économiseur de batterie peut bloquer les rappels.` / `Régler la batterie` (remplace alors la ligne du guide).
+- **Rappels bloqués, visibles sans déplier la rubrique** (décisions du porteur du projet, 2026-10-08) :
+  - les Réglages s'ouvrent sur `Rappels`, puis `Affichage`, `Chapelet`, `Offices` ;
+  - « bloqués » : tant qu'un rappel est activé, l'un des avis de blocage s'affiche (notifications refusées, arrière-plan interdit, démarrage automatique désactivé sur Xiaomi, économiseur de batterie sur Xiaomi et Samsung) ; l'avis « Alarmes et rappels » ne compte pas, un rappel en retard arrive quand même. Un seul calcul pour les avis, le résumé et l'accueil, relu à chaque retour dans l'app ;
+  - résumé de la rubrique fermée : `⚠ Rappels bloqués par le téléphone`, en brun brique ; le lecteur d'écran entend `Rappels bloqués par le téléphone.` juste avant la rubrique ;
+  - accueil : `⚠ Rappels bloqués par le téléphone ›` en brun brique, à droite du ☰ sur sa ligne (rien ne descend : les complies restent à l'écran à 360 × 780), sur l'accueil de chaque jour ; un toucher ouvre les Réglages, rubrique `Rappels` dépliée.
 - **Détails de forme codés sans validation, à montrer avec l'essai sur téléphones** : le titre `Son` au-dessus du choix du son, le lien `Changer` à côté d'un MP3 déjà choisi, le nom du MP3 affiché en clair, l'écoute du son du téléphone et du MP3, l'heure écrite `7 h 00`, la rédaction des crédits des cloches dans À propos.
 
 ### Critères d'acceptation

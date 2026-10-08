@@ -257,6 +257,28 @@ test('rappels : fenêtres d’autorisation, avis et choix du son', async ({ page
   await fenetresDesRappels(page)
 })
 
+test('rappels bloqués : la ligne de l’accueil et le résumé, de jour puis de nuit', async ({
+  page,
+}) => {
+  await servirAelf(page)
+  await simulerTelephone(page, {
+    accord: 'granted',
+    blocages: { batterie: false, arrierePlan: true },
+  })
+  await preparer(page, { rappels: ['laudes'] })
+  for (const chemin of ['/', '/reglages']) {
+    await page.emulateMedia({ colorScheme: 'light' })
+    await page.goto(chemin)
+    await expect(page.getByText('Rappels bloqués par le téléphone').first()).toBeAttached()
+    if (chemin === '/')
+      await expect(page.getByTestId('bandeau').locator('.bandeau-titre')).toBeVisible()
+    expect(await violationsGraves(page)).toEqual([])
+    await page.emulateMedia({ colorScheme: 'dark' })
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'nuit')
+    expect(await violationsGraves(page)).toEqual([])
+  }
+})
+
 test.describe('de nuit', () => {
   test('rappels : fenêtres d’autorisation, avis et choix du son', async ({ page }) => {
     await fenetresDesRappels(page)

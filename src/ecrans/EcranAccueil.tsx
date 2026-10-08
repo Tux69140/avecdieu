@@ -1,4 +1,5 @@
 import { Link, Navigate, useNavigate, useParams } from 'react-router'
+import { AlerteRappels } from '../accueil/AlerteRappels'
 import { BandeauJour } from '../accueil/BandeauJour'
 import { astre } from '../accueil/cadran'
 import { Cadran } from '../accueil/Cadran'
@@ -61,11 +62,14 @@ function Accueil({ date, aujourdhui, maintenant }: Props) {
   )
   return (
     <main className="accueil">
-      <Link className="bouton-menu" to="/menu" state={{ depuis: date }} aria-label="Menu">
-        <svg viewBox="0 0 20 20" aria-hidden="true">
-          <path d="M3 5h14M3 10h14M3 15h14" />
-        </svg>
-      </Link>
+      <div className="accueil-haut">
+        <Link className="bouton-menu" to="/menu" state={{ depuis: date }} aria-label="Menu">
+          <svg viewBox="0 0 20 20" aria-hidden="true">
+            <path d="M3 5h14M3 10h14M3 15h14" />
+          </svg>
+        </Link>
+        <AlerteRappels />
+      </div>
       <nav className="accueil-jours" aria-label="Autres jours">
         <Link
           to={routeDuJour(veille, aujourdhui)}

@@ -4,13 +4,42 @@
   padding: var(--esp-sm) var(--gouttiere) var(--esp-3xl);
 }
 
-/* ☰ en haut à gauche, sur sa propre ligne. */
+/* ☰ en haut à gauche, sur sa propre ligne, que partage à droite l'alerte des
+   rappels bloqués : ainsi, elle ne repousse pas les complies plus bas. */
+.accueil-haut {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-sm);
+  margin-top: calc(-1 * var(--esp-sm));
+}
+
 .bouton-menu {
   display: grid;
+  flex: none;
   place-items: center;
   width: 48px;
   height: 48px;
-  margin: calc(-1 * var(--esp-sm)) 0 0 calc(-1 * var(--esp-sm));
+  margin-left: calc(-1 * var(--esp-sm));
+}
+
+/* Brun brique, la couleur des erreurs : le rouge reste aux rubriques. */
+.accueil-alerte {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  margin-right: calc(-1 * var(--esp-xs));
+  padding: 0 var(--esp-xs);
+  font-family: var(--texte);
+  font-size: 15px;
+  line-height: 1.3;
+  text-align: right;
+  color: var(--erreur);
+  text-decoration: none;
+}
+
+.accueil-alerte:active {
+  background: var(--halo);
 }
 
 .bouton-menu svg {
