@@ -283,10 +283,10 @@ test('croix et ☰ du bandeau : le retour, et le menu des prières du jour', asy
     /^Vêpres\s*18 h 30$/,
     /^Complies\s*21 h 30$/,
   ])
-  await expect(page.getByRole('list', { name: 'Chapelet' }).getByRole('link')).toHaveText(
-    /^Chapelet\s*20 h$/,
-  )
-  // L'office d'où l'on vient est marqué.
+  await expect(
+    page.getByRole('list', { name: 'Chapelet et prières' }).getByRole('link').first(),
+  ).toHaveText(/^Chapelet\s*20 h$/)
+  // Ouvert depuis un office, les offices sont dépliés ; celui d'où l'on vient est marqué.
   await expect(prieres.locator('[aria-current="page"]')).toHaveText(/Laudes/)
   await prieres.getByRole('link', { name: /^Vêpres/ }).click()
   await expect(page).toHaveURL('/office/vepres/2026-10-06')

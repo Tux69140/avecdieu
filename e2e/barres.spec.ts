@@ -87,6 +87,7 @@ for (const [nom, chemin] of [
   ['accueil', '/'],
   ['accueil d’un autre jour', '/jour/2026-10-11'],
   ['office', '/office/lectures/2026-10-06'],
+  ['prière seule', '/priere/credo'],
 ]) {
   test(`${nom} : rien sous les barres d’Android`, async ({ page }) => {
     await servirAelf(page)

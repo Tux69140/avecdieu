@@ -1,11 +1,9 @@
 import { useState } from 'react'
-import { Marque } from '../composants/Marque'
 import type { Passage } from '../recueil/passages'
 import { PRIERES, type PriereId } from '../recueil/prieres'
 import type { Pas } from './deroule'
 import { PassageBiblique } from './PassageBiblique'
-import { insecables } from './typographie'
-import { ditEnsemble, strophes } from './versets'
+import { TextePriere } from './TextePriere'
 
 interface Props {
   pas: Pas & { priere: PriereId }
@@ -30,7 +28,6 @@ export function Priere(props: Props) {
   const [voirPriere, setVoirPriere] = useState(false)
   const priere = PRIERES[pas.priere]
   const passage = annonce ? props.passage : undefined
-  const ensemble = ditEnsemble(priere, plusieurs)
   return (
     <section className="priere" data-testid="priere">
       <div className={compact ? 'priere-tete priere-tete-compacte' : 'priere-tete'}>
@@ -60,22 +57,7 @@ export function Priere(props: Props) {
           )}
         </div>
       )}
-      {(!compact || voirPriere) && (
-        <div className="priere-texte">
-          {strophes(priere, plusieurs).map((vers, i) => (
-            <p key={i} className="strophe" data-testid="strophe">
-              {vers.map(({ texte, marque }, j) => (
-                // Dite ensemble, la prière passe en demi-gras, sauf un verset
-                // marqué (celui du Salve Regina), qui garde ses ℣. et ℟.
-                <span key={j} data-tous={ensemble && !marque ? 'oui' : undefined}>
-                  {marque && <Marque sorte={marque} />}
-                  {insecables(texte)}
-                </span>
-              ))}
-            </p>
-          ))}
-        </div>
-      )}
+      {(!compact || voirPriere) && <TextePriere priere={priere} plusieurs={plusieurs} />}
       {compact && passage && passageDeplie && <PassageBiblique passage={passage} />}
     </section>
   )

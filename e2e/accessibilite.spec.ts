@@ -116,10 +116,21 @@ test('prier à plusieurs, V/ et R/', async ({ page }) => {
   expect(await violationsGraves(page)).toEqual([])
 })
 
-test('menu', async ({ page }) => {
+test('menu, offices et prières dépliés', async ({ page }) => {
   await preparer(page)
   await page.goto('/menu')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Avec Dieu')
+  expect(await violationsGraves(page)).toEqual([])
+  await page.getByRole('button', { name: 'Offices du jour' }).click()
+  await page.getByRole('button', { name: 'Prières' }).click()
+  await expect(page.getByRole('link', { name: 'Je crois en Dieu' })).toBeVisible()
+  expect(await violationsGraves(page)).toEqual([])
+})
+
+test('prière seule, à plusieurs', async ({ page }) => {
+  await preparer(page, { reglages: { plusieurs: true } })
+  await page.goto('/priere/salve-regina')
+  await expect(page.getByTestId('marque-R')).toBeVisible()
   expect(await violationsGraves(page)).toEqual([])
 })
 
@@ -339,6 +350,15 @@ test.describe('de nuit', () => {
   test('menu', async ({ page }) => {
     await preparer(page)
     await page.goto('/menu')
+    await page.getByRole('button', { name: 'Offices du jour' }).click()
+    await page.getByRole('button', { name: 'Prières' }).click()
+    expect(await violationsGraves(page)).toEqual([])
+  })
+
+  test('prière seule', async ({ page }) => {
+    await preparer(page)
+    await page.goto('/priere/je-vous-salue-marie')
+    await expect(page.getByTestId('strophe').first()).toBeVisible()
     expect(await violationsGraves(page)).toEqual([])
   })
 })

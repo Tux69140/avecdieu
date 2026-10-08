@@ -1,0 +1,27 @@
+/* Une prière seule : la colonne du chapelet, le titre comme celui d'un office. */
+.priere-seule {
+  max-width: calc(34em + 2 * var(--gouttiere));
+  margin: 0 auto;
+  padding: var(--esp-sm) var(--gouttiere) var(--esp-2xl);
+}
+
+.priere-seule h1 {
+  margin: var(--esp-xs) 0 var(--esp-md);
+  text-align: center;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 32px;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+/* La fin d'un office : la perle d'or entre ses deux filets, puis
+   « Revenir à l’accueil » au centre. */
+.priere-seule-fin {
+  margin-top: var(--esp-lg);
+  text-align: center;
+}
+
+.priere-seule .fin-ecran {
+  height: 1px;
+}

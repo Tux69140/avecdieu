@@ -17,13 +17,54 @@ test.beforeEach(async ({ page }) => {
 const accueil = (page: import('@playwright/test').Page) =>
   expect(page.getByTestId('bandeau')).toBeVisible()
 
-test('présente aujourd’hui, le chapelet, les réglages et « A propos »', async ({ page }) => {
+// L'ordre choisi par le porteur du projet (2026-10-08) : offices et autres
+// prières repliés.
+test('présente, dans l’ordre, le chapelet, deux prières, les offices et les prières repliés', async ({
+  page,
+}) => {
   const menu = page.getByRole('navigation', { name: 'Menu' })
-  await expect(menu.getByRole('button', { name: 'Aujourd’hui' })).toBeVisible()
-  await expect(menu.getByRole('link', { name: 'Chapelet' })).toBeVisible()
-  await expect(menu.getByRole('link', { name: 'Réglages' })).toBeVisible()
-  await expect(menu.getByRole('link', { name: 'A propos' })).toBeVisible()
-  await expect(menu.getByRole('link', { name: /Offices/ })).toHaveCount(0)
+  await expect(menu.getByRole('link').or(menu.getByRole('button'))).toHaveText([
+    'Aujourd’hui',
+    /^Chapelet/,
+    'Je vous salue Marie',
+    'Notre Père',
+    /^Offices du jour/,
+    'Prières',
+    'Réglages',
+    'A propos',
+  ])
+  await expect(menu.getByRole('link', { name: /^Laudes/ })).toBeHidden()
+  await expect(menu.getByRole('link', { name: 'Je crois en Dieu' })).toBeHidden()
+  // La date des offices se voit sous leur nom, replié.
+  await expect(menu.getByRole('button', { name: 'Offices du jour' })).toContainText(
+    'lundi 5 octobre',
+  )
+  await menu.getByRole('button', { name: 'Offices du jour' }).click()
+  await expect(menu.getByRole('list', { name: 'Offices du jour' }).getByRole('link')).toHaveCount(7)
+  await menu.getByRole('button', { name: 'Prières' }).click()
+  const prieres = menu.getByRole('list', { name: 'Prières', exact: true })
+  await expect(prieres.getByRole('link')).toHaveText([
+    'Je crois en Dieu',
+    'Gloire au Père',
+    'Salve Regina',
+    'Je confesse à Dieu',
+  ])
+})
+
+test('une prière ouverte par le menu se dit seule, puis ramène à l’accueil', async ({ page }) => {
+  await page.getByRole('link', { name: 'Notre Père' }).click()
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Notre Père')
+  await expect(page.getByTestId('strophe').first()).toContainText('Notre Père, qui es aux cieux')
+  await expect(page.getByTestId('marque-V')).toHaveCount(0)
+  await page.goBack()
+  await accueil(page)
+  await page.getByRole('link', { name: 'Menu' }).click()
+  await page.getByRole('button', { name: 'Prières' }).click()
+  await page.getByRole('link', { name: 'Je confesse à Dieu' }).click()
+  // « tout-puissant » ne se coupe pas : un liant invisible suit le trait d'union.
+  await expect(page.getByTestId('strophe')).toContainText(/^Je confesse à Dieu tout-⁠?puissant/)
+  await page.getByRole('button', { name: 'Revenir à l’accueil' }).click()
+  await accueil(page)
 })
 
 test('le retour d’Android, la croix et « Aujourd’hui » ramènent à l’accueil', async ({ page }) => {
@@ -71,14 +112,12 @@ test('« A propos » donne la version et les sources des textes', async ({ page 
   await accueil(page)
 })
 
-test('le chapelet forme son groupe, sous les offices, séparé par un filet d’or', async ({
+test('le chapelet et deux prières forment un groupe, séparé par un filet d’or', async ({
   page,
 }) => {
-  const offices = page.getByRole('list', { name: 'Offices du jour' })
-  await expect(offices.getByRole('link')).toHaveCount(7)
-  await expect(offices.getByRole('link', { name: /Chapelet/ })).toHaveCount(0)
-  const chapelet = page.getByRole('list', { name: 'Chapelet' })
-  await expect(chapelet.getByRole('link')).toHaveAccessibleName(/^Chapelet\s*20 h$/)
+  const chapelet = page.getByRole('list', { name: 'Chapelet et prières' })
+  await expect(chapelet.getByRole('link')).toHaveCount(3)
+  await expect(chapelet.getByRole('link').first()).toHaveAccessibleName(/^Chapelet\s*20 h$/)
   const filet = await chapelet.evaluate((ul) => {
     const temoin = document.createElement('i')
     temoin.style.color = getComputedStyle(document.documentElement).getPropertyValue('--or')
@@ -92,20 +131,26 @@ test('le chapelet forme son groupe, sous les offices, séparé par un filet d’
 
 test('des lignes de 48 px en graisse normale, le tout sur un seul écran', async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 780 })
-  const lignes = page.getByRole('navigation', { name: 'Menu' }).locator('a, button')
-  await expect(lignes).toHaveCount(11)
+  const lignes = page.getByRole('navigation', { name: 'Menu' }).locator('a:visible, button:visible')
+  await expect(lignes).toHaveCount(8)
   for (const ligne of await lignes.all()) {
-    expect((await ligne.boundingBox())!.height).toBe(48)
+    // Les offices repliés portent la date sous leur nom : un peu plus haut.
+    expect((await ligne.boundingBox())!.height).toBeGreaterThanOrEqual(48)
+    expect((await ligne.boundingBox())!.height).toBeLessThanOrEqual(56)
   }
   const graisse = (l: import('@playwright/test').Locator) =>
     l.evaluate((e) => getComputedStyle(e).fontWeight)
   expect(await graisse(page.getByRole('link', { name: 'Réglages' }))).toBe('400')
   expect(await graisse(page.getByRole('button', { name: 'Aujourd’hui' }))).toBe('400')
-  expect(await graisse(page.getByRole('link', { name: /^Laudes/ }))).toBe('400')
+  expect(await graisse(page.locator('.rubrique-nom').first())).toBe('400')
   expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(780)
+  await page.getByRole('button', { name: 'Offices du jour' }).click()
+  expect(await graisse(page.getByRole('link', { name: /^Laudes/ }))).toBe('400')
+  expect((await page.getByRole('link', { name: /^Laudes/ }).boundingBox())!.height).toBe(48)
 })
 
 test('le chevron › ne se lit pas dans le nom des lignes', async ({ page }) => {
+  await page.getByRole('button', { name: 'Offices du jour' }).click()
   await expect(page.getByRole('link', { name: 'Réglages' })).toHaveAccessibleName('Réglages')
   await expect(page.getByRole('button', { name: 'Aujourd’hui' })).toHaveAccessibleName(
     'Aujourd’hui',

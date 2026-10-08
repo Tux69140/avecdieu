@@ -112,37 +112,7 @@
   white-space: nowrap;
 }
 
-.priere-texte {
-  margin-top: var(--esp-sm);
-  /* La taille choisie (Réglages, ou pincement). */
-  font-size: var(--taille-priere);
-}
-
-.strophe {
-  margin: 0;
-}
-
-/* À plusieurs, la part de tous en demi-gras, comme dans l'office (choix du
-   porteur du projet, 2026-10-08). */
-.priere-texte span[data-tous='oui'] {
-  font-weight: 600;
-}
-
-.strophe + .strophe {
-  margin-top: 0.9em;
-}
-
-/* Un vers par ligne, centré ; un vers trop long se coupe en deux lignes équilibrées. */
-.priere-texte span {
-  display: block;
-  line-height: 1.45;
-  text-wrap: balance;
-}
-
-/* Un léger blanc entre les vers garde groupées les deux lignes d'un vers coupé. */
-.priere-texte span + span {
-  margin-top: 0.3em;
-}
+/* Le texte de la prière : TextePriere.css. */
 
 .consigne {
   margin: var(--esp-xl) 0 0;

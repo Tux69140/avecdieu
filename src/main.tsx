@@ -11,6 +11,7 @@ import { EcranChapelet } from './ecrans/EcranChapelet'
 import { EcranLieu } from './ecrans/EcranLieu'
 import { EcranMenu } from './ecrans/EcranMenu'
 import { EcranOffice } from './ecrans/EcranOffice'
+import { EcranPriere } from './ecrans/EcranPriere'
 import { EcranReglages } from './ecrans/EcranReglages'
 import { suivreLesVoyages } from './lieu/voyage'
 import { entretenirRappels, ouvrirLesNotifications } from './rappels/entretien'
@@ -25,6 +26,7 @@ const routeur = createBrowserRouter([
       { path: '/chapelet', element: <EcranChapelet /> },
       { path: '/chapelet/:serie', element: <EcranChapelet /> },
       { path: '/office/:office/:date', element: <EcranOffice /> },
+      { path: '/priere/:priere', element: <EcranPriere /> },
       { path: '/reglages', element: <EcranReglages /> },
       { path: '/lieu', element: <EcranLieu /> },
       { path: '/menu', element: <EcranMenu /> },
