@@ -10,7 +10,7 @@ Décisions durables qui s'appliquent à toutes les phases :
 - **Routes** :
   - `/` : accueil « Aujourd'hui » ; `/jour/AAAA-MM-JJ` : accueil d'un autre jour
   - `/office/<office>/<AAAA-MM-JJ>` : avec `<office>` ∈ `lectures | laudes | tierce | sexte | none | vepres | complies` (mêmes noms que l'API AELF)
-  - `/chapelet` : chapelet du jour ; `/chapelet/<série>` : avec `<série>` ∈ `joyeux | lumineux | douloureux | glorieux`
+  - `/chapelet` : chapelet du jour ; `/chapelet/<série>` : avec `<série>` ∈ `joyeux | lumineux | douloureux | glorieux` ; `/rosaire` : les quatre séries à la suite (phase 17)
   - `/priere/<prière>` : une prière seule ouverte par le menu (2026-10-08), avec `<prière>` ∈ `je-vous-salue-marie | notre-pere | credo | gloire-au-pere | salve-regina | je-confesse`
   - `/reglages` ; `/lieu` (lieu des heures solaires, phase 12) ; `/menu` (ouvert par ☰ depuis le seuil) ; `/a-propos`
   - Les notifications de rappel ouvrent directement ces routes.
@@ -418,6 +418,81 @@ Reste à confirmer sur les téléphones : « Me localiser » fonctionne (vérifi
 
 ---
 
+> **Phases 15 à 17** (décision du porteur du projet, 2026-10-08) : le Rosaire, la clôture enrichie et les durées entrent dans le périmètre **avant la recette**. Elles gardent ces numéros pour ne pas renuméroter la recette et la publication.
+>
+> Décisions durables propres à ces phases :
+> - **Route** `/rosaire` : le Rosaire du jour. Le commutateur du seuil passe de `/chapelet` à `/rosaire` ; l'accueil et le rappel du chapelet ouvrent celle que le choix retenu désigne.
+> - **Réglages** : le choix Chapelet / Rosaire (Chapelet au départ) ; une bascule par texte de clôture ; pour les Litanies et saint Joseph, trois valeurs : en octobre, toujours, jamais.
+> - **Chapelet en cours** : retient aussi Chapelet ou Rosaire et la série atteinte ; même règle de reprise (le jour même).
+> - **Durées** : une table fixe dans le recueil des données, pas un calcul.
+
+## Phase 15 : Durées affichées
+
+**User stories** : US-59
+
+### Ce qu'on livre
+
+À côté du chapelet et de chaque office, l'app dit combien de temps prendre : sur le seuil du chapelet, sur l'accueil et dans le menu. Les durées sont celles du PRD, fixes, affichées « ~20 min ».
+
+### Critères d'acceptation
+
+- [ ] Les durées du PRD s'affichent sur le seuil, l'accueil et le menu, pour le chapelet et les 7 offices (test unitaire de la table, parcours Playwright sur les trois écrans).
+- [ ] À 360 px de large, aucune ligne de l'accueil ni du menu ne passe à la ligne à cause de la durée ; le menu tient toujours sur un écran à 360 × 780.
+- [ ] Le lecteur d'écran dit la durée en toutes lettres (« environ vingt minutes »).
+- [ ] Captures des trois écrans validées par le porteur du projet.
+
+## Bloquée par
+
+Aucune — démarrable immédiatement.
+
+---
+
+## Phase 16 : Clôture enrichie et octobre
+
+**User stories** : US-56, US-57, US-58
+
+### Ce qu'on livre
+
+Le chapelet se clôt selon l'ordre validé : Salve Regina, Litanies de la Sainte Vierge, verset et oraison du Rosaire, Sous l'abri de ta miséricorde, prière à saint Joseph. Les trois premiers Je vous salue Marie portent leur intention en rouge. Chaque texte se règle ; en octobre, les Litanies et saint Joseph s'ajoutent d'eux-mêmes. « A propos » donne les sources de l'ordre de clôture et est réorganisé pour rester lisible.
+
+### Critères d'acceptation
+
+- [ ] Les nouveaux textes (intentions, Litanies, verset, oraison du Rosaire, Sous l'abri, saint Joseph) sont rédigés d'après les versions liturgiques officielles, validés ligne par ligne par le porteur du projet et figés par le test d'empreinte.
+- [ ] L'ordre de la clôture et les réglages de départ sont ceux du PRD (tests du déroulé pour chaque combinaison utile).
+- [ ] Avec les réglages de départ, Litanies et saint Joseph sont dits le 1er et le 31 octobre, absents le 30 septembre et le 1er novembre ; « toujours » et « jamais » l'emportent sur le mois (critère de succès 10).
+- [ ] « A propos » cite Léon XIII et l'usage français pour l'ordre de clôture ; sa nouvelle organisation est validée sur capture.
+- [ ] Parcours Playwright : un chapelet d'octobre récité jusqu'à la fin passe par chaque texte de clôture ; analyse axe des écrans touchés.
+
+## Bloquée par
+
+Aucune — peut avancer en même temps que la phase 15.
+
+---
+
+## Phase 17 : Le Rosaire
+
+**User stories** : US-51, US-52, US-53, US-54, US-55
+
+### Ce qu'on livre
+
+Sur le seuil, un commutateur Chapelet / Rosaire, retenu. Le Rosaire enchaîne les 20 dizaines, joyeux, lumineux, douloureux, glorieux : ouverture une fois, une ligne en rouge à chaque passage de série, un repère « Série n sur 4 », clôture une fois. Il se reprend au grain exact le jour même. Une aide repliée « Chapelet ou Rosaire ? » éclaire le novice. La ligne de l'accueil dit « Rosaire » quand ce choix est retenu. Le seuil, qui porte désormais le commutateur, les durées et les réglages de clôture, est réorganisé (impeccable layout).
+
+### Critères d'acceptation
+
+- [ ] Le déroulé du Rosaire : une ouverture, 20 dizaines dans l'ordre, trois passages de série, une clôture (tests unitaires ; critère de succès 9).
+- [ ] Le texte de l'aide « Chapelet ou Rosaire ? » (les deux phrases validées, puis l'histoire et le sens) et les lignes de passage de série sont validés mot à mot par le porteur du projet.
+- [ ] Le choix est retenu d'une ouverture à l'autre ; l'accueil et le rappel du chapelet ouvrent le Rosaire quand il est choisi.
+- [ ] Un Rosaire interrompu en deuxième série reprend au grain exact le jour même et est abandonné passé minuit.
+- [ ] La disposition du seuil est validée sur maquette puis sur capture à 360 px.
+- [ ] Parcours Playwright : un Rosaire complet récité du début à la fin ; analyse axe du seuil et du Rosaire ; le seuil ajouté au contrôle des barres d'Android.
+
+## Bloquée par
+
+- Phase 15 (les durées sur le seuil)
+- Phase 16 (la clôture partagée et ses réglages)
+
+---
+
 ## Phase 13 : Recette en conditions réelles
 
 **User stories** : aucune nouvelle. Valide les critères de succès 4, 6 et 8 du PRD.
@@ -439,7 +514,7 @@ Points laissés pour la recette au fil des phases :
 
 ## Bloquée par
 
-- Toutes les phases précédentes
+- Toutes les phases précédentes, phases 15 à 17 comprises
 
 ---
 

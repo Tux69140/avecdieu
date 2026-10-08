@@ -57,6 +57,18 @@ Avec Dieu accompagne la prière de toute la journée sur un téléphone Android.
 - **US-22** En tant que priant interrompu (appel, changement d'app), je veux retrouver mon chapelet exactement où je l'avais laissé si je le rouvre le jour même, afin de ne pas recommencer.
 - **US-23** En tant que priant, je veux voir clairement que le chapelet est terminé, afin de conclure ma prière.
 
+**Rosaire et clôture** *(ajouté le 2026-10-08)*
+
+- **US-51** En tant que priant, je veux un commutateur Chapelet / Rosaire sur le seuil, retenu d'une fois sur l'autre, afin de prier selon mon habitude sans la rechoisir.
+- **US-52** En tant que priant, je veux dire le Rosaire en entier : 20 dizaines de la série joyeuse à la glorieuse, l'ouverture une seule fois au début, la clôture une seule fois à la fin, afin de prier les quatre séries d'une traite.
+- **US-53** En tant que priant, je veux une ligne en rouge au passage d'une série à l'autre et un repère « Série 2 sur 4 » toujours visible, afin de ne pas perdre le fil au bout d'une heure.
+- **US-54** En tant que priant, je veux reprendre mon Rosaire au grain exact le jour même, afin de le prier en plusieurs fois dans la journée.
+- **US-55** En tant que novice, je veux une aide repliée « Chapelet ou Rosaire ? » qui explique les deux choix, leur histoire et leur sens, afin de choisir en connaissance de cause.
+- **US-56** En tant que novice, je veux voir l'intention des trois premiers Je vous salue Marie (la foi, l'espérance, la charité), afin de savoir pour quoi je prie.
+- **US-57** En tant que priant, je veux activer ou désactiver les Litanies de la Sainte Vierge, le verset et l'oraison du Rosaire, le « Sous l'abri de ta miséricorde » et la prière à saint Joseph, au Chapelet comme au Rosaire, afin de suivre mon usage.
+- **US-58** En tant que priant, je veux qu'en octobre les Litanies et la prière à saint Joseph s'ajoutent d'elles-mêmes et se retirent le reste de l'année, sauf si j'ai choisi « toujours » ou « jamais », afin de vivre le mois du Rosaire sans rien régler.
+- **US-59** En tant que priant, je veux voir la durée approximative du chapelet, du Rosaire et de chaque office sur le seuil, l'accueil et le menu, afin de choisir ce que j'ai le temps de prier.
+
 **Offices**
 
 - **US-24** En tant que priant, je veux lire l'office complet (antienne répétée avant et après le psaume, Gloire au Père sauf exceptions, Notre Père en entier, conclusion de l'oraison complète), afin de prier correctement sans connaître les rubriques.
@@ -106,6 +118,8 @@ Avec Dieu accompagne la prière de toute la journée sur un téléphone Android.
 6. **Rapidité.** L'accueil s'affiche en moins de 2 secondes après l'ouverture de l'app.
 7. **Textes sacrés.** 100 % des prières, passages, fruits, conclusions et règles affichés ont été validés par le porteur du projet, et aucun ne peut changer sans nouvelle validation.
 8. **Usage réel.** Pendant 14 jours consécutifs, le porteur du projet dit laudes, vêpres, complies et un chapelet uniquement avec l'app, sans autre support.
+9. **Rosaire.** Un Rosaire complet se récite du début à la fin : 20 dizaines, une seule ouverture, trois passages de série signalés, une seule clôture.
+10. **Octobre.** Avec les réglages de départ, les Litanies et la prière à saint Joseph sont dites du 1er au 31 octobre, et absentes le reste de l'année.
 
 ## Hors périmètre
 
@@ -114,7 +128,7 @@ Avec Dieu accompagne la prière de toute la journée sur un téléphone Android.
 3. Les méditations rédigées pour chaque mystère *(plus tard)*.
 4. Les lectures de la messe.
 5. Les chapelets autres que le chapelet marial dans la première version : Divine Miséricorde, Sept Douleurs… *(plus tard, si besoin)*.
-6. Le Rosaire complet en une seule séance, avec les 20 dizaines enchaînées *(plus tard)*.
+6. Le Rosaire étalé sur plusieurs jours : il se reprend dans la journée et s'abandonne à minuit (décision du porteur du projet, 2026-10-08 ; le Rosaire complet en une journée est entré dans le périmètre ce jour-là).
 7. Un mode « prière à plusieurs » avec alternance automatique entre deux chœurs.
 8. L'avancée automatique, au rythme d'un prompteur, dans le chapelet ou les offices.
 9. Un écran par partie pour les offices.
@@ -130,6 +144,8 @@ Avec Dieu accompagne la prière de toute la journée sur un téléphone Android.
 21. Suivre la taille de police choisie dans Android : l'app a sa propre taille du texte et le pincement, et ses écrans dessinés (cadran) déborderaient (décision du porteur du projet, 2026-10-07).
 18. L'office selon le Bréviaire romain de 1960 (Divinum Officium) *(à étudier en fin de développement)*.
 19. Un examen de conscience rédigé et guidé aux complies *(plus tard ; la phase 6 n'en donne que la rubrique et le « Je confesse à Dieu »)*.
+22. Des durées calculées sur les textes du jour : elles sont fixes, affinées à l'usage (décision du porteur du projet, 2026-10-08).
+23. La prière pour les intentions du Pape à la fin du chapelet (décision du porteur du projet, 2026-10-08).
 
 ## Décisions d'implémentation
 
@@ -149,6 +165,30 @@ Avec Dieu accompagne la prière de toute la journée sur un téléphone Android.
 - **Annonce :** en mode complet, un écran à part, qui défile et ne s'avance que par la grosse perle. En mode compact, le passage est replié.
 - **Vibrations :** une courte par grain, une plus marquée en fin de dizaine.
 - **Reprise :** un chapelet interrompu reprend au grain exact s'il est rouvert le jour même. Passé minuit, il est abandonné.
+- **Rosaire** *(2026-10-08)* : un commutateur Chapelet / Rosaire sur le seuil, retenu ; le Chapelet est le choix de départ. Le Rosaire enchaîne joyeux, lumineux, douloureux, glorieux ; une ligne en rouge marque chaque passage de série, un repère « Série n sur 4 » reste visible ; même règle de reprise que le chapelet. La ligne « Chapelet » de l'accueil devient « Rosaire » quand ce choix est retenu. Une aide repliée « Chapelet ou Rosaire ? » donne les deux phrases validées, puis l'histoire et le sens.
+- **Intentions** des trois premiers Je vous salue Marie de l'ouverture : la foi, l'espérance, la charité, en rouge.
+- **Clôture, dans cet ordre** (Chapelet et Rosaire) : Salve Regina, Litanies de la Sainte Vierge, verset « Priez pour nous, sainte Mère de Dieu » et oraison du Rosaire, Sous l'abri de ta miséricorde, prière à saint Joseph. Les sources de cet ordre sont données dans « A propos ».
+
+| Texte | Réglage de départ |
+|---|---|
+| Intentions des 3 premiers Je vous salue Marie | activé |
+| Salve Regina | activé |
+| Litanies de la Sainte Vierge | en octobre (au choix : en octobre, toujours, jamais) |
+| Verset et oraison du Rosaire | activé |
+| Sous l'abri de ta miséricorde | désactivé |
+| Prière à saint Joseph | en octobre (au choix : en octobre, toujours, jamais) |
+
+**Durées affichées** *(2026-10-08)*
+
+- Durées fixes, approximatives, sur le seuil du chapelet, l'accueil et le menu ; elles seront affinées à l'usage.
+
+| Prière | Durée |
+|---|---|
+| Chapelet | 20 min |
+| Rosaire | ~1 h 45 |
+| Office des lectures, laudes, vêpres | ~20 min |
+| Tierce, sexte, none | ~10 min |
+| Complies | ~15 min |
 
 **Textes**
 
@@ -240,3 +280,4 @@ Avec Dieu accompagne la prière de toute la journée sur un téléphone Android.
 - L'API AELF.
 - Jean-Paul II, *Rosarium Virginis Mariae* (2002).
 - Paul VI, *Marialis Cultus* n° 47.
+- Léon XIII, *Supremi apostolatus officio* (1883) : le Rosaire d'octobre avec les Litanies de Lorette ; *Quamquam pluries* (1889) : la prière à saint Joseph ajoutée au Rosaire d'octobre.
