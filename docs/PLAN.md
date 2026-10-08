@@ -486,6 +486,15 @@ Aucune — peut avancer en même temps que la phase 15.
 
 Sur le seuil, un commutateur Chapelet / Rosaire, retenu. Le Rosaire enchaîne les 20 dizaines, joyeux, lumineux, douloureux, glorieux : ouverture une fois, une ligne en rouge à chaque passage de série, un repère « Série n sur 4 », clôture une fois. Il se reprend au grain exact le jour même. Une aide repliée « Chapelet ou Rosaire ? » éclaire le novice. La ligne de l'accueil dit « Rosaire » quand ce choix est retenu. Le seuil, qui porte désormais le commutateur, les durées et les réglages de clôture, est réorganisé (impeccable layout).
 
+Textes validés par le porteur du projet (2026-10-08), à reprendre mot à mot :
+- **Passage de série** (rouge rubrique) : « Les mystères joyeux sont achevés. Viennent les mystères lumineux. » (de même : lumineux → douloureux, douloureux → glorieux).
+- **Aide repliée « Chapelet ou Rosaire ? »** :
+  - « **Chapelet** : cinq dizaines, la série de mystères du jour. »
+  - « **Rosaire** : vingt dizaines, les quatre séries à la suite. On peut s’arrêter entre deux séries et reprendre plus tard dans la journée. La puissance spirituelle XXL. »
+  - « Le Rosaire est né au Moyen Âge. Ceux qui ne savaient pas lire les 150 psaumes disaient à la place 150 Je vous salue Marie : on l’appela le « psautier de Marie ». La tradition l’attribue à saint Dominique, et les dominicains l’ont répandu. En 1569, saint Pie V en fixe la forme : quinze dizaines, en mystères joyeux, douloureux et glorieux. En 2002, saint Jean-Paul II ajoute les mystères lumineux, ceux de la vie publique de Jésus. »
+  - « Le chapelet en est le quart. En priant chaque jour la série du jour, on parcourt tout le Rosaire dans la semaine. Le mot vient du « chapel », la couronne de fleurs posée sur la tête ; « rosaire » vient de la roseraie : une couronne de roses offerte à Marie. »
+  - « Avec Marie, on contemple la vie du Christ. Jean-Paul II disait du Rosaire qu’il est « un résumé de l’Évangile ». » (*Rosarium Virginis Mariae*, 18-19)
+
 ### Critères d'acceptation
 
 - [ ] Le déroulé du Rosaire : une ouverture, 20 dizaines dans l'ordre, trois passages de série, une clôture (tests unitaires ; critère de succès 9).

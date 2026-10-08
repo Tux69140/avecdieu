@@ -50,19 +50,24 @@ export function EcranAPropos() {
             <p>Credo du chapelet : Symbole des Apôtres.</p>
           </>,
         )}
-        {/* Les sources de l'ordre de la fin du chapelet (phase 16, 2026-10-08). */}
+        {/* Les sources de l'ordre de la fin du chapelet, texte validé par le
+            porteur du projet (phase 16, 2026-10-08). */}
         {rubrique(
           'chapelet',
           'Chapelet et Rosaire',
           <>
             <p>
-              Ordre de la fin du chapelet : feuillets en usage en France, aucune règle officielle.
+              Ordre de la fin du chapelet : celui des feuillets de prière en usage en France. Aucune
+              règle officielle ne le fixe.
             </p>
-            <p>Litanies : texte du Saint-Siège avec les ajouts de 2018 et 2020, au vous.</p>
             <p>
-              En octobre : Litanies demandées par Léon XIII en 1883,{' '}
-              <cite>Supremi apostolatus officio</cite>, et prière à saint Joseph en 1889,{' '}
-              <cite>Quamquam pluries</cite>.
+              Litanies de la Sainte Vierge : texte publié par le Saint-Siège, avec les invocations
+              ajoutées en 2018 et 2020, au vous comme le Je vous salue Marie.
+            </p>
+            <p>
+              En octobre, mois du Rosaire : les Litanies, demandées par Léon XIII en 1883 (
+              <cite>Supremi apostolatus officio</cite>), et la prière à saint Joseph, qu’il a
+              demandée en 1889 (<cite>Quamquam pluries</cite>).
             </p>
           </>,
         )}

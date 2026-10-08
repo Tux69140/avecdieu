@@ -293,10 +293,17 @@ test('« A propos » : l’en-tête ouvert, quatre rubriques repliées', async (
 
   await page.getByRole('button', { name: 'Chapelet et Rosaire' }).click()
   await expect(
-    page.getByText('Ordre de la fin du chapelet : feuillets en usage en France', { exact: false }),
+    page.getByText(
+      'Ordre de la fin du chapelet : celui des feuillets de prière en usage en France',
+      { exact: false },
+    ),
   ).toBeVisible()
-  await expect(page.getByText(/Léon XIII en 1883, Supremi apostolatus officio/)).toBeVisible()
-  await expect(page.getByText(/saint Joseph en 1889, Quamquam pluries/)).toBeVisible()
+  await expect(
+    page.getByText(/demandées par Léon XIII en 1883 \(Supremi apostolatus officio\)/),
+  ).toBeVisible()
+  await expect(
+    page.getByText(/la prière à saint Joseph, qu’il a demandée en 1889 \(Quamquam pluries\)/),
+  ).toBeVisible()
   await expect(page.getByText(/© AELF, Paris/)).toBeHidden()
   await page.getByRole('button', { name: 'Chapelet et Rosaire' }).click()
   await expect(page.getByText(/Léon XIII/)).toBeHidden()
