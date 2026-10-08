@@ -18,7 +18,8 @@ export interface Reglages {
   annonce: boolean
   oMonJesus: boolean
   salveRegina: boolean
-  // À plusieurs : V/ et R/ marquent la part de celui qui mène et la réponse.
+  // À plusieurs : ℣ et ℟ marquent la part de celui qui mène et la réponse,
+  // le demi-gras ce que disent tous.
   plusieurs: boolean
   affichage: Affichage
   vibrations: boolean

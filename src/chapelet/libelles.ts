@@ -3,9 +3,10 @@ import { insecables } from './typographie'
 // « Premier mystère », « Deuxième mystère »… : rang de la dizaine, de 1 à 5.
 export const ORDINAUX = ['Premier', 'Deuxième', 'Troisième', 'Quatrième', 'Cinquième']
 
-// Partagée entre le seuil et l'écran des réglages.
+// Partagée entre le seuil et l'écran des réglages ; dit ce que l'écran montre
+// à plusieurs (texte validé par le porteur du projet, 2026-10-08).
 export const AIDE_PLUSIEURS =
-  'Marque en rouge la part de celui qui mène (V/) et la réponse des autres (R/).'
+  '℣ celui qui mène, ℟ ceux qui répondent ; en gras, ce que disent tous.'
 
 // Partagée entre le seuil et l'écran des réglages ; « Coupez-les » ne se
 // coupe pas en fin de ligne.
