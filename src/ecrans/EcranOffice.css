@@ -126,3 +126,14 @@
 .office-erreur .btn {
   margin-top: var(--esp-sm);
 }
+
+/* La fin de l'office : la perle d'or un peu plus loin du dernier texte, puis
+   « Revenir à l’accueil » au centre. */
+.office-cloture {
+  margin-top: var(--esp-lg);
+}
+
+.office-revenir {
+  margin: 0;
+  text-align: center;
+}

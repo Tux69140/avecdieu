@@ -238,6 +238,37 @@ test('l’écran reste allumé pendant la lecture et redevient libre au retour',
   await expect.poll(() => journal(page)).toEqual(['écran allumé', 'écran libre'])
 })
 
+// La fin de l'office : une perle d'or qui ferme, puis le chemin de l'accueil ;
+// l'écran reste allumé, on lit peut-être encore le haut (2026-10-08).
+test('la fin de l’office : une perle d’or, puis « Revenir à l’accueil »', async ({ page }) => {
+  await espionner(page)
+  await servirAelf(page)
+  await preparer(page)
+  await page.goto('/')
+  await page
+    .getByRole('list', { name: 'Offices du jour' })
+    .getByRole('link', { name: /Complies/ })
+    .click()
+  const revenir = page.getByRole('button', { name: 'Revenir à l’accueil' })
+  await revenir.scrollIntoViewIfNeeded()
+  await expect(revenir).toBeInViewport()
+  await expect(page.getByTestId('cloture').locator('.repere-perle')).toHaveAttribute(
+    'data-couleur',
+    'or',
+  )
+  // La clôture vient après la dernière partie.
+  const apres = await page.evaluate(() => {
+    const parties = document.querySelectorAll('[data-testid=office] h2')
+    const derniere = parties[parties.length - 1].getBoundingClientRect().bottom
+    return document.querySelector('[data-testid=cloture]')!.getBoundingClientRect().top > derniere
+  })
+  expect(apres).toBe(true)
+  expect(await journal(page)).toEqual(['écran allumé'])
+  await revenir.click()
+  await expect(page).toHaveURL('/')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mardi 6 octobre')
+})
+
 test('une adresse d’office inconnue mène à l’accueil', async ({ page }) => {
   await servirAelf(page)
   await preparer(page)

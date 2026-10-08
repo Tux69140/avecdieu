@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { Navigate, useLocation, useNavigationType, useParams } from 'react-router'
+import { Navigate, useLocation, useNavigate, useNavigationType, useParams } from 'react-router'
 import { chargerOffice, ErreurAelf, type OfficeDuJour } from '../aelf/api'
 import type { Etendue } from '../aelf/cache'
 import { textesEnregistres } from '../aelf/reserve'
@@ -61,6 +61,7 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
   const [essai, setEssai] = useState(0)
   const [{ accents, plusieurs, prieresEntieres, signalerAjouts }] = useState(lireReglages)
   const retour = useRetour()
+  const naviguer = useNavigate()
   const { fin, cachee } = useSuiteCachee()
   // « Plus bas » ne sert qu'avant de commencer : dès qu'on lit, il ne ferait
   // qu'estomper la dernière ligne (choix du porteur du projet, 2026-10-07).
@@ -288,6 +289,20 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
                 <PartieOffice partie={partie} replier={!prieresEntieres} />
               </Fragment>
             ))}
+            {/* La fin : une perle d'or qui ferme, puis le chemin de l'accueil,
+                sans mot de plus ; l'écran reste allumé (2026-10-08). */}
+            <div className="repere office-cloture" aria-hidden="true" data-testid="cloture">
+              <span className="repere-perle" data-couleur="or" />
+            </div>
+            <p className="office-revenir">
+              <button
+                className="lien-discret"
+                type="button"
+                onClick={() => naviguer('/', { replace: true })}
+              >
+                Revenir à l’accueil
+              </button>
+            </p>
           </div>
         )}
 
