@@ -240,7 +240,8 @@ body::before {
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
-  *::after {
+  *::after,
+  *::backdrop {
     transition: none !important;
     animation: none !important;
   }

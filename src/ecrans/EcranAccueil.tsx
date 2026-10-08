@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router'
 import { AlerteRappels } from '../accueil/AlerteRappels'
 import { BandeauJour } from '../accueil/BandeauJour'
+import { avecExposants } from '../composants/Exposants'
 import { astre } from '../accueil/cadran'
 import { Cadran } from '../accueil/Cadran'
 import { useGlisserLesJours } from '../accueil/glisserLesJours'
@@ -81,7 +82,7 @@ function Accueil({ date, aujourdhui, maintenant }: Props) {
           replace
           aria-label={`Jour précédent, ${dateLisible(veille)}`}
         >
-          ‹ {dateCourte(veille)}
+          ‹ {avecExposants(dateCourte(veille))}
         </Link>
         {estAujourdhui ? (
           <span className="accueil-aujourdhui">Aujourd’hui</span>
@@ -95,7 +96,7 @@ function Accueil({ date, aujourdhui, maintenant }: Props) {
           replace
           aria-label={`Jour suivant, ${dateLisible(lendemain)}`}
         >
-          {dateCourte(lendemain)} ›
+          {avecExposants(dateCourte(lendemain))} ›
         </Link>
       </nav>
       <div className="accueil-cadran" {...glisser}>

@@ -301,3 +301,53 @@ test('une adresse d’office inconnue mène à l’accueil', async ({ page }) =>
   await page.goto('/office/laudes/2026-13-40')
   await expect(page).toHaveURL('/')
 })
+
+// Retouches de la critique de l'écran des offices (2026-10-08).
+test.describe('à 360 px', () => {
+  test.use({ viewport: { width: 360, height: 780 } })
+
+  test('« 1er » en exposant dans la date de l’office et de l’accueil', async ({ page }) => {
+    await page.clock.setFixedTime(new Date(2026, 10, 1, 10, 0))
+    await servirAelf(page)
+    await preparer(page)
+    await page.goto('/office/laudes/2026-11-01')
+    await expect(page.locator('.office-date sup')).toHaveText('er')
+    await page.goto('/')
+    await expect(page.locator('.bandeau-date sup')).toHaveText('er')
+  })
+
+  test('aucune région de l’office ne porte le nom d’une autre', async ({ page }) => {
+    await servirAelf(page)
+    await preparer(page)
+    await page.goto('/office/complies/2026-10-06')
+    await expect(titres(page).first()).toHaveText('Introduction')
+    await expect(page.getByTestId('office').getByRole('region')).toHaveCount(0)
+  })
+
+  test('« Plus bas » et une prière repliée d’une ligne : 48 px à toucher', async ({ page }) => {
+    await servirAelf(page)
+    await preparer(page)
+    await page.goto('/office/laudes/2026-10-06')
+    const indice = page.getByRole('button', { name: 'Plus bas' })
+    await expect(indice).toBeVisible()
+    const touchable = await indice.evaluate((b) => {
+      const style = getComputedStyle(b)
+      return (
+        b.getBoundingClientRect().height -
+        parseFloat(style.paddingTop) -
+        parseFloat(style.paddingBottom)
+      )
+    })
+    expect(touchable).toBeGreaterThanOrEqual(48)
+    // « Notre Père… », replié sur une ligne : un toucher 8 px au-dessus le déplie.
+    const notrePere = page.locator('.priere-repliee summary', { hasText: 'Notre Père' })
+    await notrePere.scrollIntoViewIfNeeded()
+    const boite = (await notrePere.boundingBox())!
+    expect(boite.height).toBeLessThan(48)
+    await page.mouse.click(boite.x + 40, boite.y - 8)
+    await expect(page.locator('.priere-repliee', { hasText: 'Notre Père' })).toHaveAttribute(
+      'open',
+      '',
+    )
+  })
+})

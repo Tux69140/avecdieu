@@ -13,13 +13,15 @@
   width: 10px;
   height: 10px;
   border-radius: 9999px;
-  border: 1.5px solid var(--or);
+  /* Or foncé : le contour d'une perle à venir fait 3:1 sur le fond. */
+  border: 1.5px solid var(--or-fonce);
   transition:
     background-color 0.3s ease-out,
     box-shadow 0.3s ease-out;
 }
 
 .perle-etape[data-etat='dite'] {
+  border-color: var(--or);
   background: var(--or);
 }
 

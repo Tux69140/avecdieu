@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--esp-sm);
-  min-height: 44px;
+  min-height: 48px;
   border: none;
   background: none;
   font-family: var(--sc);
@@ -15,6 +15,8 @@
 }
 
 .indice-suite-flottant {
+  /* 48 px à toucher au-dessus de la barre d'Android, sous le dégradé. */
+  min-height: calc(48px + var(--esp-lg) + var(--bord-bas));
   position: fixed;
   left: 0;
   right: 0;

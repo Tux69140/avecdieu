@@ -7,6 +7,7 @@ import { usePincement } from '../affichage/usePincement'
 import { lireReglages } from '../chapelet/reglages'
 import { saintDuJour } from '../accueil/bandeau'
 import { positionRetenue } from '../composants/defilement'
+import { avecExposants } from '../composants/Exposants'
 import { BoutonFermer, LienMenu } from '../composants/Icones'
 import { IndiceSuite } from '../composants/IndiceSuite'
 import { useRetour } from '../composants/retour'
@@ -198,7 +199,7 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
               le menu : la prière commence haut sur l'écran. */}
           <div className="office-barre">
             <BoutonFermer onClick={retour} />
-            <p className="office-date">{dateLisible(date)}</p>
+            <p className="office-date">{avecExposants(dateLisible(date))}</p>
             <LienMenu depuis={date} office={nom} />
           </div>
           {/* Le saint du jour en petit, à droite du titre qui reste centré ; sous

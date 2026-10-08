@@ -273,9 +273,24 @@ test.describe('« Plus bas »', () => {
     await page.goto('/chapelet')
     const indice = page.getByRole('button', { name: 'Plus bas' })
     await expect(indice).toBeVisible()
-    const boite = (await indice.boundingBox())!
-    // « Plus bas » et son chevron sur une seule ligne.
-    expect(boite.height).toBeLessThan(70)
+    // « Plus bas » et son chevron sur une seule ligne : le libellé tient sur
+    // une ligne, et le chevron est à sa hauteur.
+    const { ligne, chevron } = await indice.evaluate((b) => {
+      const plage = document.createRange()
+      plage.selectNodeContents(b)
+      const lignes = [...plage.getClientRects()].filter((r) => r.width > 0)
+      const svg = b.querySelector('svg')!.getBoundingClientRect()
+      return {
+        ligne: {
+          haut: Math.min(...lignes.map((r) => r.top)),
+          bas: Math.max(...lignes.map((r) => r.bottom)),
+        },
+        chevron: svg.top + svg.height / 2,
+      }
+    })
+    expect(ligne.bas - ligne.haut).toBeLessThan(30)
+    expect(chevron).toBeGreaterThan(ligne.haut)
+    expect(chevron).toBeLessThan(ligne.bas)
     await indice.click()
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
     await expect(indice).toHaveCount(0)

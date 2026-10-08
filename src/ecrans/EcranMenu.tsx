@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router'
 import { LigneFermer } from '../composants/LigneFermer'
+import { avecExposants } from '../composants/Exposants'
 import { useRetour } from '../composants/retour'
 import { dateDuJour, dateLisible, estDate } from '../office/dates'
 import { ecrireHeure, heuresDuJour } from '../office/heures'
@@ -36,7 +37,7 @@ export function EcranMenu() {
             </button>
           </li>
         </ul>
-        <h2 className="menu-jour">{dateLisible(date)}</h2>
+        <h2 className="menu-jour">{avecExposants(dateLisible(date))}</h2>
         <ul className="menu-liste menu-prieres" aria-label="Offices du jour">
           {OFFICES.map((nom) => {
             const heure = heures[nom]

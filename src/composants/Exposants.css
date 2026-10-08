@@ -1,0 +1,5 @@
+/* L'exposant ne doit pas écarter la ligne qui le porte. */
+.exposant {
+  font-size: 0.7em;
+  line-height: 0;
+}

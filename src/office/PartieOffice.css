@@ -109,8 +109,17 @@
 /* Prière courante repliée : la première ligne, et des points de suite qui
    invitent à la déplier. */
 .priere-repliee summary {
+  position: relative;
   list-style: none;
   cursor: pointer;
+}
+
+/* Une prière repliée sur une ligne ne fait que 30 px : la zone à toucher
+   déborde de 9 px dessus et dessous, sans rien déplacer. */
+.priere-repliee summary::before {
+  content: '';
+  position: absolute;
+  inset: -9px 0;
 }
 
 .priere-repliee summary::-webkit-details-marker {

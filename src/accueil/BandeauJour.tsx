@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { chargerJour } from '../aelf/api'
 import { textesEnregistres } from '../aelf/reserve'
+import { avecExposants } from '../composants/Exposants'
 import { dateLisible } from '../office/dates'
 import '../office/Repere.css'
 import { presenterJour, type Bandeau } from './bandeau'
@@ -13,13 +14,6 @@ type Etat =
   | { sorte: 'pret'; bandeau: Bandeau }
 
 const majuscule = (texte: string) => texte.charAt(0).toUpperCase() + texte.slice(1)
-
-// « 27e semaine » : la terminaison de l'ordinal en exposant.
-function avecExposants(texte: string) {
-  return texte
-    .split(/(?<=\d)(er|re|e)(?=\s|$)/)
-    .map((morceau, i) => (i % 2 === 1 ? <sup key={i}>{morceau}</sup> : morceau))
-}
 
 // Sous l'arc du cadran : la date, que l'app connaît toujours, puis ce que
 // l'AELF dit du jour (temps, fête ou saint, couleur). Un jour qui n'est pas
@@ -68,7 +62,7 @@ export function BandeauJour({
   const bandeau = etat.sorte === 'pret' ? etat.bandeau : {}
   return (
     <div className="bandeau-jour" data-testid="bandeau">
-      <h1 className="bandeau-date">{majuscule(dateLisible(date))}</h1>
+      <h1 className="bandeau-date">{avecExposants(majuscule(dateLisible(date)))}</h1>
       {bandeau.temps && <p className="bandeau-temps">{avecExposants(bandeau.temps)}</p>}
       {bandeau.titre && <p className="bandeau-titre">{avecExposants(bandeau.titre)}</p>}
       {bandeau.couleur && (

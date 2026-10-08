@@ -1,4 +1,3 @@
-import { useId } from 'react'
 import type { Bloc, Partie, Strophe, TypePartie } from './modele'
 import { LigneOffice, TexteOffice } from './TexteOffice'
 import './PartieOffice.css'
@@ -20,16 +19,16 @@ const MISES: Partial<Record<TypePartie, 'vers' | 'prose'>> = {
 // « replier » : les prières courantes se replient sur leur première ligne
 // (réglage « Prières courantes en entier » coupé).
 export function PartieOffice({ partie, replier }: { partie: Partie; replier: boolean }) {
-  const id = useId()
+  // Une section sans nom : nommée, elle deviendrait une région, et deux
+  // « Antienne » ou deux « Répons » porteraient le même nom. Le titre suffit.
   return (
     <section
       className="partie"
-      aria-labelledby={id}
       data-type={partie.type}
       data-mise={MISES[partie.type]}
       data-ajoutee={partie.ajoutee ? 'oui' : undefined}
     >
-      <h2 id={id} className="etiquette partie-libelle">
+      <h2 className="etiquette partie-libelle">
         {partie.libelle}
         {partie.precision && <span className="partie-precision"> · {partie.precision}</span>}
       </h2>
