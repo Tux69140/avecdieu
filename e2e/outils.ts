@@ -87,7 +87,8 @@ export async function deplierReglages(
 }
 
 interface Ouverture {
-  // L'aide aux gestes s'affiche-t-elle ? Masquée par défaut dans les parcours.
+  // L'aide aux gestes du chapelet et l'aide à la lecture de l'office
+  // s'affichent-elles ? Masquées par défaut dans les parcours.
   aide?: boolean
   affichage?: 'complet' | 'compact'
   reglages?: Reglages
@@ -107,7 +108,10 @@ export async function preparer(
       // Seulement au premier chargement : un rechargement garde ce que l'app a retenu.
       if (sessionStorage.getItem('parcours-prepare')) return
       sessionStorage.setItem('parcours-prepare', 'oui')
-      if (!aide) localStorage.setItem('avec-dieu.aide-gestes', 'masquee')
+      if (!aide) {
+        localStorage.setItem('avec-dieu.aide-gestes', 'masquee')
+        localStorage.setItem('avec-dieu.aide-office', 'masquee')
+      }
       if (Object.keys(tous).length > 0)
         localStorage.setItem('avec-dieu.reglages', JSON.stringify(tous))
       if (lectures) localStorage.setItem('avec-dieu.lectures', JSON.stringify(lectures))

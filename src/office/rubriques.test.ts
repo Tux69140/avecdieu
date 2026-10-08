@@ -68,7 +68,7 @@ describe('R1 et R3 : l’invitatoire ouvre la journée', () => {
     const laudes = complet('laudes', '2026-10-06', { premier: true })
     const [antienne, repetee] = partie(laudes, 'Invitatoire').blocs
     expect(texte(antienne)).toBe('Le Seigneur est Roi, venez, adorons-le.')
-    expect(repetee).toMatchObject({ ajoute: true, antienne: true })
+    expect(repetee).toMatchObject({ ajoute: true, reprise: true })
     expect(texte(repetee)).toBe(texte(antienne))
 
     const psaume = partie(laudes, 'Psaume 94').blocs
@@ -76,7 +76,7 @@ describe('R1 et R3 : l’invitatoire ouvre la journée', () => {
     expect(psaume).toHaveLength(strophes.length * 2 + 2)
     psaume.slice(0, -2).forEach((bloc, i) => {
       if (i % 2 === 0) expect(bloc.strophes).toEqual([strophes[i / 2]])
-      else expect(bloc).toMatchObject({ ajoute: true, antienne: true })
+      else expect(bloc).toMatchObject({ ajoute: true, reprise: true })
     })
     expect(estGloire(psaume.at(-2)!)).toBe(true)
     expect(texte(psaume.at(-1)!)).toBe(texte(antienne))
@@ -147,7 +147,7 @@ describe('R4 et R5 : antiennes et Gloire au Père de la psalmodie', () => {
       const blocs = partie(laudes, psaume).blocs
       expect(blocs).toHaveLength(3)
       expect(blocs[1]).toMatchObject({ priere: 'Gloire au Père', ajoute: true })
-      expect(blocs[2]).toMatchObject({ ajoute: true, antienne: true })
+      expect(blocs[2]).toMatchObject({ ajoute: true, reprise: true })
       expect(texte(blocs[2])).toBe(texte(partie(laudes, antienne).blocs[0]))
     }
   })
@@ -159,7 +159,7 @@ describe('R4 et R5 : antiennes et Gloire au Père de la psalmodie', () => {
     // L'AELF ne lui donne pas d'antienne : celle du psaume 92 vaut pour les deux.
     expect(texte(cantique.at(-1)!)).toBe(texte(partie(laudes, 'Antienne 1').blocs[0]))
     const psaume = partie(laudes, 'Psaume 92').blocs
-    expect(psaume.map((b) => b.priere ?? (b.antienne ? 'antienne' : 'texte'))).toEqual([
+    expect(psaume.map((b) => b.priere ?? (b.reprise ? 'antienne' : 'texte'))).toEqual([
       'texte',
       'Gloire au Père',
     ])
@@ -182,7 +182,7 @@ describe('R4 et R5 : antiennes et Gloire au Père de la psalmodie', () => {
   it('une seule antienne pour l’heure : dite après le dernier psaume, Gloire après chacun', () => {
     const none = complet('none', '2026-11-01')
     const forme = (libelle: string) =>
-      partie(none, libelle).blocs.map((b) => b.priere ?? (b.antienne ? 'antienne' : 'texte'))
+      partie(none, libelle).blocs.map((b) => b.priere ?? (b.reprise ? 'antienne' : 'texte'))
     expect(forme('Psaume 117 - I')).toEqual(['texte', 'Gloire au Père'])
     expect(forme('Psaume 117 - II')).toEqual(['texte', 'Gloire au Père'])
     expect(forme('Psaume 117 - III')).toEqual(['texte', 'Gloire au Père', 'antienne'])
@@ -450,12 +450,12 @@ describe('jeu d’offices de référence : 100 % des ajouts attendus', () => {
           if (p.type === 'antienne') antienne = p
           else if (!psalmique(p)) antienne = undefined
           if (!psalmique(p) || p.libelle === 'Psaume 94' || p.ajoutee) return
-          const reprises = p.blocs.filter((b) => b.antienne)
+          const reprises = p.blocs.filter((b) => b.reprise)
           if (antienne && !psalmique(office.parties[i + 1])) {
             expect(reprises.map(texte), `antienne après ${p.libelle}`).toEqual([
               texteDe(antienne.blocs.flatMap((b) => b.strophes)),
             ])
-            expect(p.blocs.at(-1)!.antienne).toBe(true)
+            expect(p.blocs.at(-1)!.reprise).toBe(true)
           } else expect(reprises, `pas d’antienne après ${p.libelle}`).toEqual([])
         })
         // Le texte de l'AELF est gardé intact, partie par partie.

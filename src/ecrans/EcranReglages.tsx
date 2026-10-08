@@ -6,6 +6,7 @@ import { ChoixTaille } from '../affichage/ChoixTaille'
 import { ChoixAffichage } from '../chapelet/ChoixAffichage'
 import { AIDE_VIBRATIONS } from '../chapelet/libelles'
 import { aideAMontrer, masquerAide, montrerAide } from '../chapelet/memoire'
+import { aideOfficeAMontrer, masquerAideOffice, montrerAideOffice } from '../office/aide'
 import { lireReglages, modifierReglages, type Reglages, type Theme } from '../chapelet/reglages'
 import { Bascule as ChoixBascule } from '../composants/Bascule'
 import { Interrupteur } from '../composants/Interrupteur'
@@ -69,6 +70,7 @@ export function EcranReglages() {
   const [rappels, setRappels] = useState(lireRappels)
   const [solaire, setSolaire] = useState(lireSolaire)
   const [aide, setAide] = useState(aideAMontrer)
+  const [aideOffice, setAideOffice] = useState(aideOfficeAMontrer)
   // Le lieu se choisit sur son propre écran ; en voyage, il change seul.
   const { lieu } = useLieu()
   const [android, relireAndroid] = useEtatAndroid()
@@ -198,6 +200,22 @@ export function EcranReglages() {
             aide="Un filet rouge marque ce que l’app ajoute au texte de l’AELF selon les rubriques."
             actif={reglages.signalerAjouts}
             onBasculer={(signalerAjouts) => modifier({ signalerAjouts })}
+          />
+          <Interrupteur
+            libelle="Consignes pour débuter"
+            aide="Rappelle en rouge, dans l’office, ce qui se répète et quand répondre."
+            actif={reglages.consignes}
+            onBasculer={(consignes) => modifier({ consignes })}
+          />
+          <Interrupteur
+            libelle="Aide à la lecture"
+            aide="A l’ouverture d’un office, rappelle ce que veulent dire les perles et les signes."
+            actif={aideOffice}
+            onBasculer={(actif) => {
+              if (actif) montrerAideOffice()
+              else masquerAideOffice()
+              setAideOffice(actif)
+            }}
           />
           <p className="reglages-note" data-testid="hors-connexion">
             {enregistres

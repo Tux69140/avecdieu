@@ -66,11 +66,18 @@ const fil = (page: Page) =>
         .join(''),
     )
 
+// Les perles sous le titre, hors du bandeau : elles ouvrent le sommaire.
+const perlesDuTitre = (page: Page) =>
+  page.getByRole('main').getByRole('button', { name: /Ouvrir le sommaire$/ })
+
 test('le bandeau revient quand on remonte et nomme l’étape lue', async ({ page }) => {
   await ouvrir(page)
   // À l'ouverture : l'en-tête, avec ‹, ☰ et le fil de perles qui ouvre le
   // sommaire ; pas de bandeau.
-  await expect(page.getByRole('button', { name: 'Sommaire', exact: true })).toBeVisible()
+  // Le fil de perles dit l'étape, comme celui du bandeau.
+  await expect(perlesDuTitre(page)).toHaveAccessibleName(
+    'Introduction, étape 1 sur 13. Ouvrir le sommaire',
+  )
   await expect(page.getByRole('button', { name: 'Fermer', exact: true })).toBeVisible()
   await expect(page.getByRole('link', { name: 'Menu' })).toBeVisible()
   await expect(bandeau(page)).toBeHidden()
@@ -103,7 +110,7 @@ test('le bandeau revient quand on remonte et nomme l’étape lue', async ({ pag
 
 test('le sommaire conduit à une étape, puis se referme', async ({ page }) => {
   await ouvrir(page)
-  await page.getByRole('button', { name: 'Sommaire', exact: true }).click()
+  await perlesDuTitre(page).click()
   await expect(sommaire(page)).toBeVisible()
   await expect(sommaire(page).getByRole('heading')).toHaveText('Sommaire · Laudes')
   const etapes = sommaire(page).getByRole('listitem').getByRole('button')
@@ -150,7 +157,7 @@ test('près de la fin, une étape courte reste celle qu’on a choisie', async (
   await ouvrir(page, '/office/vepres/2026-10-06')
   for (const etape of ['Notre Père', 'Oraison']) {
     await page
-      .getByRole('button', { name: /Sommaire/ })
+      .getByRole('button', { name: /Ouvrir le sommaire/ })
       .first()
       .click()
     await sommaire(page).getByRole('button', { name: etape, exact: true }).click()

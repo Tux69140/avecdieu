@@ -1,3 +1,4 @@
+import { insecables } from '../chapelet/typographie'
 import type { Bloc, Partie, Strophe, TypePartie } from './modele'
 import { LigneOffice, TexteOffice } from './TexteOffice'
 import './PartieOffice.css'
@@ -46,10 +47,10 @@ function BlocOffice({ bloc, replier }: { bloc: Bloc; replier: boolean }) {
     <div
       className="bloc"
       data-ajoute={bloc.ajoute ? 'oui' : undefined}
-      data-antienne={bloc.antienne ? 'oui' : undefined}
+      data-reprise={bloc.reprise ? 'oui' : undefined}
       data-testid={bloc.priere ? 'priere-courante' : undefined}
     >
-      {bloc.rubrique && <p className="office-rubrique">{bloc.rubrique}</p>}
+      {bloc.rubrique && <p className="office-rubrique">{insecables(bloc.rubrique)}</p>}
       {bloc.priere && replier ? (
         <PriereRepliee strophes={bloc.strophes} />
       ) : (

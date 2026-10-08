@@ -18,6 +18,7 @@ describe('réinitialiser l’app', () => {
       'avec-dieu.en-cours',
       'avec-dieu.lectures',
       'avec-dieu.aide-gestes',
+      'avec-dieu.aide-office',
       'avec-dieu.invitatoire',
     ])
       localStorage.setItem(cle, '{}')

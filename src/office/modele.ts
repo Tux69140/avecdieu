@@ -71,10 +71,12 @@ export interface Bloc {
   // Prière courante (Notre Père, Gloire au Père…), repliée sur sa première
   // ligne sauf réglage contraire : son nom.
   priere?: string
-  // Rubrique en rouge au-dessus du bloc : « Tous », à plusieurs.
+  // Rubrique en rouge au-dessus du bloc : « Tous », à plusieurs, ou une
+  // consigne pour qui débute (R13).
   rubrique?: string
-  // Une antienne reprise au fil du psaume : elle se distingue du psaume.
-  antienne?: boolean
+  // Un texte redit (antienne, répons) : en italique, il se distingue de sa
+  // première fois (choix du porteur du projet, 2026-10-08).
+  reprise?: boolean
 }
 
 export interface Partie {

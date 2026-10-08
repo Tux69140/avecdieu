@@ -15,10 +15,32 @@ export function TexteOffice({ strophes }: { strophes: Strophe[] }) {
   ))
 }
 
+// Ce qui ouvre la ligne : ℣. ou ℟., ou le tiret d'une intention. La suite
+// d'une telle ligne coupée s'aligne après le signe (PartieOffice.css).
+function attaqueDe(ligne: Ligne): 'marque' | 'tiret' | undefined {
+  const [premier] = ligne
+  if (premier?.signe === 'V' || premier?.signe === 'R') return 'marque'
+  if (!premier?.signe && /^\s*[—–]\s/.test(premier?.texte ?? '')) return 'tiret'
+  return undefined
+}
+
+const estPause = (segment?: Segment) => segment?.signe === 'mediante' || segment?.signe === 'flexe'
+
+// L'astérisque et la croix restent avec le mot qui les précède : en grand
+// texte, ils ne tombent jamais seuls sur une ligne.
+function sansCoupureAvantPause(ligne: Ligne): Ligne {
+  return ligne.map((segment, k) => {
+    if (estPause(segment)) return { ...segment, texte: segment.texte.replace(/^\s+/, '\u00a0') }
+    if (estPause(ligne[k + 1]))
+      return { ...segment, texte: segment.texte.replace(/\s+$/, '\u00a0') }
+    return segment
+  })
+}
+
 export function LigneOffice({ ligne }: { ligne: Ligne }) {
   return (
-    <span className="office-ligne">
-      {ligne.map((segment, k) => (
+    <span className="office-ligne" data-attaque={attaqueDe(ligne)}>
+      {sansCoupureAvantPause(ligne).map((segment, k) => (
         <SegmentOffice key={k} segment={segment} />
       ))}
     </span>

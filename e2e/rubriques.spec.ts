@@ -35,7 +35,7 @@ test('l’invitatoire suit le premier office ouvert, et le lien le déplace', as
   await ouvrir(page, 'laudes')
   await expect(titres(page).nth(1)).toHaveText('Invitatoire')
   await expect(partie(page, 'Introduction')).toContainText('Seigneur, ouvre mes lèvres')
-  await expect(page.getByRole('button', { name: 'Dire l’invitatoire ici' })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Le dire ici' })).toHaveCount(0)
 
   // L'office des lectures, ouvert ensuite, commence par « Dieu, viens à mon aide ».
   await ouvrir(page, 'lectures')
@@ -46,20 +46,25 @@ test('l’invitatoire suit le premier office ouvert, et le lien le déplace', as
   expect(demandes).toContain('https://api.aelf.org/v1/laudes/2026-10-06/france')
   expect(demandes).toContain('https://api.aelf.org/v1/lectures/2026-10-06/france')
 
-  // Le lien y déplace l'invitatoire, signalé comme ajout.
-  await page.getByRole('button', { name: 'Dire l’invitatoire ici' }).click()
+  // La raison avant l'action : le lien y déplace l'invitatoire, signalé comme ajout.
+  await expect(page.locator('.office-invitatoire')).toHaveText(
+    'L’invitatoire était aux laudes. Le dire ici',
+  )
+  await page.getByRole('button', { name: 'Le dire ici' }).click()
   await expect(titres(page).nth(1)).toHaveText('Invitatoire')
   await expect(titres(page).nth(2)).toHaveText('Psaume 94')
   await expect(partie(page, 'Introduction')).toContainText('Seigneur, ouvre mes lèvres')
   await expect(partie(page, 'Invitatoire')).toHaveAttribute('data-ajoutee', 'oui')
   // La lecture reprend sur l'invitatoire, même au lecteur d'écran.
   await expect(partie(page, 'Invitatoire').getByRole('heading')).toBeFocused()
-  await expect(page.getByRole('button', { name: 'Dire l’invitatoire ici' })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Le dire ici' })).toHaveCount(0)
 
   // Les laudes l'ont perdu, et proposent à leur tour de le reprendre.
   await ouvrir(page, 'laudes')
   await expect(titres(page).nth(1)).toHaveText(/^Hymne/)
-  await expect(page.getByRole('button', { name: 'Dire l’invitatoire ici' })).toBeVisible()
+  await expect(page.locator('.office-invitatoire')).toHaveText(
+    'L’invitatoire était à l’office des lectures. Le dire ici',
+  )
 })
 
 test('un office des lectures que l’AELF ne donne pas ne prend pas l’invitatoire', async ({
@@ -92,8 +97,11 @@ test('Gloire au Père et Notre Père repliés sur leur première ligne, déplié
   await expect(gloire.getByText('au Dieu qui est, qui était et qui vient,')).toBeHidden()
   await gloire.locator('summary').click()
   await expect(gloire.getByText('au Dieu qui est, qui était et qui vient,')).toBeVisible()
-  // Après le Gloire, l'antienne reprise.
-  await expect(psaume.locator('.bloc').last()).toHaveText(
+  // Après le Gloire, l'antienne reprise, sous sa consigne (R13).
+  await expect(psaume.locator('.bloc').last().locator('.office-rubrique')).toHaveText(
+    'On reprend l’antienne.',
+  )
+  await expect(psaume.locator('.bloc').last().locator('.office-strophe')).toHaveText(
     'Par amour de cette terre, tu ôtes le péché de ton peuple, et ta gloire habite chez nous.',
   )
 

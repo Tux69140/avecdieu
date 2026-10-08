@@ -18,6 +18,7 @@ describe('réglages du chapelet', () => {
       accents: true,
       prieresEntieres: false,
       signalerAjouts: true,
+      consignes: true,
       zone: 'france',
       tailleTexte: 18,
       theme: 'automatique',

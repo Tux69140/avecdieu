@@ -20,7 +20,7 @@
 ## Typography
 - **Display/Hero** : Baumans (400, seule graisse, pas d'italique) — titres : nom de l'app, fête du jour, noms d'offices, titres de cartes. Choix décalé assumé par le porteur du projet ; jamais en dessous de 20 px.
 - **Rubriques / dates** : Cormorant SC (500, 600) — vraies petites capitales pour les dates, libellés (« Antienne 1 »), V/ R/, repères du cadran, lettrines ; interlettrage 0,06–0,1 em ; jamais en dessous de 14 px.
-- **Body** : Literata (400, 500, 600 + italique, taille optique automatique) — tout le texte des prières, les antiennes (italique), les boutons (500), les réglages.
+- **Body** : Literata (400, 500, 600 + italique, taille optique automatique) — tout le texte des prières, les boutons (500), les réglages ; un texte redit (antienne reprise, répons) en italique, sa première fois en romain.
 - **Data/Tables** : Literata avec `tabular-nums lining-nums` — heures des offices, compteurs.
 - **Code** : sans objet (aucun code affiché dans l'app).
 - **Loading** : `https://fonts.googleapis.com/css2?family=Baumans&family=Cormorant+SC:wght@500;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;1,7..72,400&display=swap` — à auto-héberger dans l'app (hors-ligne dès le premier lancement). `font-synthesis: none` pour interdire le faux gras de Baumans.
@@ -37,7 +37,7 @@
 - **Secondary** : Or `#B08A3E` — bouton secondaire (contour or), perles, arc du cadran, focus des champs (halo).
 - **Neutrals** : `#F6EFE2` → `#EBE0CB` → `#D6C7AB` → `#A39280` → `#6B5A48` → `#2B2118`
 - **Semantic** : success `#4E6B3A`, warning `#9A6A12`, error `#7A3B1E` (brun brique, toujours accompagné de ⚠ et d'un texte — jamais le rouge des rubriques), info `#3E5C76`. Avis = cadre de 1 px de leur couleur sur fond vélin (plus de filet latéral, 2026-10-08).
-- **Couleurs liturgiques** (pastilles, identiques jour/nuit, cerclées de sépia pâle) : blanc `#F4EFE4`, vert `#3E6A3F`, violet `#5A3E7A`, rouge `#B8231B`, rose `#D58F9C`, noir `#23201C`.
+- **Couleurs liturgiques** (pastilles, identiques jour/nuit, cerclées de sépia) : blanc `#F4EFE4`, vert `#3E6A3F`, violet `#5A3E7A`, rouge `#B8231B`, rose `#D58F9C`, noir `#23201C`.
 - **Dark mode — thème nuit** : brun-noir chaud, jamais noir pur, pour les complies dans la pénombre. Nuit (fond) `#14100C` · Surface `#1D1813` · Filet `#3A3026` · Encre `#E6D9C2` · Sépia `#A6927A` · Sépia pâle `#6E604F` · Rubrique `#E07A6A` · Or `#C9A45C` · Soleil `#E2B45A` · success `#8FB07A`, warning `#D8A94A`, error `#D98A5E`, info `#8FB0CC`. Bouton principal inversé (fond encre clair, texte sombre). Activation automatique selon le réglage Android ou après le coucher du soleil.
 - **Grain** : bruit fractal très léger en surimpression (opacité 7 % le jour, 5 % la nuit).
 
@@ -96,3 +96,7 @@
 | 2026-10-08 | Aucun mot coupé en fin de ligne | Choix du porteur du projet : plus de césure automatique dans le texte prié (offices et passages du chapelet), plus joli et plus lisible à voix haute ; la prose passe à la ligne entière |
 | 2026-10-08 | Texte des offices aligné à gauche | Choix du porteur du projet : l'office se lit comme un livre (retraits des vers, versets et ℣. ℟. dans la marge, filet des ajouts) ; seules les prières du chapelet, montrées une à une, sont centrées |
 | 2026-10-08 | Apostrophes typographiques, mots composés entiers | Décision du porteur du projet : l'AELF mêle « j'ai » et « l’honneur » ; tout devient « ’ » à la lecture (textes, titres, sources), sans effet sur un texte déjà juste. Un mot composé (« Saint-Esprit », « délivre-nous ») ne se coupe plus à son trait d'union |
+| 2026-10-08 | Perles de couleur cerclées de sépia | Choix du porteur du projet après la critique de l'office : cerclée de sépia pâle, la perle blanche des fêtes et mémoires (1,14:1) ne se voyait plus ; toutes les couleurs prennent le cerclage sépia, dans l'office et sur l'accueil |
+| 2026-10-08 | Pour qui débute : répons redit, consignes, aide | Décisions du porteur du projet : le répons de l'intercession redit après chaque intention (R12) ; consignes rouges en italique (« On la répète aussitôt. », « On reprend l’antienne. », « On répond après chaque intention : », R13), masquables par « Consignes pour débuter » ; fenêtre « Lire un office » comme l'aide du chapelet, huit lignes qui n'expliquent que ce qui se voit, réglage « Aide à la lecture » |
+| 2026-10-08 | Le premier dit droit, le redit en italique | Choix du porteur du projet : l'antienne qui ouvre un psaume reste en romain, sa reprise, le répons redit et la reprise du répons bref passent en italique |
+| 2026-10-08 | « L’invitatoire était aux laudes. Le dire ici » | Décision du porteur du projet : la raison avant l'action, seuls les derniers mots se touchent |

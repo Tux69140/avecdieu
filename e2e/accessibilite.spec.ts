@@ -42,6 +42,19 @@ test('aide aux gestes', async ({ page }) => {
   expect(await violationsGraves(page)).toEqual([])
 })
 
+// L'aide à la lecture de l'office, un jour en blanc (sa perle d'exemple).
+async function aideDeLOffice(page: Page) {
+  await servirAelf(page)
+  await preparer(page, { aide: true })
+  await page.goto('/office/laudes/2026-11-01')
+  await expect(page.getByRole('dialog', { name: 'Lire un office' })).toBeVisible()
+  expect(await violationsGraves(page)).toEqual([])
+}
+
+test('aide à la lecture de l’office', async ({ page }) => {
+  await aideDeLOffice(page)
+})
+
 test('écran du chapelet, au signe de croix', async ({ page }) => {
   await commencer(page)
   expect(await violationsGraves(page)).toEqual([])
@@ -151,7 +164,7 @@ test('office : lien de l’invitatoire, prières courantes en entier, ajouts sig
   await page.goto('/office/laudes/2026-10-06')
   await expect(page.getByTestId('office')).toBeVisible()
   await page.goto('/office/lectures/2026-10-06')
-  await expect(page.getByRole('button', { name: 'Dire l’invitatoire ici' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Le dire ici' })).toBeVisible()
   await expect(page.getByTestId('office')).toBeVisible()
   expect(await violationsGraves(page)).toEqual([])
 })
@@ -304,6 +317,10 @@ test.describe('de nuit', () => {
     await page.goto('/office/laudes/2026-10-06')
     await expect(page.getByTestId('office')).toBeVisible()
     expect(await violationsGraves(page)).toEqual([])
+  })
+
+  test('aide à la lecture de l’office', async ({ page }) => {
+    await aideDeLOffice(page)
   })
 
   test('office : bandeau et sommaire', async ({ page }) => {

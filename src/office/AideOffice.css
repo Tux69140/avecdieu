@@ -1,0 +1,78 @@
+/* L'aide de l'office reprend celle du chapelet (AideGestes.css), en plus
+   serré : huit lignes au lieu de quatre tiennent sur un écran de 360 × 780. */
+.aide-office {
+  padding-top: var(--esp-md);
+}
+
+.aide-office h2 {
+  margin-bottom: var(--esp-sm);
+}
+
+.aide-office ul {
+  gap: 12px;
+}
+
+.aide-office li {
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.aide-office .halo {
+  fill: var(--halo-perle);
+  stroke: none;
+}
+
+.aide-office .soleil {
+  fill: var(--soleil);
+  stroke: var(--soleil-ombre);
+  stroke-width: 1;
+}
+
+.aide-office .filet {
+  stroke: var(--sepia);
+  stroke-width: 1.5;
+}
+
+.aide-office .rouge {
+  stroke: var(--rubrique);
+}
+
+/* La perle d'exemple : celle du jour, cerclée comme dans l'office (Repere.css). */
+.aide-office .perle {
+  stroke: var(--sepia);
+  stroke-width: 1;
+  fill: var(--liturgique-vert);
+}
+
+.aide-office .perle[data-couleur='blanc'] {
+  fill: var(--liturgique-blanc);
+}
+.aide-office .perle[data-couleur='violet'] {
+  fill: var(--liturgique-violet);
+}
+.aide-office .perle[data-couleur='rouge'] {
+  fill: var(--liturgique-rouge);
+}
+.aide-office .perle[data-couleur='rose'] {
+  fill: var(--liturgique-rose);
+}
+.aide-office .perle[data-couleur='noir'] {
+  fill: var(--liturgique-noir);
+}
+
+/* Les signes eux-mêmes, en rouge rubrique comme dans le texte. */
+.aide-glyphe {
+  width: 40px;
+  font-size: 22px;
+  text-align: center;
+  color: var(--rubrique);
+  white-space: nowrap;
+}
+
+.aide-marques {
+  font-family: 'Signes liturgiques', var(--texte);
+}
+
+.aide-suite {
+  color: var(--sepia);
+}

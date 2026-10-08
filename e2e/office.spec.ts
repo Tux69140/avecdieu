@@ -291,6 +291,8 @@ test('la fin de l’office : une perle d’or, puis « Revenir à l’accueil »
   await revenir.click()
   await expect(page).toHaveURL('/')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mardi 6 octobre')
+  // L'accueil n'est pas empilé une seconde fois : le retour d'Android quitte l'app.
+  expect(await page.evaluate(() => (history.state as { idx: number }).idx)).toBe(0)
 })
 
 test('une adresse d’office inconnue mène à l’accueil', async ({ page }) => {

@@ -29,6 +29,8 @@ export interface Reglages {
   prieresEntieres: boolean
   // Offices : un filet rouge le long de ce que l'app ajoute selon les rubriques.
   signalerAjouts: boolean
+  // Offices : les consignes en rouge pour qui débute (R13).
+  consignes: boolean
   // Offices : la zone liturgique, dont l'AELF donne le calendrier propre.
   zone: Zone
   // Offices et chapelet : la taille du texte à prier.
@@ -47,6 +49,7 @@ export const REGLAGES_PAR_DEFAUT: Reglages = {
   accents: true,
   prieresEntieres: false,
   signalerAjouts: true,
+  consignes: true,
   zone: 'france',
   tailleTexte: 18,
   theme: 'automatique',
@@ -61,6 +64,7 @@ const BASCULES = [
   'accents',
   'prieresEntieres',
   'signalerAjouts',
+  'consignes',
 ] as const
 
 const CLE = 'avec-dieu.reglages'

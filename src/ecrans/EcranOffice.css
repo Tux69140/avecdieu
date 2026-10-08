@@ -137,6 +137,20 @@
   margin-top: var(--esp-lg);
 }
 
+/* Pourquoi l'invitatoire manque, puis le lien qui le ramène ici. */
+.office-invitatoire {
+  margin: var(--esp-xs) 0 0;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--sepia);
+  text-wrap: balance;
+}
+
+.office-invitatoire .lien-discret {
+  padding: var(--esp-sm) var(--esp-xs);
+  font-size: 15px;
+}
+
 .office-revenir {
   margin: var(--esp-sm) 0 0;
   text-align: center;

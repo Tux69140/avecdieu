@@ -1,13 +1,14 @@
-import { RUBRIQUE_EXAMEN, TEXTES_OFFICE } from '../recueil/office'
+import { CONSIGNES, RUBRIQUE_EXAMEN, TEXTES_OFFICE } from '../recueil/office'
 import { PRIERES, RUBRIQUE_ENSEMBLE } from '../recueil/prieres'
 import { sansAlleluia } from './dates'
 import type { Bloc, NomOffice, Office, Partie, Strophe } from './modele'
+import { redireRepons } from './intercession'
 import { conclureOraison } from './oraison'
 import { reprendreRepons } from './repons'
 import { strophesDe, texteDesBlocs } from './textes'
 
 // L'office complet, reconstitué selon les règles validées par le porteur du
-// projet (src/recueil/office.ts, R1 à R11) à partir du texte abrégé de l'AELF.
+// projet (src/recueil/office.ts, R1 à R13) à partir du texte abrégé de l'AELF.
 // Tout ce que l'app ajoute est marqué (Bloc.ajoute, Partie.ajoutee).
 
 export interface Contexte {
@@ -17,6 +18,8 @@ export interface Contexte {
   // l'office des lectures quand celui-ci ouvre la journée.
   invitatoire?: Partie[]
   plusieurs: boolean
+  // R13 : les consignes en rouge pour qui débute (réglage « Consignes pour débuter »).
+  consignes?: boolean
 }
 
 const OUVRENT_LA_JOURNEE: readonly NomOffice[] = ['lectures', 'laudes']
@@ -43,7 +46,12 @@ function gloire(plusieurs: boolean, ajoute = true): Bloc {
   }
 }
 
-const antienneReprise = (strophes: Strophe[]): Bloc => ({ strophes, ajoute: true, antienne: true })
+const antienneReprise = (strophes: Strophe[], consigne?: string): Bloc => ({
+  strophes,
+  ajoute: true,
+  reprise: true,
+  ...(consigne && { rubrique: consigne }),
+})
 
 // R1 et R2 : « Dieu, viens à mon aide », le Gloire au Père, et l'Alléluia hors Carême.
 function introductionCourante(date: string, plusieurs: boolean): Bloc[] {
@@ -56,10 +64,16 @@ function introductionCourante(date: string, plusieurs: boolean): Bloc[] {
 
 // R3 : l'antienne, aussitôt répétée, puis reprise après chaque strophe ; le
 // Gloire au Père, et l'antienne une dernière fois.
-function invitatoireComplet([antienne, psaume]: Partie[], plusieurs: boolean, deplace: boolean) {
+function invitatoireComplet(
+  [antienne, psaume]: Partie[],
+  plusieurs: boolean,
+  deplace: boolean,
+  consignes: boolean,
+) {
   const refrain = strophesDeLaPartie(antienne)
+  const repetee = antienneReprise(refrain, consignes ? CONSIGNES.invitatoire : undefined)
   const parties: Partie[] = [
-    { ...antienne, blocs: [{ strophes: refrain }, antienneReprise(refrain)], ajoutee: deplace },
+    { ...antienne, blocs: [{ strophes: refrain }, repetee], ajoutee: deplace },
   ]
   if (psaume)
     parties.push({
@@ -113,10 +127,11 @@ function antiennesDites(parties: Partie[]): Partie[] {
 }
 
 // R4 et R5 : le Gloire au Père après chaque psaume, et l'antienne après le
-// dernier psaume qu'elle couvre.
-function psalmodie(lues: Partie[], plusieurs: boolean): Partie[] {
+// dernier psaume qu'elle couvre. R13 : la première reprise porte sa consigne.
+function psalmodie(lues: Partie[], plusieurs: boolean, consignes: boolean): Partie[] {
   const parties = antiennesDites(lues)
   let antienne: Partie | undefined
+  let consigne = consignes ? CONSIGNES.antienne : undefined
   return parties.map((partie, i) => {
     if (partie.type === 'antienne') antienne = partie
     if (partie.type === 'antienne') return partie
@@ -126,8 +141,10 @@ function psalmodie(lues: Partie[], plusieurs: boolean): Partie[] {
     }
     const blocs = [...partie.blocs]
     if (!sansGloire(partie)) blocs.push(gloire(plusieurs))
-    if (antienne && !estPsalmique(parties[i + 1]))
-      blocs.push(antienneReprise(strophesDeLaPartie(antienne)))
+    if (antienne && !estPsalmique(parties[i + 1])) {
+      blocs.push(antienneReprise(strophesDeLaPartie(antienne), consigne))
+      consigne = undefined
+    }
     return { ...partie, blocs }
   })
 }
@@ -162,13 +179,14 @@ function fin(nom: NomOffice): Partie | undefined {
 
 export function reconstituer(office: Office, contexte: Contexte): Office {
   const { nom, date } = office
-  const { plusieurs } = contexte
+  const { plusieurs, consignes = false } = contexte
   const propre = invitatoireDe(office)
   const invitatoire = nom === 'laudes' ? propre : contexte.invitatoire
   // L'invitatoire a ses propres règles (R3) : la psalmodie se reconstitue sans lui.
   const sansInvitatoire = psalmodie(
     office.parties.filter((p) => !propre?.includes(p)),
     plusieurs,
+    consignes,
   )
   const ouvre = contexte.premier && OUVRENT_LA_JOURNEE.includes(nom) && invitatoire !== undefined
   // À l'office des lectures, l'invitatoire vient des laudes : déplacé, il est un ajout.
@@ -185,7 +203,7 @@ export function reconstituer(office: Office, contexte: Contexte): Office {
               blocs: [{ strophes: strophesDe(TEXTES_OFFICE['introduction-invitatoire']) }],
               ajoutee: deplace,
             },
-            ...invitatoireComplet(invitatoire, plusieurs, deplace),
+            ...invitatoireComplet(invitatoire, plusieurs, deplace, consignes),
           ]
         return [
           // Aux laudes, l'AELF ouvre toujours par l'invitatoire : le remplacer est un ajout.
@@ -206,6 +224,8 @@ export function reconstituer(office: Office, contexte: Contexte): Office {
             ],
           },
         ]
+      case 'intercession':
+        return [redireRepons(partie, consignes ? CONSIGNES.intercession : undefined)]
       case 'repons':
         // R11 : les reprises du répons bref, écrites en entier ; les répons
         // de l'office des lectures restent tels quels.

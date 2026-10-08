@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { Navigate, useLocation, useNavigate, useNavigationType, useParams } from 'react-router'
+import { Navigate, useLocation, useNavigationType, useParams } from 'react-router'
 import { chargerOffice, ErreurAelf, type OfficeDuJour } from '../aelf/api'
 import type { Etendue } from '../aelf/cache'
 import { textesEnregistres } from '../aelf/reserve'
@@ -10,11 +10,13 @@ import { positionRetenue } from '../composants/defilement'
 import { avecExposants } from '../composants/Exposants'
 import { BoutonFermer, LienMenu } from '../composants/Icones'
 import { IndiceSuite } from '../composants/IndiceSuite'
-import { useRetour } from '../composants/retour'
+import { useRetour, useRetourAccueil } from '../composants/retour'
 import { useSuiteCachee } from '../composants/suiteCachee'
 import { dateLisible, estDate, paques, periodeLisible } from '../office/dates'
 import { deplacerInvitatoire, ouvrirOffice } from '../office/journee'
 import { estNomOffice, NOMS_OFFICES, type NomOffice, type Partie } from '../office/modele'
+import { aideOfficeAMontrer } from '../office/aide'
+import { AideOffice } from '../office/AideOffice'
 import { BandeauOffice } from '../office/BandeauOffice'
 import { etapesDe } from '../office/etapes'
 import { FilDePerles } from '../office/FilDePerles'
@@ -60,10 +62,11 @@ const DEBUT_DE_LECTURE = 48
 function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
   const [etat, setEtat] = useState<Etat>({ sorte: 'chargement' })
   const [essai, setEssai] = useState(0)
-  const [{ accents, plusieurs, prieresEntieres, signalerAjouts }] = useState(lireReglages)
+  const [{ accents, plusieurs, prieresEntieres, signalerAjouts, consignes }] =
+    useState(lireReglages)
   const retour = useRetour()
-  const naviguer = useNavigate()
-  const revenirAccueil = () => naviguer('/', { replace: true })
+  const revenirAccueil = useRetourAccueil()
+  const [aideOuverte, setAideOuverte] = useState(aideOfficeAMontrer)
   const { fin, cachee } = useSuiteCachee()
   // « Plus bas » ne sert qu'avant de commencer : dès qu'on lit, il ne ferait
   // qu'estomper la dernière ligne (choix du porteur du projet, 2026-10-07).
@@ -112,8 +115,8 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
   const office = useMemo(() => {
     if (etat.sorte !== 'pret') return undefined
     const { lu, invitatoire, premier } = etat
-    return reconstituer(lu.office, { premier, plusieurs, invitatoire })
-  }, [etat, plusieurs])
+    return reconstituer(lu.office, { premier, plusieurs, invitatoire, consignes })
+  }, [etat, plusieurs, consignes])
 
   const saint = etat.sorte === 'pret' ? saintDuJour(etat.lu.jour) : undefined
 
@@ -218,16 +221,21 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
               className="office-perles"
               type="button"
               aria-haspopup="dialog"
-              aria-label="Sommaire"
+              aria-label={`${etapes[courante]?.libelle ?? ''}, étape ${courante + 1} sur ${etapes.length}. Ouvrir le sommaire`}
               onClick={sommaire.ouvrir}
             >
               <FilDePerles nombre={etapes.length} courante={courante} />
             </button>
           )}
+          {/* La raison avant l'action : seuls les derniers mots se touchent
+              (choix du porteur du projet, 2026-10-08). */}
           {peutRecevoirInvitatoire && (
-            <button className="lien-discret" type="button" onClick={recevoirInvitatoire}>
-              Dire l’invitatoire ici
-            </button>
+            <p className="office-invitatoire">
+              L’invitatoire était {nom === 'laudes' ? 'à l’office des lectures' : 'aux laudes'}.{' '}
+              <button className="lien-discret" type="button" onClick={recevoirInvitatoire}>
+                Le dire ici
+              </button>
+            </p>
           )}
         </header>
 
@@ -318,6 +326,15 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
         <div ref={fin} className="fin-ecran" />
         <IndiceSuite visible={cachee && !aCommence && etat.sorte === 'pret'} />
       </main>
+      {office && aideOuverte && (
+        <AideOffice
+          couleur={etat.sorte === 'pret' ? etat.lu.jour.couleurs[0] : undefined}
+          accents={accents}
+          ajouts={signalerAjouts}
+          repliees={!prieresEntieres}
+          onFermer={() => setAideOuverte(false)}
+        />
+      )}
       {office && sommaire.ouvert && (
         <SommaireOffice
           office={NOMS_OFFICES[nom]}

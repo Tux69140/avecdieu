@@ -253,8 +253,8 @@ test.describe('prier à plusieurs', () => {
     await avancer(page, 3)
     await expect(titrePriere(page)).toHaveText('Je vous salue Marie')
     const strophes = page.getByTestId('strophe')
-    await expect(strophes.getByRole('img', { name: 'V/' })).toHaveCount(1)
-    await expect(strophes.getByRole('img', { name: 'R/' })).toHaveCount(1)
+    await expect(strophes.getByRole('img', { name: 'Verset' })).toHaveCount(1)
+    await expect(strophes.getByRole('img', { name: 'Répons' })).toHaveCount(1)
     await expect(strophes.filter({ has: page.getByTestId('marque-R') })).toContainText(
       'Sainte Marie, Mère de Dieu',
     )

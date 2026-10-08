@@ -6,6 +6,10 @@ interface Props {
   variante?: 'flottant' | 'en-ligne'
 }
 
+// D'un coup si les animations sont réduites.
+const glissement = (): ScrollBehavior =>
+  matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+
 // « Plus bas » : sur tout écran plus long que le téléphone, pour que rien
 // d'important ne reste ignoré sous la ligne de flottaison (demande du porteur
 // du projet). Le toucher fait défiler.
@@ -15,7 +19,7 @@ export function IndiceSuite({ visible, variante = 'flottant' }: Props) {
     <button
       className={`indice-suite indice-suite-${variante}`}
       type="button"
-      onClick={() => window.scrollBy({ top: window.innerHeight * 0.7, behavior: 'smooth' })}
+      onClick={() => window.scrollBy({ top: window.innerHeight * 0.7, behavior: glissement() })}
     >
       Plus bas
       <svg viewBox="0 0 16 10" aria-hidden="true">

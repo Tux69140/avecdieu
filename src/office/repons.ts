@@ -86,7 +86,7 @@ export function reprendreRepons(partie: Partie): Partie {
       const reste = sansSigne(ligne)
       if (reste.length > 0) strophe.push(reste)
       fermerTexte()
-      blocs.push({ strophes: [reprise], ajoute: true })
+      blocs.push({ strophes: [reprise], ajoute: true, reprise: true })
     }
     fermerStrophe()
   }

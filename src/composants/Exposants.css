@@ -1,5 +1,9 @@
-/* L'exposant ne doit pas écarter la ligne qui le porte. */
+/* L'exposant ne doit pas écarter la ligne qui le porte. Les dates sont en
+   Cormorant SC, dont les minuscules sont des petites capitales : l'exposant
+   prend la police du texte, pour lire « 1er » et non « 1ER ». */
 .exposant {
+  font-family: var(--texte);
   font-size: 0.7em;
+  letter-spacing: 0;
   line-height: 0;
 }

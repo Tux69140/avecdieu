@@ -57,6 +57,14 @@ export const TEXTES_OFFICE: Record<TexteOfficeId, string[]> = {
 // La rubrique qui ouvre l'examen de conscience des complies.
 export const RUBRIQUE_EXAMEN = 'Examen de conscience'
 
+// R13 : les consignes en rouge pour qui débute, une fois par office (validées
+// par le porteur du projet le 2026-10-08, à corriger au besoin).
+export const CONSIGNES = {
+  invitatoire: 'On la répète aussitôt.',
+  antienne: 'On reprend l’antienne.',
+  intercession: 'On répond après chaque intention :',
+}
+
 // À qui s'adresse l'oraison : au Père, au Père en nommant le Fils à la fin,
 // ou au Fils.
 export type FormeConclusion = 'pere' | 'fils-a-la-fin' | 'au-fils'
@@ -93,4 +101,6 @@ export const REGLES_RUBRIQUES: string[] = [
   'R9. Complies : l’examen de conscience se place juste après l’introduction, avant l’hymne.',
   'R10. Prier à plusieurs : la rubrique « Tous » précède chaque Gloire au Père.',
   'R11. Répons bref : là où l’AELF abrège la reprise du répons, l’app l’écrit en entier, signalée comme ajout : après « R/ », tout le répons ; après « * », sa seconde partie. Le signe abrégé disparaît. Les répons de l’office des lectures restent tels quels.',
+  'R12. Intercession : quand l’AELF donne un répons (« R/ »), l’app le redit après chaque intention, signalé comme ajout.',
+  'R13. Consignes pour débuter : sauf réglage contraire, une courte consigne en rouge précède, une fois par office, la reprise immédiate de l’antienne de l’invitatoire (« On la répète aussitôt. »), la première antienne reprise après un psaume (« On reprend l’antienne. ») et le répons de l’intercession (« On répond après chaque intention : »).',
 ]

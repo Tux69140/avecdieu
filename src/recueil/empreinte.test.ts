@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto'
 import { describe, expect, it } from 'vitest'
 import { FRUITS, SERIES } from './mysteres'
-import { CONCLUSIONS, REGLES_RUBRIQUES, RUBRIQUE_EXAMEN, TEXTES_OFFICE } from './office'
+import { CONCLUSIONS, CONSIGNES, REGLES_RUBRIQUES, RUBRIQUE_EXAMEN, TEXTES_OFFICE } from './office'
 import { PASSAGES } from './passages'
 import { PRIERES } from './prieres'
 
@@ -15,7 +15,9 @@ import { PRIERES } from './prieres'
 // à plusieurs (Notre Père, Je vous salue Marie, Gloire au Père), le 2026-10-06 ;
 // textes ajoutés aux offices et règles de rubriques R1 à R10, le 2026-10-06 ;
 // R8 complétée (envoi de l’AELF dans l’octave de Pâques et à la Pentecôte) et
-// R11 (reprises du répons bref), le 2026-10-06.
+// R11 (reprises du répons bref), le 2026-10-06 ; R12 (répons de l’intercession
+// redit), R13 et ses consignes pour débuter, validés d'avance par le porteur
+// du projet le 2026-10-08 (« nous les corrigerons au besoin »).
 const empreinte = (donnees: unknown) =>
   createHash('sha256').update(JSON.stringify(donnees)).digest('hex')
 
@@ -45,14 +47,14 @@ describe('recueil de textes figés', () => {
   })
 
   it('les textes ajoutés aux offices sont ceux validés par le porteur du projet', () => {
-    expect(empreinte({ TEXTES_OFFICE, RUBRIQUE_EXAMEN, CONCLUSIONS })).toBe(
-      '609f14c87038783e0e28dea387d0c3eeb9edc28c13e40f8252f14ad0b5277684',
+    expect(empreinte({ TEXTES_OFFICE, RUBRIQUE_EXAMEN, CONCLUSIONS, CONSIGNES })).toBe(
+      '9e305df5c0d660037babbd276fdb0d98c068d83def2e6e1a7b9b10798af43e35',
     )
   })
 
   it('les règles de rubriques sont celles validées par le porteur du projet', () => {
     expect(empreinte(REGLES_RUBRIQUES)).toBe(
-      '8025402f5aca585c9d74f4ca3ebe3105d95b148d7648e23e62b6b1702a06b556',
+      '9fa4309b39b2124ac7ed225ff72ceb84c4702e0f9f3e5d4634afe4e8ca031ff7',
     )
   })
 })
