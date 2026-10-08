@@ -134,7 +134,7 @@ test('chapelet : la croix ramène au seuil, puis celle du seuil d’où il a ét
   await croix(page).click()
   await croix(page).click()
   await expect(page).toHaveURL('/')
-  await expect(page.getByTestId('moment')).toBeVisible()
+  await expect(page.getByTestId('bandeau')).toBeVisible()
 })
 
 test('écran de fin du chapelet : la croix ramène au seuil', async ({ page }) => {

@@ -12,35 +12,34 @@ export interface Journee {
   etats: Record<Priere, EtatOffice>
 }
 
-// Un office reste « du moment » une heure après son heure (choix du porteur du
-// projet, 2026-10-06) : à 18 h 40, on veut encore dire les vêpres de 18 h 30.
+// Une prière est « du moment » de 30 minutes avant son heure à une heure
+// après (choix du porteur du projet, 2026-10-06 et 2026-10-08) : à 18 h 40, on
+// veut encore dire les vêpres de 18 h 30 ; à 10 h, sexte de midi est encore
+// loin. Hors de ces créneaux, aucune.
+export const AVANCE = 30
 export const HEURE_DE_GRACE = 60
 
 const enMinutes = ({ heures, minutes }: Heure) => heures * 60 + minutes
 
-// La prière du moment : le dernier office commencé depuis moins d'une heure,
-// sinon le prochain ; passé le dernier, les complies le restent jusqu'à minuit.
-// « maintenant » : minutes écoulées depuis minuit. « candidates » : les prières
-// qui peuvent l'être ; sans aucun texte des offices (premier lancement sans
-// réseau), aucune : un badge y serait trompeur (choix du porteur du projet,
-// 2026-10-08).
+// La prière du moment : celle dont le créneau contient l'heure qu'il est ; si
+// deux créneaux se chevauchent, la plus proche de son heure (à égalité, celle
+// déjà commencée). « maintenant » : minutes écoulées depuis minuit.
+// « candidates » : les prières qui peuvent l'être ; sans aucun texte des
+// offices (premier lancement sans réseau), aucune : un badge y serait
+// trompeur (2026-10-08).
 export function situerOffices(
   heures: Partial<Record<Priere, Heure>>,
   maintenant: number,
   candidates: readonly Priere[] = PRIERES_RAPPELEES,
 ): Journee {
-  const dates = candidates
+  const ecart = (debut: number) => Math.abs(maintenant - debut)
+  const moment = candidates
     .flatMap((nom) => {
       const heure = heures[nom]
       return heure ? [{ nom, debut: enMinutes(heure) }] : []
     })
-    .sort((x, y) => x.debut - y.debut)
-  const commences = dates.filter((o) => o.debut <= maintenant)
-  const dernier = commences.at(-1)
-  const moment =
-    dernier && maintenant < dernier.debut + HEURE_DE_GRACE
-      ? dernier
-      : (dates.find((o) => o.debut > maintenant) ?? dernier)
+    .filter(({ debut }) => maintenant >= debut - AVANCE && maintenant < debut + HEURE_DE_GRACE)
+    .sort((x, y) => ecart(x.debut) - ecart(y.debut) || x.debut - y.debut)[0]
 
   const etats = {} as Record<Priere, EtatOffice>
   for (const nom of PRIERES_RAPPELEES) {

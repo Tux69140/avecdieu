@@ -19,7 +19,7 @@ const perle = (page: Page, office: string) => page.getByTestId(`perle-${office}`
 const bandeau = (page: Page) => page.getByTestId('bandeau')
 
 test('le bandeau donne la date, la semaine, le saint et la couleur du jour', async ({ page }) => {
-  await ouvrir(page, MARDI(17, 50))
+  await ouvrir(page, MARDI(18, 10))
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mardi 6 octobre')
   await expect(bandeau(page)).toContainText('27e semaine du temps ordinaire')
   await expect(bandeau(page)).toContainText('S. Bruno')
@@ -51,12 +51,12 @@ test('un dimanche, le titre dit le jour, sans ligne de semaine', async ({ page }
 
 for (const [heure, minutes, office, horaire, astre] of [
   [7, 30, 'Laudes', '7 h', 'lune'],
-  [8, 10, 'Tierce', '9 h', 'soleil'],
+  [8, 40, 'Tierce', '9 h', 'soleil'],
   [12, 10, 'Sexte', '12 h', 'soleil'],
-  [17, 50, 'Vêpres', '18 h 30', 'soleil'],
+  [18, 10, 'Vêpres', '18 h 30', 'soleil'],
   [18, 40, 'Vêpres', '18 h 30', 'soleil'],
   [21, 15, 'Complies', '21 h 30', 'lune'],
-  [23, 50, 'Complies', '21 h 30', 'lune'],
+  [22, 15, 'Complies', '21 h 30', 'lune'],
 ] as const) {
   test(`à ${heure} h ${minutes}, prière du moment : ${office}`, async ({ page }) => {
     await ouvrir(page, MARDI(heure, minutes))
@@ -112,12 +112,13 @@ test('passé minuit, l’accueil passe au lendemain', async ({ page }) => {
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mardi 6 octobre')
   await page.clock.fastForward('01:00')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mercredi 7 octobre')
-  await expect(moment(page)).toContainText('Laudes')
+  // En pleine nuit, aucune prière n'est du moment : les laudes le seront à 6 h 30.
+  await expect(moment(page)).toHaveCount(0)
   await expect(page).toHaveURL('/')
 })
 
 test('une perle, même passée, ouvre son office', async ({ page }) => {
-  await ouvrir(page, MARDI(17, 50))
+  await ouvrir(page, MARDI(18, 10))
   await expect(perle(page, 'laudes')).toHaveAttribute('data-etat', 'passe')
   await perle(page, 'laudes').click()
   await expect(page).toHaveURL('/office/laudes/2026-10-06')
@@ -127,7 +128,7 @@ test('une perle, même passée, ouvre son office', async ({ page }) => {
 })
 
 test('une ligne de la liste et la prière du moment ouvrent leur office', async ({ page }) => {
-  await ouvrir(page, MARDI(17, 50))
+  await ouvrir(page, MARDI(18, 10))
   await page
     .getByRole('list', { name: 'Offices du jour' })
     .getByRole('link', { name: /Laudes/ })
@@ -145,7 +146,7 @@ test('une ligne de la liste et la prière du moment ouvrent leur office', async 
 })
 
 test('d’un jour à l’autre, l’adresse suit et le retour quitte l’accueil', async ({ page }) => {
-  await ouvrir(page, MARDI(17, 50))
+  await ouvrir(page, MARDI(18, 10))
   const jours = page.getByRole('navigation', { name: 'Autres jours' })
   await expect(jours).toHaveText(/lun\. 5\s*Aujourd’hui\s*mer\. 7/)
   await jours.getByRole('link', { name: /Jour suivant/ }).click()
@@ -182,7 +183,7 @@ test('une adresse de jour invalide ou d’aujourd’hui mène à l’accueil', a
 })
 
 test('premier lancement sans réseau : la date reste, le chapelet est proposé', async ({ page }) => {
-  await page.clock.setFixedTime(MARDI(17, 50))
+  await page.clock.setFixedTime(MARDI(18, 10))
   await preparer(page)
   let panne = true
   await page.route('https://api.aelf.org/**', (route) => {
@@ -228,7 +229,7 @@ test('rien ne sort de l’app que les demandes à l’AELF', async ({ page }) =>
     if (!url.startsWith('http://localhost:4173/') && !url.startsWith('https://api.aelf.org/'))
       externes.push(url)
   })
-  await page.clock.setFixedTime(MARDI(17, 50))
+  await page.clock.setFixedTime(MARDI(18, 10))
   const demandes = await servirAelf(page)
   await preparer(page)
   await page.goto('/')
@@ -255,7 +256,7 @@ test.describe('glisser sur le cadran', () => {
   }
 
   test('vers la gauche, le jour suivant ; vers la droite, le jour précédent', async ({ page }) => {
-    await ouvrir(page, MARDI(17, 50))
+    await ouvrir(page, MARDI(18, 10))
     await glisser(page, -160, await milieu(page))
     await expect(page).toHaveURL('/jour/2026-10-07')
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mercredi 7 octobre')
@@ -267,7 +268,7 @@ test.describe('glisser sur le cadran', () => {
   })
 
   test('un geste vertical ou trop court ne change pas de jour', async ({ page }) => {
-    await ouvrir(page, MARDI(17, 50))
+    await ouvrir(page, MARDI(18, 10))
     await glisser(page, 0, await milieu(page), 160)
     await glisser(page, -30, await milieu(page))
     await expect(page).toHaveURL('/')
@@ -275,7 +276,7 @@ test.describe('glisser sur le cadran', () => {
   })
 
   test('un glissement parti d’une perle change de jour sans ouvrir l’office', async ({ page }) => {
-    await ouvrir(page, MARDI(17, 50))
+    await ouvrir(page, MARDI(18, 10))
     const sexte = (await perle(page, 'sexte').boundingBox())!
     await glisserDepuis(page, sexte.x + sexte.width / 2, sexte.y + sexte.height / 2, -120)
     await expect(page).toHaveURL('/jour/2026-10-07')
@@ -285,7 +286,7 @@ test.describe('glisser sur le cadran', () => {
 test('le chapelet sous les offices : du moment l’heure qui suit son heure, puis atténué', async ({
   page,
 }) => {
-  await ouvrir(page, MARDI(17, 50))
+  await ouvrir(page, MARDI(18, 10))
   const chapelet = page.getByRole('list', { name: 'Chapelet' }).getByRole('listitem')
   await expect(chapelet).toHaveText(/^Chapelet20 h$/)
   await expect(chapelet).toHaveAttribute('data-etat', 'a-venir')

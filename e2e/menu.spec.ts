@@ -12,8 +12,10 @@ test.beforeEach(async ({ page }) => {
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Avec Dieu')
 })
 
+// L'accueil se reconnaît à son bandeau du jour (la prière du moment n'a de
+// badge qu'à ses heures).
 const accueil = (page: import('@playwright/test').Page) =>
-  expect(page.getByTestId('moment')).toBeVisible()
+  expect(page.getByTestId('bandeau')).toBeVisible()
 
 test('présente aujourd’hui, le chapelet, les réglages et « A propos »', async ({ page }) => {
   const menu = page.getByRole('navigation', { name: 'Menu' })
