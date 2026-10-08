@@ -424,7 +424,7 @@ Reste à confirmer sur les téléphones : « Me localiser » fonctionne (vérifi
 > - **Route** `/rosaire` : le Rosaire du jour. Le commutateur du seuil passe de `/chapelet` à `/rosaire` ; l'accueil et le rappel du chapelet ouvrent celle que le choix retenu désigne.
 > - **Réglages** : le choix Chapelet / Rosaire (Chapelet au départ) ; une bascule par texte de clôture ; pour les Litanies et saint Joseph, trois valeurs : en octobre, toujours, jamais.
 > - **Chapelet en cours** : retient aussi Chapelet ou Rosaire et la série atteinte ; même règle de reprise (le jour même).
-> - **Durées** : une table fixe dans le recueil des données, pas un calcul.
+> - **Durées** : une table fixe, hors du recueil des textes sacrés, pas un calcul.
 
 ## Phase 15 : Durées affichées
 
