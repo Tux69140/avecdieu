@@ -474,11 +474,11 @@ Décisions du porteur du projet (2026-10-08) :
 
 ### Critères d'acceptation
 
-- [ ] Les nouveaux textes (intentions, Litanies, verset, oraison du Rosaire, Sous l'abri, saint Joseph) sont rédigés d'après les versions liturgiques officielles, validés ligne par ligne par le porteur du projet et figés par le test d'empreinte.
-- [ ] L'ordre de la clôture et les réglages de départ sont ceux du PRD (tests du déroulé pour chaque combinaison utile).
-- [ ] Avec les réglages de départ, Litanies et saint Joseph sont dits le 1er et le 31 octobre, absents le 30 septembre et le 1er novembre ; « toujours » et « jamais » l'emportent sur le mois (critère de succès 10).
-- [ ] « A propos » cite Léon XIII et l'usage français pour l'ordre de clôture ; sa nouvelle organisation est validée sur capture.
-- [ ] Parcours Playwright : un chapelet d'octobre récité jusqu'à la fin passe par chaque texte de clôture ; analyse axe des écrans touchés.
+- [x] Les nouveaux textes (intentions, Litanies, verset, oraison du Rosaire, Sous l'abri, saint Joseph) sont rédigés d'après les versions liturgiques officielles, validés ligne par ligne par le porteur du projet et figés par le test d'empreinte.
+- [x] L'ordre de la clôture et les réglages de départ sont ceux du PRD (tests du déroulé pour chaque combinaison utile).
+- [x] Avec les réglages de départ, Litanies et saint Joseph sont dits le 1er et le 31 octobre, absents le 30 septembre et le 1er novembre ; « toujours » et « jamais » l'emportent sur le mois (critère de succès 10).
+- [x] « A propos » cite Léon XIII et l'usage français pour l'ordre de clôture ; sa nouvelle organisation est validée sur capture.
+- [x] Parcours Playwright : un chapelet d'octobre récité jusqu'à la fin passe par chaque texte de clôture ; analyse axe des écrans touchés.
 
 ## Bloquée par
 
