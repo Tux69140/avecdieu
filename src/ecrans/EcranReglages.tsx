@@ -8,6 +8,7 @@ import { AIDE_PLUSIEURS, AIDE_VIBRATIONS } from '../chapelet/libelles'
 import { aideAMontrer, masquerAide, montrerAide } from '../chapelet/memoire'
 import { aideOfficeAMontrer, masquerAideOffice, montrerAideOffice } from '../office/aide'
 import { lireReglages, modifierReglages, type Reglages, type Theme } from '../chapelet/reglages'
+import { ReglagesCloture } from '../chapelet/ReglagesCloture'
 import { Bascule as ChoixBascule } from '../composants/Bascule'
 import { Interrupteur } from '../composants/Interrupteur'
 import { LigneFermer } from '../composants/LigneFermer'
@@ -26,12 +27,17 @@ import { useEtatAndroid } from '../rappels/useEtatAndroid'
 import { usePeutVibrer } from '../telephone/retours'
 import './EcranReglages.css'
 
-type Bascule = 'annonce' | 'oMonJesus' | 'salveRegina' | 'plusieurs'
+type Bascule = 'annonce' | 'oMonJesus' | 'intentions' | 'plusieurs'
 
+// La fin du chapelet a sa propre liste, sous son sous-titre (ReglagesCloture).
 const BASCULES: [Bascule, string, string?][] = [
   ['annonce', 'Annonce des mystères', 'Titre, fruit et passage avant chaque dizaine.'],
   ['oMonJesus', '« Ô mon Jésus » après chaque dizaine'],
-  ['salveRegina', 'Salve Regina à la fin'],
+  [
+    'intentions',
+    'Intentions des trois premiers Je vous salue Marie',
+    'La foi, l’espérance, la charité.',
+  ],
   ['plusieurs', 'Prier à plusieurs', AIDE_PLUSIEURS],
 ]
 
@@ -145,6 +151,7 @@ export function EcranReglages() {
               onBasculer={(actif) => modifier({ [cle]: actif })}
             />
           ))}
+          <ReglagesCloture reglages={reglages} onModifier={modifier} />
           <h3 id="reglages-affichage">Affichage des prières</h3>
           <ChoixAffichage
             titre="reglages-affichage"

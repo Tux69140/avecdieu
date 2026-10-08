@@ -19,6 +19,13 @@ const LUNDI = new Date(2026, 9, 5, 10, 0)
 const MARDI = new Date(2026, 9, 6, 7, 0)
 // Pas du déroulé complet : ouverture (0 à 6), puis 14 pas par dizaine.
 const dizaine = (d: number) => 7 + (d - 1) * 14
+// Sans aucun texte de clôture (phase 16), le dernier « Ô mon Jésus » finit le chapelet.
+const SANS_CLOTURE: Reglages = {
+  salveRegina: false,
+  litanies: 'jamais',
+  oraisonRosaire: false,
+  saintJoseph: 'jamais',
+}
 
 const titrePriere = (page: Page) => page.getByTestId('priere').getByRole('heading', { level: 2 })
 const reglage = (page: Page, nom: string | RegExp) => page.getByRole('switch', { name: nom })
@@ -53,7 +60,7 @@ test.describe('écran des réglages', () => {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Réglages')
     await expect(reglage(page, 'Annonce des mystères')).toHaveAttribute('aria-checked', 'true')
     await expect(reglage(page, /Ô mon Jésus/)).toHaveAttribute('aria-checked', 'true')
-    await expect(reglage(page, 'Salve Regina à la fin')).toHaveAttribute('aria-checked', 'true')
+    await expect(reglage(page, 'Salve Regina')).toHaveAttribute('aria-checked', 'true')
     await expect(reglage(page, 'Prier à plusieurs')).toHaveAttribute('aria-checked', 'false')
     await expect(page.getByRole('radio', { name: 'Texte complet' })).toHaveAttribute(
       'aria-checked',
@@ -94,14 +101,14 @@ test.describe('écran des réglages', () => {
     await deplierReglages(page)
     await reglage(page, 'Annonce des mystères').click()
     await reglage(page, /Ô mon Jésus/).click()
-    await reglage(page, 'Salve Regina à la fin').click()
+    await reglage(page, 'Salve Regina').click()
     await reglage(page, 'Prier à plusieurs').click()
     await page.getByRole('radio', { name: 'Compact' }).click()
     await reglage(page, 'Vibrations').click()
 
     await page.reload()
     await deplierReglages(page)
-    for (const nom of ['Annonce des mystères', /Ô mon Jésus/, 'Salve Regina à la fin'])
+    for (const nom of ['Annonce des mystères', /Ô mon Jésus/, 'Salve Regina'])
       await expect(reglage(page, nom)).toHaveAttribute('aria-checked', 'false')
     await expect(reglage(page, 'Prier à plusieurs')).toHaveAttribute('aria-checked', 'true')
     await expect(page.getByRole('radio', { name: 'Compact' })).toHaveAttribute(
@@ -174,7 +181,7 @@ test.describe('écran des réglages', () => {
 })
 
 test.describe('déroulé selon les réglages', () => {
-  test('par défaut, chaque dizaine finit par le « Ô mon Jésus », le chapelet par le Salve Regina', async ({
+  test('par défaut, chaque dizaine finit par le « Ô mon Jésus », le chapelet par la clôture', async ({
     page,
   }) => {
     await commencer(page)
@@ -189,7 +196,8 @@ test.describe('déroulé selon les réglages', () => {
     await avancer(page, dizaine(6) - dizaine(2))
     await expect(titrePriere(page)).toHaveText('Salve Regina')
     await expect(page.getByTestId('mystere')).toHaveCount(0)
-    await toucher(page)
+    // Un lundi d'octobre : Litanies, oraison et saint Joseph suivent.
+    await avancer(page, 4)
     await expect(page.getByTestId('fin-chapelet')).toBeVisible()
   })
 
@@ -201,11 +209,11 @@ test.describe('déroulé selon les réglages', () => {
     await expect(page.getByTestId('annonce')).toBeVisible()
   })
 
-  test('sans Salve Regina, le dernier « Ô mon Jésus » mène à la fin', async ({ page }) => {
-    await commencer(page, '/chapelet', { reglages: { salveRegina: false } })
+  test('sans texte de clôture, le dernier « Ô mon Jésus » mène à la fin', async ({ page }) => {
+    await commencer(page, '/chapelet', { reglages: SANS_CLOTURE })
     await avancer(page, dizaine(6) - 1)
     await expect(titrePriere(page)).toHaveText('Ô mon Jésus')
-    await toucher(page)
+    await avancer(page, 1)
     await expect(page.getByTestId('fin-chapelet')).toBeVisible()
   })
 
@@ -238,11 +246,16 @@ test.describe('déroulé selon les réglages', () => {
     // Ouverture 7, puis par dizaine : annonce ?, Notre Père, 10 Ave, Gloire, Ô mon Jésus ?
     const attendu = ({ annonce = true, oMonJesus = true, salveRegina = true }: Reglages) =>
       7 + 5 * (12 + Number(annonce) + Number(oMonJesus)) + Number(salveRegina)
-    const combinaison: Reglages = { annonce: false, oMonJesus: false, salveRegina: true }
+    const combinaison: Reglages = {
+      ...SANS_CLOTURE,
+      annonce: false,
+      oMonJesus: false,
+      salveRegina: true,
+    }
     await commencer(page, '/chapelet', { reglages: combinaison })
     await avancer(page, attendu(combinaison) - 1)
     await expect(titrePriere(page)).toHaveText('Salve Regina')
-    await toucher(page)
+    await avancer(page, 1)
     await expect(page.getByTestId('fin-chapelet')).toBeVisible()
   })
 })
@@ -262,11 +275,12 @@ test.describe('prier à plusieurs', () => {
 
   // Comme dans l'office : la part de tous en demi-gras, plus de « Tous »
   // (choix du porteur du projet, 2026-10-08). Le verset du Salve Regina garde
-  // ses ℣. et ℟., en graisse normale.
+  // ses ℣. et ℟., en graisse normale ; il n'y est dit que sans l'oraison du
+  // Rosaire (phase 16).
   test('les prières dites ensemble en demi-gras, jusqu’au verset du Salve Regina', async ({
     page,
   }) => {
-    await commencer(page, '/chapelet', { reglages: { plusieurs: true } })
+    await commencer(page, '/chapelet', { reglages: { plusieurs: true, oraisonRosaire: false } })
     const vers = page.getByTestId('strophe').locator('span')
     await expect(page.getByText('Tous', { exact: true })).toHaveCount(0)
     await expect(vers.first()).toHaveCSS('font-weight', '600')
@@ -312,7 +326,7 @@ test.describe('prier à plusieurs', () => {
   })
 
   test('seul, ni demi-gras ni marque, sauf le verset du Salve Regina', async ({ page }) => {
-    await commencer(page)
+    await commencer(page, '/chapelet', { reglages: { oraisonRosaire: false } })
     await expect(page.getByTestId('strophe').locator('span').first()).toHaveCSS(
       'font-weight',
       '400',
@@ -441,7 +455,7 @@ test.describe('reprise d’un chapelet interrompu', () => {
   })
 
   test('un chapelet terminé ne se reprend pas', async ({ page }) => {
-    await commencer(page, '/chapelet', { reglages: { salveRegina: false } })
+    await commencer(page, '/chapelet', { reglages: SANS_CLOTURE })
     await avancer(page, dizaine(6))
     await expect(page.getByTestId('fin-chapelet')).toBeVisible()
     await page.goBack()

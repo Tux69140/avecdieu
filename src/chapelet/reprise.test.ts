@@ -73,9 +73,18 @@ describe('retrouver le grain', () => {
     expect(sansAnnonce.pas[i]).toMatchObject({ dizaine: 2, priere: 'notre-pere' })
   })
 
-  it('un Salve Regina retiré entre-temps mène à la fin du chapelet', () => {
+  it('un texte de la clôture retiré entre-temps cède la place au suivant, ou à la fin', () => {
+    const dans = (priere: string) => COMPLET.pas.find((p) => p.priere === priere)!
     const sansSalve = derouler(CHAPELET_MARIAL, { salveRegina: false })
-    expect(retrouver(sansSalve, repere(COMPLET.pas.at(-1)!))).toBe(sansSalve.pas.length)
+    expect(sansSalve.pas[retrouver(sansSalve, repere(dans('salve-regina')))].priere).toBe(
+      'litanies',
+    )
+    const sansLitanies = derouler(CHAPELET_MARIAL, { litanies: false, oraisonRosaire: false })
+    expect(sansLitanies.pas[retrouver(sansLitanies, repere(dans('litanies')))].priere).toBe(
+      'sous-l-abri',
+    )
+    const sansJoseph = derouler(CHAPELET_MARIAL, { saintJoseph: false })
+    expect(retrouver(sansJoseph, repere(dans('saint-joseph')))).toBe(sansJoseph.pas.length)
   })
 })
 

@@ -144,7 +144,8 @@ test('chapelet : la croix ramène au seuil, puis celle du seuil d’où il a ét
 
 test('écran de fin du chapelet : la croix ramène au seuil', async ({ page }) => {
   await commencer(page)
-  await avancer(page, 78)
+  // Un lundi d'octobre : 77 pas, puis Salve, Litanies, oraison et saint Joseph.
+  await avancer(page, 81)
   await expect(page.getByTestId('fin-chapelet')).toBeVisible()
   await croix(page).click()
   await expect(page.getByRole('button', { name: 'Commencer le chapelet' })).toBeVisible()

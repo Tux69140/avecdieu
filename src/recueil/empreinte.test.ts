@@ -3,7 +3,8 @@ import { describe, expect, it } from 'vitest'
 import { FRUITS, SERIES } from './mysteres'
 import { CONCLUSIONS, CONSIGNES, REGLES_RUBRIQUES, RUBRIQUE_EXAMEN, TEXTES_OFFICE } from './office'
 import { PASSAGES } from './passages'
-import { PRIERES } from './prieres'
+import { LITANIES } from './litanies'
+import { INTENTIONS, PRIERES, VERSET_MARIAL } from './prieres'
 
 // Les textes sacrés sont validés ligne par ligne par le porteur du projet.
 // Si ce test échoue, un texte a changé : faire valider la nouvelle version
@@ -19,13 +20,23 @@ import { PRIERES } from './prieres'
 // redit, tiret des intentions retiré), R13 et ses consignes pour débuter (dont
 // le silence de l’examen), R10 revue (la part de tous en demi-gras), décidés
 // par le porteur du projet le 2026-10-08 (« nous les corrigerons au besoin »).
+// Clôture enrichie (phase 16) : intentions des trois premiers Je vous salue
+// Marie, Litanies de la Sainte Vierge, oraison du Rosaire (précédée du verset
+// du Salve Regina, inchangé), Sous l’abri de votre miséricorde et prière à
+// saint Joseph, validés par le porteur du projet le 2026-10-08.
 const empreinte = (donnees: unknown) =>
   createHash('sha256').update(JSON.stringify(donnees)).digest('hex')
 
 describe('recueil de textes figés', () => {
   it('les prières sont celles validées par le porteur du projet', () => {
     expect(empreinte(PRIERES)).toBe(
-      '95272c8d0588de2087215055f0c3e7e715ad8c747b1db5ca058ba29dcca2b57e',
+      'e86f73c6843471b11b6b65b565dc81399fce8899b193f88923a08a79f497d038',
+    )
+  })
+
+  it('les intentions, le verset marial et les Litanies sont ceux validés par le porteur du projet', () => {
+    expect(empreinte({ INTENTIONS, VERSET_MARIAL, LITANIES })).toBe(
+      'cae2952245139a8ea4fc2d628495941c68fd0b563b8e90af5d5537e8df7bbc72',
     )
   })
 

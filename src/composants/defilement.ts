@@ -29,3 +29,8 @@ export function useHautDePage() {
     chemin.current = pathname
   }, [key, pathname, sorte])
 }
+
+// Un défilement demandé par l'app glisse, ou se fait d'un coup si les
+// animations sont réduites.
+export const glissement = (): ScrollBehavior =>
+  matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'

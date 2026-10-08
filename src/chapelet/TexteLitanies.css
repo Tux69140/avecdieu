@@ -1,0 +1,16 @@
+/* Les Litanies : une invocation par ligne, centrée comme les autres prières ;
+   une invocation trop longue se coupe en lignes équilibrées. */
+.litanies .invocation {
+  margin: 0;
+  line-height: 1.45;
+  text-wrap: balance;
+}
+
+.litanies .invocation + .invocation {
+  margin-top: 0.3em;
+}
+
+/* La réponse suit l'invocation sur la même ligne. */
+.priere-texte.litanies .reponse {
+  display: inline;
+}

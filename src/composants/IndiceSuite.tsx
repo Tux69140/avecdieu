@@ -1,3 +1,4 @@
+import { glissement } from './defilement'
 import './IndiceSuite.css'
 
 interface Props {
@@ -5,10 +6,6 @@ interface Props {
   // Flottant : en bas de l'écran ; en ligne : dans une zone déjà fixée en bas.
   variante?: 'flottant' | 'en-ligne'
 }
-
-// D'un coup si les animations sont réduites.
-const glissement = (): ScrollBehavior =>
-  matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
 
 // « Plus bas » : sur tout écran plus long que le téléphone, pour que rien
 // d'important ne reste ignoré sous la ligne de flottaison (demande du porteur

@@ -1,12 +1,13 @@
 import { expect } from '@playwright/test'
-import { commencer, espionner, journal, suivant, test, toucher } from './outils.ts'
+import { avancer, commencer, espionner, journal, test, toucher } from './outils.ts'
 
 const LUNDI = new Date(2026, 9, 5, 10, 0)
-// Ouverture (7 prières), 5 dizaines (l'annonce et 13 prières), le Salve Regina, l'écran de fin.
+// Ouverture (7 prières), 5 dizaines (l'annonce et 13 prières), la clôture d'un
+// lundi d'octobre (Salve Regina, Litanies, oraison, saint Joseph), l'écran de fin.
 const OUVERTURE = 7
 const DIZAINE = 14
 const SALVE = OUVERTURE + 5 * DIZAINE
-const PRIERES = SALVE + 1
+const PRIERES = SALVE + 4
 
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(LUNDI)
@@ -14,10 +15,10 @@ test.beforeEach(async ({ page }) => {
   await commencer(page)
 })
 
-test('chaque prière vibre court ; chaque annonce, le Salve Regina et la fin vibrent fort', async ({
+test('chaque prière vibre court ; chaque annonce, l’entrée dans la clôture et la fin vibrent fort', async ({
   page,
 }) => {
-  for (let i = 0; i < PRIERES; i++) await suivant(page)
+  await avancer(page, PRIERES)
   await expect(page.getByTestId('fin-chapelet')).toBeVisible()
 
   const vibrations = (await journal(page)).filter((e) => e.startsWith('vibre'))
@@ -47,11 +48,11 @@ test('revenir en arrière vibre court', async ({ page }) => {
 test('l’écran reste allumé pendant le chapelet et redevient libre à la fin', async ({ page }) => {
   await expect.poll(() => journal(page)).toEqual(['écran allumé'])
 
-  for (let i = 0; i < PRIERES; i++) await suivant(page)
+  await avancer(page, PRIERES)
   await expect(page.getByTestId('fin-chapelet')).toBeVisible()
   await expect.poll(() => journal(page).then((j) => j.at(-1))).toBe('écran libre')
 
-  // Revenir au Salve Regina rallume l'écran.
+  // Revenir à la dernière prière rallume l'écran.
   await page.keyboard.press('ArrowLeft')
   await expect.poll(() => journal(page).then((j) => j.at(-1))).toBe('écran allumé')
   const etats = (await journal(page)).filter((e) => !e.startsWith('vibre'))

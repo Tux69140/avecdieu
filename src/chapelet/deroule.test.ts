@@ -8,9 +8,10 @@ const prieres = deroule.pas.map((p) => p.priere)
 const AVE = 'je-vous-salue-marie'
 const OUVERTURE = ['signe-de-croix', 'credo', 'notre-pere', AVE, AVE, AVE, 'gloire-au-pere']
 const dizaine = ['annonce', 'notre-pere', ...Array(10).fill(AVE), 'gloire-au-pere', 'o-mon-jesus']
+const CLOTURE = ['salve-regina', 'litanies', 'oraison-rosaire', 'sous-l-abri', 'saint-joseph']
 
 describe('déroulé du chapelet marial', () => {
-  it('suit exactement le PRD : ouverture, 5 dizaines, Salve Regina', () => {
+  it('suit exactement le PRD : ouverture, 5 dizaines, clôture dans l’ordre validé', () => {
     expect(prieres).toEqual([
       ...OUVERTURE,
       ...dizaine,
@@ -18,18 +19,18 @@ describe('déroulé du chapelet marial', () => {
       ...dizaine,
       ...dizaine,
       ...dizaine,
-      'salve-regina',
+      ...CLOTURE,
     ])
   })
 
-  it('numérote les dizaines de 1 à 5 ; l’ouverture et le Salve Regina n’en ont pas', () => {
+  it('numérote les dizaines de 1 à 5 ; l’ouverture et la clôture n’en ont pas', () => {
     expect(deroule.pas.slice(0, 7).every((p) => p.dizaine === undefined)).toBe(true)
     for (let d = 1; d <= 5; d++) {
       const debut = 7 + (d - 1) * 14
       const pasDizaine = deroule.pas.slice(debut, debut + 14)
       expect(pasDizaine.every((p) => p.dizaine === d)).toBe(true)
     }
-    expect(deroule.pas.at(-1)!.dizaine).toBeUndefined()
+    expect(deroule.pas.slice(-5).every((p) => p.dizaine === undefined)).toBe(true)
   })
 
   it('compte les répétitions : 1 à 3 à l’ouverture, 1 à 10 dans la dizaine', () => {
@@ -93,7 +94,8 @@ describe('déroulé du chapelet marial', () => {
   })
 })
 
-// Chaque combinaison des trois options : l'option retirée disparaît, rien d'autre ne bouge.
+// Chaque combinaison des options des dizaines : l'option retirée disparaît,
+// rien d'autre ne bouge.
 describe('options du déroulé', () => {
   const combinaisons: Options[] = []
   for (const annonce of [true, false])
@@ -114,16 +116,64 @@ describe('options du déroulé', () => {
           (options.salveRegina || p !== 'salve-regina'),
       )
       expect(choisi.pas.map((p) => p.priere)).toEqual(attendu)
-      // Les grains du chapelet restent les mêmes, médaille comprise si le Salve est dit.
-      const grains = options.salveRegina
-        ? deroule.grains
-        : deroule.grains.filter((g) => g !== 'medaille')
-      expect(choisi.grains).toEqual(grains)
+      // Les grains du chapelet restent les mêmes, médaille comprise.
+      expect(choisi.grains).toEqual(deroule.grains)
       // Le Notre Père de chaque dizaine reste sur son gros grain.
       const grainDe = (d: number, liste: typeof deroule) =>
         liste.pas.find((p) => p.dizaine === d && p.priere === 'notre-pere')!.grain
       for (let d = 1; d <= 5; d++) expect(grainDe(d, choisi)).toBe(grainDe(d, deroule))
       expect(choisi.pas.at(-1)!.grain).toBe(choisi.grains.length - 1)
+    })
+  }
+})
+
+describe('intentions des trois premiers Je vous salue Marie', () => {
+  it('la foi, l’espérance, la charité, chacune avant son Je vous salue Marie', () => {
+    expect(deroule.pas.slice(3, 6).map((p) => p.intention)).toEqual([
+      'Pour la foi.',
+      'Pour l’espérance.',
+      'Pour la charité.',
+    ])
+  })
+
+  it('aucune ailleurs, ni sans le réglage', () => {
+    expect(deroule.pas.filter((p) => p.intention !== undefined)).toHaveLength(3)
+    const sans = derouler(CHAPELET_MARIAL, { intentions: false })
+    expect(sans.pas.filter((p) => p.intention !== undefined)).toEqual([])
+    // Les grains ne bougent pas : l'intention accompagne le grain du Je vous salue Marie.
+    expect(sans.pas.map((p) => [p.priere, p.grain])).toEqual(
+      deroule.pas.map((p) => [p.priere, p.grain]),
+    )
+  })
+})
+
+// Les cinq textes de la clôture, chacun dit ou non : 32 combinaisons.
+describe('clôture du chapelet', () => {
+  const OPTIONS = ['salveRegina', 'litanies', 'oraisonRosaire', 'sousLAbri', 'saintJoseph'] as const
+  for (let masque = 0; masque < 32; masque++) {
+    const options: Options = Object.fromEntries(
+      OPTIONS.map((option, i) => [option, (masque & (1 << i)) !== 0]),
+    )
+    const dites = CLOTURE.filter((_, i) => (masque & (1 << i)) !== 0)
+    const nom = dites.length > 0 ? dites.join(', ') : 'rien'
+    it(nom, () => {
+      const choisi = derouler(CHAPELET_MARIAL, options)
+      const cloture = choisi.pas.slice(prieres.length - CLOTURE.length)
+      // L'ordre validé, sans rien d'autre.
+      expect(cloture.map((p) => p.priere)).toEqual(dites)
+      // Toute la clôture se dit sur la médaille, qui n'existe que si l'on y prie.
+      expect(cloture.every((p) => choisi.grains[p.grain] === 'medaille')).toBe(true)
+      expect(new Set(cloture.map((p) => p.grain)).size).toBe(Math.min(dites.length, 1))
+      expect(choisi.grains.filter((g) => g === 'medaille')).toHaveLength(Math.min(dites.length, 1))
+      expect(choisi.pas.at(-1)!.grain).toBe(choisi.grains.length - 1)
+      // Le verset, une seule fois : avant l'oraison si elle est dite, sinon à
+      // la fin du Salve Regina, sinon nulle part.
+      const versets = choisi.pas.filter((p) => p.verset !== undefined)
+      if (dites.includes('oraison-rosaire'))
+        expect(versets.map((p) => [p.priere, p.verset])).toEqual([['oraison-rosaire', 'avant']])
+      else if (dites.includes('salve-regina'))
+        expect(versets.map((p) => [p.priere, p.verset])).toEqual([['salve-regina', 'apres']])
+      else expect(versets).toEqual([])
     })
   }
 })

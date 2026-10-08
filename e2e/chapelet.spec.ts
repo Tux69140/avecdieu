@@ -1,5 +1,5 @@
 import { expect, type Page } from '@playwright/test'
-import { commencer, glisser, preparer, servirAelf, suivant, test, toucher } from './outils.ts'
+import { avancer, commencer, glisser, preparer, servirAelf, test, toucher } from './outils.ts'
 
 const AVE = 'Je vous salue Marie'
 const JOYEUX = [
@@ -35,7 +35,12 @@ const DEROULE: Attendu[] = [
       { priere: 'Ô mon Jésus', mystere },
     ]
   }),
+  // Un lundi d'octobre, avec les réglages de départ : Litanies et saint Joseph
+  // s'ajoutent, le verset passe avant l'oraison (phase 16).
   { priere: 'Salve Regina' },
+  { priere: 'Litanies de la Sainte Vierge' },
+  { priere: 'Oraison du Rosaire' },
+  { priere: 'Prière à saint Joseph' },
 ]
 
 // Un lundi : mystères joyeux.
@@ -90,7 +95,8 @@ test('réciter un chapelet complet, toucher par toucher, sans quitter l’app', 
       await toucher(page)
       await verifierPas(page, attendu, i)
     }
-    await suivant(page)
+    // Une prière plus haute que l'écran défile d'abord au toucher.
+    await avancer(page, 1)
   }
 
   await expect(page.getByTestId('fin-chapelet')).toBeVisible()
@@ -104,7 +110,7 @@ test('glisser revient d’une prière en arrière, dans un sens comme dans l’a
   page,
 }) => {
   await commencer(page)
-  for (let i = 0; i < 5; i++) await toucher(page)
+  await avancer(page, 5)
   await verifierPas(page, DEROULE[5], 5)
 
   await glisser(page, 160)
@@ -122,11 +128,11 @@ test('glisser revient d’une prière en arrière, dans un sens comme dans l’a
 test('chaque prière s’ouvre en haut de l’écran', async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 640 })
   await commencer(page)
-  for (let i = 0; i < 7; i++) await suivant(page)
+  await avancer(page, 7)
   await expect(page.getByRole('button', { name: 'Commencer la dizaine' })).toBeVisible()
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0)
-  await suivant(page)
+  await avancer(page, 1)
   await expect(page.getByTestId('priere').getByRole('heading', { level: 2 })).toHaveText(
     'Notre Père',
   )
@@ -167,9 +173,9 @@ test('glisser au tout début ne fait rien', async ({ page }) => {
   await verifierPas(page, DEROULE[0], 0)
 })
 
-test('glisser depuis l’écran de fin revient au Salve Regina', async ({ page }) => {
+test('glisser depuis l’écran de fin revient à la dernière prière', async ({ page }) => {
   await commencer(page)
-  for (let i = 0; i < DEROULE.length; i++) await suivant(page)
+  await avancer(page, DEROULE.length)
   await expect(page.getByTestId('fin-chapelet')).toBeVisible()
   await glisser(page, 160)
   await verifierPas(page, DEROULE.at(-1)!, DEROULE.length - 1)
@@ -177,7 +183,7 @@ test('glisser depuis l’écran de fin revient au Salve Regina', async ({ page }
 
 test('glisser en partant de « Revenir à l’accueil » revient aussi en arrière', async ({ page }) => {
   await commencer(page)
-  for (let i = 0; i < DEROULE.length; i++) await suivant(page)
+  await avancer(page, DEROULE.length)
   const lien = (await page.getByRole('button', { name: 'Revenir à l’accueil' }).boundingBox())!
   await glisser(page, 160, lien.y + lien.height / 2)
   await verifierPas(page, DEROULE.at(-1)!, DEROULE.length - 1)
@@ -187,7 +193,7 @@ test('glisser en partant de « Revenir à l’accueil » revient aussi en arriè
 // l'accueil, sans titre ni « Recommencer » (choix du porteur du projet, 2026-10-08).
 test('la fin du chapelet : une perle d’or, puis « Revenir à l’accueil »', async ({ page }) => {
   await commencer(page)
-  for (let i = 0; i < DEROULE.length; i++) await suivant(page)
+  await avancer(page, DEROULE.length)
   const fin = page.getByTestId('fin-chapelet')
   await expect(fin.locator('.repere-perle')).toHaveAttribute('data-couleur', 'or')
   await expect(fin.getByRole('heading')).toHaveCount(0)
@@ -238,11 +244,11 @@ test.describe('série du jour', () => {
 test('une série choisie par l’adresse remplace celle du jour', async ({ page }) => {
   await commencer(page, '/chapelet/lumineux')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mystères lumineux')
-  for (let i = 0; i < 7; i++) await toucher(page)
+  await avancer(page, 7)
   await expect(page.getByTestId('annonce').getByRole('heading', { level: 2 })).toHaveText(
     'Le Baptême de Jésus au Jourdain',
   )
-  await suivant(page)
+  await avancer(page, 1)
   await expect(page.getByTestId('mystere')).toHaveText('1 · Le Baptême de Jésus au Jourdain')
 })
 
@@ -264,7 +270,7 @@ test('le compteur se place à droite du titre, sur sa ligne, le titre restant ce
   // Le plus petit téléphone visé.
   await page.setViewportSize({ width: 360, height: 760 })
   await commencer(page)
-  for (let i = 0; i < 3; i++) await toucher(page)
+  await avancer(page, 3)
   await expect(page.getByTestId('compteur')).toHaveText('1 / 3')
   await expect.poll(() => page.evaluate(() => document.getAnimations().length)).toBe(0)
 

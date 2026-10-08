@@ -40,19 +40,27 @@ describe('vibrationEntre', () => {
     expect(vibrationEntre(compact, notrePere - 1, notrePere)).toBe('marquee')
   })
 
-  it('une vibration marquée quand la dernière dizaine s’achève, puis à l’écran de fin', () => {
-    const salve = FIN - 1
-    expect(DEROULE.pas[salve].priere).toBe('salve-regina')
+  it('une vibration marquée quand la dernière dizaine s’achève, courte dans la clôture, marquée à l’écran de fin', () => {
+    const salve = DEROULE.pas.findIndex((p) => p.priere === 'salve-regina')
     expect(vibrationEntre(DEROULE, salve - 1, salve)).toBe('marquee')
-    expect(vibrationEntre(DEROULE, salve, FIN)).toBe('marquee')
+    for (let i = salve; i < FIN - 1; i++) expect(vibrationEntre(DEROULE, i, i + 1)).toBe('courte')
+    expect(DEROULE.pas[FIN - 1].priere).toBe('saint-joseph')
+    expect(vibrationEntre(DEROULE, FIN - 1, FIN)).toBe('marquee')
   })
 
-  it('sept vibrations marquées : cinq dizaines, le Salve Regina et la fin', () => {
+  it('sept vibrations marquées : cinq dizaines, la clôture et la fin', () => {
     expect(marquees()).toHaveLength(7)
   })
 
-  it('six sans le Salve Regina : cinq dizaines et la fin', () => {
-    expect(marquees(derouler(CHAPELET_MARIAL, { salveRegina: false }))).toHaveLength(6)
+  it('six sans aucun texte de clôture : cinq dizaines et la fin', () => {
+    const sansCloture = derouler(CHAPELET_MARIAL, {
+      salveRegina: false,
+      litanies: false,
+      oraisonRosaire: false,
+      sousLAbri: false,
+      saintJoseph: false,
+    })
+    expect(marquees(sansCloture)).toHaveLength(6)
   })
 
   it('revenir en arrière vibre court, même en repassant une dizaine', () => {

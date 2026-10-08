@@ -1,0 +1,22 @@
+/* Aligné sur les interrupteurs qui l'entourent : même libellé, même filet. */
+.choix-frequence {
+  padding: var(--esp-sm) 0;
+  border-bottom: 1px solid var(--filet);
+}
+
+.choix-frequence-libelle {
+  margin: 0 0 var(--esp-sm);
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.choix-frequence .choix-aide {
+  margin-top: var(--esp-xs);
+}
+
+/* Trois valeurs sur 360 px : « En octobre » tient sur une ligne. */
+.choix-frequence .bascule button {
+  padding: 0 var(--esp-xs);
+  white-space: nowrap;
+}

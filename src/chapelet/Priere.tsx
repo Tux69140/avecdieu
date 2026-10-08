@@ -1,12 +1,15 @@
 import { useState } from 'react'
+import { LITANIES } from '../recueil/litanies'
 import type { Passage } from '../recueil/passages'
-import { PRIERES, type PriereId } from '../recueil/prieres'
+import type { PriereId } from '../recueil/prieres'
 import type { Pas } from './deroule'
 import { PassageBiblique } from './PassageBiblique'
+import { TexteLitanies } from './TexteLitanies'
 import { TextePriere } from './TextePriere'
+import { priereDuPas } from './texteDuPas'
 
 interface Props {
-  pas: Pas & { priere: PriereId }
+  pas: Pas & { priere: PriereId | 'litanies' }
   compact: boolean
   // À plusieurs : V/ et R/ marquent la part de chacun, le demi-gras celle de tous.
   plusieurs: boolean
@@ -26,12 +29,13 @@ interface Props {
 export function Priere(props: Props) {
   const { pas, compact, plusieurs, annonce, passageDeplie, onBasculerPassage } = props
   const [voirPriere, setVoirPriere] = useState(false)
-  const priere = PRIERES[pas.priere]
+  const priere =
+    pas.priere === 'litanies' ? null : priereDuPas({ priere: pas.priere, verset: pas.verset })
   const passage = annonce ? props.passage : undefined
   return (
     <section className="priere" data-testid="priere">
       <div className={compact ? 'priere-tete priere-tete-compacte' : 'priere-tete'}>
-        <h2>{priere.titre}</h2>
+        <h2>{priere ? priere.titre : LITANIES.titre}</h2>
         {pas.total > 1 && (
           // La barre se lirait « barre oblique » : le lecteur d'écran entend « 5 sur 10 ».
           <span className="compteur">
@@ -44,6 +48,13 @@ export function Priere(props: Props) {
           </span>
         )}
       </div>
+      {/* L'intention, en rouge comme une rubrique, avant la prière (texte
+          complet et compact). */}
+      {pas.intention && (
+        <p className="intention" data-testid="intention">
+          {pas.intention}
+        </p>
+      )}
       {/* Les liens restent sous le titre : ce qu'ils déplient s'ouvre en dessous. */}
       {compact && (
         <div className="liens-compacts">
@@ -57,7 +68,12 @@ export function Priere(props: Props) {
           )}
         </div>
       )}
-      {(!compact || voirPriere) && <TextePriere priere={priere} plusieurs={plusieurs} />}
+      {(!compact || voirPriere) &&
+        (priere ? (
+          <TextePriere priere={priere} plusieurs={plusieurs} />
+        ) : (
+          <TexteLitanies plusieurs={plusieurs} />
+        ))}
       {compact && passage && passageDeplie && <PassageBiblique passage={passage} />}
     </section>
   )

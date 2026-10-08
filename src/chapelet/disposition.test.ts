@@ -54,10 +54,19 @@ describe('disposition du chapelet dessiné', () => {
     expect(plan.hauteur / plan.largeur).toBeLessThan(1 / 3)
   })
 
-  it('pose le Salve Regina sur la médaille, et sans lui le dessin reste le même', () => {
+  it('pose la clôture sur la médaille, et sans elle le dessin reste le même', () => {
     expect(plan.points.at(-1)).toMatchObject({ type: 'medaille', ...plan.medaille })
-    const sansSalve = disposer(derouler(CHAPELET_MARIAL, { salveRegina: false }))
-    expect(sansSalve.points).toEqual(plan.points.slice(0, -1))
+    expect(plan.points.filter((p) => p.type === 'medaille')).toHaveLength(1)
+    const sansCloture = disposer(
+      derouler(CHAPELET_MARIAL, {
+        salveRegina: false,
+        litanies: false,
+        oraisonRosaire: false,
+        sousLAbri: false,
+        saintJoseph: false,
+      }),
+    )
+    expect(sansCloture.points).toEqual(plan.points.slice(0, -1))
   })
 
   it('tient dans un cadre au moins deux fois plus large que haut', () => {

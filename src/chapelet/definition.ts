@@ -1,16 +1,25 @@
-import type { PriereId } from '../recueil/prieres'
+import { INTENTIONS, type PriereId } from '../recueil/prieres'
 
 // Ce qui porte la prière sur le chapelet : la croix, un gros ou un petit grain,
 // un nœud du fil entre deux grains (le Gloire au Père se dit sur le fil), ou
 // la médaille qui ferme la boucle.
 export type TypeGrain = 'croix' | 'gros' | 'petit' | 'noeud' | 'medaille'
 
-// Ce qui se dit ou se médite à une étape : une prière du recueil, ou l'annonce
-// du mystère de la dizaine (titre, fruit, passage).
-export type Moment = PriereId | 'annonce'
+// Ce qui se dit ou se médite à une étape : une prière du recueil, les Litanies
+// de la Sainte Vierge, ou l'annonce du mystère de la dizaine (titre, fruit,
+// passage).
+export type Moment = PriereId | 'litanies' | 'annonce'
 
-// Étapes que les réglages peuvent retirer du déroulé.
-export type OptionDeroule = 'annonce' | 'oMonJesus' | 'salveRegina'
+// Ce que les réglages peuvent retirer du déroulé.
+export type OptionDeroule =
+  | 'annonce'
+  | 'oMonJesus'
+  | 'intentions'
+  | 'salveRegina'
+  | 'litanies'
+  | 'oraisonRosaire'
+  | 'sousLAbri'
+  | 'saintJoseph'
 
 export interface Etape {
   priere: Moment
@@ -21,6 +30,13 @@ export interface Etape {
   memeGrain?: boolean
   // L'étape n'est dite que si cette option est active.
   option?: OptionDeroule
+  // Une intention annoncée avant chaque répétition, dans l'ordre, si son
+  // option est active.
+  intentions?: { textes: readonly string[]; option: OptionDeroule }
+  // Le verset marial (« Priez pour nous, sainte Mère de Dieu ») ne se dit
+  // qu'une fois : à la dernière étape dite qui peut le porter, avant ou après
+  // sa prière.
+  verset?: 'avant' | 'apres'
 }
 
 // Définition déclarative d'un chapelet : ajouter un autre chapelet, c'est
@@ -37,7 +53,12 @@ export const CHAPELET_MARIAL: DefinitionChapelet = {
     { priere: 'signe-de-croix', grain: 'croix' },
     { priere: 'credo', grain: 'croix', memeGrain: true },
     { priere: 'notre-pere', grain: 'gros' },
-    { priere: 'je-vous-salue-marie', grain: 'petit', repetitions: 3 },
+    {
+      priere: 'je-vous-salue-marie',
+      grain: 'petit',
+      repetitions: 3,
+      intentions: { textes: INTENTIONS, option: 'intentions' },
+    },
     { priere: 'gloire-au-pere', grain: 'noeud' },
   ],
   // L'annonce se fait sur le gros grain, juste avant le Notre Père ; le « Ô mon
@@ -50,6 +71,21 @@ export const CHAPELET_MARIAL: DefinitionChapelet = {
     { priere: 'o-mon-jesus', grain: 'noeud', memeGrain: true, option: 'oMonJesus' },
   ],
   nombreDeDizaines: 5,
-  // Le Salve Regina se dit en revenant à la médaille, la boucle achevée.
-  cloture: [{ priere: 'salve-regina', grain: 'medaille', option: 'salveRegina' }],
+  // La clôture se dit en revenant à la médaille, la boucle achevée, dans
+  // l'ordre validé par le porteur du projet (2026-10-08). Le verset marial
+  // finit le Salve Regina, sauf quand l'oraison du Rosaire est dite : il
+  // passe alors juste avant elle.
+  cloture: [
+    { priere: 'salve-regina', grain: 'medaille', option: 'salveRegina', verset: 'apres' },
+    { priere: 'litanies', grain: 'medaille', memeGrain: true, option: 'litanies' },
+    {
+      priere: 'oraison-rosaire',
+      grain: 'medaille',
+      memeGrain: true,
+      option: 'oraisonRosaire',
+      verset: 'avant',
+    },
+    { priere: 'sous-l-abri', grain: 'medaille', memeGrain: true, option: 'sousLAbri' },
+    { priere: 'saint-joseph', grain: 'medaille', memeGrain: true, option: 'saintJoseph' },
+  ],
 }

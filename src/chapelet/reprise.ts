@@ -1,5 +1,5 @@
 import { SERIES, type SerieId } from '../recueil/mysteres'
-import type { Moment } from './definition'
+import { CHAPELET_MARIAL, type Moment } from './definition'
 import type { Deroule, Pas } from './deroule'
 import { effacer, ecrire, lireObjet } from './stockage'
 
@@ -43,15 +43,26 @@ export function lireEnCours(date: Date): ChapeletEnCours | null {
   return { jour, serie: serie as SerieId, dizaine, priere: priere as Moment, rang }
 }
 
+// L'ordre des textes de la clôture.
+const CLOTURE: Moment[] = CHAPELET_MARIAL.cloture.map((etape) => etape.priere)
+
 // Index du pas où reprendre. Une prière retirée par les réglages entre-temps
-// cède la place au début de sa dizaine ; le Salve Regina retiré, à la fin.
+// cède la place au début de sa dizaine ; un texte de la clôture retiré, au
+// texte suivant de la clôture, ou à la fin.
 export function retrouver(deroule: Deroule, enCours: ChapeletEnCours): number {
   const { pas } = deroule
   const exact = pas.findIndex(
     (p) => p.dizaine === enCours.dizaine && p.priere === enCours.priere && p.rang === enCours.rang,
   )
   if (exact >= 0) return exact
-  if (enCours.dizaine === undefined) return enCours.priere === 'salve-regina' ? pas.length : 0
+  const rang = CLOTURE.indexOf(enCours.priere)
+  if (enCours.dizaine === undefined && rang >= 0) {
+    const suivant = pas.findIndex(
+      (p) => p.dizaine === undefined && CLOTURE.indexOf(p.priere) > rang,
+    )
+    return suivant >= 0 ? suivant : pas.length
+  }
+  if (enCours.dizaine === undefined) return 0
   return Math.max(
     pas.findIndex((p) => p.dizaine === enCours.dizaine),
     0,

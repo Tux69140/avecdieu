@@ -107,6 +107,7 @@ test('« A propos » donne la version et les sources des textes', async ({ page 
   await page.getByRole('link', { name: 'A propos' }).click()
   await expect(page.getByText(/^Version \d+\.\d+$/)).toBeVisible()
   await expect(page.getByText('Rien ne quitte votre téléphone', { exact: false })).toBeVisible()
+  await page.getByRole('button', { name: 'Textes' }).click()
   await expect(page.getByText(/© AELF, Paris/)).toBeVisible()
   await page.getByRole('button', { name: 'Fermer', exact: true }).click()
   await accueil(page)

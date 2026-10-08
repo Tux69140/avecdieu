@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { TEXTES_OFFICE } from './office'
-import { PRIERES } from './prieres'
+import { LITANIES } from './litanies'
+import { INTENTIONS, PRIERES } from './prieres'
 
 // Dans le recueil, chaque ligne est un vers ; une ligne vide ('') sépare deux strophes.
 describe('format du recueil des prières', () => {
@@ -31,4 +32,29 @@ describe('format du recueil des offices', () => {
         expect(ligne).not.toContain("'")
       }
     })
+})
+
+describe('format des Litanies et des intentions', () => {
+  it('la première invocation a sa réponse ; ensuite, la réponse n’est écrite que si elle change', () => {
+    const { invocations } = LITANIES
+    expect(invocations[0].reponse).toBeDefined()
+    let precedente = ''
+    for (const { reponse } of invocations.slice(5)) {
+      if (reponse !== undefined) expect(reponse).not.toBe(precedente)
+      precedente = reponse ?? precedente
+    }
+  })
+
+  it('textes sans espaces superflus, apostrophe typographique, sans tiret écrit', () => {
+    const textes = [
+      ...INTENTIONS,
+      ...LITANIES.invocations.flatMap(({ invocation, reponse }) => [invocation, reponse ?? 'x']),
+    ]
+    for (const texte of textes) {
+      expect(texte).toBe(texte.trim())
+      expect(texte).not.toBe('')
+      expect(texte).not.toContain("'")
+      expect(texte).not.toContain('—')
+    }
+  })
 })

@@ -1,14 +1,17 @@
 import { expect, type Page } from '@playwright/test'
 import { readFileSync } from 'node:fs'
 import {
+  avancer,
   faireRevenirBandeau,
   commencer,
+  defilementArrete,
+  derniereLigneVisible,
   deplierReglages,
   preparer,
   servirAelf,
   simulerTelephone,
-  suivant,
   test,
+  toucher,
 } from './outils.ts'
 
 // Sur le téléphone, l'app s'étend sous les barres d'Android (état en haut,
@@ -171,7 +174,7 @@ test('annonce d’un mystère : la grosse perle reste au-dessus de la barre du b
   page,
 }) => {
   await commencer(page)
-  for (let i = 0; i < 7; i++) await suivant(page)
+  await avancer(page, 7)
   const perle = page.getByRole('button', { name: 'Commencer la dizaine' })
   await expect(perle).toBeVisible()
   const boite = (await perle.boundingBox())!
@@ -188,7 +191,13 @@ for (const tailleTexte of [18, 20]) {
   }) => {
     await page.setViewportSize({ width: 360, height: 780 })
     await commencer(page, '/chapelet', { reglages: { tailleTexte } })
-    for (let i = 0; i < 9; i++) await suivant(page)
+    // Le premier Je vous salue Marie porte son intention (phase 16) : il tient aussi.
+    await avancer(page, 3)
+    await expect(page.getByTestId('intention')).toHaveText('Pour la foi.')
+    await expect.poll(() => page.evaluate(() => document.getAnimations().length)).toBe(0)
+    const ouverture = (await page.locator('.priere-texte').boundingBox())!
+    expect(ouverture.y + ouverture.height).toBeLessThanOrEqual(780 - BAS)
+    await avancer(page, 6)
     await expect(page.getByTestId('priere').getByRole('heading', { level: 2 })).toHaveText(
       'Je vous salue Marie',
     )
@@ -202,6 +211,28 @@ for (const tailleTexte of [18, 20]) {
     await expect(page.getByRole('button', { name: 'Plus bas' })).toBeHidden()
   })
 }
+
+// Les Litanies, plus hautes que l'écran : rien sous les barres en défilant,
+// et chaque toucher descend sans rien cacher sous la barre du haut (phase 16).
+test('Litanies : rien sous les barres, le toucher descend entre elles', async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 780 })
+  await commencer(page, '/chapelet', { reglages: { salveRegina: false } })
+  await avancer(page, 77)
+  await expect(page.getByTestId('invocation').first()).toBeVisible()
+  await verifierBarres(page)
+  // La dernière ligne entière au-dessus du signal « Plus bas » reste visible
+  // sous la barre du haut après le toucher (deux lignes gardées).
+  await expect(page.getByRole('button', { name: 'Plus bas' })).toBeVisible()
+  const ligne = await derniereLigneVisible(page)
+  // verifierBarres vient de faire défiler la page : un toucher trop prompt
+  // l'arrêterait seulement, et ne compterait pas.
+  await expect(async () => {
+    await toucher(page)
+    await expect.poll(() => page.evaluate(() => scrollY), { timeout: 500 }).toBeGreaterThan(0)
+  }).toPass()
+  expect(await defilementArrete(page)).toBeGreaterThan(300)
+  expect(ligne - (await page.evaluate(() => scrollY))).toBeGreaterThanOrEqual(HAUT)
+})
 
 test('rappels : la fenêtre d’autorisation s’écarte des barres d’Android', async ({ page }) => {
   await simulerTelephone(page, { accord: 'prompt' })

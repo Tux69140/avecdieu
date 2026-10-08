@@ -3,11 +3,18 @@ import { PRIERES } from '../recueil/prieres'
 import { ditEnsemble, strophes } from './versets'
 
 describe('prières dites ensemble, à plusieurs', () => {
-  it('le signe de croix, le Credo, le « Ô mon Jésus » et le Salve Regina', () => {
+  it('le signe de croix, le Credo, le « Ô mon Jésus », le Salve Regina, Sous l’abri et saint Joseph', () => {
     const ensemble = Object.values(PRIERES)
       .filter((p) => ditEnsemble(p, true))
       .map((p) => p.titre)
-    expect(ensemble).toEqual(['Signe de croix', 'Je crois en Dieu', 'Ô mon Jésus', 'Salve Regina'])
+    expect(ensemble).toEqual([
+      'Signe de croix',
+      'Je crois en Dieu',
+      'Ô mon Jésus',
+      'Salve Regina',
+      'Sous l’abri de votre miséricorde',
+      'Prière à saint Joseph',
+    ])
   })
 
   it('seul, aucune', () => {

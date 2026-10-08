@@ -174,3 +174,13 @@
 :root[data-texte='grand'] .strophe + .strophe {
   margin-top: 0.6em;
 }
+
+/* L'intention des trois premiers Je vous salue Marie : rubrique rouge, comme
+   dans les livres (2026-10-08). */
+.intention {
+  margin: var(--esp-xs) 0 0;
+  font-style: italic;
+  font-size: calc(var(--taille-priere) * 0.889);
+  line-height: 1.4;
+  color: var(--rubrique);
+}

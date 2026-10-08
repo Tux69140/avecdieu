@@ -87,7 +87,8 @@ test('mode compact, prière et passage dépliés', async ({ page }) => {
 
 test('écran de fin du chapelet', async ({ page }) => {
   await commencer(page)
-  await avancer(page, 78)
+  // Un lundi d'octobre : 77 pas, puis Salve, Litanies, oraison et saint Joseph.
+  await avancer(page, 81)
   await expect(page.getByTestId('fin-chapelet')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Fermer', exact: true })).toBeVisible()
   expect(await violationsGraves(page)).toEqual([])
@@ -113,6 +114,34 @@ test('prier à plusieurs, V/ et R/', async ({ page }) => {
   await commencer(page, '/chapelet', { reglages: { plusieurs: true } })
   await avancer(page, 3)
   await expect(page.getByTestId('marque-R')).toBeVisible()
+  expect(await violationsGraves(page)).toEqual([])
+})
+
+// La clôture enrichie (phase 16) : l'intention en rouge, les Litanies à
+// plusieurs (réponse en demi-gras), l'oraison et son verset.
+async function cloture(page: Page) {
+  await commencer(page, '/chapelet', { reglages: { plusieurs: true, salveRegina: false } })
+  await avancer(page, 3)
+  await expect(page.getByTestId('intention')).toHaveText('Pour la foi.')
+  expect(await violationsGraves(page)).toEqual([])
+  await avancer(page, 74)
+  await expect(page.getByTestId('invocation').first()).toBeVisible()
+  expect(await violationsGraves(page)).toEqual([])
+  await avancer(page, 1)
+  await expect(page.getByTestId('marque-V')).toHaveCount(2)
+  expect(await violationsGraves(page)).toEqual([])
+}
+
+test('clôture : intention, Litanies et oraison, à plusieurs', async ({ page }) => {
+  await cloture(page)
+})
+
+test('à propos, chaque rubrique ouverte', async ({ page }) => {
+  await preparer(page)
+  await page.goto('/a-propos')
+  for (const nom of ['Textes', 'Chapelet et Rosaire', 'Cloches des rappels', 'Heures solaires'])
+    await page.getByRole('button', { name: nom }).click()
+  await expect(page.getByText(/Quamquam pluries/)).toBeVisible()
   expect(await violationsGraves(page)).toEqual([])
 })
 
@@ -345,6 +374,10 @@ test.describe('de nuit', () => {
     await page.getByRole('button', { name: 'Commencer le chapelet' }).click()
     await avancer(page, 10)
     expect(await violationsGraves(page)).toEqual([])
+  })
+
+  test('clôture : intention, Litanies et oraison', async ({ page }) => {
+    await cloture(page)
   })
 
   test('menu', async ({ page }) => {

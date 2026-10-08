@@ -20,15 +20,21 @@ export function ditEnsemble({ reponse }: Priere, plusieurs: boolean): boolean {
 // Les strophes d'une prière, prêtes à afficher. Dans le recueil, une ligne vide
 // sépare deux strophes et « V/ » ou « R/ » ouvre un verset. À plusieurs, la
 // réponse ouvre sa propre strophe, pour que chacun voie où commence sa part.
+// La part de celui qui mène s'ouvre sur le premier vers sans marque : après
+// le verset, pour l'oraison du Rosaire.
 export function strophes({ lignes, reponse }: Priere, plusieurs: boolean): Vers[][] {
   const groupes: Vers[][] = [[]]
-  lignes.forEach((ligne, i) => {
+  let premier = true
+  lignes.forEach((ligne) => {
     if (ligne === '') return groupes.push([])
     const prefixe = PREFIXE.exec(ligne)
     if (prefixe)
       return groupes.at(-1)!.push({ texte: ligne.slice(3), marque: prefixe[1] as Marque })
     if (plusieurs && reponse !== undefined) {
-      if (i === 0) return groupes.at(-1)!.push({ texte: ligne, marque: 'V' })
+      if (premier) {
+        premier = false
+        return groupes.at(-1)!.push({ texte: ligne, marque: 'V' })
+      }
       if (ligne === reponse) {
         if (groupes.at(-1)!.length > 0) groupes.push([])
         return groupes.at(-1)!.push({ texte: ligne, marque: 'R' })

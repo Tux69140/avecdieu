@@ -16,8 +16,10 @@ import { effacerEnCours, lireEnCours, retenirEnCours, retrouver } from '../chape
 import { dizaineCommencee, rangDuPassage } from '../chapelet/rotation'
 import { Seuil } from '../chapelet/Seuil'
 import { serieDuJour } from '../chapelet/serieDuJour'
+import { deciderToucher } from '../chapelet/toucher'
 import { vibrationEntre } from '../chapelet/vibration'
 import { BoutonAide } from '../composants/BoutonAide'
+import { glissement } from '../composants/defilement'
 import { avecExposants } from '../composants/Exposants'
 import { IndiceSuite } from '../composants/IndiceSuite'
 import { LigneFermer } from '../composants/LigneFermer'
@@ -38,7 +40,28 @@ const TOUCHES_RECULER = new Set(['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'])
 const estSerie = (valeur: string): valeur is SerieId => valeur in SERIES
 const estInteractif = (cible: EventTarget) =>
   cible instanceof Element && cible.closest('button, a, input, label, dialog') !== null
-const estPriere = (pas: Pas): pas is Pas & { priere: PriereId } => pas.priere !== 'annonce'
+const estPriere = (pas: Pas): pas is Pas & { priere: PriereId | 'litanies' } =>
+  pas.priere !== 'annonce'
+
+// Ce que l'écran montre au moment d'un toucher, pour décider s'il descend ou
+// avance (chapelet/toucher.ts). Les bandes sous les barres d'Android et le
+// signal « Plus bas » cachent le haut et le bas de la fenêtre.
+function mesurerPage(depuisDefilement: number) {
+  const haut = document.querySelector('.voile-barre-haut')?.getBoundingClientRect().bottom ?? 0
+  const bas = document.querySelector('.voile-barre-bas')?.getBoundingClientRect().top
+  const basVisible = bas ?? window.innerHeight
+  const indice = document.querySelector('.indice-suite-flottant')?.getBoundingClientRect().top
+  const texte = document.querySelector('[data-testid="priere"] .priere-texte')
+  return {
+    depuisDefilement,
+    basContenu: texte?.getBoundingClientRect().bottom ?? -Infinity,
+    hautVisible: haut,
+    basVisible,
+    recouvert: indice === undefined ? 0 : Math.max(basVisible - indice, 0),
+    // Une ligne et l'écart qui la sépare de la suivante (TextePriere.css).
+    ligne: parseFloat(getComputedStyle(texte ?? document.body).fontSize) * 1.75,
+  }
+}
 
 // Le chapelet s'ouvre sur son seuil ; « Commencer » ajoute une entrée à
 // l'historique, si bien que le retour d'Android y ramène.
@@ -78,7 +101,11 @@ export function EcranChapelet() {
 function Chapelet({ serie, date }: { serie: SerieId; date: Date }) {
   const [reglages] = useState(lireReglages)
   const compact = reglages.affichage === 'compact'
-  const deroule = useMemo(() => derouler(CHAPELET_MARIAL, optionsDuDeroule(reglages)), [reglages])
+  // Les Litanies et saint Joseph « en octobre » suivent le jour du chapelet.
+  const deroule = useMemo(
+    () => derouler(CHAPELET_MARIAL, optionsDuDeroule(reglages, date)),
+    [reglages, date],
+  )
   const plan = useMemo(() => disposer(deroule), [deroule])
   // Le passage de chaque mystère est choisi une fois pour tout le chapelet.
   const [passages] = useState(() =>
@@ -93,7 +120,17 @@ function Chapelet({ serie, date }: { serie: SerieId; date: Date }) {
   })
   const [aideOuverte, setAideOuverte] = useState(aideAMontrer)
   const [passageDeplie, setPassageDeplie] = useState<number | null>(null)
-  const debutGeste = useRef<{ id: number; x: number; y: number; surBouton: boolean } | null>(null)
+  const debutGeste = useRef<{
+    id: number
+    x: number
+    y: number
+    surBouton: boolean
+    depuisDefilement: number
+  } | null>(null)
+  // L'instant du dernier défilement, et le retour en haut de page que l'app
+  // fait elle-même à chaque prière, qui ne compte pas comme un défilement.
+  const dernierDefilement = useRef(-Infinity)
+  const remiseEnHaut = useRef(false)
   const indexPrecedent = useRef(index)
   const dizainesLues = useRef(new Set<number>())
   const { fin, cachee } = useSuiteCachee()
@@ -125,8 +162,19 @@ function Chapelet({ serie, date }: { serie: SerieId; date: Date }) {
   // (Entre accolades : les navigateurs récents rendent une promesse, que React
   // prendrait pour un nettoyage.)
   useLayoutEffect(() => {
+    if (window.scrollY === 0) return
+    remiseEnHaut.current = true
     window.scrollTo(0, 0)
   }, [index])
+
+  useEffect(() => {
+    const defiler = () => {
+      if (remiseEnHaut.current) remiseEnHaut.current = false
+      else dernierDefilement.current = performance.now()
+    }
+    window.addEventListener('scroll', defiler, { passive: true })
+    return () => window.removeEventListener('scroll', defiler)
+  }, [])
 
   // Retenu à chaque pas, oublié une fois le chapelet terminé.
   useEffect(() => {
@@ -159,7 +207,15 @@ function Chapelet({ serie, date }: { serie: SerieId; date: Date }) {
       x: e.clientX,
       y: e.clientY,
       surBouton: estInteractif(e.target),
+      depuisDefilement: performance.now() - dernierDefilement.current,
     }
+  }
+  // Un toucher sur une prière plus haute que l'écran la fait d'abord défiler.
+  const toucherPriere = (depuisDefilement: number) => {
+    const decision = deciderToucher(mesurerPage(depuisDefilement))
+    if (decision.sorte === 'avancer') setIndex((i) => avancer(i, nombre))
+    else if (decision.sorte === 'descendre')
+      window.scrollBy({ top: decision.de, behavior: glissement() })
   }
   const relachement = (e: PointerEvent) => {
     const debut = debutGeste.current
@@ -167,7 +223,8 @@ function Chapelet({ serie, date }: { serie: SerieId; date: Date }) {
     if (aideOuverte || !debut || debut.id !== e.pointerId) return
     const geste = classerGeste({ dx: e.clientX - debut.x, dy: e.clientY - debut.y })
     // Un toucher sur un bouton appartient au bouton ; un glissement, lui, recule partout.
-    if (geste === 'avancer' && !debut.surBouton && !surAnnonce) setIndex((i) => avancer(i, nombre))
+    if (geste === 'avancer' && !debut.surBouton && !surAnnonce)
+      toucherPriere(debut.depuisDefilement)
     else if (geste === 'reculer') setIndex(reculer)
   }
 

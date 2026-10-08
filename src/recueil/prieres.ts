@@ -12,6 +12,9 @@ export type PriereId =
   | 'gloire-au-pere'
   | 'o-mon-jesus'
   | 'salve-regina'
+  | 'oraison-rosaire'
+  | 'sous-l-abri'
+  | 'saint-joseph'
 
 export interface Priere {
   titre: string
@@ -20,6 +23,17 @@ export interface Priere {
   // répondent à partir d'elle. Absent : la prière se dit ensemble.
   reponse?: string
 }
+
+// Le verset marial, dit une seule fois au chapelet : à la fin du Salve Regina,
+// ou avant l'oraison du Rosaire quand elle est dite (2026-10-08).
+export const VERSET_MARIAL = [
+  'V/ Priez pour nous, sainte Mère de Dieu.',
+  'R/ Afin que nous soyons rendus dignes des promesses du Christ.',
+]
+
+// Les intentions des trois premiers Je vous salue Marie de l'ouverture, en rouge
+// (validées par le porteur du projet, 2026-10-08).
+export const INTENTIONS = ['Pour la foi.', 'Pour l’espérance.', 'Pour la charité.']
 
 export const PRIERES: Record<PriereId, Priere> = {
   'signe-de-croix': {
@@ -130,8 +144,60 @@ export const PRIERES: Record<PriereId, Priere> = {
       'Ô clémente, ô miséricordieuse,',
       'ô douce Vierge Marie.',
       '',
-      'V/ Priez pour nous, sainte Mère de Dieu.',
-      'R/ Afin que nous soyons rendus dignes des promesses du Christ.',
+      ...VERSET_MARIAL,
+    ],
+  },
+  // Les textes de la clôture enrichie (phase 16), validés par le porteur du
+  // projet le 2026-10-08 : Marie et Joseph au vous, Dieu au tu. L'oraison du
+  // Rosaire est précédée du verset marial au chapelet.
+  'oraison-rosaire': {
+    titre: 'Oraison du Rosaire',
+    lignes: [
+      'Prions.',
+      'Ô Dieu, dont le Fils unique, par sa vie, sa mort et sa résurrection,',
+      'nous a acquis les récompenses du salut éternel,',
+      'accorde-nous, nous t’en prions,',
+      'qu’en méditant ces mystères du très saint Rosaire de la bienheureuse Vierge Marie,',
+      'nous imitions ce qu’ils contiennent',
+      'et obtenions ce qu’ils promettent.',
+      'Par le Christ, notre Seigneur.',
+      'Amen.',
+    ],
+    reponse: 'Amen.',
+  },
+  'sous-l-abri': {
+    titre: 'Sous l’abri de votre miséricorde',
+    lignes: [
+      'Sous l’abri de votre miséricorde,',
+      'nous nous réfugions, sainte Mère de Dieu.',
+      'Ne méprisez pas nos prières',
+      'quand nous sommes dans l’épreuve,',
+      'mais de tous les dangers',
+      'délivrez-nous toujours,',
+      'Vierge glorieuse et bénie.',
+    ],
+  },
+  'saint-joseph': {
+    titre: 'Prière à saint Joseph',
+    lignes: [
+      'Nous recourons à vous dans notre tribulation, ô bienheureux Joseph,',
+      'et, après avoir imploré le secours de votre très sainte Épouse,',
+      'nous sollicitons aussi avec confiance votre patronage.',
+      'Par l’affection qui vous a uni à la Vierge immaculée, Mère de Dieu,',
+      'par l’amour paternel dont vous avez entouré l’Enfant Jésus,',
+      'nous vous supplions de regarder avec bonté l’héritage que Jésus Christ a conquis au prix de son sang,',
+      'et de nous assister de votre puissance et de votre secours dans nos besoins.',
+      'Protégez, ô très sage gardien de la divine Famille, la race élue de Jésus Christ.',
+      'Préservez-nous, ô père très aimant, de toute souillure d’erreur et de corruption.',
+      'Soyez-nous favorable, ô notre très puissant libérateur ;',
+      'du haut du ciel, assistez-nous dans le combat que nous livrons à la puissance des ténèbres,',
+      'et, de même que vous avez arraché autrefois l’Enfant Jésus au péril de la mort,',
+      'défendez aujourd’hui la sainte Église de Dieu des embûches de l’ennemi et de toute adversité.',
+      'Couvrez chacun de nous de votre perpétuelle protection,',
+      'afin que, à votre exemple et soutenus par votre secours,',
+      'nous puissions vivre saintement, pieusement mourir',
+      'et obtenir la béatitude éternelle du ciel.',
+      'Amen.',
     ],
   },
 }

@@ -1,5 +1,5 @@
 import { expect, type Page } from '@playwright/test'
-import { commencer, glisser, preparer, suivant, test, toucher } from './outils.ts'
+import { avancer, commencer, glisser, preparer, suivant, test, toucher } from './outils.ts'
 
 // Phase 3 : annonce des mystères, mode compact, choix de la série, aide aux gestes.
 
@@ -9,7 +9,7 @@ const perle = (page: Page) => page.getByRole('button', { name: 'Commencer la diz
 const titrePriere = (page: Page) => page.getByTestId('priere').getByRole('heading', { level: 2 })
 
 async function jusquALAnnonce(page: Page) {
-  for (let i = 0; i < 7; i++) await toucher(page)
+  await avancer(page, 7)
   await expect(titreAnnonce(page)).toHaveText('L’Annonciation')
 }
 
@@ -117,7 +117,7 @@ test.describe('mode compact', () => {
     await expect(titrePriere(page)).toHaveText('Signe de croix')
     await expect(page.getByTestId('strophe')).toHaveCount(0)
 
-    for (let i = 0; i < 7; i++) await toucher(page)
+    await avancer(page, 7)
     await expect(page.getByTestId('annonce')).toHaveCount(0)
     await expect(titrePriere(page)).toHaveText('Notre Père')
     await expect(page.getByTestId('mystere')).toHaveText('1 · L’Annonciation')
@@ -128,7 +128,7 @@ test.describe('mode compact', () => {
 
   test('le lecteur d’écran entend le mystère qui commence et « 1 sur 10 »', async ({ page }) => {
     await commencer(page, '/chapelet', { affichage: 'compact' })
-    for (let i = 0; i < 7; i++) await toucher(page)
+    await avancer(page, 7)
     // Sans écran d'annonce, le mystère est dans la région que lit le lecteur d'écran.
     const region = page.locator('[aria-live="polite"]')
     await expect(region.getByTestId('mystere')).toHaveText('1 · L’Annonciation')
@@ -141,7 +141,7 @@ test.describe('mode compact', () => {
     page,
   }) => {
     await commencer(page, '/chapelet', { affichage: 'compact' })
-    for (let i = 0; i < 8; i++) await toucher(page)
+    await avancer(page, 8)
     await expect(page.getByTestId('compteur')).toHaveText('1 / 10')
 
     await page.getByRole('button', { name: 'Voir la prière' }).tap()
@@ -169,7 +169,7 @@ test('en compact, les liens restent sous le titre quand la prière ou le passage
   // Le plus petit téléphone visé : les libellés longs y passeraient à la ligne.
   await page.setViewportSize({ width: 360, height: 760 })
   await commencer(page, '/chapelet', { affichage: 'compact' })
-  for (let i = 0; i < 8; i++) await toucher(page)
+  await avancer(page, 8)
   await expect(page.getByTestId('compteur')).toHaveText('1 / 10')
   const position = async (nom: RegExp) => {
     await expect.poll(() => page.evaluate(() => document.getAnimations().length)).toBe(0)
@@ -224,7 +224,7 @@ test.describe('choix de la série', () => {
       await page.getByRole('button', { name: 'Commencer le chapelet' }).click()
       // Une touche pressée avant que l'écran soit prêt serait perdue.
       await expect(titrePriere(page)).toHaveText('Signe de croix')
-      for (let i = 0; i < 7; i++) await toucher(page)
+      await avancer(page, 7)
       await expect(titreAnnonce(page)).toHaveText(premier)
     })
   }

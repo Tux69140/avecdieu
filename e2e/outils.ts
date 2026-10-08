@@ -43,7 +43,12 @@ export async function glisserDepuis(page: Page, x0: number, y0: number, dx: numb
 export interface Reglages {
   annonce?: boolean
   oMonJesus?: boolean
+  intentions?: boolean
   salveRegina?: boolean
+  litanies?: 'octobre' | 'toujours' | 'jamais'
+  oraisonRosaire?: boolean
+  sousLAbri?: boolean
+  saintJoseph?: 'octobre' | 'toujours' | 'jamais'
   plusieurs?: boolean
   affichage?: 'complet' | 'compact'
   vibrations?: boolean
@@ -138,14 +143,46 @@ export async function commencer(page: Page, chemin = '/chapelet', ouverture: Ouv
 }
 
 // Avance de plusieurs étapes, en attendant chacune : un toucher donné avant que
-// l'annonce soit affichée tomberait à côté de sa grosse perle.
+// l'annonce soit affichée tomberait à côté de sa grosse perle. Sur une prière
+// plus haute que l'écran, le toucher fait d'abord descendre la page (phase
+// 16) : on touche encore, une fois le défilement arrêté, jusqu'à la suivante.
 export async function avancer(page: Page, fois: number) {
   const chapelet = page.locator('main.chapelet')
   for (let i = 0; i < fois; i++) {
-    const pas = Number(await chapelet.getAttribute('data-pas'))
-    await suivant(page)
-    await expect(chapelet).toHaveAttribute('data-pas', String(pas + 1))
+    const vise = Number(await chapelet.getAttribute('data-pas')) + 1
+    await expect(async () => {
+      if (Number(await chapelet.getAttribute('data-pas')) >= vise) return
+      await suivant(page)
+      await expect(chapelet).toHaveAttribute('data-pas', String(vise), { timeout: 400 })
+    }).toPass()
   }
+}
+
+// Le haut de la dernière ligne de la prière entièrement visible au-dessus du
+// signal « Plus bas », dans le repère de la page (défilement compris).
+export const derniereLigneVisible = (page: Page) =>
+  page.evaluate(() => {
+    const bas = document.querySelector('.indice-suite')!.getBoundingClientRect().top
+    const lignes = [...document.querySelectorAll('.priere-texte > *')].flatMap((e) => {
+      const plage = document.createRange()
+      plage.selectNodeContents(e)
+      return [...plage.getClientRects()].filter((r) => r.height > 0 && r.bottom <= bas)
+    })
+    return Math.max(...lignes.map((r) => r.top)) + window.scrollY
+  })
+
+// Attend que la page ait fini de défiler, et rend où elle s'est arrêtée.
+export async function defilementArrete(page: Page) {
+  let avant = -1
+  await expect
+    .poll(async () => {
+      const y = await page.evaluate(() => window.scrollY)
+      const arrete = y === avant
+      avant = y
+      return arrete
+    })
+    .toBe(true)
+  return avant
 }
 
 // Étape suivante : un toucher, ou la grosse perle sur l'annonce d'un mystère.

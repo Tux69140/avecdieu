@@ -12,12 +12,25 @@ export type TailleTexte = (typeof TAILLES)[number]
 export type Theme = 'automatique' | 'jour' | 'nuit'
 const THEMES: readonly Theme[] = ['automatique', 'jour', 'nuit']
 
+// Les Litanies et la prière à saint Joseph : dites en octobre, mois du
+// Rosaire, ou toujours, ou jamais (décision du porteur du projet, 2026-10-08).
+export type Frequence = 'octobre' | 'toujours' | 'jamais'
+const FREQUENCES: readonly Frequence[] = ['octobre', 'toujours', 'jamais']
+
 // Un seul enregistrement pour tous les réglages, ceux du chapelet et ceux des
 // offices.
 export interface Reglages {
   annonce: boolean
   oMonJesus: boolean
+  // Chapelet : la foi, l'espérance, la charité, avant les trois premiers Je
+  // vous salue Marie.
+  intentions: boolean
+  // Chapelet : les textes de la clôture, dans leur ordre.
   salveRegina: boolean
+  litanies: Frequence
+  oraisonRosaire: boolean
+  sousLAbri: boolean
+  saintJoseph: Frequence
   // À plusieurs : ℣ et ℟ marquent la part de celui qui mène et la réponse,
   // le demi-gras ce que disent tous.
   plusieurs: boolean
@@ -43,7 +56,12 @@ export interface Reglages {
 export const REGLAGES_PAR_DEFAUT: Reglages = {
   annonce: true,
   oMonJesus: true,
+  intentions: true,
   salveRegina: true,
+  litanies: 'octobre',
+  oraisonRosaire: true,
+  sousLAbri: false,
+  saintJoseph: 'octobre',
   plusieurs: false,
   affichage: 'complet',
   vibrations: true,
@@ -59,7 +77,10 @@ export const REGLAGES_PAR_DEFAUT: Reglages = {
 const BASCULES = [
   'annonce',
   'oMonJesus',
+  'intentions',
   'salveRegina',
+  'oraisonRosaire',
+  'sousLAbri',
   'plusieurs',
   'vibrations',
   'accents',
@@ -76,9 +97,13 @@ const estAffichage = (valeur: unknown): valeur is Affichage =>
   valeur === 'complet' || valeur === 'compact'
 const estTaille = (valeur: unknown): valeur is TailleTexte =>
   TAILLES.some((taille) => taille === valeur)
+const estFrequence = (valeur: unknown): valeur is Frequence =>
+  FREQUENCES.some((frequence) => frequence === valeur)
 const estTheme = (valeur: unknown): valeur is Theme => THEMES.some((theme) => theme === valeur)
 
-// Chaque valeur enregistrée n'est reprise que si elle a le bon type.
+// Chaque valeur enregistrée n'est reprise que si elle a le bon type ; une
+// valeur absente (réglages enregistrés avant qu'elle existe) garde celle de
+// départ.
 export function lireReglages(): Reglages {
   const enregistres = lireObjet(CLE)
   const reglages = { ...REGLAGES_PAR_DEFAUT }
@@ -91,6 +116,8 @@ export function lireReglages(): Reglages {
   if (estZone(enregistres.zone)) reglages.zone = enregistres.zone
   if (estTaille(enregistres.tailleTexte)) reglages.tailleTexte = enregistres.tailleTexte
   if (estTheme(enregistres.theme)) reglages.theme = enregistres.theme
+  if (estFrequence(enregistres.litanies)) reglages.litanies = enregistres.litanies
+  if (estFrequence(enregistres.saintJoseph)) reglages.saintJoseph = enregistres.saintJoseph
   return reglages
 }
 
@@ -104,11 +131,21 @@ export function modifierReglages(changement: Partial<Reglages>): Reglages {
   return reglages
 }
 
+// « En octobre » : du 1er au 31 octobre, selon la date du téléphone le jour du
+// chapelet.
+export const ditCeJour = (frequence: Frequence, jour: Date) =>
+  frequence === 'toujours' || (frequence === 'octobre' && jour.getMonth() === 9)
+
 // En mode compact, l'annonce n'a pas d'écran à part : le Notre Père la porte.
-export function optionsDuDeroule(reglages: Reglages): Options {
+export function optionsDuDeroule(reglages: Reglages, jour: Date): Options {
   return {
     annonce: reglages.annonce && reglages.affichage === 'complet',
     oMonJesus: reglages.oMonJesus,
+    intentions: reglages.intentions,
     salveRegina: reglages.salveRegina,
+    litanies: ditCeJour(reglages.litanies, jour),
+    oraisonRosaire: reglages.oraisonRosaire,
+    sousLAbri: reglages.sousLAbri,
+    saintJoseph: ditCeJour(reglages.saintJoseph, jour),
   }
 }
