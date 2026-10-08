@@ -1,32 +1,14 @@
 .menu {
   max-width: calc(34em + 2 * var(--gouttiere));
   margin: 0 auto;
-  padding: var(--esp-xs) var(--gouttiere) var(--esp-3xl);
+  padding: var(--esp-sm) var(--gouttiere) var(--esp-3xl);
 }
 
-.menu-fermer {
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  margin-left: calc(-1 * var(--esp-sm));
-  padding: 0;
-  border: none;
-  background: none;
-  cursor: pointer;
-}
-
-.menu-fermer svg {
-  width: 22px;
-  height: 22px;
-  fill: none;
-  stroke: var(--encre);
-  stroke-width: 1.8;
-  stroke-linecap: round;
+.menu .ligne-fermer {
+  margin-bottom: var(--esp-md);
 }
 
 .menu h1 {
-  margin: var(--esp-xs) 0 var(--esp-lg);
   font-family: var(--display);
   font-weight: 400;
   font-size: 34px;
@@ -44,7 +26,7 @@
   border-bottom: 1px solid var(--filet);
 }
 
-/* Deux groupes : un filet d'or, plus marqué, les sépare. */
+/* Les groupes : un filet d'or, plus marqué, les sépare. */
 .menu-liste + .menu-liste {
   border-top-color: var(--or);
 }
@@ -55,13 +37,15 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  min-height: 56px;
+  /* 48 px partout, la cible tactile minimale : le menu tient sur un seul
+     écran de 360 × 780 (décision du porteur du projet, 2026-10-08). */
+  min-height: 48px;
   padding: 0;
   border: none;
   background: none;
   font-family: var(--texte);
   font-size: 18px;
-  font-weight: 500;
+  font-weight: 400;
   text-align: left;
   color: var(--encre);
   text-decoration: none;
@@ -70,7 +54,9 @@
 
 .menu-liste a::after,
 .menu-liste button::after {
-  content: '›';
+  /* › veut dire « ouvre un autre écran » ; il ne se lit pas dans le nom
+     de la ligne (texte de remplacement vide). */
+  content: '›' / '';
   font-size: 26px;
   line-height: 1;
   color: var(--or-fonce);
@@ -93,7 +79,13 @@
 
 .menu-prieres a {
   gap: var(--esp-sm);
-  min-height: 48px;
+}
+
+/* Le chapelet prolonge les offices, son filet d'or posé sur leur dernier
+   filet, comme sur l'accueil. */
+.menu-liste.menu-chapelet {
+  position: relative;
+  margin-top: calc(-1 * var(--esp-md) - 1px);
 }
 
 .menu-priere {

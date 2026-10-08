@@ -10,7 +10,7 @@ interface Props {
 }
 
 // Une rubrique des réglages en accordéon : le titre et son résumé se touchent
-// en entier, le chevron pivote à l'ouverture.
+// en entier, la flèche se retourne à l'ouverture.
 export function Rubrique({ titre, resume, ouverte, onBasculer, children }: Props) {
   const id = useId()
   return (
@@ -22,8 +22,12 @@ export function Rubrique({ titre, resume, ouverte, onBasculer, children }: Props
           <span className="rubrique-resume" aria-hidden="true">
             {resume}
           </span>
+          {/* Une flèche vers le bas, dessinée : › veut dire « ouvre un autre
+              écran », et le caractère retombait sur une police système. */}
           <span className="rubrique-chevron" aria-hidden="true">
-            ›
+            <svg viewBox="0 0 16 10">
+              <path d="M2 2l6 6 6-6" />
+            </svg>
           </span>
         </button>
       </h2>

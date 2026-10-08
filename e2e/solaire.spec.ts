@@ -133,7 +133,7 @@ test('passer aux heures solaires : choisir une ville, puis les heures suivent le
 test('revenir de l’écran du lieu sans choisir garde les heures fixes', async ({ page }) => {
   await ouvrirRappels(page)
   await heures(page).getByRole('radio', { name: 'Solaires' }).click()
-  await page.getByRole('button', { name: '‹ Retour' }).click()
+  await page.getByRole('button', { name: 'Fermer', exact: true }).click()
   await deplierReglages(page, 'Rappels')
   await expect(heures(page).getByRole('radio', { name: 'Fixes' })).toHaveAttribute(
     'aria-checked',

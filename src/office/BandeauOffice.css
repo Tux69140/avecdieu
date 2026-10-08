@@ -22,7 +22,7 @@
     visibility 0s 0.25s;
 }
 
-/* ‹ et ☰ de part et d'autre de l'étape et du fil de perles. */
+/* La croix et ☰ de part et d'autre de l'étape et du fil de perles. */
 .bandeau-office-contenu {
   display: grid;
   grid-template-columns: 48px 1fr 48px;
@@ -62,7 +62,8 @@
   text-overflow: ellipsis;
 }
 
-.bandeau-office svg {
+/* La flèche du sommaire seulement : la croix et ☰ gardent leur dessin. */
+.bandeau-office-ligne svg {
   flex: none;
   width: 14px;
   height: 9px;

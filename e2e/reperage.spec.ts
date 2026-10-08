@@ -71,7 +71,7 @@ test('le bandeau revient quand on remonte et nomme l’étape lue', async ({ pag
   // À l'ouverture : l'en-tête, avec ‹, ☰ et le fil de perles qui ouvre le
   // sommaire ; pas de bandeau.
   await expect(page.getByRole('button', { name: 'Sommaire', exact: true })).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Retour' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Fermer', exact: true })).toBeVisible()
   await expect(page.getByRole('link', { name: 'Menu' })).toBeVisible()
   await expect(bandeau(page)).toBeHidden()
 
@@ -256,7 +256,7 @@ test('pincer pour changer la taille du texte ne fait pas revenir le bandeau', as
   await expect(bandeau(page)).toBeHidden()
 })
 
-test('‹ et ☰ du bandeau : le retour, et le menu des prières du jour', async ({ page }) => {
+test('croix et ☰ du bandeau : le retour, et le menu des prières du jour', async ({ page }) => {
   await page.goto('/')
   await page
     .getByRole('list', { name: 'Offices du jour' })
@@ -266,7 +266,7 @@ test('‹ et ☰ du bandeau : le retour, et le menu des prières du jour', async
   await amenerSousLeBandeau(titre(page, 'Psaume 66'))
   await bandeau(page).getByRole('link', { name: 'Menu' }).click()
 
-  const prieres = page.getByRole('list', { name: 'Prières du jour' })
+  const prieres = page.getByRole('list', { name: 'Offices du jour' })
   await expect(prieres.getByRole('link')).toHaveText([
     /^Office des lectures\s*à toute heure$/,
     /^Laudes\s*7 h$/,
@@ -275,17 +275,19 @@ test('‹ et ☰ du bandeau : le retour, et le menu des prières du jour', async
     /^None\s*15 h$/,
     /^Vêpres\s*18 h 30$/,
     /^Complies\s*21 h 30$/,
-    /^Chapelet\s*20 h$/,
   ])
+  await expect(page.getByRole('list', { name: 'Chapelet' }).getByRole('link')).toHaveText(
+    /^Chapelet\s*20 h$/,
+  )
   // L'office d'où l'on vient est marqué.
   await expect(prieres.locator('[aria-current="page"]')).toHaveText(/Laudes/)
   await prieres.getByRole('link', { name: /^Vêpres/ }).click()
   await expect(page).toHaveURL('/office/vepres/2026-10-06')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Vêpres')
 
-  // ‹ du bandeau : comme le retour d'Android.
+  // La croix du bandeau : comme le retour d'Android.
   await amenerSousLeBandeau(titre(page, 'Oraison'))
-  await bandeau(page).getByRole('button', { name: 'Retour' }).click()
+  await bandeau(page).getByRole('button', { name: 'Fermer', exact: true }).click()
   await expect(page).toHaveURL('/office/laudes/2026-10-06')
 })
 

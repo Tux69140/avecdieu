@@ -5,12 +5,10 @@
 }
 
 .reglages h1 {
-  margin: var(--esp-xs) 0 0;
   font-family: var(--display);
   font-weight: 400;
   font-size: 34px;
   line-height: 1.1;
-  text-align: center;
 }
 
 .reglages-rubriques {

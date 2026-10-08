@@ -8,6 +8,7 @@ import { aideAMontrer, masquerAide, montrerAide } from '../chapelet/memoire'
 import { lireReglages, modifierReglages, type Reglages, type Theme } from '../chapelet/reglages'
 import { Bascule as ChoixBascule } from '../composants/Bascule'
 import { Interrupteur } from '../composants/Interrupteur'
+import { LigneFermer } from '../composants/LigneFermer'
 import { useRetour } from '../composants/retour'
 import { Rubrique } from '../composants/Rubrique'
 import { dateLisible } from '../office/dates'
@@ -79,10 +80,9 @@ export function EcranReglages() {
 
   return (
     <main className="reglages">
-      <button className="retour lien-discret" type="button" onClick={retour}>
-        ‹ Retour
-      </button>
-      <h1>Réglages</h1>
+      <LigneFermer onFermer={retour}>
+        <h1>Réglages</h1>
+      </LigneFermer>
 
       <div className="reglages-rubriques">
         <Rubrique titre="Affichage" resume="Taille du texte, thème" {...rubrique('affichage')}>

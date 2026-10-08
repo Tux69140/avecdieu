@@ -191,7 +191,7 @@ test.describe('choix de la série', () => {
       await expect(lien).toContainText(jours)
       await lien.click()
       await expect(page.getByRole('heading', { level: 1 })).toHaveText(serie)
-      await expect(page.getByText(/^Chapelet · /)).toBeVisible()
+      await expect(page.getByText(/^Chapelet\s·\s/)).toBeVisible()
       await page.getByRole('button', { name: 'Commencer le chapelet' }).click()
       // Une touche pressée avant que l'écran soit prêt serait perdue.
       await expect(titrePriere(page)).toHaveText('Signe de croix')
@@ -207,7 +207,7 @@ test.describe('choix de la série', () => {
     await expect(lien).toContainText('Le lundi et le samedi · aujourd’hui')
     await lien.click()
     await expect(page).toHaveURL(/\/chapelet$/)
-    await expect(page.getByText(/^Chapelet du jour · /)).toBeVisible()
+    await expect(page.getByText(/^Chapelet\sdu\sjour\s·\s/)).toBeVisible()
   })
 
   test('changer plusieurs fois de mystères n’empile pas les seuils : un retour suffit', async ({

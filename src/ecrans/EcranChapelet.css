@@ -2,7 +2,8 @@
   min-height: calc(100dvh - var(--bord-haut) - var(--bord-bas));
   max-width: calc(34em + 2 * var(--gouttiere));
   margin: 0 auto;
-  padding: var(--esp-md) var(--gouttiere) var(--esp-2xl);
+  /* En haut, le même écart que les autres écrans : la croix y est à la même place. */
+  padding: var(--esp-sm) var(--gouttiere) var(--esp-2xl);
   /* Le navigateur garde le défilement vertical, l'app reçoit les glissements horizontaux. */
   touch-action: pan-y;
   user-select: none;

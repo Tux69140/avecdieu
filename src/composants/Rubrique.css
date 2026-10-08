@@ -37,17 +37,27 @@
 }
 
 .rubrique-chevron {
+  display: grid;
   grid-column: 2;
   grid-row: 1 / span 2;
   align-self: center;
-  font-size: 28px;
-  line-height: 1;
-  color: var(--or-fonce);
   transition: transform 0.2s ease-out;
 }
 
+.rubrique-chevron svg {
+  width: 16px;
+  height: 10px;
+  fill: none;
+  stroke: var(--or-fonce);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Ouverte, la flèche se retourne vers le haut ; la rotation est coupée quand
+   les animations sont réduites (règle générale de jetons.css). */
 .rubrique[data-ouverte='oui'] .rubrique-chevron {
-  transform: rotate(90deg);
+  transform: rotate(180deg);
 }
 
 .rubrique-contenu {

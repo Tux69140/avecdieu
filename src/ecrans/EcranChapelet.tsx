@@ -4,6 +4,7 @@ import { usePincement } from '../affichage/usePincement'
 import { AideGestes } from '../chapelet/AideGestes'
 import { Annonce } from '../chapelet/Annonce'
 import { ChapeletDessine } from '../chapelet/ChapeletDessine'
+import { etiquetteDuChapelet } from '../chapelet/libelles'
 import { CHAPELET_MARIAL } from '../chapelet/definition'
 import { derouler, type Pas } from '../chapelet/deroule'
 import { disposer } from '../chapelet/disposition'
@@ -18,6 +19,8 @@ import { Seuil } from '../chapelet/Seuil'
 import { serieDuJour } from '../chapelet/serieDuJour'
 import { vibrationEntre } from '../chapelet/vibration'
 import { IndiceSuite } from '../composants/IndiceSuite'
+import { LigneFermer } from '../composants/LigneFermer'
+import { useRetour } from '../composants/retour'
 import { useSuiteCachee } from '../composants/suiteCachee'
 import { SERIES, type SerieId } from '../recueil/mysteres'
 import { PASSAGES } from '../recueil/passages'
@@ -92,6 +95,7 @@ function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisi
   const dizainesLues = useRef(new Set<number>())
   const { fin, cachee } = useSuiteCachee()
   const pincer = usePincement<HTMLElement>()
+  const retour = useRetour()
 
   const nombre = deroule.pas.length
   const termine = index === nombre
@@ -155,7 +159,6 @@ function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisi
     else if (geste === 'reculer') setIndex(reculer)
   }
 
-  const jour = date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
   return (
     <main
       ref={pincer}
@@ -166,7 +169,12 @@ function Chapelet({ serie, date, choisie }: { serie: SerieId; date: Date; choisi
       onPointerCancel={() => (debutGeste.current = null)}
     >
       <header className="chapelet-entete">
-        <p className="etiquette">{choisie ? `Chapelet · ${jour}` : `Chapelet du jour · ${jour}`}</p>
+        {/* La croix ramène au seuil, comme le retour d'Android : on y change de
+            série ou on reprend (décision du porteur du projet, 2026-10-08). Un
+            toucher sur elle n'avance pas le chapelet (estInteractif). */}
+        <LigneFermer onFermer={retour}>
+          <p className="etiquette">{etiquetteDuChapelet(!choisie, date)}</p>
+        </LigneFermer>
         <h1>{SERIES[serie].titre}</h1>
       </header>
 

@@ -15,7 +15,7 @@ export interface Barre {
 }
 
 export interface Contexte {
-  // L'en-tête de l'office (‹ date ☰) est sorti de l'écran.
+  // L'en-tête de l'office (croix, date, ☰) est sorti de l'écran.
   horsTitre: boolean
   // Il ne reste presque plus rien à faire défiler.
   enFin: boolean

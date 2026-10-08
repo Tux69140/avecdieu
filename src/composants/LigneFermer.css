@@ -1,0 +1,26 @@
+/* La croix dans la gouttière (son dessin aligné sur le texte), le titre au
+   milieu, une colonne vide de même largeur à droite. Un titre long passe sur
+   deux lignes équilibrées sans jamais glisser sous la croix. */
+.ligne-fermer {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 48px;
+  align-items: center;
+  margin: 0 calc(-1 * var(--esp-sm));
+  text-align: center;
+}
+
+.ligne-fermer > :not(.bouton-fermer) {
+  grid-column: 2;
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* La croix reste en haut quand le titre prend deux lignes. */
+.ligne-fermer > .bouton-fermer {
+  align-self: start;
+}
+
+/* L'étiquette du chapelet, coupée en deux lignes à côté de la croix : serrée. */
+.ligne-fermer > .etiquette {
+  line-height: 1.35;
+}

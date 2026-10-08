@@ -1,5 +1,5 @@
 import type { Ref } from 'react'
-import { BoutonRetour, LienMenu } from '../composants/Icones'
+import { BoutonFermer, LienMenu } from '../composants/Icones'
 import type { Etape } from './etapes'
 import { FilDePerles } from './FilDePerles'
 import './BandeauOffice.css'
@@ -9,18 +9,18 @@ interface Props {
   courante: number
   visible: boolean
   onOuvrir: () => void
-  onRetour: () => void
+  onFermer: () => void
   date: string
   office: string
   ref: Ref<HTMLElement>
 }
 
-// En haut de l'écran, une fois le titre de l'office sorti : ‹, l'étape en
+// En haut de l'écran, une fois le titre de l'office sorti : la croix, l'étape en
 // cours et la progression (un toucher ouvre le sommaire), ☰. Elle s'efface
 // pendant la lecture et revient quand on remonte (src/office/barre.ts ;
 // choix du porteur du projet, 2026-10-07).
 export function BandeauOffice(props: Props) {
-  const { etapes, courante, visible, onOuvrir, onRetour, date, office, ref } = props
+  const { etapes, courante, visible, onOuvrir, onFermer, date, office, ref } = props
   const etape = etapes[courante]
   return (
     <header
@@ -31,7 +31,7 @@ export function BandeauOffice(props: Props) {
       inert={!visible}
     >
       <div className="bandeau-office-contenu">
-        <BoutonRetour onClick={onRetour} />
+        <BoutonFermer onClick={onFermer} />
         <button
           className="bandeau-office-bouton"
           type="button"

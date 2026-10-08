@@ -118,7 +118,7 @@ test('une ligne de la liste et la prière du moment ouvrent leur office', async 
     .getByRole('link', { name: /Laudes/ })
     .click()
   await expect(page).toHaveURL('/office/laudes/2026-10-06')
-  await page.getByRole('button', { name: /Retour/ }).click()
+  await page.getByRole('button', { name: 'Fermer', exact: true }).click()
   await page
     .getByRole('list', { name: 'Offices du jour' })
     .getByRole('link', { name: /Office des lectures/ })

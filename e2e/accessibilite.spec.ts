@@ -58,6 +58,8 @@ test('écran du chapelet, pendant une dizaine', async ({ page }) => {
   await commencer(page)
   await avancer(page, 10)
   await expect(page.getByTestId('mystere')).toBeVisible()
+  // La croix qui ferme le chapelet est analysée avec l'écran.
+  await expect(page.getByRole('button', { name: 'Fermer', exact: true })).toBeVisible()
   expect(await violationsGraves(page)).toEqual([])
 })
 
@@ -74,6 +76,7 @@ test('écran de fin du chapelet', async ({ page }) => {
   await commencer(page)
   await avancer(page, 78)
   await expect(page.getByRole('heading', { level: 2 })).toHaveText('Chapelet terminé')
+  await expect(page.getByRole('button', { name: 'Fermer', exact: true })).toBeVisible()
   expect(await violationsGraves(page)).toEqual([])
 })
 
