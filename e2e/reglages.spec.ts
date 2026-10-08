@@ -260,28 +260,47 @@ test.describe('prier à plusieurs', () => {
     )
   })
 
-  test('« Tous » annonce les prières dites ensemble, jusqu’au verset du Salve Regina', async ({
+  // Comme dans l'office : la part de tous en demi-gras, plus de « Tous »
+  // (choix du porteur du projet, 2026-10-08). Le verset du Salve Regina garde
+  // ses ℣. et ℟., en graisse normale.
+  test('les prières dites ensemble en demi-gras, jusqu’au verset du Salve Regina', async ({
     page,
   }) => {
     await commencer(page, '/chapelet', { reglages: { plusieurs: true } })
-    const tous = page.getByTestId('rubrique-ensemble')
-    await expect(tous).toHaveText('Tous')
+    const vers = page.getByTestId('strophe').locator('span')
+    await expect(page.getByText('Tous', { exact: true })).toHaveCount(0)
+    await expect(vers.first()).toHaveCSS('font-weight', '600')
     await avancer(page, 1)
     await expect(titrePriere(page)).toHaveText('Je crois en Dieu')
-    await expect(tous).toHaveText('Tous')
+    await expect(vers.first()).toHaveCSS('font-weight', '600')
     await avancer(page, 1)
     await expect(titrePriere(page)).toHaveText('Notre Père')
-    await expect(tous).toHaveCount(0)
+    for (const span of await vers.all()) await expect(span).toHaveCSS('font-weight', '400')
     await avancer(page, dizaine(6) - 2)
     await expect(titrePriere(page)).toHaveText('Salve Regina')
-    // La rubrique ouvre le texte, avant la première strophe.
-    await expect(page.locator('.priere-texte > :first-child')).toHaveText('Tous')
-    await expect(page.getByTestId('marque-V')).toHaveCount(1)
+    await expect(vers.first()).toHaveCSS('font-weight', '600')
+    const verset = vers.filter({ has: page.getByTestId('marque-V') })
+    await expect(verset).toHaveCSS('font-weight', '400')
+    await expect(page.getByText('Tous', { exact: true })).toHaveCount(0)
   })
 
-  test('seul, ni rubrique ni marque, sauf le verset du Salve Regina', async ({ page }) => {
+  test('l’aide dit ℣ ℟ et le demi-gras, à plusieurs seulement', async ({ page }) => {
+    await commencer(page, '/chapelet', { reglages: { plusieurs: true } })
+    const aide = page.getByRole('dialog', { name: 'Prier avec l’app' })
+    await page.getByRole('button', { name: 'Aide aux gestes' }).click()
+    await expect(aide.getByRole('listitem')).toHaveCount(7)
+    await expect(aide).toContainText(
+      '℣. celui qui mène, ℟. ceux qui répondent. Seul, on dit les deux.',
+    )
+    await expect(aide).toContainText('En gras, ce que disent tous.')
+  })
+
+  test('seul, ni demi-gras ni marque, sauf le verset du Salve Regina', async ({ page }) => {
     await commencer(page)
-    await expect(page.getByTestId('rubrique-ensemble')).toHaveCount(0)
+    await expect(page.getByTestId('strophe').locator('span').first()).toHaveCSS(
+      'font-weight',
+      '400',
+    )
     await avancer(page, 3)
     await expect(titrePriere(page)).toHaveText('Je vous salue Marie')
     await expect(page.getByTestId('marque-V')).toHaveCount(0)

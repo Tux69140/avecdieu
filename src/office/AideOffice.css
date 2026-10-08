@@ -60,25 +60,6 @@
   fill: var(--liturgique-noir);
 }
 
-/* Les signes eux-mêmes, en rouge rubrique comme dans le texte. */
-.aide-glyphe {
-  width: 40px;
-  font-size: 22px;
-  text-align: center;
-  color: var(--rubrique);
-  white-space: nowrap;
-}
-
-.aide-marques {
-  font-family: 'Signes liturgiques', var(--texte);
-}
-
 .aide-suite {
   color: var(--sepia);
-}
-
-.aide-gras {
-  font-family: var(--texte);
-  font-weight: 600;
-  color: var(--encre);
 }

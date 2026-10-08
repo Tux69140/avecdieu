@@ -109,7 +109,7 @@
 
 .priere-texte {
   margin-top: var(--esp-sm);
-  /* La taille choisie (Réglages, ou pincement) ; la rubrique « Tous » suit en em. */
+  /* La taille choisie (Réglages, ou pincement). */
   font-size: var(--taille-priere);
 }
 
@@ -117,12 +117,10 @@
   margin: 0;
 }
 
-/* Rubrique ajoutée par l'app (« Tous ») : rouge, comme les rubriques des livres. */
-.rubrique-ensemble {
-  margin: 0 0 var(--esp-xs);
-  font-style: italic;
-  font-size: 0.889em;
-  color: var(--rubrique);
+/* À plusieurs, la part de tous en demi-gras, comme dans l'office (choix du
+   porteur du projet, 2026-10-08). */
+.priere-texte span[data-tous='oui'] {
+  font-weight: 600;
 }
 
 .strophe + .strophe {

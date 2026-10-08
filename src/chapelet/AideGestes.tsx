@@ -5,7 +5,8 @@ import './AideGestes.css'
 // L'aide aux gestes, par-dessus le signe de croix, pour qu'un nouveau priant
 // sache avancer et revenir. Elle revient à chaque chapelet tant que « Ne plus
 // afficher » n'est pas coché ; « ? », en face de la croix, la rouvre.
-export function AideGestes({ onFermer }: { onFermer: () => void }) {
+// À plusieurs, deux lignes de plus, les mêmes que dans l'aide de l'office.
+export function AideGestes({ plusieurs, onFermer }: { plusieurs: boolean; onFermer: () => void }) {
   const fenetre = useRef<HTMLDialogElement>(null)
   const compris = useRef<HTMLButtonElement>(null)
   const [nePlus, setNePlus] = useState(false)
@@ -69,6 +70,27 @@ export function AideGestes({ onFermer }: { onFermer: () => void }) {
             <strong>Ecartez deux doigts</strong> pour agrandir le texte.
           </span>
         </li>
+        {plusieurs && (
+          <>
+            <li>
+              <span className="aide-glyphe aide-marques" aria-hidden="true">
+                ℣ ℟
+              </span>
+              <span>
+                <strong>℣.</strong> celui qui mène, <strong>℟.</strong> ceux qui répondent. Seul, on
+                dit les deux.
+              </span>
+            </li>
+            <li>
+              <span className="aide-glyphe aide-gras" aria-hidden="true">
+                Aa
+              </span>
+              <span>
+                <strong>En gras</strong>, ce que disent tous.
+              </span>
+            </li>
+          </>
+        )}
       </ul>
       <label className="ne-plus">
         <input type="checkbox" checked={nePlus} onChange={(e) => setNePlus(e.target.checked)} />

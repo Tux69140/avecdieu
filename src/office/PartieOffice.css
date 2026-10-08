@@ -135,7 +135,7 @@
   text-indent: -1.3em;
 }
 
-/* « Tous », à plusieurs : rubrique rouge, comme au chapelet. */
+/* Une indication (« Un temps de silence… ») : rubrique rouge, comme dans les livres. */
 .office-rubrique {
   margin: 0 0 var(--esp-xs);
   font-style: italic;

@@ -4,9 +4,6 @@
 // Chaque ligne est un vers ; une ligne vide ('') sépare deux strophes. Une
 // ligne qui commence par « V/ » ou « R/ » est un verset ou son répons.
 
-// Rubrique ajoutée, à plusieurs, devant une prière dite ensemble (validée le 2026-10-06).
-export const RUBRIQUE_ENSEMBLE = 'Tous'
-
 export type PriereId =
   | 'signe-de-croix'
   | 'credo'

@@ -72,6 +72,26 @@
   stroke-width: 1;
 }
 
+/* Les signes eux-mêmes (℣ ℟, demi-gras), en rouge rubrique comme dans le
+   texte ; partagés avec l'aide de l'office. */
+.aide-glyphe {
+  width: 40px;
+  font-size: 22px;
+  text-align: center;
+  color: var(--rubrique);
+  white-space: nowrap;
+}
+
+.aide-marques {
+  font-family: 'Signes liturgiques', var(--texte);
+}
+
+.aide-gras {
+  font-family: var(--texte);
+  font-weight: 600;
+  color: var(--encre);
+}
+
 .ne-plus {
   display: flex;
   align-items: center;

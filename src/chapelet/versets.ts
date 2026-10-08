@@ -10,9 +10,9 @@ export interface Vers {
 
 const PREFIXE = /^([VR])\/ /
 
-// À plusieurs, une prière sans réponse se dit ensemble : la rubrique « Tous »
-// l'annonce (validée par le porteur du projet). Pour le Salve Regina, elle
-// vaut jusqu'au verset, qui garde ses ℣. et ℟.
+// À plusieurs, une prière sans réponse se dit ensemble : elle passe en
+// demi-gras, comme la part de tous dans l'office (2026-10-08). Pour le Salve
+// Regina, jusqu'au verset, qui garde ses ℣. et ℟.
 export function ditEnsemble({ reponse }: Priere, plusieurs: boolean): boolean {
   return plusieurs && reponse === undefined
 }

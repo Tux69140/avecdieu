@@ -234,7 +234,9 @@ function Chapelet({ serie, date }: { serie: SerieId; date: Date }) {
       )}
       <div ref={fin} className="fin-ecran" />
       <IndiceSuite visible={cachee && !surAnnonce} />
-      {aideOuverte && <AideGestes onFermer={() => setAideOuverte(false)} />}
+      {aideOuverte && (
+        <AideGestes plusieurs={reglages.plusieurs} onFermer={() => setAideOuverte(false)} />
+      )}
     </main>
   )
 }

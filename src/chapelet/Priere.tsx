@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Marque } from '../composants/Marque'
 import type { Passage } from '../recueil/passages'
-import { PRIERES, RUBRIQUE_ENSEMBLE, type PriereId } from '../recueil/prieres'
+import { PRIERES, type PriereId } from '../recueil/prieres'
 import type { Pas } from './deroule'
 import { PassageBiblique } from './PassageBiblique'
 import { insecables } from './typographie'
@@ -10,7 +10,7 @@ import { ditEnsemble, strophes } from './versets'
 interface Props {
   pas: Pas & { priere: PriereId }
   compact: boolean
-  // À plusieurs : V/ et R/ marquent la part de chacun.
+  // À plusieurs : V/ et R/ marquent la part de chacun, le demi-gras celle de tous.
   plusieurs: boolean
   // Passage du mystère, en compact, quand l'annonce est active.
   annonce: boolean
@@ -30,6 +30,7 @@ export function Priere(props: Props) {
   const [voirPriere, setVoirPriere] = useState(false)
   const priere = PRIERES[pas.priere]
   const passage = annonce ? props.passage : undefined
+  const ensemble = ditEnsemble(priere, plusieurs)
   return (
     <section className="priere" data-testid="priere" aria-live="polite">
       <div className={compact ? 'priere-tete priere-tete-compacte' : 'priere-tete'}>
@@ -55,15 +56,12 @@ export function Priere(props: Props) {
       )}
       {(!compact || voirPriere) && (
         <div className="priere-texte">
-          {ditEnsemble(priere, plusieurs) && (
-            <p className="rubrique-ensemble" data-testid="rubrique-ensemble">
-              {RUBRIQUE_ENSEMBLE}
-            </p>
-          )}
           {strophes(priere, plusieurs).map((vers, i) => (
             <p key={i} className="strophe" data-testid="strophe">
               {vers.map(({ texte, marque }, j) => (
-                <span key={j}>
+                // Dite ensemble, la prière passe en demi-gras, sauf un verset
+                // marqué (celui du Salve Regina), qui garde ses ℣. et ℟.
+                <span key={j} data-tous={ensemble && !marque ? 'oui' : undefined}>
                   {marque && <Marque sorte={marque} />}
                   {insecables(texte)}
                 </span>
