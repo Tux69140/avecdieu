@@ -455,6 +455,11 @@ Aucune — démarrable immédiatement.
 
 Le chapelet se clôt selon l'ordre validé : Salve Regina, Litanies de la Sainte Vierge, verset et oraison du Rosaire, Sous l'abri de ta miséricorde, prière à saint Joseph. Les trois premiers Je vous salue Marie portent leur intention en rouge. Chaque texte se règle ; en octobre, les Litanies et saint Joseph s'ajoutent d'eux-mêmes. « A propos » donne les sources de l'ordre de clôture et est réorganisé pour rester lisible.
 
+Décisions du porteur du projet (2026-10-08) :
+- **Vous pour Marie et Joseph, tu pour Dieu**, comme le Je vous salue Marie, le Salve Regina et le Notre Père : les Litanies (version du Vatican, ajouts de 2018 et 2020 compris) et le Sous l'abri sont mis au vous ; l'oraison du Rosaire tutoie Dieu.
+- **Un seul verset** « Priez pour nous, sainte Mère de Dieu », juste avant l'oraison du Rosaire : oraison activée, il quitte la fin du Salve Regina et vient après les Litanies ; oraison désactivée, le Salve Regina le garde. Les Litanies n'ont pas leur oraison propre.
+- Textes rédigés et validés le 2026-10-08, à figer tels quels.
+
 ### Critères d'acceptation
 
 - [ ] Les nouveaux textes (intentions, Litanies, verset, oraison du Rosaire, Sous l'abri, saint Joseph) sont rédigés d'après les versions liturgiques officielles, validés ligne par ligne par le porteur du projet et figés par le test d'empreinte.
