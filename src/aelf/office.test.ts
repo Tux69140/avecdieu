@@ -164,4 +164,17 @@ describe('lireJour', () => {
   it('ignore une couleur inconnue', () => {
     expect(lireJour({ date: '2026-10-06', zone: 'france', couleur: 'or' }).couleurs).toEqual([])
   })
+
+  it('rend typographiques les apostrophes des titres et des références', () => {
+    const office = lireOffice('complies', '2026-10-06', {
+      complies: {
+        hymne: { titre: "L'aube", auteur: "P. d'Orval", texte: '<p>Texte</p>' },
+        hymne_mariale: { titre: "Ô Mère, l'aurore", texte: '<p>Texte</p>' },
+      },
+    })
+    const [hymne, mariale] = office.parties
+    expect(hymne.precision).toBe('L’aube')
+    expect(hymne.source).toContain('P. d’Orval')
+    expect(mariale.titre).toBe('Ô Mère, l’aurore')
+  })
 })

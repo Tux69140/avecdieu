@@ -11,6 +11,8 @@ test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(MARDI)
 })
 
+// À l'écran, un liant invisible suit le trait d'union d'un mot composé.
+const lie = (texte: string) => texte.replace(/(?<=\p{L})-(?=\p{L})/gu, '-\u2060')
 const titres = (page: Page) => page.getByTestId('office').getByRole('heading', { level: 2 })
 // Une partie, par son titre : les sections n'ont pas de nom (deux « Antienne »
 // porteraient le même).
@@ -85,7 +87,7 @@ test('Gloire au Père et Notre Père repliés sur leur première ligne, déplié
   const psaume = partie(page, 'Psaume 84')
   const gloire = psaume.getByTestId('priere-courante')
   await expect(gloire.locator('summary')).toHaveText(
-    'Gloire au Père, et au Fils et au Saint-Esprit,',
+    lie('Gloire au Père, et au Fils et au Saint-Esprit,'),
   )
   await expect(gloire.getByText('au Dieu qui est, qui était et qui vient,')).toBeHidden()
   await gloire.locator('summary').click()
@@ -98,7 +100,7 @@ test('Gloire au Père et Notre Père repliés sur leur première ligne, déplié
   const notrePere = partie(page, 'Notre Père').getByTestId('priere-courante')
   await expect(notrePere.locator('summary')).toHaveText('Notre Père, qui es aux cieux,')
   await notrePere.locator('summary').click()
-  await expect(notrePere).toContainText('mais délivre-nous du Mal.')
+  await expect(notrePere).toContainText(lie('mais délivre-nous du Mal.'))
 })
 
 test('réglages : prières courantes en entier, et ajouts sans filet', async ({ page }) => {
@@ -156,7 +158,7 @@ test('complies : examen de conscience après l’introduction', async ({ page })
   await ouvrir(page, 'complies')
   await expect(titres(page).nth(1)).toHaveText('Examen de conscience')
   await expect(partie(page, 'Examen de conscience').locator('summary')).toHaveText(
-    'Je confesse à Dieu tout-puissant,',
+    lie('Je confesse à Dieu tout-puissant,'),
   )
   await expect(titres(page).nth(2)).toHaveText(/^Hymne/)
 })

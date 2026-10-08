@@ -21,7 +21,8 @@ const estObjet = (valeur: unknown): valeur is Brut =>
 const chaine = (valeur: unknown): string | undefined =>
   typeof valeur === 'string' && valeur.trim() !== '' ? valeur.trim() : undefined
 
-// L'apostrophe typographique des libellés de l'app.
+// L'apostrophe typographique, que l'AELF ne met pas partout (« j'ai » à côté
+// de « l’honneur ») : sans effet sur un texte déjà juste.
 const typographier = (texte: string) => texte.replace(/'/g, '’')
 
 // Champs d'une partie : l'AELF donne soit le texte seul, soit un objet.
@@ -156,8 +157,8 @@ export function lireOffice(nom: NomOffice, date: string, reponse: unknown): Offi
       type,
       libelle,
       ...(precision && precision !== libelle && { precision: typographier(precision) }),
-      ...(titre && titre !== libelle && { titre }),
-      ...(source && { source }),
+      ...(titre && titre !== libelle && { titre: typographier(titre) }),
+      ...(source && { source: typographier(source) }),
       blocs: seulTitre ? [] : [{ strophes }],
       ajoutee: false,
     })

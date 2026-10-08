@@ -362,3 +362,26 @@ test('aucun mot coupé en fin de ligne dans le texte prié (2026-10-08)', async 
   )
   expect(new Set(cesures)).toEqual(new Set(['manual']))
 })
+
+test('« Saint-Esprit » ne se coupe pas à son trait d’union, à 360 px', async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 780 })
+  await servirAelf(page)
+  await preparer(page)
+  await page.goto('/office/laudes/2026-10-06')
+  const gloire = page.locator('.priere-repliee summary', { hasText: 'Gloire au Père' }).first()
+  await gloire.scrollIntoViewIfNeeded()
+  // Le mot entier tient sur une seule ligne : un seul rectangle.
+  const morceaux = await gloire.evaluate((summary) => {
+    const marcheur = document.createTreeWalker(summary, NodeFilter.SHOW_TEXT)
+    for (let n = marcheur.nextNode(); n; n = marcheur.nextNode()) {
+      const debut = n.textContent!.indexOf('Saint-')
+      if (debut < 0) continue
+      const plage = document.createRange()
+      plage.setStart(n, debut)
+      plage.setEnd(n, n.textContent!.indexOf('Esprit') + 'Esprit'.length)
+      return [...plage.getClientRects()].filter((r) => r.width > 0).length
+    }
+    return -1
+  })
+  expect(morceaux).toBe(1)
+})

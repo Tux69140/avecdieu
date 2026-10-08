@@ -110,7 +110,8 @@ function nettoyer(ligne: Segment[]): Ligne {
     const signe =
       segment.signe === 'emphase' && SIGNE_EN_GRAS.test(texte) ? undefined : segment.signe
     const precedent = fusionnee.at(-1)
-    const reduit = texte.replace(BLANCS, ' ')
+    // L'apostrophe typographique partout, comme l'AELF la met le plus souvent.
+    const reduit = texte.replace(BLANCS, ' ').replace(/'/g, '’')
     if (precedent && precedent.signe === signe && signe !== 'verset') precedent.texte += reduit
     else fusionnee.push(signe ? { texte: reduit, signe } : { texte: reduit })
   }

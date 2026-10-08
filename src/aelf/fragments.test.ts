@@ -125,4 +125,16 @@ describe('lireFragment', () => {
       '<script>alert(1)</script><style>p{}</style><img src=x onerror="alert(2)">Amen<iframe src="//x"></iframe>'
     expect(brut(lireFragment(html))).toEqual([['Amen']])
   })
+
+  // L'AELF mêle les deux apostrophes (« j'ai », « l’honneur ») : toutes
+  // typographiques. Un texte déjà juste n'est pas touché.
+  it('rend toutes les apostrophes typographiques', () => {
+    const texte = (html: string) =>
+      lireFragment(html)
+        .flat(2)
+        .map((s) => s.texte)
+        .join('')
+    expect(texte("<p>j'ai vu l’honneur</p>")).toBe('j’ai vu l’honneur')
+    expect(texte('<p>j’ai vu</p>')).toBe('j’ai vu')
+  })
 })
