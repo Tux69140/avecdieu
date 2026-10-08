@@ -61,7 +61,10 @@ for (const [heure, minutes, office, horaire, astre] of [
   test(`à ${heure} h ${minutes}, prière du moment : ${office}`, async ({ page }) => {
     await ouvrir(page, MARDI(heure, minutes))
     // Le badge sur la ligne de l'office, dans la liste : plus d'encadré à part.
-    await expect(moment(page)).toHaveText(`${office}${horaire}Prière du moment`)
+    // Entre l'heure et le badge, la durée (phase 15).
+    await expect(moment(page)).toHaveText(
+      new RegExp(`^${office}${horaire}~\\d+ min, environ [a-z]+ minutesPrière du moment$`),
+    )
     await expect(
       page.getByRole('list', { name: 'Offices du jour' }).getByTestId('moment'),
     ).toHaveCount(1)
@@ -288,13 +291,13 @@ test('le chapelet sous les offices : du moment l’heure qui suit son heure, pui
 }) => {
   await ouvrir(page, MARDI(18, 10))
   const chapelet = page.getByRole('list', { name: 'Chapelet' }).getByRole('listitem')
-  await expect(chapelet).toHaveText(/^Chapelet20 h$/)
+  await expect(chapelet).toHaveText(/^Chapelet20 h20 min, vingt minutes$/)
   await expect(chapelet).toHaveAttribute('data-etat', 'a-venir')
   // À l'heure de son rappel, le chapelet porte le badge, pas les complies.
   await page.clock.setFixedTime(MARDI(20, 5))
   await page.reload()
   await expect(chapelet).toHaveAttribute('data-etat', 'moment')
-  await expect(moment(page)).toHaveText(/^Chapelet20 hPrière du moment$/)
+  await expect(moment(page)).toHaveText(/^Chapelet20 h20 min, vingt minutesPrière du moment$/)
   await expect(page.getByTestId('moment')).toHaveCount(1)
   await page.clock.setFixedTime(MARDI(21, 5))
   await page.reload()

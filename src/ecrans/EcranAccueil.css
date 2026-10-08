@@ -202,8 +202,27 @@
   font-size: 21px;
 }
 
-.accueil-office-heure {
+/* L'heure, et sous elle la durée, plus petite : à droite, dans la hauteur
+   des 48 px de la ligne, sans rien repousser (US-59). */
+.accueil-office-quand {
   grid-column: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.accueil-office-duree {
+  font-family: var(--sc);
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  color: var(--sepia);
+  font-variant-numeric: lining-nums;
+}
+
+.accueil-office-heure {
   font-family: var(--sc);
   font-weight: 600;
   font-size: 16px;

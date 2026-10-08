@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
+import { Duree } from '../composants/Duree'
 import { LigneFermer } from '../composants/LigneFermer'
 import { avecExposants } from '../composants/Exposants'
 import { useRetour } from '../composants/retour'
@@ -64,8 +65,11 @@ export function EcranMenu() {
           <li>
             <Link to="/chapelet" replace>
               <span className="menu-priere">Chapelet</span>
-              <span className="menu-heure">
-                {heures.chapelet ? ecrireHeure(heures.chapelet) : ''}
+              <span className="menu-quand">
+                <span className="menu-heure">
+                  {heures.chapelet ? ecrireHeure(heures.chapelet) : ''}
+                </span>
+                <Duree priere="chapelet" className="menu-duree" />
               </span>
             </Link>
           </li>
@@ -94,8 +98,11 @@ export function EcranMenu() {
                         {ouvert && <PerleEtape etat="courante" />}
                         {NOMS_OFFICES[nom]}
                       </span>
-                      <span className="menu-heure">
-                        {heure ? ecrireHeure(heure) : 'à toute heure'}
+                      <span className="menu-quand">
+                        <span className="menu-heure">
+                          {heure ? ecrireHeure(heure) : 'à toute heure'}
+                        </span>
+                        <Duree priere={nom} className="menu-duree" />
                       </span>
                     </Link>
                   </li>

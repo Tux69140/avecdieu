@@ -1,0 +1,8 @@
+/* En petites capitales, le tilde de Cormorant SC, minuscule et bas, se lit
+   comme un tiret (« -20 min ») : celui de Literata dit bien « environ ». */
+.duree-environ {
+  font-family: var(--texte);
+  font-weight: 400;
+  letter-spacing: 0;
+  margin-right: 0.05em;
+}

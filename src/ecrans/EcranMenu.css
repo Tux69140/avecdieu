@@ -125,11 +125,26 @@
   gap: var(--esp-sm);
 }
 
-.menu-heure {
+/* L'heure, et sous elle la durée, plus petite, comme sur l'accueil (US-59). */
+.menu-quand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.menu-heure,
+.menu-duree {
   font-family: var(--sc);
   font-weight: 500;
   font-size: 16px;
   color: var(--sepia);
+}
+
+.menu-duree {
+  font-size: 14px;
+  letter-spacing: 0.04em;
 }
 
 /* L'office d'où l'on vient : la perle en cours, comme dans le fil. */

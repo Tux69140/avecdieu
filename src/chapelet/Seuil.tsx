@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
+import { Duree } from '../composants/Duree'
 import { avecExposants } from '../composants/Exposants'
 import { IndiceSuite } from '../composants/IndiceSuite'
 import { Interrupteur } from '../composants/Interrupteur'
@@ -56,6 +57,10 @@ export function Seuil({ serie, duJour, date, enCours, onCommencer, onRecommencer
           <p className="ligne-date">{avecExposants(dateLisible(dateDuJour(date)))}</p>
         </LigneFermer>
         <h1>{SERIES[serie].titre}</h1>
+        {/* Combien de temps prendre, avant de commencer (US-59). */}
+        <p className="seuil-duree">
+          <Duree priere="chapelet" />
+        </p>
       </header>
       <ol className="seuil-mysteres" aria-label="Les cinq mystères">
         {SERIES[serie].mysteres.map((titre) => (

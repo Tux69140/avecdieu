@@ -274,18 +274,19 @@ test('croix et ☰ du bandeau : le retour, et le menu des prières du jour', asy
   await bandeau(page).getByRole('link', { name: 'Menu' }).click()
 
   const prieres = page.getByRole('list', { name: 'Offices du jour' })
+  // L'heure, puis la durée (phase 15), vue et dite.
   await expect(prieres.getByRole('link')).toHaveText([
-    /^Office des lectures\s*à toute heure$/,
-    /^Laudes\s*7 h$/,
-    /^Tierce\s*9 h$/,
-    /^Sexte\s*12 h$/,
-    /^None\s*15 h$/,
-    /^Vêpres\s*18 h 30$/,
-    /^Complies\s*21 h 30$/,
+    /^Office des lectures\s*à toute heure\s*~20 min, environ vingt minutes$/,
+    /^Laudes\s*7 h\s*~20 min, environ vingt minutes$/,
+    /^Tierce\s*9 h\s*~10 min, environ dix minutes$/,
+    /^Sexte\s*12 h\s*~10 min, environ dix minutes$/,
+    /^None\s*15 h\s*~10 min, environ dix minutes$/,
+    /^Vêpres\s*18 h 30\s*~20 min, environ vingt minutes$/,
+    /^Complies\s*21 h 30\s*~15 min, environ quinze minutes$/,
   ])
   await expect(
     page.getByRole('list', { name: 'Chapelet et prières' }).getByRole('link').first(),
-  ).toHaveText(/^Chapelet\s*20 h$/)
+  ).toHaveText(/^Chapelet\s*20 h\s*20 min, vingt minutes$/)
   // Ouvert depuis un office, les offices sont dépliés ; celui d'où l'on vient est marqué.
   await expect(prieres.locator('[aria-current="page"]')).toHaveText(/Laudes/)
   await prieres.getByRole('link', { name: /^Vêpres/ }).click()

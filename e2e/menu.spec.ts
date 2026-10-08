@@ -117,7 +117,9 @@ test('le chapelet et deux prières forment un groupe, séparé par un filet d’
 }) => {
   const chapelet = page.getByRole('list', { name: 'Chapelet et prières' })
   await expect(chapelet.getByRole('link')).toHaveCount(3)
-  await expect(chapelet.getByRole('link').first()).toHaveAccessibleName(/^Chapelet\s*20 h$/)
+  await expect(chapelet.getByRole('link').first()).toHaveAccessibleName(
+    /^Chapelet\s*20 h\s*, vingt minutes$/,
+  )
   const filet = await chapelet.evaluate((ul) => {
     const temoin = document.createElement('i')
     temoin.style.color = getComputedStyle(document.documentElement).getPropertyValue('--or')
@@ -155,5 +157,7 @@ test('le chevron › ne se lit pas dans le nom des lignes', async ({ page }) => 
   await expect(page.getByRole('button', { name: 'Aujourd’hui' })).toHaveAccessibleName(
     'Aujourd’hui',
   )
-  await expect(page.getByRole('link', { name: /^Laudes/ })).toHaveAccessibleName(/^Laudes\s*7 h$/)
+  await expect(page.getByRole('link', { name: /^Laudes/ })).toHaveAccessibleName(
+    /^Laudes\s*7 h\s*, environ vingt minutes$/,
+  )
 })

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router'
 import { AlerteRappels } from '../accueil/AlerteRappels'
 import { BandeauJour } from '../accueil/BandeauJour'
+import { Duree } from '../composants/Duree'
 import { avecExposants } from '../composants/Exposants'
 import { astre } from '../accueil/cadran'
 import { Cadran } from '../accueil/Cadran'
@@ -117,6 +118,7 @@ function Accueil({ date, aujourdhui, maintenant }: Props) {
 }
 
 // Les sept offices ; l'office des lectures, sans heure, se dit à toute heure.
+// Sous l'heure, la durée, pour choisir ce qu'on a le temps de prier (US-59).
 // Un office passé est atténué, mais s'ouvre comme les autres. L'office du
 // moment porte le badge « Prière du moment » (il remplace l'encadré
 // d'origine, à la demande du porteur du projet, 2026-10-07). Sans aucun texte
@@ -141,8 +143,11 @@ function ListeOffices({
           <li key={office} data-etat={indisponibles ? 'passe' : journee?.etats[office]}>
             <Link to={`/office/${office}/${date}`} data-testid={duMoment ? 'moment' : undefined}>
               <span className="accueil-office-nom">{NOMS_OFFICES[office]}</span>
-              <span className="accueil-office-heure">
-                {heure ? ecrireHeure(heure) : 'à toute heure'}
+              <span className="accueil-office-quand">
+                <span className="accueil-office-heure">
+                  {heure ? ecrireHeure(heure) : 'à toute heure'}
+                </span>
+                <Duree priere={office} className="accueil-office-duree" />
               </span>
               {duMoment && <span className="accueil-moment">Prière du moment</span>}
             </Link>
@@ -164,7 +169,10 @@ function LigneChapelet({ date, journee }: { date: string; journee?: Journee }) {
       <li data-etat={journee?.etats.chapelet}>
         <Link to="/chapelet" data-testid={duMoment ? 'moment' : undefined}>
           <span className="accueil-office-nom">Chapelet</span>
-          <span className="accueil-office-heure">{heure ? ecrireHeure(heure) : ''}</span>
+          <span className="accueil-office-quand">
+            <span className="accueil-office-heure">{heure ? ecrireHeure(heure) : ''}</span>
+            <Duree priere="chapelet" className="accueil-office-duree" />
+          </span>
           {duMoment && <span className="accueil-moment">Prière du moment</span>}
         </Link>
       </li>

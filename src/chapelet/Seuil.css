@@ -20,6 +20,19 @@
   text-wrap: balance;
 }
 
+/* La durée, sous le titre : une indication, dans le style des heures de
+   l'accueil (petites capitales sépia). */
+.seuil-duree {
+  margin: var(--esp-2xs) 0 0;
+  font-family: var(--sc);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  color: var(--sepia);
+  font-variant-numeric: lining-nums;
+}
+
 /* Les cinq mystères ne sont qu'une indication : petits et sépia, pour que
    les choix du bas restent à l'écran (choix du porteur du projet, 2026-10-08). */
 .seuil-mysteres {

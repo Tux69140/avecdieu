@@ -159,8 +159,8 @@ test('la flèche « › » des lignes ne s’entend pas dans leur nom', async ({
   await ouvrir(page, JEUDI(10))
   await expect(
     page.getByRole('list', { name: 'Offices du jour' }).getByRole('link').nth(1),
-  ).toHaveAccessibleName(/^Laudes\s*7 h$/)
+  ).toHaveAccessibleName(/^Laudes\s*7 h\s*, environ vingt minutes$/)
   await expect(page.getByRole('list', { name: 'Chapelet' }).getByRole('link')).toHaveAccessibleName(
-    /^Chapelet\s*20 h$/,
+    /^Chapelet\s*20 h\s*, vingt minutes$/,
   )
 })
