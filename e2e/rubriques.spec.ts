@@ -12,8 +12,13 @@ test.beforeEach(async ({ page }) => {
 })
 
 const titres = (page: Page) => page.getByTestId('office').getByRole('heading', { level: 2 })
+// Une partie, par son titre : les sections n'ont pas de nom (deux « Antienne »
+// porteraient le même).
 const partie = (page: Page, libelle: string) =>
-  page.getByTestId('office').getByRole('region', { name: libelle, exact: true })
+  page
+    .getByTestId('office')
+    .locator('section')
+    .filter({ has: page.getByRole('heading', { level: 2, name: libelle, exact: true }) })
 
 async function ouvrir(page: Page, office: string) {
   await page.goto(`/office/${office}/2026-10-06`)
