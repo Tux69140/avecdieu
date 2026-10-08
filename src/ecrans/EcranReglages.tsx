@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { changerDeZone, textesEnregistres } from '../aelf/reserve'
-import { ZONES, type Zone } from '../aelf/zones'
+import { type Zone } from '../aelf/zones'
 import { ChoixTaille } from '../affichage/ChoixTaille'
 import { ChoixAffichage } from '../chapelet/ChoixAffichage'
 import { AIDE_VIBRATIONS } from '../chapelet/libelles'
@@ -15,6 +15,7 @@ import { useLieu } from '../lieu/useLieu'
 import { lireRappels, modifierRappel } from '../rappels/reglages'
 import { lireSolaire, modifierSolaire } from '../rappels/solaire'
 import { RubriqueRappels } from '../rappels/RubriqueRappels'
+import { ChoixZone } from '../reglages/ChoixZone'
 import { Reinitialiser } from '../reglages/Reinitialiser'
 import { resumerRappels } from '../rappels/textes'
 import { usePeutVibrer } from '../telephone/retours'
@@ -146,43 +147,25 @@ export function EcranReglages() {
           resume="Zone, accents, textes hors connexion"
           {...rubrique('offices')}
         >
-          <h3 id="reglages-zone">Zone liturgique</h3>
-          <p className="choix-aide reglages-aide-zone">
-            Le calendrier des fêtes propres à votre pays.
-          </p>
-          <div className="reglages-zones" role="radiogroup" aria-labelledby="reglages-zone">
-            {(Object.entries(ZONES) as [Zone, string][]).map(([zone, nom]) => (
-              <label key={zone} className="reglages-zone">
-                <input
-                  type="radio"
-                  name="zone"
-                  checked={reglages.zone === zone}
-                  onChange={() => choisirZone(zone)}
-                />
-                {nom}
-              </label>
-            ))}
-          </div>
-          <div className="reglages-offices">
-            <Interrupteur
-              libelle="Accents de psalmodie"
-              aide="Souligne les syllabes accentuées des psaumes et cantiques."
-              actif={reglages.accents}
-              onBasculer={(accents) => modifier({ accents })}
-            />
-            <Interrupteur
-              libelle="Prières courantes en entier"
-              aide="Notre Père, Gloire au Père et Je confesse à Dieu, écrits en entier sans avoir à les déplier."
-              actif={reglages.prieresEntieres}
-              onBasculer={(prieresEntieres) => modifier({ prieresEntieres })}
-            />
-            <Interrupteur
-              libelle="Signaler les ajouts de l’app"
-              aide="Un filet rouge marque ce que l’app ajoute au texte de l’AELF selon les rubriques."
-              actif={reglages.signalerAjouts}
-              onBasculer={(signalerAjouts) => modifier({ signalerAjouts })}
-            />
-          </div>
+          <ChoixZone zone={reglages.zone} textesGardes={!!enregistres} onChoisir={choisirZone} />
+          <Interrupteur
+            libelle="Accents de psalmodie"
+            aide="Souligne les syllabes accentuées des psaumes et cantiques."
+            actif={reglages.accents}
+            onBasculer={(accents) => modifier({ accents })}
+          />
+          <Interrupteur
+            libelle="Prières courantes en entier"
+            aide="Notre Père, Gloire au Père et Je confesse à Dieu, écrits en entier sans avoir à les déplier."
+            actif={reglages.prieresEntieres}
+            onBasculer={(prieresEntieres) => modifier({ prieresEntieres })}
+          />
+          <Interrupteur
+            libelle="Signaler les ajouts de l’app"
+            aide="Un filet rouge marque ce que l’app ajoute au texte de l’AELF selon les rubriques."
+            actif={reglages.signalerAjouts}
+            onBasculer={(signalerAjouts) => modifier({ signalerAjouts })}
+          />
           <p className="reglages-note" data-testid="hors-connexion">
             {enregistres
               ? `Textes disponibles hors connexion jusqu’au ${dateLisible(enregistres.fin)}.`

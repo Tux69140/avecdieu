@@ -207,6 +207,23 @@ test('réglages dépliés, de jour puis de nuit', async ({ page }) => {
   expect(await violationsGraves(page)).toEqual([])
 })
 
+test('choix de la zone liturgique, puis sa confirmation', async ({ page }) => {
+  // La confirmation ne vient que si des textes sont gardés : on attend la réserve.
+  const demandes = await servirAelf(page)
+  await preparer(page)
+  await page.goto('/')
+  await expect.poll(() => demandes.length).toBe(72)
+  await page.goto('/reglages')
+  await deplierReglages(page, 'Offices')
+  await expect(page.getByTestId('hors-connexion')).toContainText('jusqu’au')
+  await page.getByRole('button', { name: /^Zone liturgique/ }).click()
+  await expect(page.getByRole('dialog', { name: 'Zone liturgique' })).toBeVisible()
+  expect(await violationsGraves(page)).toEqual([])
+  await page.getByRole('radio', { name: 'Suisse' }).click()
+  await expect(page.getByRole('dialog', { name: 'Changer de zone ?' })).toBeVisible()
+  expect(await violationsGraves(page)).toEqual([])
+})
+
 // Les fenêtres du premier rappel activé, et le choix du son déplié.
 async function fenetresDesRappels(page: Page) {
   await simulerTelephone(page, {

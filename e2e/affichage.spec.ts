@@ -52,7 +52,11 @@ test.describe('les rubriques des réglages', () => {
 })
 
 test.describe('zone liturgique', () => {
-  test('France par défaut ; une autre zone oublie les textes et les redemande', async ({
+  const ligneZone = (page: Page) => page.getByRole('button', { name: /^Zone liturgique/ })
+  const fenetreZone = (page: Page) => page.getByRole('dialog', { name: 'Zone liturgique' })
+  const confirmation = (page: Page) => page.getByRole('dialog', { name: 'Changer de zone ?' })
+
+  test('France par défaut ; une autre zone, confirmée, oublie les textes et les redemande', async ({
     page,
   }) => {
     const demandes = await servirAelf(page)
@@ -61,10 +65,29 @@ test.describe('zone liturgique', () => {
     await expect.poll(() => demandes.length).toBe(72)
     await page.goto('/reglages')
     await deplierReglages(page, 'Offices')
-    const zones = page.getByRole('radiogroup', { name: 'Zone liturgique' }).getByRole('radio')
+    // Une seule ligne dans la rubrique : la liste des zones n'y est plus.
+    await expect(page.getByRole('radio')).toHaveCount(0)
+    await expect(ligneZone(page)).toHaveText(/France/)
+    await ligneZone(page).click()
+    const zones = fenetreZone(page).getByRole('radio')
     await expect(zones).toHaveCount(8)
-    await expect(page.getByRole('radio', { name: 'France' })).toBeChecked()
-    await page.getByRole('radio', { name: 'Belgique' }).check()
+    await expect(fenetreZone(page).getByRole('radio', { name: 'France' })).toBeChecked()
+
+    // Annuler la confirmation : rien ne change, les textes restent.
+    await fenetreZone(page).getByRole('radio', { name: 'Belgique' }).click()
+    await expect(confirmation(page)).toContainText(
+      'Les textes gardés pour prier sans connexion seront remplacés par ceux de la zone Belgique. Il faudra une connexion pour les recharger.',
+    )
+    await confirmation(page).getByRole('button', { name: 'Annuler' }).click()
+    await expect(page.getByRole('dialog')).toHaveCount(0)
+    await expect(ligneZone(page)).toHaveText(/France/)
+    await expect(page.getByTestId('hors-connexion')).toContainText('hors connexion jusqu’au')
+
+    await ligneZone(page).click()
+    await fenetreZone(page).getByRole('radio', { name: 'Belgique' }).click()
+    await confirmation(page).getByRole('button', { name: 'Changer' }).click()
+    await expect(page.getByRole('dialog')).toHaveCount(0)
+    await expect(ligneZone(page)).toHaveText(/Belgique/)
     await expect(page.getByTestId('hors-connexion')).toHaveText(
       'Aucun texte enregistré pour l’instant.',
     )
@@ -76,9 +99,25 @@ test.describe('zone liturgique', () => {
 
     await page.reload()
     await deplierReglages(page, 'Offices')
-    await expect(page.getByRole('radio', { name: 'Belgique' })).toBeChecked()
+    await expect(ligneZone(page)).toHaveText(/Belgique/)
     await page.goto('/office/laudes/2026-10-06')
     await expect(page.getByTestId('office')).toBeVisible()
+  })
+
+  test('sans texte gardé, la zone change sans confirmation ; Annuler referme le choix', async ({
+    page,
+  }) => {
+    await page.route('https://api.aelf.org/**', (route) => route.abort())
+    await preparer(page)
+    await page.goto('/reglages')
+    await deplierReglages(page, 'Offices')
+    await ligneZone(page).click()
+    await fenetreZone(page).getByRole('button', { name: 'Annuler' }).click()
+    await expect(page.getByRole('dialog')).toHaveCount(0)
+    await ligneZone(page).click()
+    await fenetreZone(page).getByRole('radio', { name: 'Calendrier romain général' }).click()
+    await expect(page.getByRole('dialog')).toHaveCount(0)
+    await expect(ligneZone(page)).toHaveText(/Calendrier romain général/)
   })
 })
 

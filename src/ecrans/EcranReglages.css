@@ -35,30 +35,9 @@
   border-top: 1px solid var(--filet);
 }
 
-.reglages-gestes,
-.reglages-offices {
+.reglages-gestes {
   margin-top: var(--esp-lg);
   border-top: 1px solid var(--filet);
-}
-
-.reglages-aide-zone {
-  margin: 0 0 var(--esp-xs);
-}
-
-/* Une zone par ligne, toute la ligne se touche. */
-.reglages-zone {
-  display: flex;
-  align-items: center;
-  gap: var(--esp-md);
-  min-height: 48px;
-  cursor: pointer;
-}
-
-.reglages-zone input {
-  width: 22px;
-  height: 22px;
-  margin: 0;
-  accent-color: var(--or-fonce);
 }
 
 /* Ce que l'app garde pour prier sans réseau : une information, pas un réglage. */
