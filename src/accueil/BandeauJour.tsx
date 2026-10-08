@@ -25,7 +25,15 @@ function avecExposants(texte: string) {
 // l'AELF dit du jour (temps, fête ou saint, couleur). Un jour qui n'est pas
 // enregistré, sans réseau, garde la date seule et dit pourquoi (textes validés
 // le 2026-10-07).
-export function BandeauJour({ date }: { date: string }) {
+export function BandeauJour({
+  date,
+  onSansTextes,
+}: {
+  date: string
+  // Prévenu quand aucun texte des offices n'est disponible (premier lancement
+  // sans réseau), puis quand ils le redeviennent.
+  onSansTextes?: (sansTextes: boolean) => void
+}) {
   const [etat, setEtat] = useState<Etat>({ sorte: 'chargement' })
   const [essai, setEssai] = useState(0)
 
@@ -45,6 +53,9 @@ export function BandeauJour({ date }: { date: string }) {
     setEtat({ sorte: 'chargement' })
     setEssai((n) => n + 1)
   }
+
+  const sansTextes = etat.sorte === 'erreur' && etat.premiere
+  useEffect(() => onSansTextes?.(sansTextes), [sansTextes, onSansTextes])
 
   // Le réseau revenu, le jour se charge de lui-même.
   const enPanne = etat.sorte === 'erreur'

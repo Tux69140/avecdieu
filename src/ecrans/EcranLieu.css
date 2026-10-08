@@ -100,7 +100,8 @@
 .lieu-erreur {
   margin: var(--esp-md) 0 0;
   padding: var(--esp-md);
-  border-left: 3px solid var(--erreur);
+  border: 1px solid var(--erreur);
+  border-radius: var(--r-md);
   background: var(--velin);
 }
 

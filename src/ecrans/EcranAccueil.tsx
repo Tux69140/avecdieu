@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router'
 import { AlerteRappels } from '../accueil/AlerteRappels'
 import { BandeauJour } from '../accueil/BandeauJour'
@@ -46,7 +47,11 @@ function Accueil({ date, aujourdhui, maintenant }: Props) {
   const estAujourdhui = date === aujourdhui
   const heures = heuresDesOffices(date)
   const minutes = minutesDe(maintenant)
-  const journee = estAujourdhui ? situerOffices(heures, minutes) : undefined
+  // Premier lancement sans réseau : aucun office ne peut s'ouvrir.
+  const [sansTextes, setSansTextes] = useState(false)
+  const journee = estAujourdhui
+    ? situerOffices(heuresDuJour(date), minutes, sansTextes ? [] : undefined)
+    : undefined
   const { lever, coucher } = leverEtCoucher(enDate(date), lieuDuSoleil())
   const soleil = { lever: minutesDe(lever), coucher: minutesDe(coucher) }
   // En heures solaires, l'arc va du lever au coucher (hors des cercles polaires).
@@ -101,11 +106,11 @@ function Accueil({ date, aujourdhui, maintenant }: Props) {
           astre={estAujourdhui ? astre(minutes, soleil) : undefined}
           soleil={arcSolaire}
         >
-          <BandeauJour date={date} />
+          <BandeauJour date={date} onSansTextes={setSansTextes} />
         </Cadran>
       </div>
-      <ListeOffices date={date} journee={journee} />
-      <LigneChapelet date={date} minutes={estAujourdhui ? minutes : undefined} />
+      <ListeOffices date={date} journee={journee} indisponibles={sansTextes} />
+      <LigneChapelet date={date} journee={sansTextes ? undefined : journee} />
     </main>
   )
 }
@@ -113,8 +118,18 @@ function Accueil({ date, aujourdhui, maintenant }: Props) {
 // Les sept offices ; l'office des lectures, sans heure, se dit à toute heure.
 // Un office passé est atténué, mais s'ouvre comme les autres. L'office du
 // moment porte le badge « Prière du moment » (il remplace l'encadré
-// d'origine, à la demande du porteur du projet, 2026-10-07).
-function ListeOffices({ date, journee }: { date: string; journee?: Journee }) {
+// d'origine, à la demande du porteur du projet, 2026-10-07). Sans aucun texte
+// (premier lancement sans réseau), tous sont atténués : le chapelet, seul en
+// pleine couleur, est ce qui se prie (2026-10-08).
+function ListeOffices({
+  date,
+  journee,
+  indisponibles,
+}: {
+  date: string
+  journee?: Journee
+  indisponibles: boolean
+}) {
   const heures = heuresDesOffices(date)
   return (
     <ul className="accueil-offices" aria-label="Offices du jour">
@@ -122,7 +137,7 @@ function ListeOffices({ date, journee }: { date: string; journee?: Journee }) {
         const heure = heures[office]
         const duMoment = journee?.moment === office && heure !== undefined
         return (
-          <li key={office} data-etat={journee?.etats[office]}>
+          <li key={office} data-etat={indisponibles ? 'passe' : journee?.etats[office]}>
             <Link to={`/office/${office}/${date}`} data-testid={duMoment ? 'moment' : undefined}>
               <span className="accueil-office-nom">{NOMS_OFFICES[office]}</span>
               <span className="accueil-office-heure">
@@ -137,18 +152,19 @@ function ListeOffices({ date, journee }: { date: string; journee?: Journee }) {
   )
 }
 
-// Le chapelet sous les offices, à son heure (celle des rappels), atténué une
-// fois l'heure passée (demande du porteur du projet, 2026-10-07).
-function LigneChapelet({ date, minutes }: { date: string; minutes?: number }) {
+// Le chapelet sous les offices, à son heure (celle des rappels) : du moment
+// pendant l'heure qui suit, comme un office, puis atténué (demandes du porteur
+// du projet, 2026-10-07 et 2026-10-08).
+function LigneChapelet({ date, journee }: { date: string; journee?: Journee }) {
   const heure = heuresDuJour(date).chapelet
-  const passe =
-    minutes !== undefined && heure !== undefined && heure.heures * 60 + heure.minutes <= minutes
+  const duMoment = journee?.moment === 'chapelet'
   return (
     <ul className="accueil-offices accueil-chapelet" aria-label="Chapelet">
-      <li data-etat={passe ? 'passe' : undefined}>
-        <Link to="/chapelet">
+      <li data-etat={journee?.etats.chapelet}>
+        <Link to="/chapelet" data-testid={duMoment ? 'moment' : undefined}>
           <span className="accueil-office-nom">Chapelet</span>
           <span className="accueil-office-heure">{heure ? ecrireHeure(heure) : ''}</span>
+          {duMoment && <span className="accueil-moment">Prière du moment</span>}
         </Link>
       </li>
     </ul>

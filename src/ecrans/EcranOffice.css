@@ -65,10 +65,12 @@
   font-size: var(--taille-priere);
 }
 
-/* Avis d'erreur : filet brun brique à gauche, jamais le rouge des rubriques. */
+/* Avis d’erreur : encadré brun brique, jamais le rouge des rubriques ; le même
+   que les avis des rappels et de l’accueil. */
 .office-erreur {
   padding: var(--esp-md);
-  border-left: 3px solid var(--erreur);
+  border: 1px solid var(--erreur);
+  border-radius: var(--r-md);
   background: var(--velin);
 }
 

@@ -55,7 +55,7 @@ for (const [heure, minutes, office, horaire, astre] of [
   [12, 10, 'Sexte', '12 h', 'soleil'],
   [17, 50, 'Vêpres', '18 h 30', 'soleil'],
   [18, 40, 'Vêpres', '18 h 30', 'soleil'],
-  [19, 45, 'Complies', '21 h 30', 'lune'],
+  [21, 15, 'Complies', '21 h 30', 'lune'],
   [23, 50, 'Complies', '21 h 30', 'lune'],
 ] as const) {
   test(`à ${heure} h ${minutes}, prière du moment : ${office}`, async ({ page }) => {
@@ -99,7 +99,8 @@ test('la prière du moment change d’elle-même, sans rouvrir l’app', async (
   await page.goto('/')
   await expect(moment(page)).toContainText('Vêpres')
   await page.clock.fastForward('01:00')
-  await expect(moment(page)).toContainText('Complies')
+  // Vêpres passées, le chapelet de 20 h est la prochaine prière.
+  await expect(moment(page)).toContainText('Chapelet')
   await expect(perle(page, 'vepres')).toHaveAttribute('data-etat', 'passe')
 })
 
@@ -203,13 +204,21 @@ test('premier lancement sans réseau : la date reste, le chapelet est proposé',
     '/chapelet',
   )
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mardi 6 octobre')
-  // Le reste de l'accueil ne dépend pas de l'AELF.
-  await expect(moment(page)).toContainText('Vêpres')
-  // Le réseau revient : le jour se charge de lui-même.
+  // Aucun office ne peut s'ouvrir : tous atténués, aucun badge (il serait
+  // trompeur), le chapelet seul en pleine couleur.
+  const offices = page.getByRole('list', { name: 'Offices du jour' }).getByRole('listitem')
+  await expect(offices).toHaveCount(7)
+  for (const office of await offices.all())
+    await expect(office).toHaveAttribute('data-etat', 'passe')
+  await expect(page.getByTestId('moment')).toHaveCount(0)
+  const chapelet = page.getByRole('list', { name: 'Chapelet' }).getByRole('listitem')
+  await expect(chapelet).not.toHaveAttribute('data-etat', /./)
+  // Le réseau revient : le jour se charge de lui-même, et le badge revient.
   panne = false
   await page.evaluate(() => window.dispatchEvent(new Event('online')))
   await expect(bandeau(page)).toContainText('S. Bruno')
   await expect(page.getByRole('alert')).toHaveCount(0)
+  await expect(moment(page)).toContainText('Vêpres')
 })
 
 test('rien ne sort de l’app que les demandes à l’AELF', async ({ page }) => {
@@ -273,14 +282,23 @@ test.describe('glisser sur le cadran', () => {
   })
 })
 
-test('le chapelet sous les offices, à son heure, atténué une fois passée', async ({ page }) => {
+test('le chapelet sous les offices : du moment l’heure qui suit son heure, puis atténué', async ({
+  page,
+}) => {
   await ouvrir(page, MARDI(17, 50))
   const chapelet = page.getByRole('list', { name: 'Chapelet' }).getByRole('listitem')
   await expect(chapelet).toHaveText(/^Chapelet20 h$/)
-  await expect(chapelet).not.toHaveAttribute('data-etat', 'passe')
+  await expect(chapelet).toHaveAttribute('data-etat', 'a-venir')
+  // À l'heure de son rappel, le chapelet porte le badge, pas les complies.
   await page.clock.setFixedTime(MARDI(20, 5))
   await page.reload()
+  await expect(chapelet).toHaveAttribute('data-etat', 'moment')
+  await expect(moment(page)).toHaveText(/^Chapelet20 hPrière du moment$/)
+  await expect(page.getByTestId('moment')).toHaveCount(1)
+  await page.clock.setFixedTime(MARDI(21, 5))
+  await page.reload()
   await expect(chapelet).toHaveAttribute('data-etat', 'passe')
+  await expect(moment(page)).toContainText('Complies')
   await chapelet.getByRole('link').click()
   await expect(page).toHaveURL(/\/chapelet$/)
 })
