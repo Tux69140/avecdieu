@@ -82,6 +82,8 @@ test('Capacitor fournit la hauteur des barres (réglage « css »)', () => {
 
 for (const [nom, chemin] of [
   ['seuil', '/chapelet'],
+  ['seuil du Rosaire', '/rosaire'],
+  ['chapelet ou Rosaire ?', '/chapelet-ou-rosaire'],
   ['menu', '/menu'],
   ['réglages', '/reglages'],
   ['réglages · rappels', '/reglages/rappels'],

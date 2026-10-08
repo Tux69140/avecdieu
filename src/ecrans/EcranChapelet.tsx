@@ -11,7 +11,7 @@ import { aideAMontrer, compterLecture, lireLectures } from '../chapelet/memoire'
 import { avancer, classerGeste, reculer } from '../chapelet/navigation'
 import { MystereEnCours } from '../chapelet/MystereEnCours'
 import { Priere } from '../chapelet/Priere'
-import { lireReglages, optionsDuDeroule } from '../chapelet/reglages'
+import { lireReglages, optionsDuDeroule, type Forme } from '../chapelet/reglages'
 import { effacerEnCours, lireEnCours, retenirEnCours, retrouver } from '../chapelet/reprise'
 import { dizaineCommencee, rangDuPassage } from '../chapelet/rotation'
 import { Seuil } from '../chapelet/Seuil'
@@ -65,7 +65,7 @@ function mesurerPage(depuisDefilement: number) {
 
 // Le chapelet s'ouvre sur son seuil ; « Commencer » ajoute une entrée à
 // l'historique, si bien que le retour d'Android y ramène.
-export function EcranChapelet() {
+export function EcranChapelet({ forme = 'chapelet' }: { forme?: Forme }) {
   const { serie: serieChoisie } = useParams()
   const { pathname, state } = useLocation()
   const naviguer = useNavigate()
@@ -76,14 +76,33 @@ export function EcranChapelet() {
   // Le chapelet ouvert, son rappel n'a plus à rester affiché.
   useEffect(() => void retirerNotification('/chapelet'), [])
 
+  // Le seuil du Rosaire ; son déroulé viendra une fois la maquette validée.
+  if (forme === 'rosaire')
+    return (
+      <Seuil
+        key="rosaire"
+        forme="rosaire"
+        serie={duJour}
+        duJour={duJour}
+        date={aujourdhui}
+        enCours={null}
+        onCommencer={() => undefined}
+        onRecommencer={() => undefined}
+      />
+    )
   if (serieChoisie !== undefined && !estSerie(serieChoisie))
     return <Navigate to="/chapelet" replace />
+  // Le choix retenu : le chapelet du jour cède la place au Rosaire quand on
+  // l'a choisi (relu à chaque fois : le commutateur vient de le changer).
+  if (serieChoisie === undefined && !prier && lireReglages().forme === 'rosaire')
+    return <Navigate to="/rosaire" replace />
   const serie = serieChoisie ?? duJour
   const commencer = () => naviguer(pathname, { state: { prier: true } })
   if (!prier)
     return (
       <Seuil
         key={serie}
+        forme="chapelet"
         serie={serie}
         duJour={duJour}
         date={aujourdhui}

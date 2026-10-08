@@ -8,6 +8,7 @@ import { Racine } from './composants/Racine'
 import { EcranAccueil } from './ecrans/EcranAccueil'
 import { EcranAPropos } from './ecrans/EcranAPropos'
 import { EcranChapelet } from './ecrans/EcranChapelet'
+import { EcranChapeletOuRosaire } from './ecrans/EcranChapeletOuRosaire'
 import { EcranLieu } from './ecrans/EcranLieu'
 import { EcranMenu } from './ecrans/EcranMenu'
 import { EcranOffice } from './ecrans/EcranOffice'
@@ -34,6 +35,9 @@ const routeur = createBrowserRouter([
       { path: '/jour/:date', element: <EcranAccueil /> },
       { path: '/chapelet', element: <EcranChapelet /> },
       { path: '/chapelet/:serie', element: <EcranChapelet /> },
+      // Le Rosaire du jour ; son déroulé viendra après la maquette du seuil (phase 17).
+      { path: '/rosaire', element: <EcranChapelet forme="rosaire" /> },
+      { path: '/chapelet-ou-rosaire', element: <EcranChapeletOuRosaire /> },
       { path: '/office/:office/:date', element: <EcranOffice /> },
       { path: '/priere/:priere', element: <EcranPriere /> },
       // Les réglages en pages emboîtées (2026-10-08).

@@ -1,0 +1,33 @@
+/* Une page de lecture, comme « A propos » : la colonne du livre, le texte en
+   Literata à 17 px. */
+.chapelet-ou-rosaire {
+  max-width: calc(34em + 2 * var(--gouttiere));
+  margin: 0 auto;
+  padding: var(--esp-sm) var(--gouttiere) var(--esp-3xl);
+}
+
+.chapelet-ou-rosaire h1 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 34px;
+  line-height: 1.1;
+}
+
+.chapelet-ou-rosaire p {
+  margin: 0 0 var(--esp-md);
+  font-size: 17px;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+/* Les deux formes d'abord, à part, fermées par un filet : la réponse avant
+   l'histoire. */
+.chapelet-ou-rosaire-formes {
+  margin: var(--esp-lg) 0 var(--esp-lg);
+  padding-bottom: var(--esp-sm);
+  border-bottom: 1px solid var(--filet);
+}
+
+.chapelet-ou-rosaire strong {
+  font-weight: 600;
+}

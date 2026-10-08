@@ -1,24 +1,26 @@
 import { useState } from 'react'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
+import { Bascule } from '../composants/Bascule'
 import { Duree } from '../composants/Duree'
 import { avecExposants } from '../composants/Exposants'
 import { IndiceSuite } from '../composants/IndiceSuite'
 import { Interrupteur } from '../composants/Interrupteur'
 import { LigneFermer } from '../composants/LigneFermer'
+import { LignePage } from '../composants/LignePage'
 import { useRetour } from '../composants/retour'
-import { Rubrique } from '../composants/Rubrique'
 import { useSuiteCachee } from '../composants/suiteCachee'
 import { dateDuJour, dateLisible } from '../office/dates'
 import { usePeutVibrer } from '../telephone/retours'
 import { SERIES, type SerieId } from '../recueil/mysteres'
 import { ChoixAffichage } from './ChoixAffichage'
-import { AIDE_PLUSIEURS, AIDE_VIBRATIONS } from './libelles'
-import { lireReglages, modifierReglages, type Reglages } from './reglages'
+import { AIDE_PLUSIEURS, AIDE_VIBRATIONS, CHAPELET_OU_ROSAIRE } from './libelles'
+import { lireReglages, modifierReglages, type Forme, type Reglages } from './reglages'
 import { libelleReprise, type ChapeletEnCours } from './reprise'
 import { joursDeLaSerie } from './serieDuJour'
 import './Seuil.css'
 
 interface Props {
+  forme: Forme
   serie: SerieId
   duJour: SerieId
   date: Date
@@ -28,47 +30,80 @@ interface Props {
   onRecommencer: () => void
 }
 
-// « Joyeux, douloureux, glorieux » : les autres séries, sous le titre replié.
-const resumerSeries = (series: SerieId[]) => {
-  const noms = series.map((s) => SERIES[s].titre.replace('Mystères ', '')).join(', ')
-  return noms.charAt(0).toUpperCase() + noms.slice(1)
-}
+const TOUTES = Object.keys(SERIES) as SerieId[]
 
-// Le seuil du chapelet, entre l'accueil et le signe de croix : la série et ses
-// mystères, puis les choix qui se font avant de prier (affichage, vibrations,
-// à plusieurs), et les autres séries repliées. Les habitudes qu'on règle une
-// fois sont dans les réglages.
-export function Seuil({ serie, duJour, date, enCours, onCommencer, onRecommencer }: Props) {
+// Chaque forme avec sa durée sous le mot : « Chapelet, vingt minutes » au
+// lecteur d'écran (US-59).
+const FORMES = (['chapelet', 'rosaire'] as const).map(
+  (forme) =>
+    [
+      forme,
+      <>
+        <span className="seuil-forme-nom">{forme === 'chapelet' ? 'Chapelet' : 'Rosaire'}</span>
+        <Duree priere={forme} className="seuil-forme-duree" />
+      </>,
+    ] as const,
+)
+
+// Le seuil du chapelet, entre l'accueil et le signe de croix (phase 17,
+// organisation validée par le porteur du projet, 2026-10-08) : le choix du
+// chapelet ou du Rosaire et ce qu'on va prier, le bouton, puis, plus calmes,
+// les choix qui se font avant de prier, les autres séries et les prières dites.
+export function Seuil({ forme, serie, duJour, date, enCours, onCommencer, onRecommencer }: Props) {
   const [reglages, setReglages] = useState(lireReglages)
   const retour = useRetour()
+  const naviguer = useNavigate()
   // Sans vibreur (tablette), le réglage n'a pas lieu d'être.
   const vibreur = usePeutVibrer()
   const { fin, cachee } = useSuiteCachee()
-  const [autresOuvertes, setAutresOuvertes] = useState(false)
-  const autres = (Object.keys(SERIES) as SerieId[]).filter((s) => s !== serie)
   const modifier = (changement: Partial<Reglages>) => setReglages(modifierReglages(changement))
+  const rosaire = forme === 'rosaire'
+  // Le choix est retenu ; le seuil passe de /chapelet à /rosaire sans
+  // s'empiler dans l'historique.
+  const choisirForme = (choisie: Forme) => {
+    if (choisie === forme) return
+    modifier({ forme: choisie })
+    void naviguer(choisie === 'rosaire' ? '/rosaire' : '/chapelet', { replace: true })
+  }
 
   return (
-    <main className="seuil">
+    <main className="seuil" data-forme={forme}>
       <header className="seuil-entete">
-        {/* La croix sur la ligne de la date, comme dans un office : le titre
-            de la série garde sa place, juste dessous. */}
         <LigneFermer onFermer={retour}>
           <p className="ligne-date">{avecExposants(dateLisible(dateDuJour(date)))}</p>
         </LigneFermer>
-        <h1>{SERIES[serie].titre}</h1>
-        {/* Combien de temps prendre, avant de commencer (US-59). */}
-        <p className="seuil-duree">
-          <Duree priere="chapelet" />
+        <Bascule
+          className="seuil-forme"
+          nom="Chapelet ou Rosaire"
+          choix={FORMES}
+          valeur={forme}
+          onChoisir={choisirForme}
+        />
+        <p className="seuil-aide">
+          <Link className="lien-discret" to="/chapelet-ou-rosaire">
+            {CHAPELET_OU_ROSAIRE.titre}
+            <span aria-hidden="true">{'\u00a0›'}</span>
+          </Link>
         </p>
       </header>
-      <ol className="seuil-mysteres" aria-label="Les cinq mystères">
-        {SERIES[serie].mysteres.map((titre) => (
+
+      <h1>{rosaire ? 'Rosaire' : SERIES[serie].titre}</h1>
+      {/* Ce qu'on va prier n'est qu'une indication : petit et sépia, pour que
+          le bouton reste à l'écran (choix du porteur du projet, 2026-10-08). */}
+      <ol
+        className="seuil-mysteres"
+        aria-label={rosaire ? 'Les quatre séries' : 'Les cinq mystères'}
+      >
+        {(rosaire ? TOUTES.map((s) => SERIES[s].titre) : SERIES[serie].mysteres).map((titre) => (
           <li key={titre}>{titre}</li>
         ))}
       </ol>
       <button className="btn btn-principal seuil-commencer" type="button" onClick={onCommencer}>
-        {enCours ? avecExposants(libelleReprise(enCours)) : 'Commencer le chapelet'}
+        {enCours
+          ? avecExposants(libelleReprise(enCours))
+          : rosaire
+            ? 'Commencer le Rosaire'
+            : 'Commencer le chapelet'}
       </button>
       {enCours && (
         <p className="seuil-recommencer">
@@ -78,58 +113,58 @@ export function Seuil({ serie, duJour, date, enCours, onCommencer, onRecommencer
         </p>
       )}
 
-      <section className="seuil-section" aria-labelledby="seuil-affichage">
+      <section className="seuil-section seuil-prier" aria-labelledby="seuil-affichage">
         <h2 id="seuil-affichage">Affichage des prières</h2>
         <ChoixAffichage
           titre="seuil-affichage"
           affichage={reglages.affichage}
           onChoisir={(affichage) => modifier({ affichage })}
         />
+        {/* Seul ou en groupe se décide au moment de prier : le même réglage
+            que dans les réglages (choix du porteur du projet, 2026-10-08). */}
+        <div className="seuil-interrupteurs">
+          {vibreur && (
+            <Interrupteur
+              libelle="Vibrations"
+              aide={AIDE_VIBRATIONS}
+              actif={reglages.vibrations}
+              onBasculer={(vibrations) => modifier({ vibrations })}
+            />
+          )}
+          <Interrupteur
+            libelle="Prier à plusieurs"
+            aide={AIDE_PLUSIEURS}
+            actif={reglages.plusieurs}
+            onBasculer={(plusieurs) => modifier({ plusieurs })}
+          />
+        </div>
       </section>
 
-      {/* Seul ou en groupe se décide au moment de prier : le même réglage que
-          dans les réglages (choix du porteur du projet, 2026-10-08). */}
-      <div className="seuil-section">
-        {vibreur && (
-          <Interrupteur
-            libelle="Vibrations"
-            aide={AIDE_VIBRATIONS}
-            actif={reglages.vibrations}
-            onBasculer={(vibrations) => modifier({ vibrations })}
-          />
-        )}
-        <Interrupteur
-          libelle="Prier à plusieurs"
-          aide={AIDE_PLUSIEURS}
-          actif={reglages.plusieurs}
-          onBasculer={(plusieurs) => modifier({ plusieurs })}
-        />
-      </div>
-
-      {/* Les autres séries, repliées : on prie d'ordinaire celle du jour. */}
-      <div className="seuil-section seuil-autres">
-        <Rubrique
-          titre="Prier d’autres mystères"
-          resume={resumerSeries(autres)}
-          ouverte={autresOuvertes}
-          onBasculer={() => setAutresOuvertes((o) => !o)}
-        >
-          <ul className="seuil-series">
-            {autres.map((autre) => (
-              <li key={autre}>
-                {/* Changer de mystères remplace le seuil : le retour ramène d'où l'on
-                    venait, sans repasser par chaque série parcourue. */}
-                <Link to={autre === duJour ? '/chapelet' : `/chapelet/${autre}`} replace>
-                  <span className="seuil-serie-nom">{SERIES[autre].titre}</span>
-                  <span className="seuil-serie-jours">
-                    {joursDeLaSerie(autre)}
-                    {autre === duJour && ' · aujourd’hui'}
-                  </span>
-                </Link>
-              </li>
+      {/* Les autres séries, en lignes directes : ni accordéon ni fenêtre
+          (décision du porteur du projet, 2026-10-08). Changer de mystères
+          remplace le seuil : le retour ramène d'où l'on venait, sans repasser
+          par chaque série parcourue. */}
+      {!rosaire && (
+        <section className="seuil-section" aria-labelledby="seuil-autres">
+          <h2 id="seuil-autres">Prier d’autres mystères</h2>
+          <div className="seuil-liste">
+            {TOUTES.filter((s) => s !== serie).map((autre) => (
+              <LignePage
+                key={autre}
+                vers={autre === duJour ? '/chapelet' : `/chapelet/${autre}`}
+                nom={SERIES[autre].titre}
+                resume={`${joursDeLaSerie(autre)}${autre === duJour ? ' · aujourd’hui' : ''}`}
+                remplacer
+              />
             ))}
-          </ul>
-        </Rubrique>
+          </div>
+        </section>
+      )}
+
+      {/* Les prières dites (ouverture, dizaines, fin) : la page des réglages,
+          dont la croix ramène ici. */}
+      <div className="seuil-liste seuil-prieres">
+        <LignePage vers="/reglages/chapelet/prieres" nom="Prières du chapelet" revenir />
       </div>
 
       <div ref={fin} className="fin-ecran" />

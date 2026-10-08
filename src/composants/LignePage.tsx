@@ -11,16 +11,23 @@ interface Props {
   // Un résumé que le lecteur d'écran n'a pas à lire (il lit la page une fois
   // ouverte) ; une valeur retenue, elle, se lit.
   resumeCache?: boolean
+  // La page ouverte prend la place de celle-ci dans l'historique (une autre
+  // série de mystères, au seuil du chapelet).
+  remplacer?: boolean
+  // Ouverte hors de sa page parente (une page des réglages ouverte du seuil) :
+  // sa croix ramène ici plutôt qu'à sa parente.
+  revenir?: boolean
 }
 
-// Une ligne qui ouvre une autre page des réglages, comme une ligne du menu :
-// 48 px au moins, le nom en graisse normale, le chevron › à droite (› veut
-// toujours dire « ouvre un autre écran »). La page ouverte sait d'où elle
-// vient : sa croix y remonte (`useRemonter`).
-export function LignePage({ vers, nom, resume, resumeCache }: Props) {
+// Une ligne qui ouvre une autre page, comme une ligne du menu : 48 px au
+// moins, le nom en graisse normale, le chevron › à droite (› veut toujours
+// dire « ouvre un autre écran »). La page ouverte sait d'où elle vient : sa
+// croix y remonte (`useRemonter`).
+export function LignePage({ vers, nom, resume, resumeCache, remplacer, revenir }: Props) {
   const { pathname } = useLocation()
+  const depuis: DepuisParente = revenir ? { revenir: true } : { parente: pathname }
   return (
-    <Link className="ligne-page" to={vers} state={{ parente: pathname } satisfies DepuisParente}>
+    <Link className="ligne-page" to={vers} replace={remplacer} state={depuis}>
       <span className="ligne-page-nom">{nom}</span>
       {resume && (
         <span className="ligne-page-resume" aria-hidden={resumeCache || undefined}>

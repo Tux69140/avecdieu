@@ -17,6 +17,10 @@ const THEMES: readonly Theme[] = ['automatique', 'jour', 'nuit']
 export type Frequence = 'octobre' | 'toujours' | 'jamais'
 const FREQUENCES: readonly Frequence[] = ['octobre', 'toujours', 'jamais']
 
+// Cinq dizaines, ou les vingt à la suite : le choix du seuil, retenu (phase 17).
+export type Forme = 'chapelet' | 'rosaire'
+const FORMES: readonly Forme[] = ['chapelet', 'rosaire']
+
 // Un seul enregistrement pour tous les réglages, ceux du chapelet et ceux des
 // offices.
 export interface Reglages {
@@ -50,6 +54,8 @@ export interface Reglages {
   // Offices et chapelet : la taille du texte à prier.
   tailleTexte: TailleTexte
   theme: Theme
+  // Le chapelet ou le Rosaire, choisi sur le seuil.
+  forme: Forme
 }
 
 // Ceux du PRD.
@@ -72,6 +78,7 @@ export const REGLAGES_PAR_DEFAUT: Reglages = {
   zone: 'france',
   tailleTexte: 18,
   theme: 'automatique',
+  forme: 'chapelet',
 }
 
 const BASCULES = [
@@ -100,6 +107,7 @@ const estTaille = (valeur: unknown): valeur is TailleTexte =>
 const estFrequence = (valeur: unknown): valeur is Frequence =>
   FREQUENCES.some((frequence) => frequence === valeur)
 const estTheme = (valeur: unknown): valeur is Theme => THEMES.some((theme) => theme === valeur)
+const estForme = (valeur: unknown): valeur is Forme => FORMES.some((forme) => forme === valeur)
 
 // Chaque valeur enregistrée n'est reprise que si elle a le bon type ; une
 // valeur absente (réglages enregistrés avant qu'elle existe) garde celle de
@@ -118,6 +126,7 @@ export function lireReglages(): Reglages {
   if (estTheme(enregistres.theme)) reglages.theme = enregistres.theme
   if (estFrequence(enregistres.litanies)) reglages.litanies = enregistres.litanies
   if (estFrequence(enregistres.saintJoseph)) reglages.saintJoseph = enregistres.saintJoseph
+  if (estForme(enregistres.forme)) reglages.forme = enregistres.forme
   return reglages
 }
 

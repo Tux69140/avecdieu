@@ -34,6 +34,9 @@ export function useRetourAccueil(): () => void {
 // Ce qu'une page des réglages reçoit de la page qui l'ouvre (`LignePage`).
 export interface DepuisParente {
   parente?: string
+  // Ouverte d'un autre écran que sa parente (le seuil du chapelet) : la croix
+  // y revient, comme le retour d'Android.
+  revenir?: boolean
 }
 
 // La croix d'une page des réglages remonte d'un niveau, comme le retour
@@ -43,7 +46,8 @@ export function useRemonter(parente: string): () => void {
   const naviguer = useNavigate()
   const { state } = useLocation()
   return () => {
-    if ((state as DepuisParente | null)?.parente === parente) naviguer(-1)
+    const depuis = state as DepuisParente | null
+    if (depuis?.parente === parente || depuis?.revenir) naviguer(-1)
     else naviguer(parente, { replace: true })
   }
 }

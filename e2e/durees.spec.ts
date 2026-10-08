@@ -69,19 +69,27 @@ test('le menu donne la durée des offices et du chapelet, et tient en un écran'
   await expect(page.getByTestId('duree')).toHaveCount(8)
 })
 
-test('le seuil du chapelet donne sa durée sous le titre de la série', async ({ page }) => {
+// Phase 17 : chaque forme porte sa durée dans le commutateur, sous son nom.
+test('le seuil donne la durée du chapelet et du Rosaire dans le commutateur', async ({ page }) => {
   await page.goto('/chapelet')
-  const duree = page.getByTestId('duree')
-  await expect(duree).toHaveCount(1)
-  await expect(duree).toHaveText(/^20 min/)
-  await expect(duree.locator('[aria-hidden="true"]')).toHaveText('20 min')
-  await expect(duree.locator('.cache-a-l-oeil')).toHaveText(', vingt minutes')
-  const titre = (await page.getByRole('heading', { level: 1 }).boundingBox())!
-  const boite = (await duree.boundingBox())!
-  expect(boite.y).toBeGreaterThanOrEqual(titre.y + titre.height)
-  expect(boite.y).toBeLessThan(
-    (await page.getByRole('list', { name: 'Les cinq mystères' }).boundingBox())!.y,
-  )
+  const commutateur = page.getByRole('radiogroup', { name: 'Chapelet ou Rosaire' })
+  await expect(page.getByTestId('duree')).toHaveCount(2)
+  for (const [nom, vue, dite] of [
+    ['Chapelet', '20 min', 'vingt minutes'],
+    ['Rosaire', '~1 h 45', 'environ une heure quarante-cinq'],
+  ]) {
+    const forme = commutateur.getByRole('radio', { name: new RegExp(`^${nom}`) })
+    await expect(forme).toHaveAccessibleName(new RegExp(`^${nom}\\s*, ${dite}$`))
+    const duree = forme.getByTestId('duree')
+    await expect(duree.locator('[aria-hidden="true"]')).toHaveText(vue)
+    // La durée sous le mot, dans le bouton.
+    const mot = (await forme.locator('.seuil-forme-nom').boundingBox())!
+    const boite = (await duree.boundingBox())!
+    expect(boite.y).toBeGreaterThanOrEqual(mot.y + mot.height - 1)
+    expect(boite.y + boite.height).toBeLessThanOrEqual(
+      (await forme.boundingBox())!.y + (await forme.boundingBox())!.height,
+    )
+  }
 })
 
 test('l’office ouvert et le chapelet commencé ne donnent pas de durée', async ({ page }) => {

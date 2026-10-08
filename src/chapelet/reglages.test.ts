@@ -27,6 +27,7 @@ describe('réglages du chapelet', () => {
       zone: 'france',
       tailleTexte: 18,
       theme: 'automatique',
+      forme: 'chapelet',
     })
     expect(REGLAGES_PAR_DEFAUT).toEqual(lireReglages())
   })
@@ -136,6 +137,38 @@ describe('réglages de la clôture (phase 16)', () => {
       JSON.stringify({ litanies: 'parfois', saintJoseph: true, sousLAbri: 'oui' }),
     )
     expect(lireReglages()).toEqual(REGLAGES_PAR_DEFAUT)
+  })
+})
+
+describe('Chapelet ou Rosaire (phase 17)', () => {
+  it('le chapelet par défaut, le Rosaire retenu une fois choisi', () => {
+    expect(lireReglages().forme).toBe('chapelet')
+    modifierReglages({ forme: 'rosaire' })
+    expect(lireReglages().forme).toBe('rosaire')
+    modifierReglages({ vibrations: false })
+    expect(lireReglages()).toMatchObject({ forme: 'rosaire', vibrations: false })
+  })
+
+  // Réglages enregistrés avant la phase 17 : le chapelet, les autres choix gardés.
+  it('des réglages d’avant le Rosaire se lisent encore, le chapelet choisi', () => {
+    localStorage.setItem(
+      'avec-dieu.reglages',
+      JSON.stringify({ affichage: 'compact', litanies: 'jamais', plusieurs: true }),
+    )
+    expect(lireReglages()).toEqual({
+      ...REGLAGES_PAR_DEFAUT,
+      affichage: 'compact',
+      litanies: 'jamais',
+      plusieurs: true,
+      forme: 'chapelet',
+    })
+  })
+
+  it('ignorent une forme inconnue', () => {
+    localStorage.setItem('avec-dieu.reglages', JSON.stringify({ forme: 'dizainier' }))
+    expect(lireReglages().forme).toBe('chapelet')
+    localStorage.setItem('avec-dieu.reglages', JSON.stringify({ forme: true }))
+    expect(lireReglages().forme).toBe('chapelet')
   })
 })
 

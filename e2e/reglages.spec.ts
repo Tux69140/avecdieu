@@ -422,7 +422,6 @@ test.describe('reprise d’un chapelet interrompu', () => {
     await ouvrirChapelet(lendemain)
     await expect(lendemain.getByRole('heading', { level: 1 })).toHaveText('Mystères douloureux')
     await expect(lendemain.getByRole('button', { name: 'Commencer le chapelet' })).toBeVisible()
-    await lendemain.getByRole('button', { name: 'Prier d’autres mystères' }).click()
     await lendemain.getByRole('link', { name: /Mystères joyeux/ }).click()
     await expect(lendemain.getByRole('button', { name: 'Commencer le chapelet' })).toBeVisible()
   })

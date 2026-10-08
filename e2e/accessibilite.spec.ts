@@ -33,6 +33,21 @@ test('seuil du chapelet', async ({ page }) => {
   expect(await violationsGraves(page)).toEqual([])
 })
 
+// Phase 17 : le seuil du Rosaire et la page « Chapelet ou Rosaire ? », de
+// jour puis de nuit.
+for (const chemin of ['/chapelet', '/rosaire', '/chapelet-ou-rosaire']) {
+  test(`${chemin}, de jour puis de nuit`, async ({ page }) => {
+    await preparer(page)
+    await page.emulateMedia({ colorScheme: 'light' })
+    await page.goto(chemin)
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+    expect(await violationsGraves(page)).toEqual([])
+    await page.emulateMedia({ colorScheme: 'dark' })
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'nuit')
+    expect(await violationsGraves(page)).toEqual([])
+  })
+}
+
 test('aide aux gestes', async ({ page }) => {
   await preparer(page, { aide: true })
   await page.goto('/chapelet')

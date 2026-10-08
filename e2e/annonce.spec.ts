@@ -193,20 +193,20 @@ test.describe('choix de la série', () => {
     ['Mystères douloureux', 'Le mardi et le vendredi', 'L’Agonie de Jésus à Gethsémani'],
     ['Mystères glorieux', 'Le mercredi et le dimanche', 'La Résurrection'],
   ]
-  // Les autres séries sont repliées sous « Prier d’autres mystères ».
-  const deplierAutres = async (page: Page) => {
-    const rubrique = page.getByRole('button', { name: 'Prier d’autres mystères' })
-    await expect(rubrique).toHaveAttribute('aria-expanded', 'false')
-    await rubrique.click()
-  }
-
-  test('les autres séries sont repliées, résumées sous leur titre', async ({ page }) => {
+  // Les autres séries en lignes directes, sans accordéon (phase 17) : leur
+  // nom, leurs jours en petit, le chevron.
+  test('les autres séries sont des lignes directes, sous leur petit titre', async ({ page }) => {
     await preparer(page)
     await page.goto('/chapelet')
-    await expect(page.getByRole('link', { name: /Mystères glorieux/ })).toBeHidden()
-    await expect(page.getByText('Lumineux, douloureux, glorieux')).toBeVisible()
-    await deplierAutres(page)
-    await expect(page.getByRole('link', { name: /Mystères glorieux/ })).toBeVisible()
+    const autres = page.getByRole('region', { name: 'Prier d’autres mystères' })
+    await expect(autres.getByRole('button')).toHaveCount(0)
+    const liens = autres.getByRole('link')
+    await expect(liens).toHaveCount(3)
+    for (const [i, [serie, jours]] of SERIES.entries()) {
+      const lien = liens.nth(i)
+      await expect(lien).toHaveText(`${serie}${jours}`)
+      expect((await lien.boundingBox())!.height).toBeGreaterThanOrEqual(48)
+    }
   })
 
   for (const [serie, jours, premier] of SERIES) {
@@ -214,7 +214,6 @@ test.describe('choix de la série', () => {
       await preparer(page)
       await page.goto('/chapelet')
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mystères joyeux')
-      await deplierAutres(page)
       const lien = page.getByRole('link', { name: new RegExp(serie) })
       await expect(lien).toContainText(jours)
       // La flèche se voit, le lecteur d'écran ne la lit pas.
@@ -232,7 +231,6 @@ test.describe('choix de la série', () => {
   test('les mystères du jour restent à portée depuis une autre série', async ({ page }) => {
     await preparer(page)
     await page.goto('/chapelet/glorieux')
-    await deplierAutres(page)
     const lien = page.getByRole('link', { name: /Mystères joyeux/ })
     await expect(lien).toContainText('Le lundi et le samedi · aujourd’hui')
     await lien.click()
@@ -247,7 +245,6 @@ test.describe('choix de la série', () => {
     await page.goto('/')
     await page.goto('/chapelet')
     for (const serie of [/Mystères glorieux/, /Mystères douloureux/, /Mystères lumineux/]) {
-      await deplierAutres(page)
       await page.getByRole('link', { name: serie }).click()
       await expect(page.getByRole('heading', { level: 1 })).toHaveText(serie)
     }

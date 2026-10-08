@@ -1,40 +1,77 @@
-/* Seuil du chapelet : une colonne de lecture, l'action principale au milieu,
-   les choix secondaires en dessous, séparés par des filets. */
+/* Seuil du chapelet (phase 17) : en haut, serrés, le choix Chapelet / Rosaire
+   et ce qu'on va prier, jusqu'au bouton ; tout cela tient dans le premier
+   écran, même à 360 × 640. Dessous, après un grand blanc, les choix plus
+   calmes, en lignes sous des filets comme les réglages. */
 .seuil {
   max-width: calc(34em + 2 * var(--gouttiere));
   margin: 0 auto;
   padding: var(--esp-sm) var(--gouttiere) var(--esp-3xl);
 }
 
-.seuil-entete {
-  text-align: center;
+/* Le commutateur, comme les choix segmentés des réglages, chaque forme avec
+   sa durée sous le mot, plus petite. */
+.seuil-forme {
+  margin-top: var(--esp-sm);
 }
 
-.seuil-entete h1 {
-  font-family: var(--display);
-  font-weight: 400;
-  /* 32 px, comme le titre de l'office (2026-10-08). */
-  font-size: 32px;
-  line-height: 1.1;
-  margin: var(--esp-xs) 0 0;
-  text-wrap: balance;
+.seuil-forme button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  padding: var(--esp-xs) var(--esp-sm);
 }
 
-/* La durée, sous le titre : une indication, dans le style des heures de
-   l'accueil (petites capitales sépia). */
-.seuil-duree {
-  margin: var(--esp-2xs) 0 0;
+.seuil-forme-nom {
+  font-size: 17px;
+  line-height: 1.25;
+}
+
+/* La durée dans le style des heures de l'accueil : petites capitales sépia,
+   qui ne prennent pas le demi-gras de la forme choisie. */
+.seuil-forme-duree {
   font-family: var(--sc);
   font-weight: 500;
-  font-size: 16px;
-  line-height: 1.3;
+  font-size: 15px;
+  line-height: 1.2;
   letter-spacing: 0.04em;
   color: var(--sepia);
   font-variant-numeric: lining-nums;
 }
 
-/* Les cinq mystères ne sont qu'une indication : petits et sépia, pour que
-   les choix du bas restent à l'écran (choix du porteur du projet, 2026-10-08). */
+/* Sur le halo de la forme choisie, le sépia n'a plus assez de contraste. */
+.seuil-forme [aria-checked='true'] .seuil-forme-duree {
+  color: var(--encre);
+}
+
+/* « Chapelet ou Rosaire ? › » : un lien discret centré sous le commutateur,
+   qui ouvre l'aide à part. */
+.seuil-aide {
+  margin: 0;
+  text-align: center;
+}
+
+.seuil-aide .lien-discret {
+  display: inline-flex;
+  align-items: center;
+  font-size: 15px;
+  color: var(--sepia);
+}
+
+.seuil h1 {
+  margin: var(--esp-sm) 0 0;
+  font-family: var(--display);
+  font-weight: 400;
+  /* 32 px, comme le titre de l'office (2026-10-08). */
+  font-size: 32px;
+  line-height: 1.1;
+  text-align: center;
+  text-wrap: balance;
+}
+
+/* Les mystères, ou les séries du Rosaire, ne sont qu'une indication : petits
+   et sépia (choix du porteur du projet, 2026-10-08). */
 .seuil-mysteres {
   list-style: none;
   counter-reset: mystere;
@@ -55,7 +92,7 @@
   line-height: 1.35;
 }
 
-/* Le numéro du mystère est une indication : rouge rubrique. */
+/* Le numéro est une indication : rouge rubrique. */
 .seuil-mysteres li::before {
   content: counter(mystere);
   font-family: var(--sc);
@@ -74,8 +111,19 @@
   font-size: 18px;
 }
 
-.seuil-section {
-  margin-top: var(--esp-lg);
+/* Reprendre un chapelet en cours, ou le recommencer : lien discret sous le bouton. */
+.seuil-recommencer {
+  margin: var(--esp-xs) 0 0;
+  text-align: center;
+}
+
+/* Le grand blanc sous le bouton sépare ce qu'on va prier du reste. */
+.seuil-prier {
+  margin-top: var(--esp-2xl);
+}
+
+.seuil-section + .seuil-section {
+  margin-top: var(--esp-xl);
 }
 
 .seuil-section h2 {
@@ -87,65 +135,18 @@
   color: var(--sepia);
 }
 
-/* Les autres séries, en accordéon comme une rubrique des réglages, juste sous
-   le filet du dernier interrupteur ; le filet de la rubrique ferme la liste. */
-.seuil-autres {
-  margin-top: 0;
+.seuil-interrupteurs {
+  margin-top: var(--esp-md);
 }
 
-.seuil-autres .seuil-series li:last-child a {
-  border-bottom: none;
-}
-
-.seuil-series {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+/* Des lignes à chevron sous un filet, chacune fermée par le sien, comme
+   celles des réglages. */
+.seuil-liste {
   border-top: 1px solid var(--filet);
 }
 
-.seuil-series a {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  grid-template-areas: 'nom fleche' 'jours fleche';
-  align-items: center;
-  column-gap: var(--esp-md);
-  min-height: 56px;
-  padding: var(--esp-xs) 0;
-  border-bottom: 1px solid var(--filet);
-  color: var(--encre);
-  text-decoration: none;
-}
-
-.seuil-series a::after {
-  /* Vue, pas lue : le lecteur d'écran dit déjà que c'est un lien. */
-  content: '›' / '';
-  grid-area: fleche;
-  font-size: 26px;
-  line-height: 1;
-  color: var(--or-fonce);
-}
-
-.seuil-series a:active {
-  background: var(--halo);
-}
-
-.seuil-serie-nom {
-  grid-area: nom;
-  font-weight: 500;
-}
-
-.seuil-serie-jours {
-  grid-area: jours;
-  font-size: 15px;
-  line-height: 1.3;
-  color: var(--sepia);
-}
-
-/* Reprendre un chapelet en cours, ou le recommencer : lien discret sous le bouton. */
-.seuil-recommencer {
-  margin: var(--esp-xs) 0 0;
-  text-align: center;
+.seuil-prieres {
+  margin-top: var(--esp-xl);
 }
 
 .fin-ecran {

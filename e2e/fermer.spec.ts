@@ -75,6 +75,7 @@ for (const [nom, chemin, titre] of [
   ['réglages · zone liturgique', '/reglages/offices/zone', 'Zone liturgique'],
   ['à propos', '/a-propos', 'Avec Dieu'],
   ['lieu des heures solaires', '/lieu', 'Lieu des heures solaires'],
+  ['chapelet ou Rosaire ?', '/chapelet-ou-rosaire', 'Chapelet ou Rosaire ?'],
 ] as const) {
   test(`${nom} : la croix en haut à gauche, le titre centré sur sa ligne`, async ({ page }) => {
     await preparer(page)

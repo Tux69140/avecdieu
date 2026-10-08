@@ -57,6 +57,7 @@ export interface Reglages {
   signalerAjouts?: boolean
   tailleTexte?: number
   theme?: 'jour' | 'nuit' | 'automatique'
+  forme?: 'chapelet' | 'rosaire'
 }
 
 // Les parcours ne dépendent pas du réseau : l'AELF est remplacée par ses
