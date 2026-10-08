@@ -20,6 +20,8 @@
   text-wrap: balance;
 }
 
+/* Les cinq mystères ne sont qu'une indication : petits et sépia, pour que
+   les choix du bas restent à l'écran (choix du porteur du projet, 2026-10-08). */
 .seuil-mysteres {
   list-style: none;
   counter-reset: mystere;
@@ -27,12 +29,14 @@
   padding: 0;
   display: grid;
   gap: var(--esp-xs);
+  font-size: 16px;
+  color: var(--sepia);
 }
 
 .seuil-mysteres li {
   counter-increment: mystere;
   display: grid;
-  grid-template-columns: 28px 1fr;
+  grid-template-columns: 24px 1fr;
   align-items: baseline;
   gap: var(--esp-sm);
   line-height: 1.35;
@@ -43,7 +47,7 @@
   content: counter(mystere);
   font-family: var(--sc);
   font-weight: 600;
-  font-size: 17px;
+  font-size: 15px;
   color: var(--rubrique);
   text-align: right;
   font-variant-numeric: lining-nums;
@@ -58,7 +62,7 @@
 }
 
 .seuil-section {
-  margin-top: var(--esp-xl);
+  margin-top: var(--esp-lg);
 }
 
 .seuil-section h2 {
