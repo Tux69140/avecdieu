@@ -126,6 +126,17 @@ test.describe('mode compact', () => {
     await expect(page.getByTestId('compteur')).toHaveText('1 / 10')
   })
 
+  test('le lecteur d’écran entend le mystère qui commence et « 1 sur 10 »', async ({ page }) => {
+    await commencer(page, '/chapelet', { affichage: 'compact' })
+    for (let i = 0; i < 7; i++) await toucher(page)
+    // Sans écran d'annonce, le mystère est dans la région que lit le lecteur d'écran.
+    const region = page.locator('[aria-live="polite"]')
+    await expect(region.getByTestId('mystere')).toHaveText('1 · L’Annonciation')
+    await toucher(page)
+    await expect(region).toContainText('1 sur 10')
+    await expect(page.getByTestId('compteur')).toHaveAttribute('aria-hidden', 'true')
+  })
+
   test('« Voir la prière » et « Lire le passage » déplient sans faire avancer', async ({
     page,
   }) => {

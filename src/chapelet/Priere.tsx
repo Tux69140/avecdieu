@@ -36,8 +36,14 @@ export function Priere(props: Props) {
       <div className={compact ? 'priere-tete priere-tete-compacte' : 'priere-tete'}>
         <h2>{priere.titre}</h2>
         {pas.total > 1 && (
-          <span className="compteur" data-testid="compteur">
-            {pas.rang} / {pas.total}
+          // La barre se lirait « barre oblique » : le lecteur d'écran entend « 5 sur 10 ».
+          <span className="compteur">
+            <span aria-hidden="true" data-testid="compteur">
+              {pas.rang} / {pas.total}
+            </span>
+            <span className="cache-a-l-oeil">
+              {pas.rang} sur {pas.total}
+            </span>
           </span>
         )}
       </div>

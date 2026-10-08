@@ -14,3 +14,7 @@
 - À plusieurs, la part de tous en demi-gras (une strophe sur deux, reprises de l'invitatoire, Gloire au Père) : choix du porteur du projet sur maquette (2026-10-08).
 - Les petites capitales sans accent (« BENEDICTION », « FEVRIER »), y compris pour les titres de l'AELF : choix du porteur du projet (2026-10-08).
 - Le saint à gauche du titre et le « ? » à droite dans l'en-tête de l'office : choix du porteur du projet (2026-10-08).
+- La fin du chapelet sans « Chapelet terminé » ni « Recommencer », seulement la perle d'or et « Revenir à l’accueil », l'écran laissé libre : choix du porteur du projet (2026-10-08).
+- Au chapelet à plusieurs, Notre Père, Je vous salue et Gloire au Père partagés en ℣/℟ sans demi-gras, et les seules prières dites ensemble en demi-gras : choix du porteur du projet (2026-10-08).
+- « Lire le passage » / « Voir la prière » en mode compact (deux verbes) : libellés voulus par le porteur du projet ; ne jamais proposer « Lecture », qui désigne l'office des lectures (2026-10-08).
+- Le chapelet dessiné qui rapetisse au-delà de 18 px, et deux lignes à faire défiler à 24 px : choix du porteur du projet (2026-10-08).

@@ -16,12 +16,17 @@
   margin-bottom: var(--esp-sm);
 }
 
+/* Pendant la prière, la série n'est qu'une indication : petites capitales
+   sépia, comme la date ; le seul titre en Baumans est celui de la prière
+   (choix du porteur du projet, 2026-10-08). */
 .chapelet-entete h1 {
-  font-family: var(--display);
-  font-weight: 400;
-  font-size: 30px;
-  line-height: 1.1;
-  margin: var(--esp-xs) 0 0;
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.3;
+  letter-spacing: 0.06em;
+  color: var(--sepia);
+  margin: 0;
 }
 
 .priere {

@@ -199,18 +199,19 @@ function Chapelet({ serie, date }: { serie: SerieId; date: Date }) {
         libelle={termine ? 'Chapelet terminé' : `Chapelet, prière ${index + 1} sur ${nombre}`}
       />
 
-      {/* Sans annonce, rien du mystère : des prières vocales seules. */}
-      {pas && estPriere(pas) && pas.dizaine !== undefined && reglages.annonce && (
-        <MystereEnCours
-          serie={serie}
-          dizaine={pas.dizaine}
-          fruit={compact && pas.priere === 'notre-pere'}
-        />
-      )}
-
       {/* Une seule région annonce chaque prière au lecteur d'écran : une
-          région neuve à chaque pas resterait muette. */}
+          région neuve à chaque pas resterait muette. Le mystère y entre aussi,
+          lu quand il change : en compact, sans écran d'annonce, c'est lui qui
+          dit le mystère qui commence. */}
       <div aria-live="polite">
+        {/* Sans annonce, rien du mystère : des prières vocales seules. */}
+        {pas && estPriere(pas) && pas.dizaine !== undefined && reglages.annonce && (
+          <MystereEnCours
+            serie={serie}
+            dizaine={pas.dizaine}
+            fruit={compact && pas.priere === 'notre-pere'}
+          />
+        )}
         {!pas ? (
           // La fin comme celle de l'office : une perle d'or qui ferme, puis le
           // chemin de l'accueil, sans mot de plus ni « Recommencer » qu'un

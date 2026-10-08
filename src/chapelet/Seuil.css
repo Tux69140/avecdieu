@@ -13,7 +13,8 @@
 .seuil-entete h1 {
   font-family: var(--display);
   font-weight: 400;
-  font-size: 34px;
+  /* 32 px, comme le titre de l'office (2026-10-08). */
+  font-size: 32px;
   line-height: 1.1;
   margin: var(--esp-xs) 0 0;
   text-wrap: balance;
