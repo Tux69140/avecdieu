@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type PointerEvent } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type PointerEvent } from 'react'
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router'
 import { usePincement } from '../affichage/usePincement'
 import { AideGestes } from '../chapelet/AideGestes'
@@ -120,6 +120,14 @@ function Chapelet({ serie, date }: { serie: SerieId; date: Date }) {
     }
   }, [index, deroule, serie, reglages])
 
+  // Chaque prière s'ouvre en haut, comme tout écran : après une annonce qu'on
+  // a fait défiler, la suivante ne s'ouvre pas à mi-hauteur.
+  // (Entre accolades : les navigateurs récents rendent une promesse, que React
+  // prendrait pour un nettoyage.)
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0)
+  }, [index])
+
   // Retenu à chaque pas, oublié une fois le chapelet terminé.
   useEffect(() => {
     if (index < deroule.pas.length) retenirEnCours(date, serie, deroule.pas[index])
@@ -185,7 +193,11 @@ function Chapelet({ serie, date }: { serie: SerieId; date: Date }) {
         <h1>{SERIES[serie].titre}</h1>
       </header>
 
-      <ChapeletDessine plan={plan} grainCourant={pas ? pas.grain : plan.points.length} />
+      <ChapeletDessine
+        plan={plan}
+        grainCourant={pas ? pas.grain : plan.points.length}
+        libelle={termine ? 'Chapelet terminé' : `Chapelet, prière ${index + 1} sur ${nombre}`}
+      />
 
       {/* Sans annonce, rien du mystère : des prières vocales seules. */}
       {pas && estPriere(pas) && pas.dizaine !== undefined && reglages.annonce && (
@@ -196,38 +208,42 @@ function Chapelet({ serie, date }: { serie: SerieId; date: Date }) {
         />
       )}
 
-      {!pas ? (
-        // La fin comme celle de l'office : une perle d'or qui ferme, puis le
-        // chemin de l'accueil, sans mot de plus ni « Recommencer » qu'un
-        // toucher machinal relancerait (choix du porteur du projet, 2026-10-08).
-        <section className="fin" data-testid="fin-chapelet" aria-label="Fin du chapelet">
-          <Repere />
-          <button className="lien-discret" type="button" onClick={revenirAccueil}>
-            Revenir à l’accueil
-          </button>
-        </section>
-      ) : estPriere(pas) ? (
-        <Priere
-          key={index}
-          pas={pas}
-          compact={compact}
-          plusieurs={reglages.plusieurs}
-          annonce={reglages.annonce}
-          passage={pas.dizaine ? passages[pas.dizaine - 1] : undefined}
-          passageDeplie={passageDeplie === pas.dizaine}
-          onBasculerPassage={() =>
-            setPassageDeplie((d) => (d === pas.dizaine ? null : (pas.dizaine ?? null)))
-          }
-        />
-      ) : (
-        <Annonce
-          key={index}
-          serie={serie}
-          dizaine={pas.dizaine!}
-          passage={passages[pas.dizaine! - 1]}
-          onCommencer={() => setIndex((i) => avancer(i, nombre))}
-        />
-      )}
+      {/* Une seule région annonce chaque prière au lecteur d'écran : une
+          région neuve à chaque pas resterait muette. */}
+      <div aria-live="polite">
+        {!pas ? (
+          // La fin comme celle de l'office : une perle d'or qui ferme, puis le
+          // chemin de l'accueil, sans mot de plus ni « Recommencer » qu'un
+          // toucher machinal relancerait (choix du porteur du projet, 2026-10-08).
+          <section className="fin" data-testid="fin-chapelet" aria-label="Fin du chapelet">
+            <Repere />
+            <button className="lien-discret" type="button" onClick={revenirAccueil}>
+              Revenir à l’accueil
+            </button>
+          </section>
+        ) : estPriere(pas) ? (
+          <Priere
+            key={index}
+            pas={pas}
+            compact={compact}
+            plusieurs={reglages.plusieurs}
+            annonce={reglages.annonce}
+            passage={pas.dizaine ? passages[pas.dizaine - 1] : undefined}
+            passageDeplie={passageDeplie === pas.dizaine}
+            onBasculerPassage={() =>
+              setPassageDeplie((d) => (d === pas.dizaine ? null : (pas.dizaine ?? null)))
+            }
+          />
+        ) : (
+          <Annonce
+            key={index}
+            serie={serie}
+            dizaine={pas.dizaine!}
+            passage={passages[pas.dizaine! - 1]}
+            onCommencer={() => setIndex((i) => avancer(i, nombre))}
+          />
+        )}
+      </div>
 
       {index === 0 && (
         <p className="consigne">Touchez l’écran pour avancer, glissez pour revenir.</p>

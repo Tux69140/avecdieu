@@ -19,7 +19,7 @@ export function Annonce({ serie, dizaine, passage, onCommencer }: Props) {
   const fruit = FRUITS[serie][dizaine - 1]
   const { fin, cachee } = useSuiteCachee()
   return (
-    <section className="annonce" data-testid="annonce" aria-live="polite">
+    <section className="annonce" data-testid="annonce">
       <p className="etiquette">{ORDINAUX[dizaine - 1]} mystère</p>
       <h2 className="annonce-titre">{SERIES[serie].mysteres[dizaine - 1]}</h2>
       <div className="fruit">

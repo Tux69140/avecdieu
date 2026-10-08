@@ -32,7 +32,7 @@ export function Priere(props: Props) {
   const passage = annonce ? props.passage : undefined
   const ensemble = ditEnsemble(priere, plusieurs)
   return (
-    <section className="priere" data-testid="priere" aria-live="polite">
+    <section className="priere" data-testid="priere">
       <div className={compact ? 'priere-tete priere-tete-compacte' : 'priere-tete'}>
         <h2>{priere.titre}</h2>
         {pas.total > 1 && (

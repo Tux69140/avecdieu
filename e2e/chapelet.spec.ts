@@ -117,6 +117,38 @@ test('glisser revient d’une prière en arrière, dans un sens comme dans l’a
   await verifierPas(page, DEROULE[4], 4)
 })
 
+// Comme tout écran, chaque prière s'ouvre en haut : après une annonce qu'on a
+// fait défiler, le Notre Père ne s'ouvre pas à mi-hauteur.
+test('chaque prière s’ouvre en haut de l’écran', async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 640 })
+  await commencer(page)
+  for (let i = 0; i < 7; i++) await suivant(page)
+  await expect(page.getByRole('button', { name: 'Commencer la dizaine' })).toBeVisible()
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0)
+  await suivant(page)
+  await expect(page.getByTestId('priere').getByRole('heading', { level: 2 })).toHaveText(
+    'Notre Père',
+  )
+  expect(await page.evaluate(() => window.scrollY)).toBe(0)
+})
+
+// Le lecteur d'écran entend la prière qui arrive, et le chapelet dessiné dit
+// où l'on en est, comme le fil de perles de l'office.
+test('le lecteur d’écran suit la progression', async ({ page }) => {
+  await commencer(page)
+  const dessin = page.getByRole('img', { name: /^Chapelet/ })
+  await expect(dessin).toHaveAccessibleName(`Chapelet, prière 1 sur ${DEROULE.length}`)
+  const annonces = page.locator('[aria-live="polite"]').filter({ has: page.getByTestId('priere') })
+  await expect(annonces).toHaveCount(1)
+  const region = await annonces.elementHandle()
+  await toucher(page)
+  await expect(dessin).toHaveAccessibleName(`Chapelet, prière 2 sur ${DEROULE.length}`)
+  // La même région annonce chaque prière : une région neuve resterait muette.
+  expect(await region!.evaluate((e) => e.isConnected)).toBe(true)
+  await expect(annonces).toContainText('Je crois en Dieu')
+})
+
 test('glisser au tout début ne fait rien', async ({ page }) => {
   await commencer(page)
   await glisser(page, 160)

@@ -62,9 +62,11 @@
   background: linear-gradient(to bottom, transparent, var(--parchemin) var(--esp-lg));
 }
 
+/* 32 px à l'œil, 48 px à toucher : la cible déborde sur le fondu du haut. */
 .grosse-perle-zone .indice-suite {
-  min-height: 32px;
-  margin-bottom: var(--esp-xs);
+  min-height: 48px;
+  margin: -16px 0 var(--esp-xs);
+  padding-top: 16px;
 }
 
 .grosse-perle {

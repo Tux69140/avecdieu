@@ -90,7 +90,8 @@
 }
 
 .seuil-series a::after {
-  content: '›';
+  /* Vue, pas lue : le lecteur d'écran dit déjà que c'est un lien. */
+  content: '›' / '';
   grid-area: fleche;
   font-size: 26px;
   line-height: 1;

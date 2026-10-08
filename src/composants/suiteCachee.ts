@@ -7,7 +7,11 @@ export function useSuiteCachee() {
   const [cachee, setCachee] = useState(false)
   useEffect(() => {
     if (!fin.current || typeof IntersectionObserver === 'undefined') return
-    const observateur = new IntersectionObserver(([e]) => setCachee(!e.isIntersecting))
+    // Plusieurs signaux peuvent arriver d'un coup (mise en page qui bouge deux
+    // fois) : seul le dernier est à jour.
+    const observateur = new IntersectionObserver((entrees) =>
+      setCachee(!entrees[entrees.length - 1].isIntersecting),
+    )
     observateur.observe(fin.current)
     return () => observateur.disconnect()
   }, [])

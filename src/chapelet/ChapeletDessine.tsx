@@ -5,12 +5,14 @@ interface Props {
   plan: Plan
   // Index du grain en cours ; plan.points.length quand le chapelet est terminé.
   grainCourant: number
+  // Ce que dit le lecteur d'écran : où l'on en est.
+  libelle?: string
 }
 
 // Le chapelet dessiné : grains passés en or, grain en cours en soleil avec
 // halo, grains à venir en nacre cerclée d'or, tous en relief. Les nœuds du fil
 // ne sont pas des perles : seul leur halo se voit, lorsqu'on y est.
-export function ChapeletDessine({ plan, grainCourant }: Props) {
+export function ChapeletDessine({ plan, grainCourant, libelle = 'Chapelet' }: Props) {
   const { boucle, medaille, points, largeur, hauteur, pendentif } = plan
   return (
     <svg
@@ -19,7 +21,7 @@ export function ChapeletDessine({ plan, grainCourant }: Props) {
       data-grain-courant={grainCourant}
       viewBox={`0 0 ${largeur} ${hauteur}`}
       role="img"
-      aria-label="Chapelet"
+      aria-label={libelle}
     >
       <defs>
         <Relief id="perle-or" reflet="--or-reflet" teinte="--or" ombre="--or-fonce" />

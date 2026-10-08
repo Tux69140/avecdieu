@@ -416,7 +416,10 @@ test.describe('reprise d’un chapelet interrompu', () => {
     await reglage(page, /Ô mon Jésus/).click()
     await page.getByRole('button', { name: 'Fermer', exact: true }).click()
     await ouvrirChapelet(page)
-    await page.getByRole('button', { name: 'Reprendre à la 3e dizaine' }).click()
+    const reprendre = page.getByRole('button', { name: 'Reprendre à la 3e dizaine' })
+    // L'ordinal en exposant, comme partout dans l'app (« 3ᵉ »).
+    await expect(reprendre.locator('sup')).toHaveText('e')
+    await reprendre.click()
     await verifierAve34(page)
   })
 

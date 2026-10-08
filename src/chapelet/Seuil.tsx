@@ -54,7 +54,7 @@ export function Seuil({ serie, duJour, date, enCours, onCommencer, onRecommencer
         ))}
       </ol>
       <button className="btn btn-principal seuil-commencer" type="button" onClick={onCommencer}>
-        {enCours ? libelleReprise(enCours) : 'Commencer le chapelet'}
+        {enCours ? avecExposants(libelleReprise(enCours)) : 'Commencer le chapelet'}
       </button>
       {enCours && (
         <p className="seuil-recommencer">

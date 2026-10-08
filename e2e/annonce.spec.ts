@@ -189,6 +189,8 @@ test.describe('choix de la série', () => {
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mystères joyeux')
       const lien = page.getByRole('link', { name: new RegExp(serie) })
       await expect(lien).toContainText(jours)
+      // La flèche se voit, le lecteur d'écran ne la lit pas.
+      await expect(lien).not.toHaveAccessibleName(/›/)
       await lien.click()
       await expect(page.getByRole('heading', { level: 1 })).toHaveText(serie)
       await page.getByRole('button', { name: 'Commencer le chapelet' }).click()
@@ -317,6 +319,19 @@ test.describe('« Plus bas »', () => {
     await page.setViewportSize({ width: 360, height: 640 })
     await commencer(page)
     await jusquALAnnonce(page)
+    const indice = page.getByRole('button', { name: 'Plus bas' })
+    await expect(indice).toBeVisible()
+    // 48 px à toucher, comme toute cible, sans prendre plus de place à l'écran.
+    expect((await indice.boundingBox())!.height).toBeGreaterThanOrEqual(48)
+    const perle = (await page.getByRole('button', { name: 'Commencer la dizaine' }).boundingBox())!
+    const boite = (await indice.boundingBox())!
+    expect(boite.y + boite.height).toBeLessThanOrEqual(perle.y)
+  })
+
+  test('signale la suite du seuil sur un écran de 360 × 780', async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 780 })
+    await preparer(page)
+    await page.goto('/chapelet')
     await expect(page.getByRole('button', { name: 'Plus bas' })).toBeVisible()
   })
 })
