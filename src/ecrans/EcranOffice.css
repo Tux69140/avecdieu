@@ -27,6 +27,45 @@
   color: var(--sepia);
 }
 
+/* Le titre au centre, le saint du jour en petit dans la colonne de droite ;
+   la colonne de gauche, vide, garde le titre centré. */
+.office-titre {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: var(--esp-sm);
+}
+
+.office-titre h1 {
+  grid-column: 2;
+}
+
+.office-saint {
+  grid-column: 3;
+  justify-self: end;
+  margin: 0;
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  color: var(--sepia);
+  text-align: right;
+  text-wrap: balance;
+}
+
+/* « Office des lectures » prend toute la ligne : le saint passe dessous. */
+.office-titre[data-office='lectures'] {
+  grid-template-columns: 1fr;
+}
+
+.office-titre[data-office='lectures'] h1,
+.office-titre[data-office='lectures'] .office-saint {
+  grid-column: 1;
+  justify-self: center;
+  text-align: center;
+}
+
 .office-entete h1 {
   margin: 0;
   font-family: var(--display);

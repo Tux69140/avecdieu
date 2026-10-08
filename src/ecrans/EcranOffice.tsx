@@ -5,6 +5,7 @@ import type { Etendue } from '../aelf/cache'
 import { textesEnregistres } from '../aelf/reserve'
 import { usePincement } from '../affichage/usePincement'
 import { lireReglages } from '../chapelet/reglages'
+import { saintDuJour } from '../accueil/bandeau'
 import { positionRetenue } from '../composants/defilement'
 import { BoutonFermer, LienMenu } from '../composants/Icones'
 import { IndiceSuite } from '../composants/IndiceSuite'
@@ -111,6 +112,8 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
     return reconstituer(lu.office, { premier, plusieurs, invitatoire })
   }, [etat, plusieurs])
 
+  const saint = etat.sorte === 'pret' ? saintDuJour(etat.lu.jour) : undefined
+
   const clesDesParties = useMemo(() => cles(office?.parties ?? []), [office])
 
   // Revenu du menu par le retour d'Android : la lecture reprend où on l'avait
@@ -196,7 +199,16 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
             <p className="office-date">{dateLisible(date)}</p>
             <LienMenu depuis={date} office={nom} />
           </div>
-          <h1 ref={titre}>{NOMS_OFFICES[nom]}</h1>
+          {/* Le saint du jour en petit, à droite du titre qui reste centré ; sous
+              le titre long de l'office des lectures (2026-10-08). */}
+          <div className="office-titre" data-office={nom}>
+            <h1 ref={titre}>{NOMS_OFFICES[nom]}</h1>
+            {saint && (
+              <p className="office-saint" data-testid="saint-du-jour">
+                {saint}
+              </p>
+            )}
+          </div>
           {/* Les perles, comme dans le bandeau : un toucher ouvre le sommaire. */}
           {office && (
             <button

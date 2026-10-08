@@ -47,13 +47,17 @@ function nettoyer(texte: string): string {
     .replace(/'/g, '’')
 }
 
+// Le saint du jour, tel que l'accueil le montre en gros ; rien un jour de fête
+// (« Tous les Saints »), qui n'a pas de saint. Repris en tête de l'office.
+export const saintDuJour = (jour: JourLiturgique): string | undefined =>
+  jour.celebration && !RANG_SEUL.test(jour.celebration)
+    ? nettoyer(nommerSaint(jour.celebration))
+    : undefined
+
 export function presenterJour(jour: JourLiturgique): Bandeau {
   const couleur = jour.couleurs[0]
   const intitule = jour.intitule && nettoyer(jour.intitule.replace(JOUR_DE_SEMAINE, ''))
-  const saint =
-    jour.celebration && !RANG_SEUL.test(jour.celebration)
-      ? nettoyer(nommerSaint(jour.celebration))
-      : undefined
+  const saint = saintDuJour(jour)
   if (saint) return { temps: intitule, titre: saint, couleur }
   if (intitule && RANG_DU_JOUR.test(intitule)) return { temps: intitule, titre: undefined, couleur }
   return { temps: undefined, titre: intitule, couleur }

@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs'
 import { expect, type Page } from '@playwright/test'
 import { deplierReglages, espionner, journal, preparer, servirAelf, test } from './outils.ts'
 
@@ -138,6 +139,76 @@ test('premier lancement sans réseau : un message clair et « Réessayer »', as
   await page.getByRole('button', { name: 'Réessayer' }).click()
   await expect(page.getByRole('alert')).toHaveCount(0)
   await expect(titres(page).first()).toHaveText('Introduction')
+})
+
+// Le saint du jour en petit, à droite du titre, qui reste centré ; rien un
+// jour de fête (choix du porteur du projet, 2026-10-08).
+const boites = (page: Page) =>
+  page.evaluate(() => {
+    const boite = (selecteur: string) => {
+      const b = document.querySelector(selecteur)?.getBoundingClientRect()
+      return b && { gauche: b.left, droite: b.right, haut: b.top, bas: b.bottom }
+    }
+    return { titre: boite('.office-entete h1'), saint: boite('.office-saint') }
+  })
+
+test('le saint du jour en petit sur la ligne du titre, qui reste centré', async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 780 })
+  await servirAelf(page)
+  await preparer(page)
+  await page.goto('/office/laudes/2026-10-06')
+  await expect(page.getByTestId('saint-du-jour')).toHaveText('S. Bruno')
+  const { titre, saint } = await boites(page)
+  expect((titre!.gauche + titre!.droite) / 2).toBeCloseTo(180, 0)
+  expect(saint!.gauche).toBeGreaterThan(titre!.droite)
+  expect(saint!.droite).toBeLessThanOrEqual(360 - 16)
+  expect(saint!.haut).toBeLessThan(titre!.bas)
+  expect(saint!.bas).toBeGreaterThan(titre!.haut)
+})
+
+test('un nom de saint long tient à droite du titre, sur plusieurs lignes', async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 780 })
+  await servirAelf(page)
+  const long = 'Les sept saints fondateurs des Servîtes de Marie'
+  await page.route('https://api.aelf.org/v1/complies/2026-10-06/**', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      headers: { 'access-control-allow-origin': '*' },
+      body: readFileSync('src/aelf/exemples/complies-2026-10-06.json', 'utf8').replaceAll(
+        'S. Bruno, pr\\u00eatre',
+        long,
+      ),
+    }),
+  )
+  await preparer(page)
+  await page.goto('/office/complies/2026-10-06')
+  await expect(page.getByTestId('saint-du-jour')).toHaveText(long)
+  const { titre, saint } = await boites(page)
+  expect((titre!.gauche + titre!.droite) / 2).toBeCloseTo(180, 0)
+  expect(saint!.gauche).toBeGreaterThan(titre!.droite)
+  expect(saint!.droite).toBeLessThanOrEqual(360 - 16)
+  const debordements = await page
+    .getByTestId('saint-du-jour')
+    .evaluate((p) => p.scrollWidth - p.clientWidth)
+  expect(debordements).toBe(0)
+})
+
+test('l’office des lectures, au titre long : le saint sous le titre', async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 780 })
+  await servirAelf(page)
+  await preparer(page)
+  await page.goto('/office/lectures/2026-10-06')
+  await expect(page.getByTestId('saint-du-jour')).toHaveText('S. Bruno')
+  const { titre, saint } = await boites(page)
+  expect(saint!.haut).toBeGreaterThanOrEqual(titre!.bas - 1)
+})
+
+test('un jour de fête, aucun nom en tête de l’office', async ({ page }) => {
+  await servirAelf(page)
+  await preparer(page)
+  await page.goto('/office/laudes/2026-11-01')
+  await expect(titres(page).first()).toHaveText('Introduction')
+  await expect(page.getByTestId('saint-du-jour')).toHaveCount(0)
 })
 
 test('un office que l’AELF ne propose pas : le dire, sans « Réessayer »', async ({ page }) => {

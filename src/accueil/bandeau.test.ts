@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { lireJour } from '../aelf/office'
-import { presenterJour } from './bandeau'
+import { presenterJour, saintDuJour } from './bandeau'
 
 // Réponses réelles de l'AELF (src/aelf/exemples/informations-*.json).
 const jour = (date: string) =>
@@ -74,5 +74,20 @@ describe('presenterJour', () => {
       titre: undefined,
       couleur: undefined,
     })
+  })
+
+  // En tête de l'office, le saint seul ; rien un jour de fête, dont le texte
+  // dit déjà le nom (choix du porteur du projet, 2026-10-08).
+  it.each([
+    ['2026-10-06', 'S. Bruno'],
+    ['2026-10-07', 'Bienheureuse Vierge Marie du Rosaire'],
+    ['2026-12-29', 'S. Thomas Becket'],
+    ['2026-10-10', undefined],
+    ['2026-10-11', undefined],
+    ['2026-11-01', undefined],
+    ['2026-11-22', undefined],
+    ['2026-12-25', undefined],
+  ])('%s : le saint du jour est « %s »', (date, saint) => {
+    expect(saintDuJour(jour(date))).toBe(saint)
   })
 })
