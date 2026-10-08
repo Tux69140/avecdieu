@@ -225,11 +225,25 @@ test('un office que l’AELF ne propose pas : le dire, sans « Réessayer »', a
   // Le dimanche de Pâques, la Vigile pascale tient lieu d'office des lectures.
   await servirAelf(page)
   await preparer(page)
+  // L'app le dit, sans parler de panne (choix du porteur du projet, 2026-10-08).
   await page.goto('/office/lectures/2026-04-05')
   const alerte = page.getByRole('alert')
-  await expect(alerte).toContainText('L’AELF ne propose pas cet office pour ce jour.')
-  await expect(alerte).not.toContainText('ne répond pas')
+  await expect(alerte).toHaveText(
+    /^⚠ Le jour de Pâques, la Vigile pascale tient lieu d’office des lectures\.$/,
+  )
   await expect(page.getByRole('button', { name: 'Réessayer' })).toHaveCount(0)
+  await page.getByRole('button', { name: 'Revenir à l’accueil' }).click()
+  await expect(page).toHaveURL('/')
+})
+
+test('un autre office absent de l’AELF : le dire, sans parler de panne', async ({ page }) => {
+  await servirAelf(page)
+  await preparer(page)
+  await page.goto('/office/tierce/2026-10-08')
+  await expect(page.getByRole('alert')).toHaveText(
+    /^⚠ L’AELF ne propose pas cet office pour ce jour\.$/,
+  )
+  await expect(page.getByRole('button', { name: 'Revenir à l’accueil' })).toBeVisible()
 })
 
 test('l’écran reste allumé pendant la lecture et redevient libre au retour', async ({ page }) => {

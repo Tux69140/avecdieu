@@ -11,7 +11,7 @@ import { BoutonFermer, LienMenu } from '../composants/Icones'
 import { IndiceSuite } from '../composants/IndiceSuite'
 import { useRetour } from '../composants/retour'
 import { useSuiteCachee } from '../composants/suiteCachee'
-import { dateLisible, estDate, periodeLisible } from '../office/dates'
+import { dateLisible, estDate, paques, periodeLisible } from '../office/dates'
 import { deplacerInvitatoire, ouvrirOffice } from '../office/journee'
 import { estNomOffice, NOMS_OFFICES, type NomOffice, type Partie } from '../office/modele'
 import { BandeauOffice } from '../office/BandeauOffice'
@@ -62,6 +62,7 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
   const [{ accents, plusieurs, prieresEntieres, signalerAjouts }] = useState(lireReglages)
   const retour = useRetour()
   const naviguer = useNavigate()
+  const revenirAccueil = () => naviguer('/', { replace: true })
   const { fin, cachee } = useSuiteCachee()
   // « Plus bas » ne sert qu'avant de commencer : dès qu'on lit, il ne ferait
   // qu'estomper la dernière ligne (choix du porteur du projet, 2026-10-07).
@@ -238,13 +239,14 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
         {etat.sorte === 'erreur' && (
           <div className="office-erreur" role="alert">
             {etat.absent ? (
-              <>
-                <p className="office-erreur-titre">
-                  <span aria-hidden="true">⚠ </span>Impossible de récupérer l’office.
-                </p>
-                {/* Réessayer n'y changerait rien : l'AELF n'a pas ce texte. */}
-                <p>L’AELF ne propose pas cet office pour ce jour.</p>
-              </>
+              // Réessayer n'y changerait rien : l'AELF n'a pas ce texte. Le seul
+              // cas connu est l'office des lectures de Pâques (2026-10-08).
+              <p className="office-erreur-titre">
+                <span aria-hidden="true">⚠ </span>
+                {nom === 'lectures' && date === paques(Number(date.slice(0, 4)))
+                  ? 'Le jour de Pâques, la Vigile pascale tient lieu d’office des lectures.'
+                  : 'L’AELF ne propose pas cet office pour ce jour.'}
+              </p>
             ) : (
               <>
                 {/* Textes validés par le porteur du projet le 2026-10-07. */}
@@ -280,6 +282,14 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
           </div>
         )}
 
+        {etat.sorte === 'erreur' && etat.absent && (
+          <p className="office-revenir">
+            <button className="lien-discret" type="button" onClick={revenirAccueil}>
+              Revenir à l’accueil
+            </button>
+          </p>
+        )}
+
         {etat.sorte === 'pret' && office && (
           <div ref={texte} className="office-texte" data-testid="office">
             {office.parties.map((partie, i) => (
@@ -297,11 +307,7 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
               <span className="repere-perle" data-couleur="or" />
             </div>
             <p className="office-revenir">
-              <button
-                className="lien-discret"
-                type="button"
-                onClick={() => naviguer('/', { replace: true })}
-              >
+              <button className="lien-discret" type="button" onClick={revenirAccueil}>
                 Revenir à l’accueil
               </button>
             </p>
