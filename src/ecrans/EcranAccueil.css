@@ -56,7 +56,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0 0 var(--esp-sm);
+  /* Collé au cadran : la perle la plus haute garde 12 px d'écart avec ses
+     liens, et l'accueil tient en un écran jusqu'au chapelet. */
+  margin: 0;
   font-family: var(--sc);
   font-weight: 600;
   font-size: 16px;
@@ -102,7 +104,12 @@
   font-family: var(--sc);
   font-weight: 600;
   font-size: 18px;
-  letter-spacing: 0.06em;
+  /* Interligne serré : le bandeau, plus haut que l'arc, fixe la hauteur du
+     cadran, et chaque pixel gagné remonte le chapelet. */
+  line-height: 1.2;
+  /* Resserrée : la plus longue date (« Mercredi 30 septembre ») tient entre
+     les branches de l'arc sans toucher une perle (cadran.ts, LARGEUR_DATE). */
+  letter-spacing: 0.03em;
   color: var(--encre);
 }
 
@@ -112,6 +119,7 @@
   font-family: var(--sc);
   font-weight: 400;
   font-size: 15px;
+  line-height: 1.3;
   letter-spacing: 0.02em;
   color: var(--sepia);
 }
@@ -130,16 +138,25 @@
   line-height: 0;
 }
 
+/* En bloc : en ligne, elle porterait la hauteur d'une ligne de texte. */
 .bandeau-pastille {
-  display: inline-block;
+  display: block;
   width: 12px;
   height: 12px;
-  margin-top: var(--esp-sm);
+  margin: var(--esp-xs) auto 0;
 }
 
+/* Le même encadré brun brique que les avis de l'office et des rappels,
+   aligné à gauche malgré le bandeau centré. */
 .bandeau-erreur {
   margin: var(--esp-sm) 0 0;
+  padding: var(--esp-sm) var(--esp-md);
+  border: 1px solid var(--erreur);
+  border-radius: var(--r-md);
+  background: var(--velin);
   font-size: 16px;
+  line-height: 1.45;
+  text-align: left;
   color: var(--erreur);
 }
 
@@ -163,7 +180,7 @@
 /* Les sept offices : une ligne chacun, filets fins, flèche d'or. */
 .accueil-offices {
   list-style: none;
-  margin: var(--esp-md) 0 0;
+  margin: var(--esp-sm) 0 0;
   padding: 0;
   border-top: 1px solid var(--filet);
 }
@@ -202,7 +219,8 @@
 }
 
 .accueil-offices a::after {
-  content: '›';
+  /* Décorative : hors du nom lu par les lecteurs d'écran. */
+  content: '›' / '';
   grid-row: 1;
   grid-column: 4;
   font-size: 26px;

@@ -169,3 +169,24 @@ test('rappels : la fenêtre d’autorisation s’écarte des barres d’Android'
   expect(boite.y).toBeGreaterThanOrEqual(HAUT)
   expect(boite.y + boite.height).toBeLessThanOrEqual(page.viewportSize()!.height - BAS)
 })
+
+test('accueil, saint sur deux lignes : tout tient jusqu’au chapelet, barres comprises', async ({
+  page,
+}) => {
+  // Objectif validé : à 360 × 780, l'accueil tient en un écran jusqu'à la
+  // ligne du chapelet, même un jour au titre de deux lignes.
+  await page.setViewportSize({ width: 360, height: 780 })
+  await page.clock.setFixedTime(new Date(2026, 9, 15, 12, 15))
+  await servirAelf(page)
+  await preparer(page)
+  await page.goto('/')
+  const titre = page.getByTestId('bandeau').locator('.bandeau-titre')
+  await expect(titre).toHaveText('Ste Thérèse de Jésus (d’Avila)')
+  await expect.poll(() => page.evaluate(() => document.getAnimations().length)).toBe(0)
+  const lignes = await titre.evaluate(
+    (t) => t.getBoundingClientRect().height / parseFloat(getComputedStyle(t).lineHeight),
+  )
+  expect(Math.round(lignes)).toBe(2)
+  const chapelet = (await page.getByRole('list', { name: 'Chapelet' }).boundingBox())!
+  expect(chapelet.y + chapelet.height).toBeLessThanOrEqual(page.viewportSize()!.height - BAS)
+})

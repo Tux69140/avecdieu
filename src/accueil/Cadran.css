@@ -62,13 +62,13 @@
   fill: var(--sepia-pale);
 }
 
-/* Chaque perle : une cible de 48 px centrée sur l'heure de son office. */
+/* Chaque perle : une cible ronde centrée sur l'heure de son office, de 48 px
+   ou de l'écart à sa voisine (largeur posée par Cadran.tsx). */
 .cadran-perle {
   position: absolute;
   display: grid;
   place-items: center;
-  width: 48px;
-  height: 48px;
+  aspect-ratio: 1;
   border-radius: 9999px;
   transform: translate(-50%, -50%);
   pointer-events: auto;
@@ -78,7 +78,9 @@
   width: 12px;
   height: 12px;
   border-radius: 9999px;
-  border: 1.5px solid var(--or);
+  /* L'or foncé : un contour à 3:1 au moins sur le parchemin (WCAG 1.4.11),
+     de jour comme de nuit ; à venir, la perle reste creuse. */
+  border: 1.5px solid var(--or-fonce);
   background: var(--parchemin);
 }
 
@@ -100,8 +102,7 @@
 }
 
 .cadran-centre {
-  /* Assez bas pour que la date tienne entre les deux branches de l'arc. */
-  padding: 18% 12% 0;
+  /* Sa marge, posée par Cadran.tsx, loge la date entre les deux branches de l'arc. */
   text-align: center;
 }
 

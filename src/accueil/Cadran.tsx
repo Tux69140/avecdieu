@@ -4,13 +4,21 @@ import { ecrireHeure, type Heure } from '../office/heures'
 import { NOMS_OFFICES, OFFICES, type NomOffice } from '../office/modele'
 import {
   cheminDeLArc,
+  ciblesDesPerles,
   ECHELLE_FIXE,
   echelleSolaire,
+  etiquetteDuRepere,
+  HAUT_DU_BANDEAU,
   HAUTEUR,
+  INTERLIGNE,
   JOUR_SOLAIRE,
   LARGEUR,
+  LUNE,
+  MARGE_DU_BANDEAU,
   pointDeLaPart,
   pointDuCadran,
+  RAYON_HALO_SOLEIL,
+  RAYON_LUNE,
   REPERES,
   reperesSolaires,
   type Astre,
@@ -32,15 +40,15 @@ interface Props {
   children: ReactNode
 }
 
-// La nuit, le croissant se tient au ciel, sous le sommet de l'arc : posé à
-// l'heure qu'il est, il se cacherait derrière la perle des complies.
-const LUNE = { x: LARGEUR / 2, y: 66 }
-
 const enMinutes = ({ heures, minutes }: Heure) => heures * 60 + minutes
-const pourcents = ({ x, y }: Point) => ({
-  left: `${(x / LARGEUR) * 100}%`,
-  top: `${(y / HAUTEUR) * 100}%`,
-})
+const enLargeur = (unites: number) => `${(unites / LARGEUR) * 100}%`
+const pourcents = ({ x, y }: Point) => ({ left: enLargeur(x), top: `${(y / HAUTEUR) * 100}%` })
+
+// Le bandeau se loge sous l'arc, à la place que lui laisse la géométrie : un
+// padding en % suit la largeur, comme les unités du dessin.
+const SOUS_L_ARC = {
+  padding: `${enLargeur(HAUT_DU_BANDEAU)} ${enLargeur(MARGE_DU_BANDEAU)} 0`,
+}
 
 // Le cadran de l'accueil : l'arc du jour, ses repères, le soleil ou la lune, et
 // chaque office comme une perle qui l'ouvre d'un toucher (passé compris).
@@ -55,6 +63,8 @@ export function Cadran({ date, heures, journee, astre, soleil, children }: Props
         offices.map(({ heure }) => enMinutes(heure)),
       )
     : ECHELLE_FIXE
+  const points = offices.map(({ heure }) => pointDuCadran(enMinutes(heure), 0, echelle))
+  const cibles = ciblesDesPerles(points)
   return (
     <div className="cadran">
       <div className="cadran-zone">
@@ -65,12 +75,13 @@ export function Cadran({ date, heures, journee, astre, soleil, children }: Props
           )}
           {astre?.sorte === 'lune' && <Lune centre={LUNE} />}
         </svg>
-        {offices.map(({ nom, heure }) => (
+        {offices.map(({ nom, heure }, i) => (
           <Link
             key={nom}
             className="cadran-perle"
             to={`/office/${nom}/${date}`}
-            style={pourcents(pointDuCadran(enMinutes(heure), 0, echelle))}
+            // 48 px, ou l'écart à la perle voisine si elle est plus proche.
+            style={{ ...pourcents(points[i]), width: `min(48px, ${enLargeur(cibles[i])})` }}
             aria-label={`${NOMS_OFFICES[nom]}, ${ecrireHeure(heure)}`}
             data-etat={journee?.etats[nom] ?? 'a-venir'}
             data-testid={`perle-${nom}`}
@@ -79,7 +90,9 @@ export function Cadran({ date, heures, journee, astre, soleil, children }: Props
           </Link>
         ))}
       </div>
-      <div className="cadran-centre">{children}</div>
+      <div className="cadran-centre" style={SOUS_L_ARC}>
+        {children}
+      </div>
     </div>
   )
 }
@@ -95,25 +108,15 @@ function ArcFixe() {
   return (
     <>
       <path className="cadran-arc" d={cheminDeLArc()} />
-      {REPERES.map(({ texte, minutes }) => {
-        const part = ECHELLE_FIXE(minutes)
-        const etiquette = pointDeLaPart(part, 19)
-        return (
-          <g key={texte}>
-            <Trait part={part} />
-            <text x={etiquette.x} y={etiquette.y + 5} textAnchor="middle">
-              {texte}
-            </text>
-          </g>
-        )
-      })}
+      {REPERES.map(({ texte, minutes }) => (
+        <Repere key={texte} lignes={[texte]} part={ECHELLE_FIXE(minutes)} />
+      ))}
     </>
   )
 }
 
 // Heures solaires : l'arc doré du lever au coucher, les pointillés de la
-// nuit aux deux bouts. Les repères du lever et du coucher se logent au-dessus
-// des bouts de l'arc, alignés sur les bords, pour ne pas couvrir les perles.
+// nuit aux deux bouts.
 function ArcSolaire({ soleil }: { soleil: { lever: number; coucher: number } }) {
   const { debut, fin } = JOUR_SOLAIRE
   return (
@@ -121,35 +124,34 @@ function ArcSolaire({ soleil }: { soleil: { lever: number; coucher: number } }) 
       <path className="cadran-arc cadran-nuit" d={cheminDeLArc(0, debut)} />
       <path className="cadran-arc" d={cheminDeLArc(debut, fin)} />
       <path className="cadran-arc cadran-nuit" d={cheminDeLArc(fin, 1)} />
-      {reperesSolaires(soleil).map(({ lignes, part }) => {
-        const bord = part < 0.5 ? 'gauche' : part > 0.5 ? 'droite' : 'sommet'
-        const point = pointDeLaPart(part, 19)
-        const x = bord === 'gauche' ? MARGE : bord === 'droite' ? LARGEUR - MARGE : point.x
-        const y = bord === 'sommet' ? point.y + 5 : point.y - 30
-        const ancre = bord === 'gauche' ? 'start' : bord === 'droite' ? 'end' : 'middle'
-        return (
-          <g key={lignes[0]}>
-            <Trait part={part} />
-            <text x={x} y={y} textAnchor={ancre}>
-              {lignes.map((ligne, i) => (
-                <tspan key={ligne} x={x} dy={i === 0 ? 0 : 16}>
-                  {ligne}
-                </tspan>
-              ))}
-            </text>
-          </g>
-        )
-      })}
+      {reperesSolaires(soleil).map(({ lignes, part }) => (
+        <Repere key={lignes[0]} lignes={lignes} part={part} />
+      ))}
     </>
   )
 }
 
-const MARGE = 2
+// Un trait sur l'arc et son étiquette, posée à l'écart des perles et du soleil.
+function Repere({ lignes, part }: { lignes: string[]; part: number }) {
+  const { x, y } = etiquetteDuRepere(lignes, part)
+  return (
+    <g>
+      <Trait part={part} />
+      <text x={x} y={y} textAnchor="middle">
+        {lignes.map((ligne, i) => (
+          <tspan key={ligne} x={x} dy={i === 0 ? 0 : INTERLIGNE}>
+            {ligne}
+          </tspan>
+        ))}
+      </text>
+    </g>
+  )
+}
 
 function Soleil({ centre: { x, y } }: { centre: Point }) {
   return (
     <g className="cadran-soleil" data-testid="soleil">
-      <circle className="cadran-halo" cx={x} cy={y} r={18} />
+      <circle className="cadran-halo" cx={x} cy={y} r={RAYON_HALO_SOLEIL} />
       {Array.from({ length: 12 }, (_, i) => {
         const angle = (i * Math.PI) / 6
         return (
@@ -167,13 +169,15 @@ function Soleil({ centre: { x, y } }: { centre: Point }) {
   )
 }
 
+const R = RAYON_LUNE
+
 // Un croissant tourné vers la droite : deux arcs de même hauteur.
 function Lune({ centre: { x, y } }: { centre: Point }) {
   return (
     <path
       className="cadran-lune"
       data-testid="lune"
-      d={`M${x} ${y - 10} A10 10 0 1 0 ${x} ${y + 10} A5 10 0 1 1 ${x} ${y - 10}Z`}
+      d={`M${x} ${y - R} A${R} ${R} 0 1 0 ${x} ${y + R} A${R / 2} ${R} 0 1 1 ${x} ${y - R}Z`}
     />
   )
 }
