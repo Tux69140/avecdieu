@@ -51,6 +51,7 @@ export interface Reglages {
   prieresEntieres?: boolean
   signalerAjouts?: boolean
   tailleTexte?: number
+  theme?: 'jour' | 'nuit' | 'automatique'
 }
 
 // Les parcours ne dépendent pas du réseau : l'AELF est remplacée par ses

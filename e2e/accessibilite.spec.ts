@@ -80,7 +80,7 @@ test('mode compact, prière et passage dépliés', async ({ page }) => {
   await commencer(page, '/chapelet', { affichage: 'compact' })
   await avancer(page, 8)
   await page.getByRole('button', { name: 'Voir la prière' }).click()
-  await page.getByRole('button', { name: 'Afficher la Lecture' }).click()
+  await page.getByRole('button', { name: 'Lire le passage' }).click()
   await expect(page.getByTestId('passage')).toBeVisible()
   expect(await violationsGraves(page)).toEqual([])
 })

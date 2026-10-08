@@ -222,7 +222,7 @@ test.describe('déroulé selon les réglages', () => {
     await expect(page.getByText(/mystère|Fruit/)).toHaveCount(0)
   })
 
-  test('sans annonce, en compact, ni mystère, ni fruit, ni « Afficher la Lecture »', async ({
+  test('sans annonce, en compact, ni mystère, ni fruit, ni « Lire le passage »', async ({
     page,
   }) => {
     await commencer(page, '/chapelet', { reglages: { annonce: false, affichage: 'compact' } })
@@ -231,7 +231,7 @@ test.describe('déroulé selon les réglages', () => {
     await expect(page.getByTestId('mystere')).toHaveCount(0)
     await expect(page.getByText(/Fruit/)).toHaveCount(0)
     await expect(page.getByRole('button', { name: 'Voir la prière' })).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Afficher la Lecture' })).toHaveCount(0)
+    await expect(page.getByRole('button', { name: 'Lire le passage' })).toHaveCount(0)
   })
 
   test('sans annonce ni « Ô mon Jésus », le Salve Regina vient au bon rang', async ({ page }) => {

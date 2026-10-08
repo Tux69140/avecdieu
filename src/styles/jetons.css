@@ -59,6 +59,8 @@
   --rubrique: #9e2a1f;
   --or: #b08a3e;
   --or-fonce: #8a6a2a;
+  /* Cercle des perles à venir : or foncé de jour pour se détacher du parchemin. */
+  --cercle-perle: var(--or-fonce);
   --soleil: #d9a441;
   --halo: rgba(217, 164, 65, 0.28);
   /* Lueur rosée des perles en cours et du Gloire au Père : la rubrique très
@@ -128,6 +130,7 @@
   --rubrique: #e07a6a;
   --or: #c9a45c;
   --or-fonce: #b08a3e;
+  --cercle-perle: var(--or);
   --soleil: #e2b45a;
   --halo: rgba(226, 180, 90, 0.22);
   --halo-perle: rgba(224, 122, 106, 0.3);

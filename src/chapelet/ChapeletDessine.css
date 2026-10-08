@@ -29,7 +29,7 @@
 
 .chapelet-dessine .grain-a-venir {
   fill: url(#perle-nacre);
-  stroke: var(--or);
+  stroke: var(--cercle-perle);
   stroke-width: 0.8;
 }
 

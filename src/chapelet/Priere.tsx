@@ -49,7 +49,7 @@ export function Priere(props: Props) {
           </button>
           {passage && (
             <button className="lien-discret" type="button" onClick={onBasculerPassage}>
-              {passageDeplie ? 'Masquer la Lecture' : 'Afficher la Lecture'}
+              {passageDeplie ? 'Masquer le passage' : 'Lire le passage'}
             </button>
           )}
         </div>

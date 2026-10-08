@@ -149,6 +149,18 @@ test('le lecteur d’écran suit la progression', async ({ page }) => {
   await expect(annonces).toContainText('Je crois en Dieu')
 })
 
+// De jour, le cercle des perles à venir est d'or foncé pour se détacher du
+// parchemin ; la nuit, l'or suffit (choix du porteur du projet, 2026-10-08).
+for (const [theme, cercle] of [
+  ['jour', 'rgb(138, 106, 42)'],
+  ['nuit', 'rgb(201, 164, 92)'],
+] as const) {
+  test(`les perles à venir, cerclées pour se voir (${theme})`, async ({ page }) => {
+    await commencer(page, '/chapelet', { reglages: { theme } })
+    await expect(page.locator('.grain-a-venir').first()).toHaveCSS('stroke', cercle)
+  })
+}
+
 test('glisser au tout début ne fait rien', async ({ page }) => {
   await commencer(page)
   await glisser(page, 160)
