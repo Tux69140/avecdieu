@@ -47,7 +47,7 @@ test('en mode avion, les 7 offices du jour s’ouvrent avec tous leurs textes', 
   }
   // L'accueil garde son bandeau, et le chapelet se prie.
   await page.goto('/')
-  await expect(page.getByTestId('bandeau')).toContainText('S. Bruno, prêtre')
+  await expect(page.getByTestId('bandeau')).toContainText('S. Bruno')
   await commencer(page)
 })
 

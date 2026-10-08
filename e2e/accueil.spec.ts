@@ -22,11 +22,25 @@ test('le bandeau donne la date, la semaine, le saint et la couleur du jour', asy
   await ouvrir(page, MARDI(17, 50))
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mardi 6 octobre')
   await expect(bandeau(page)).toContainText('27e semaine du temps ordinaire')
-  await expect(bandeau(page)).toContainText('S. Bruno, prêtre')
+  await expect(bandeau(page)).toContainText('S. Bruno')
   // Une seule pastille, sans texte : ni rang, ni couleur de la mémoire.
   await expect(bandeau(page).getByRole('img')).toHaveCount(1)
   await expect(bandeau(page).getByRole('img', { name: 'Couleur liturgique : vert' })).toBeVisible()
   await expect(bandeau(page)).not.toContainText(/mémoire|vert/i)
+  // Le saint seul, sans ses qualités ; le rang du jour en petit, le même chaque jour.
+  await expect(bandeau(page).locator('.bandeau-titre')).toHaveText('S. Bruno')
+  await expect(bandeau(page).locator('.bandeau-temps')).toHaveCSS('font-weight', '400')
+})
+
+test('un jour sans fête ni saint, rien en gros : le rang reste dans la petite ligne', async ({
+  page,
+}) => {
+  await page.clock.setFixedTime(new Date(2026, 9, 10, 10, 0))
+  await servirAelf(page)
+  await preparer(page)
+  await page.goto('/')
+  await expect(bandeau(page).locator('.bandeau-temps')).toHaveText('27e semaine du temps ordinaire')
+  await expect(bandeau(page).locator('.bandeau-titre')).toHaveCount(0)
 })
 
 test('un dimanche, le titre dit le jour, sans ligne de semaine', async ({ page }) => {
@@ -194,7 +208,7 @@ test('premier lancement sans réseau : la date reste, le chapelet est proposé',
   // Le réseau revient : le jour se charge de lui-même.
   panne = false
   await page.evaluate(() => window.dispatchEvent(new Event('online')))
-  await expect(bandeau(page)).toContainText('S. Bruno, prêtre')
+  await expect(bandeau(page)).toContainText('S. Bruno')
   await expect(page.getByRole('alert')).toHaveCount(0)
 })
 

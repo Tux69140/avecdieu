@@ -1,9 +1,10 @@
 import type { CouleurLiturgique, JourLiturgique } from '../office/modele'
 
-// Ce que le bandeau de l'accueil dit du jour, sous la date : le temps (la
-// semaine), le titre (la fête ou le saint, sinon le jour lui-même) et une seule
-// pastille, la couleur du jour (choix du porteur du projet, 2026-10-06 : un
-// écran simple à lire, ni rang ni couleur des mémoires possibles).
+// Ce que le bandeau de l'accueil dit du jour, sous la date : le temps (le rang
+// du jour, toujours en petit), le titre (la fête ou le saint seul, en gros) et
+// une seule pastille, la couleur du jour (choix du porteur du projet,
+// 2026-10-06 et 2026-10-08 : un écran simple à lire, ni rang de la célébration,
+// ni qualités du saint, ni couleur des mémoires possibles).
 export interface Bandeau {
   temps?: string
   titre?: string
@@ -14,6 +15,22 @@ export interface Bandeau {
 // jour (« Solennité », « Fête », « de la férie »), déjà dit par le titre.
 const RANG_SEUL = /^(solennité|fête|mémoire|de la férie)/i
 const JOUR_DE_SEMAINE = /^(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche), /i
+// Le jour n'est que sa place dans le temps (« 27e semaine du temps ordinaire »,
+// « 28e dimanche… », « Lundi dans l'octave de Pâques ») : il va dans la petite
+// ligne. Sinon, il porte le nom d'une fête (« Tous les Saints ») : en gros.
+const RANG_DU_JOUR = /^\d+(e|er|re) (semaine|dimanche|jour)\b|dans l’octave|^\p{L}+ après l’/iu
+// Ce qui suit le nom du saint : ses qualités (« , évêque », « , vierge et
+// docteur… »), ses compagnons, le rang de la célébration (« . Mémoire… »).
+const QUALITES =
+  /,\s*(et (ses|leurs) compagnons|abbé|abbesse|apôtres?|archanges?|confesseurs?|diacres?|docteurs?|ermites?|évêques?|fondat(eur|rice)s?|martyrs?|missionnaires?|moines?|papes?|prêtres?|religieu(x|ses?)|vierges?)\b.*$|\.\s*(mémoire|fête|solennité)\b.*$/i
+
+// Le saint seul, comme l'écrit l'AELF (« S. », « Ste » gardés : la place
+// compte), les crochets changés en parenthèses.
+const nommerSaint = (celebration: string) =>
+  celebration
+    .replace(QUALITES, '')
+    .replace(/\[([^\]]*)\]/g, '($1)')
+    .trim()
 
 // La typographie de l'AELF corrigée, sans toucher à ses mots : « 27e », « 1re »,
 // minuscules à « semaine » ou « temps ordinaire », apostrophe typographique ;
@@ -34,7 +51,10 @@ export function presenterJour(jour: JourLiturgique): Bandeau {
   const couleur = jour.couleurs[0]
   const intitule = jour.intitule && nettoyer(jour.intitule.replace(JOUR_DE_SEMAINE, ''))
   const saint =
-    jour.celebration && !RANG_SEUL.test(jour.celebration) ? nettoyer(jour.celebration) : undefined
+    jour.celebration && !RANG_SEUL.test(jour.celebration)
+      ? nettoyer(nommerSaint(jour.celebration))
+      : undefined
   if (saint) return { temps: intitule, titre: saint, couleur }
-  return { titre: intitule, couleur }
+  if (intitule && RANG_DU_JOUR.test(intitule)) return { temps: intitule, titre: undefined, couleur }
+  return { temps: undefined, titre: intitule, couleur }
 }

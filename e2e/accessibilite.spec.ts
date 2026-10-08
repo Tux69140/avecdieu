@@ -120,7 +120,7 @@ for (const [nom, heure, chemin] of [
     await servirAelf(page)
     await preparer(page)
     await page.goto(chemin)
-    await expect(page.getByTestId('bandeau').locator('.bandeau-titre')).toBeVisible()
+    await expect(page.getByTestId('bandeau').locator('.bandeau-pastille')).toBeVisible()
     expect(await violationsGraves(page)).toEqual([])
   })
 }
@@ -274,7 +274,7 @@ test('rappels bloqués : la ligne de l’accueil et le résumé, de jour puis de
     await page.goto(chemin)
     await expect(page.getByText('Rappels bloqués par le téléphone').first()).toBeAttached()
     if (chemin === '/')
-      await expect(page.getByTestId('bandeau').locator('.bandeau-titre')).toBeVisible()
+      await expect(page.getByTestId('bandeau').locator('.bandeau-pastille')).toBeVisible()
     expect(await violationsGraves(page)).toEqual([])
     await page.emulateMedia({ colorScheme: 'dark' })
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'nuit')
@@ -295,7 +295,7 @@ test.describe('de nuit', () => {
   test('accueil', async ({ page }) => {
     await preparer(page)
     await page.goto('/')
-    await expect(page.getByTestId('bandeau').locator('.bandeau-titre')).toBeVisible()
+    await expect(page.getByTestId('bandeau').locator('.bandeau-pastille')).toBeVisible()
     expect(await violationsGraves(page)).toEqual([])
   })
 
