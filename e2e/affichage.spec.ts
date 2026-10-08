@@ -76,7 +76,7 @@ test.describe('zone liturgique', () => {
     // Annuler la confirmation : rien ne change, les textes restent.
     await fenetreZone(page).getByRole('radio', { name: 'Belgique' }).click()
     await expect(confirmation(page)).toContainText(
-      'Les textes gardés pour prier sans connexion seront remplacés par ceux de la zone Belgique. Il faudra une connexion pour les recharger.',
+      'Les textes gardés pour prier sans connexion seront effacés et remplacés par ceux de la zone Belgique. Il faudra une connexion pour les recharger, sinon aucun texte ne sera disponible.',
     )
     await confirmation(page).getByRole('button', { name: 'Annuler' }).click()
     await expect(page.getByRole('dialog')).toHaveCount(0)

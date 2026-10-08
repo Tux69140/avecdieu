@@ -82,3 +82,4 @@
 | 2026-10-07 | Accueil resserré | Validé par le porteur du projet : lignes des offices à 48 px, marges réduites ; à 360 × 780, l'écran montre tout jusqu'aux complies sans défiler, cadran inchangé |
 | 2026-10-07 | Accueil : badge « Prière du moment » sur la ligne de l'office | Demande du porteur du projet : l'encadré répétait la liste ; badge discret cerclé de rouge, Literata italique 11 px (plus étroite que les petites capitales), sans délai, écarté du nom de 16 px ; tout tient à 360 px jusqu'au chapelet |
 | 2026-10-07 | « Plus bas » s'efface dans un office dès qu'on lit | Choix du porteur du projet : au-delà de 48 px de défilement, le signal ne revient plus dans l'office ; il reste partout ailleurs |
+| 2026-10-08 | Date du menu en petites capitales, telle quelle | Choix assumé du porteur du projet après la critique du menu : la date (« jeudi 8 octobre », Cormorant SC 15 px, sépia) reste comme elle est ; ne plus la signaler comme trop ténue dans les critiques |

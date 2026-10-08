@@ -13,7 +13,7 @@ interface Props {
 // La zone liturgique, choisie une fois pour toutes : une seule ligne dans la
 // rubrique Offices, qui ouvre le choix dans une fenêtre. Changer de zone efface
 // les textes gardés ; une confirmation l'annonce avant (textes validés par le
-// porteur du projet, 2026-10-08).
+// porteur du projet, 2026-10-08, revus le même jour).
 export function ChoixZone({ zone, textesGardes, onChoisir }: Props) {
   const [ouvert, setOuvert] = useState(false)
   return (
@@ -80,8 +80,9 @@ function Fenetre({ zone, textesGardes, onChoisir, onFermer }: Props & { onFermer
         <>
           <h2 id={titre}>Changer de zone ?</h2>
           <p>
-            Les textes gardés pour prier sans connexion seront remplacés par {ceuxDe(enAttente)}. Il
-            faudra une connexion pour les recharger.
+            Les textes gardés pour prier sans connexion seront effacés et remplacés par{' '}
+            {ceuxDe(enAttente)}. Il faudra une connexion pour les recharger, sinon aucun texte ne
+            sera disponible.
           </p>
           <div className="dialogue-boutons">
             <button
