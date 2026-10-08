@@ -4,3 +4,4 @@
 - Les rubriques et dates en petites capitales espacées (Cormorant SC) prises pour des sur-titres de gabarit : c'est la voix des rubriques liturgiques du système (docs/DESIGN.md).
 - Les noms d'offices en Baumans sur l'accueil (et en Literata dans le menu), jugés trop proches du titre du jour ou incohérents entre les écrans : choix assumé du porteur du projet (2026-10-08).
 - La pastille de couleur liturgique du bandeau, sans légende : choix assumé du porteur du projet (2026-10-08), annoncée au lecteur d'écran.
+- Le texte des offices aligné à gauche et non centré comme les prières du chapelet : choix du porteur du projet (2026-10-08, voir le journal de docs/DESIGN.md).
