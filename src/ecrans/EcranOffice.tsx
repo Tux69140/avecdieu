@@ -6,7 +6,7 @@ import { textesEnregistres } from '../aelf/reserve'
 import { usePincement } from '../affichage/usePincement'
 import { lireReglages } from '../chapelet/reglages'
 import { positionRetenue } from '../composants/defilement'
-import { BoutonRetour, LienMenu } from '../composants/Icones'
+import { BoutonFermer, LienMenu } from '../composants/Icones'
 import { IndiceSuite } from '../composants/IndiceSuite'
 import { useRetour } from '../composants/retour'
 import { useSuiteCachee } from '../composants/suiteCachee'
@@ -177,7 +177,7 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
           courante={courante}
           visible={bandeauVisible}
           onOuvrir={sommaire.ouvrir}
-          onRetour={retour}
+          onFermer={retour}
           date={date}
           office={nom}
         />
@@ -192,7 +192,7 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
           {/* Une seule ligne pour sortir, se repérer dans la journée et ouvrir
               le menu : la prière commence haut sur l'écran. */}
           <div className="office-barre">
-            <BoutonRetour onClick={retour} />
+            <BoutonFermer onClick={retour} />
             <p className="office-date">{dateLisible(date)}</p>
             <LienMenu depuis={date} office={nom} />
           </div>

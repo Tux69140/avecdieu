@@ -245,13 +245,6 @@ body::before {
   }
 }
 
-/* Retour en haut d'un écran secondaire, aligné sur la gouttière. */
-.retour {
-  margin-left: calc(-1 * var(--esp-sm));
-  text-decoration: none;
-  color: var(--sepia);
-}
-
 /* Pour le seul lecteur d'écran : ce que l'œil lit déjà ailleurs. */
 .cache-a-l-oeil {
   position: absolute;
@@ -280,7 +273,7 @@ body::before {
   cursor: pointer;
 }
 
-/* Une icône à toucher (‹ retour, ☰ menu) : 48 px de cible, trait d'encre. */
+/* Une icône à toucher (croix, ☰ menu) : 48 px de cible, trait d'encre. */
 .bouton-icone {
   display: grid;
   place-items: center;
@@ -301,4 +294,13 @@ body::before {
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+/* La croix qui ferme : plus fine et plus discrète que ☰, en sépia, un dessin
+   de 18 px (décision du porteur du projet, 2026-10-08). */
+.bouton-icone.bouton-fermer svg {
+  width: 18px;
+  height: 18px;
+  stroke: var(--sepia);
+  stroke-width: 1.5;
 }

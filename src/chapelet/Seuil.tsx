@@ -2,12 +2,13 @@ import { useState } from 'react'
 import { Link } from 'react-router'
 import { IndiceSuite } from '../composants/IndiceSuite'
 import { Interrupteur } from '../composants/Interrupteur'
+import { LigneFermer } from '../composants/LigneFermer'
 import { useRetour } from '../composants/retour'
 import { useSuiteCachee } from '../composants/suiteCachee'
 import { usePeutVibrer } from '../telephone/retours'
 import { SERIES, type SerieId } from '../recueil/mysteres'
 import { ChoixAffichage } from './ChoixAffichage'
-import { AIDE_VIBRATIONS } from './libelles'
+import { AIDE_VIBRATIONS, etiquetteDuChapelet } from './libelles'
 import { lireReglages, modifierReglages, type Reglages } from './reglages'
 import { libelleReprise, type ChapeletEnCours } from './reprise'
 import { joursDeLaSerie } from './serieDuJour'
@@ -32,19 +33,17 @@ export function Seuil({ serie, duJour, date, enCours, onCommencer, onRecommencer
   // Sans vibreur (tablette), le réglage n'a pas lieu d'être.
   const vibreur = usePeutVibrer()
   const { fin, cachee } = useSuiteCachee()
-  const jour = date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
   const autres = (Object.keys(SERIES) as SerieId[]).filter((s) => s !== serie)
   const modifier = (changement: Partial<Reglages>) => setReglages(modifierReglages(changement))
 
   return (
     <main className="seuil">
-      <button className="retour lien-discret" type="button" onClick={retour}>
-        ‹ Retour
-      </button>
       <header className="seuil-entete">
-        <p className="etiquette">
-          {serie === duJour ? `Chapelet du jour · ${jour}` : `Chapelet · ${jour}`}
-        </p>
+        {/* La croix sur la ligne de la date, comme dans un office : le titre
+            de la série garde sa place, juste dessous. */}
+        <LigneFermer onFermer={retour}>
+          <p className="etiquette">{etiquetteDuChapelet(serie === duJour, date)}</p>
+        </LigneFermer>
         <h1>{SERIES[serie].titre}</h1>
       </header>
       <ol className="seuil-mysteres" aria-label="Les cinq mystères">

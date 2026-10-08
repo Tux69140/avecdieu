@@ -202,7 +202,7 @@ test('le chapelet s’ouvre par le menu de l’accueil, et son retour y ramène'
   await page.getByRole('link', { name: 'Menu' }).click()
   await page.getByRole('link', { name: 'Chapelet' }).click()
   await expect(page).toHaveURL(/\/chapelet$/)
-  await page.getByRole('button', { name: /Retour/ }).click()
+  await page.getByRole('button', { name: 'Fermer', exact: true }).click()
   await expect(page).toHaveURL('/')
   await expect(page.getByRole('link', { name: 'Menu' })).toBeVisible()
 })

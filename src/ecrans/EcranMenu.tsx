@@ -1,4 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router'
+import { LigneFermer } from '../composants/LigneFermer'
 import { useRetour } from '../composants/retour'
 import { dateDuJour, dateLisible, estDate } from '../office/dates'
 import { ecrireHeure, heuresDuJour } from '../office/heures'
@@ -24,12 +25,9 @@ export function EcranMenu() {
   const heures = heuresDuJour(date)
   return (
     <main className="menu">
-      <button className="menu-fermer" type="button" aria-label="Fermer le menu" onClick={fermer}>
-        <svg viewBox="0 0 20 20" aria-hidden="true">
-          <path d="M4 4l12 12M16 4L4 16" />
-        </svg>
-      </button>
-      <h1>Avec Dieu</h1>
+      <LigneFermer onFermer={fermer}>
+        <h1>Avec Dieu</h1>
+      </LigneFermer>
       <nav aria-label="Menu">
         <ul className="menu-liste">
           <li>
@@ -39,7 +37,7 @@ export function EcranMenu() {
           </li>
         </ul>
         <h2 className="menu-jour">{dateLisible(date)}</h2>
-        <ul className="menu-liste menu-prieres" aria-label="Prières du jour">
+        <ul className="menu-liste menu-prieres" aria-label="Offices du jour">
           {OFFICES.map((nom) => {
             const heure = heures[nom]
             const ouvert = nom === office
@@ -59,6 +57,10 @@ export function EcranMenu() {
               </li>
             )
           })}
+        </ul>
+        {/* Le chapelet, son propre groupe sous les offices, comme sur l'accueil
+            (décision du porteur du projet, 2026-10-08). */}
+        <ul className="menu-liste menu-prieres menu-chapelet" aria-label="Chapelet">
           <li>
             <Link to="/chapelet" replace>
               <span className="menu-priere">Chapelet</span>

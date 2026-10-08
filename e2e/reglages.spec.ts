@@ -61,8 +61,31 @@ test.describe('écran des réglages', () => {
     )
     await expect(reglage(page, 'Vibrations')).toHaveAttribute('aria-checked', 'true')
 
-    await page.getByRole('button', { name: /Retour/ }).click()
+    await page.getByRole('button', { name: 'Fermer', exact: true }).click()
     await accueil(page)
+  })
+
+  // › veut dire « ouvre un autre écran » ; une rubrique qui se déplie sur
+  // place porte une flèche vers le bas, retournée une fois ouverte (décision
+  // du porteur du projet, 2026-10-08).
+  test('une rubrique porte une flèche dessinée, retournée une fois ouverte', async ({ page }) => {
+    await preparer(page)
+    await page.goto('/reglages')
+    const bouton = page.getByRole('button', { name: 'Affichage', exact: true })
+    const fleche = bouton.locator('svg')
+    await expect(fleche).toHaveCount(1)
+    await expect(bouton).not.toContainText('›')
+    // Le sens de la flèche : 1 vers le bas, -1 retournée vers le haut.
+    const sens = () =>
+      fleche.evaluate((svg) => {
+        const t = getComputedStyle(svg.closest('.rubrique-chevron')!).transform
+        return Math.round(new DOMMatrix(t === 'none' ? undefined : t).d)
+      })
+    await expect.poll(() => page.evaluate(() => document.getAnimations().length)).toBe(0)
+    expect(await sens()).toBe(1)
+    await bouton.click()
+    await expect.poll(() => page.evaluate(() => document.getAnimations().length)).toBe(0)
+    expect(await sens()).toBe(-1)
   })
 
   test('chaque réglage se retient après redémarrage de l’app', async ({ page }) => {
@@ -88,7 +111,7 @@ test.describe('écran des réglages', () => {
     await expect(reglage(page, 'Vibrations')).toHaveAttribute('aria-checked', 'false')
 
     // Le seuil partage la même mémoire.
-    await page.getByRole('button', { name: /Retour/ }).click()
+    await page.getByRole('button', { name: 'Fermer', exact: true }).click()
     await ouvrirChapelet(page)
     await expect(page.getByRole('radio', { name: 'Compact' })).toHaveAttribute(
       'aria-checked',
@@ -368,11 +391,11 @@ test.describe('reprise d’un chapelet interrompu', () => {
     await commencer(page)
     await avancer(page, AVE_3_4)
     await page.goBack()
-    await page.getByRole('button', { name: /Retour/ }).click()
+    await page.getByRole('button', { name: 'Fermer', exact: true }).click()
     await ouvrirReglages(page)
     // Sans « Ô mon Jésus », les deux premières dizaines ont une prière de moins.
     await reglage(page, /Ô mon Jésus/).click()
-    await page.getByRole('button', { name: /Retour/ }).click()
+    await page.getByRole('button', { name: 'Fermer', exact: true }).click()
     await ouvrirChapelet(page)
     await page.getByRole('button', { name: 'Reprendre à la 3e dizaine' }).click()
     await verifierAve34(page)

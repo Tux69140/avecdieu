@@ -162,7 +162,7 @@ test('l’écran reste allumé pendant la lecture et redevient libre au retour',
     .click()
   await expect(titres(page).first()).toHaveText('Introduction')
   await expect.poll(() => journal(page)).toEqual(['écran allumé'])
-  await page.getByRole('button', { name: /Retour/ }).click()
+  await page.getByRole('button', { name: 'Fermer', exact: true }).click()
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mardi 6 octobre')
   await expect.poll(() => journal(page)).toEqual(['écran allumé', 'écran libre'])
 })

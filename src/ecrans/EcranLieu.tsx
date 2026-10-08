@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router'
 import { Interrupteur } from '../composants/Interrupteur'
+import { LigneFermer } from '../composants/LigneFermer'
 import { useRetour } from '../composants/retour'
 import {
   changerActualisation,
@@ -76,10 +77,9 @@ export function EcranLieu() {
 
   return (
     <main className="lieu">
-      <button className="retour lien-discret" type="button" onClick={retour}>
-        ‹ Retour
-      </button>
-      <h1>Lieu des heures solaires</h1>
+      <LigneFermer onFermer={retour}>
+        <h1>Lieu des heures solaires</h1>
+      </LigneFermer>
 
       <button
         className="btn btn-principal lieu-localiser"

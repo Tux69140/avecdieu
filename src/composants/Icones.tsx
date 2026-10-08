@@ -1,12 +1,20 @@
 import { Link } from 'react-router'
 
-// ‹ et ☰, partout les mêmes : en tête d'un office et dans sa barre.
+// La croix et ☰, partout les mêmes : en tête des écrans, d'un office et dans sa barre.
 
-export function BoutonRetour({ onClick }: { onClick: () => void }) {
+// Fermer : une croix fine en haut à gauche, le même dessin sur chaque écran.
+// Elle ramène là d'où l'on vient, comme le retour d'Android (décision du
+// porteur du projet, 2026-10-08).
+export function BoutonFermer({ onClick }: { onClick: () => void }) {
   return (
-    <button className="bouton-icone" type="button" aria-label="Retour" onClick={onClick}>
-      <svg viewBox="0 0 20 20" aria-hidden="true">
-        <path d="M12.5 4l-6 6 6 6" />
+    <button
+      className="bouton-icone bouton-fermer"
+      type="button"
+      aria-label="Fermer"
+      onClick={onClick}
+    >
+      <svg viewBox="0 0 18 18" aria-hidden="true">
+        <path d="M3.5 3.5l11 11M14.5 3.5l-11 11" />
       </svg>
     </button>
   )
