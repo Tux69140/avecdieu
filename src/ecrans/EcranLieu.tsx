@@ -96,10 +96,10 @@ export function EcranLieu() {
         <div className="lieu-erreur" role="alert">
           <p>
             <span aria-hidden="true">⚠ </span>Android refuse l’accès à la position. Cherchez plutôt
-            une ville, ou autorisez la position dans les réglages d’Android.
+            une ville, ou autorisez la position dans les Paramètres du téléphone.
           </p>
           <button className="btn btn-secondaire" type="button" onClick={ouvrirFicheApp}>
-            Ouvrir les réglages d’Android
+            Ouvrir les Paramètres du téléphone
           </button>
         </div>
       )}

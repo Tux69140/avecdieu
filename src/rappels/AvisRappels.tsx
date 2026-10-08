@@ -51,7 +51,7 @@ export function AvisRappels({ android, onMinuteOuverte }: Props) {
     return (
       <Avis
         texte="Android bloque les notifications de l’app : aucun rappel ne s’affichera."
-        bouton="Ouvrir les réglages d’Android"
+        bouton="Ouvrir les Paramètres du téléphone"
         onOuvrir={ouvrirReglagesNotifications}
       />
     )
@@ -72,7 +72,7 @@ export function AvisRappels({ android, onMinuteOuverte }: Props) {
       {bloque.arrierePlan && (
         <Avis
           texte="Android interdit à l’app de travailler en arrière-plan : aucun rappel ne viendra."
-          bouton="Ouvrir les réglages d’Android"
+          bouton="Ouvrir les Paramètres du téléphone"
           onOuvrir={ouvrirFicheApp}
         />
       )}

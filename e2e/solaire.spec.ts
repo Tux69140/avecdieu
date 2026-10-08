@@ -176,9 +176,11 @@ test('position refusée par Android : le message et le chemin vers ses réglages
   await page.goto('/lieu')
   await page.getByRole('button', { name: 'Me localiser' }).click()
   await expect(page.getByRole('alert')).toContainText(
-    '⚠ Android refuse l’accès à la position. Cherchez plutôt une ville, ou autorisez la position dans les réglages d’Android.',
+    '⚠ Android refuse l’accès à la position. Cherchez plutôt une ville, ou autorisez la position dans les Paramètres du téléphone.',
   )
-  await expect(page.getByRole('button', { name: 'Ouvrir les réglages d’Android' })).toBeVisible()
+  await expect(
+    page.getByRole('button', { name: 'Ouvrir les Paramètres du téléphone' }),
+  ).toBeVisible()
 })
 
 test('position introuvable : le message le dit', async ({ page }) => {

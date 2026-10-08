@@ -186,7 +186,7 @@ test('notifications refusées : un avis le dit, et rien n’est programmé', asy
   await expect(avis).toHaveText(
     /⚠ Android bloque les notifications de l’app : aucun rappel ne s’affichera\./,
   )
-  await avis.getByRole('button', { name: 'Ouvrir les réglages d’Android' }).click()
+  await avis.getByRole('button', { name: 'Ouvrir les Paramètres du téléphone' }).click()
   await expect
     .poll(async () => (await telephone(page)).journal)
     .toContain('réglages des notifications')
@@ -291,7 +291,7 @@ test('arrière-plan interdit, sur toute marque : un avis', async ({ page }) => {
   await expect(avis).toHaveText([
     /⚠ Android interdit à l’app de travailler en arrière-plan : aucun rappel ne viendra\./,
   ])
-  await avis.getByRole('button', { name: 'Ouvrir les réglages d’Android' }).click()
+  await avis.getByRole('button', { name: 'Ouvrir les Paramètres du téléphone' }).click()
   await expect.poll(async () => (await telephone(page)).journal).toContain('fiche de l’app')
 })
 
