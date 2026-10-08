@@ -170,3 +170,32 @@
   padding: var(--esp-xs);
   text-wrap: balance;
 }
+
+/* Texte agrandi (au-delà de 18 px) : le chapelet dessiné rapetisse à mesure
+   et les espaces se resserrent, pour qu'un Je vous salue tienne à 20 px sur
+   un écran de 360 × 780, barres d'Android comprises (choix du porteur du
+   projet, 2026-10-08). 64 px de haut à 20 px, 56 à 22, 48 à 24. */
+:root[data-texte='grand'] .chapelet .chapelet-dessine {
+  max-height: calc(144px - 4 * var(--taille-priere));
+}
+
+:root[data-texte='grand'] .chapelet-entete {
+  margin-bottom: var(--esp-xs);
+}
+
+:root[data-texte='grand'] .mystere-en-cours {
+  margin-top: var(--esp-xs);
+}
+
+:root[data-texte='grand'] .priere {
+  margin-top: var(--esp-sm);
+  padding-top: var(--esp-sm);
+}
+
+:root[data-texte='grand'] .priere-texte {
+  margin-top: var(--esp-xs);
+}
+
+:root[data-texte='grand'] .strophe + .strophe {
+  margin-top: 0.6em;
+}

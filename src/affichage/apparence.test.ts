@@ -38,9 +38,11 @@ describe('appliquerApparence', () => {
     appliquerApparence({ theme: 'nuit', tailleTexte: 22 }, false, MARDI(12))
     expect(document.documentElement.dataset.theme).toBe('nuit')
     expect(document.documentElement.style.getPropertyValue('--taille-priere')).toBe('22px')
+    expect(document.documentElement.dataset.texte).toBe('grand')
     appliquerApparence({ theme: 'automatique', tailleTexte: 18 }, false, MARDI(12))
     expect(document.documentElement.dataset.theme).toBe('jour')
     expect(document.documentElement.style.getPropertyValue('--taille-priere')).toBe('18px')
+    expect(document.documentElement.dataset.texte).toBe('normal')
   })
 })
 

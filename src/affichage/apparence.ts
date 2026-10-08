@@ -33,6 +33,9 @@ export function appliquerApparence(
   const avant = page.dataset.theme
   page.dataset.theme = nuit ? 'nuit' : 'jour'
   page.style.setProperty('--taille-priere', `${tailleTexte}px`)
+  // Au-delà de la taille par défaut, le haut du chapelet se resserre pour que
+  // la prière tienne à l'écran (choix du porteur du projet, 2026-10-08).
+  page.dataset.texte = tailleTexte > 18 ? 'grand' : 'normal'
   if (avant !== page.dataset.theme) accorderLesBarres(nuit)
 }
 

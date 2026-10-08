@@ -178,6 +178,30 @@ test('annonce d’un mystère : la grosse perle reste au-dessus de la barre du b
   await verifierBarres(page)
 })
 
+// À partir de 20 px, le chapelet dessiné rapetisse et les espaces se
+// resserrent : un Je vous salue tient entre les barres à 20 px (choix du
+// porteur du projet, 2026-10-08). À 18 px, rien ne change.
+for (const tailleTexte of [18, 20]) {
+  test(`chapelet, texte à ${tailleTexte} px : un Je vous salue tient entre les barres`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 360, height: 780 })
+    await commencer(page, '/chapelet', { reglages: { tailleTexte } })
+    for (let i = 0; i < 9; i++) await suivant(page)
+    await expect(page.getByTestId('priere').getByRole('heading', { level: 2 })).toHaveText(
+      'Je vous salue Marie',
+    )
+    await expect.poll(() => page.evaluate(() => document.getAnimations().length)).toBe(0)
+    const dessin = (await page.getByTestId('chapelet-dessine').boundingBox())!
+    // Le dessin ne rapetisse qu'au-delà de la taille par défaut.
+    if (tailleTexte === 18) expect(dessin.height).toBeGreaterThan(100)
+    else expect(dessin.height).toBeLessThan(80)
+    const texte = (await page.locator('.priere-texte').boundingBox())!
+    expect(texte.y + texte.height).toBeLessThanOrEqual(780 - BAS)
+    await expect(page.getByRole('button', { name: 'Plus bas' })).toBeHidden()
+  })
+}
+
 test('rappels : la fenêtre d’autorisation s’écarte des barres d’Android', async ({ page }) => {
   await simulerTelephone(page, { accord: 'prompt' })
   await preparer(page)
