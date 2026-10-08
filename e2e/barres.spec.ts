@@ -143,6 +143,29 @@ test('office : le bandeau et le sommaire s’écartent des barres d’Android', 
   expect(boite.y + boite.height).toBeLessThanOrEqual(page.viewportSize()!.height - BAS)
 })
 
+test('les fenêtres d’aide de l’office et du chapelet s’écartent des barres d’Android', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 360, height: 640 })
+  await servirAelf(page)
+  await preparer(page, { aide: true })
+  const hauteur = page.viewportSize()!.height
+  for (const [chemin, nom] of [
+    ['/office/laudes/2026-10-06', 'Lire un office'],
+    ['/chapelet', 'Prier avec l’app'],
+  ]) {
+    await page.goto(chemin)
+    if (chemin === '/chapelet')
+      await page.getByRole('button', { name: 'Commencer le chapelet' }).click()
+    const fenetre = page.getByRole('dialog', { name: nom })
+    await expect(fenetre).toBeVisible()
+    await expect.poll(() => page.evaluate(() => document.getAnimations().length)).toBe(0)
+    const boite = (await fenetre.boundingBox())!
+    expect(boite.y, nom).toBeGreaterThanOrEqual(HAUT)
+    expect(boite.y + boite.height, nom).toBeLessThanOrEqual(hauteur - BAS)
+  }
+})
+
 test('annonce d’un mystère : la grosse perle reste au-dessus de la barre du bas', async ({
   page,
 }) => {

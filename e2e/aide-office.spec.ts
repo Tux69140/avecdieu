@@ -101,3 +101,28 @@ test('l’aide n’explique que ce qui se voit', async ({ page }) => {
   await expect(aide(page)).not.toContainText('filet rouge')
   await expect(aide(page)).not.toContainText('en entier')
 })
+
+test('« ? » rouvre l’aide, même écartée ; « J’ai compris » a le focus', async ({ page }) => {
+  await servirAelf(page)
+  await preparer(page, { reglages: { plusieurs: true } })
+  await page.goto('/office/laudes/2026-10-06')
+  await expect(page.getByTestId('office')).toBeVisible()
+  await expect(aide(page)).toHaveCount(0)
+  await page.getByRole('button', { name: 'Aide à la lecture' }).click()
+  await expect(aide(page)).toBeVisible()
+  await expect(aide(page).getByRole('button', { name: 'J’ai compris' })).toBeFocused()
+  // À plusieurs, une ligne de plus : le demi-gras.
+  await expect(aide(page).getByRole('listitem')).toHaveCount(9)
+  await expect(aide(page)).toContainText('En gras, ce que disent tous.')
+  await page.keyboard.press('Escape')
+  await expect(aide(page)).toHaveCount(0)
+})
+
+test('complies : un temps de silence avant le Je confesse', async ({ page }) => {
+  await servirAelf(page)
+  await preparer(page)
+  await page.goto('/office/complies/2026-10-06')
+  await expect(partie(page, 'Examen de conscience').locator('.office-rubrique')).toHaveText(
+    'Un temps de silence pour relire sa journée.',
+  )
+})

@@ -81,8 +81,11 @@ describe('R13 : les consignes pour débuter', () => {
     expect(repons.rubrique).toBe(CONSIGNES.intercession)
   })
 
-  it('aux complies, la seule antienne reprise porte sa consigne', () => {
-    expect(consignes(complet('complies', '2026-10-06', true))).toEqual([CONSIGNES.antienne])
+  it('aux complies : le silence de l’examen, puis la seule antienne reprise', () => {
+    expect(consignes(complet('complies', '2026-10-06', true))).toEqual([
+      CONSIGNES.examen,
+      CONSIGNES.antienne,
+    ])
   })
 
   it('le réglage coupé, aucune consigne', () => {

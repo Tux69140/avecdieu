@@ -101,6 +101,27 @@
   font-style: italic;
 }
 
+/* À plusieurs, la part de tous en demi-gras, interligne inchangé (choix du
+   porteur du projet, 2026-10-08). */
+.bloc[data-tous='oui'] {
+  font-weight: 600;
+}
+
+/* L'antienne, l'invitatoire et l'intercession se lisent ligne à ligne : une
+   ligne coupée faute de place reprend en retrait, comme un vers, pour qu'on ne
+   la prenne pas pour une ligne nouvelle. */
+.partie:is([data-type='antienne'], [data-type='invitatoire'], [data-type='intercession'])
+  .office-ligne {
+  padding-left: 1.2em;
+  text-indent: -1.2em;
+}
+
+/* Reprise au bout d'un psaume, l'antienne garde sa mise en page : seule
+   l'italique la distingue. */
+.partie[data-mise='vers'] .bloc[data-reprise='oui'] {
+  line-height: 1.65;
+}
+
 /* Une ligne qui commence par ℣. ou ℟., ou par le tiret d'une intention : si
    elle se coupe, la suite s'aligne après le signe, pour qu'on ne la prenne
    pas pour une ligne nouvelle. Placé après la règle des vers, il l'emporte. */

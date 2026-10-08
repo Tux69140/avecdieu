@@ -16,8 +16,9 @@ import { PRIERES } from './prieres'
 // textes ajoutés aux offices et règles de rubriques R1 à R10, le 2026-10-06 ;
 // R8 complétée (envoi de l’AELF dans l’octave de Pâques et à la Pentecôte) et
 // R11 (reprises du répons bref), le 2026-10-06 ; R12 (répons de l’intercession
-// redit, tiret des intentions retiré), R13 et ses consignes pour débuter, validés d'avance par le porteur
-// du projet le 2026-10-08 (« nous les corrigerons au besoin »).
+// redit, tiret des intentions retiré), R13 et ses consignes pour débuter (dont
+// le silence de l’examen), R10 revue (la part de tous en demi-gras), décidés
+// par le porteur du projet le 2026-10-08 (« nous les corrigerons au besoin »).
 const empreinte = (donnees: unknown) =>
   createHash('sha256').update(JSON.stringify(donnees)).digest('hex')
 
@@ -48,13 +49,13 @@ describe('recueil de textes figés', () => {
 
   it('les textes ajoutés aux offices sont ceux validés par le porteur du projet', () => {
     expect(empreinte({ TEXTES_OFFICE, RUBRIQUE_EXAMEN, CONCLUSIONS, CONSIGNES })).toBe(
-      '9e305df5c0d660037babbd276fdb0d98c068d83def2e6e1a7b9b10798af43e35',
+      '36657d7bf165a9b215cebf3a80793a2f44df501a381b5bffa1e967413a4cdf43',
     )
   })
 
   it('les règles de rubriques sont celles validées par le porteur du projet', () => {
     expect(empreinte(REGLES_RUBRIQUES)).toBe(
-      '3532ac8442a7a1b097a86f5413125540cec7bc5c643f18865b5d164388ee64a5',
+      '3b95dd6a973a6fb592ca30a159f8dfe7f5249e89c0548a94c1b5fbf22bfb5c47',
     )
   })
 })

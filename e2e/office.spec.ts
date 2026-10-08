@@ -162,7 +162,9 @@ const boites = (page: Page) =>
     return { titre: boite('.office-entete h1'), saint: boite('.office-saint') }
   })
 
-test('le saint du jour en petit sur la ligne du titre, qui reste centré', async ({ page }) => {
+test('le saint du jour en petit à gauche du titre, qui reste centré, et « ? » à droite', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 360, height: 780 })
   await servirAelf(page)
   await preparer(page)
@@ -170,13 +172,17 @@ test('le saint du jour en petit sur la ligne du titre, qui reste centré', async
   await expect(page.getByTestId('saint-du-jour')).toHaveText('S. Bruno')
   const { titre, saint } = await boites(page)
   expect((titre!.gauche + titre!.droite) / 2).toBeCloseTo(180, 0)
-  expect(saint!.gauche).toBeGreaterThan(titre!.droite)
-  expect(saint!.droite).toBeLessThanOrEqual(360 - 16)
+  expect(saint!.droite).toBeLessThan(titre!.gauche)
+  expect(saint!.gauche).toBeGreaterThanOrEqual(16)
   expect(saint!.haut).toBeLessThan(titre!.bas)
   expect(saint!.bas).toBeGreaterThan(titre!.haut)
+  const aide = await page.getByRole('button', { name: 'Aide à la lecture' }).boundingBox()
+  expect(aide!.x).toBeGreaterThan(titre!.droite)
+  expect(aide!.width).toBe(48)
+  expect(aide!.height).toBe(48)
 })
 
-test('un nom de saint long tient à droite du titre, sur plusieurs lignes', async ({ page }) => {
+test('un nom de saint long tient à gauche du titre, sur plusieurs lignes', async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 780 })
   await servirAelf(page)
   const long = 'Les sept saints fondateurs des Servîtes de Marie'
@@ -195,8 +201,8 @@ test('un nom de saint long tient à droite du titre, sur plusieurs lignes', asyn
   await expect(page.getByTestId('saint-du-jour')).toHaveText(long)
   const { titre, saint } = await boites(page)
   expect((titre!.gauche + titre!.droite) / 2).toBeCloseTo(180, 0)
-  expect(saint!.gauche).toBeGreaterThan(titre!.droite)
-  expect(saint!.droite).toBeLessThanOrEqual(360 - 16)
+  expect(saint!.droite).toBeLessThan(titre!.gauche)
+  expect(saint!.gauche).toBeGreaterThanOrEqual(16)
   const debordements = await page
     .getByTestId('saint-du-jour')
     .evaluate((p) => p.scrollWidth - p.clientWidth)
@@ -221,19 +227,20 @@ test('un jour de fête, aucun nom en tête de l’office', async ({ page }) => {
   await expect(page.getByTestId('saint-du-jour')).toHaveCount(0)
 })
 
-test('un office que l’AELF ne propose pas : le dire, sans « Réessayer »', async ({ page }) => {
+test('le jour de Pâques, une note et le chemin des laudes, sans ton d’erreur', async ({ page }) => {
   // Le dimanche de Pâques, la Vigile pascale tient lieu d'office des lectures.
   await servirAelf(page)
   await preparer(page)
-  // L'app le dit, sans parler de panne (choix du porteur du projet, 2026-10-08).
-  await page.goto('/office/lectures/2026-04-05')
-  const alerte = page.getByRole('alert')
-  await expect(alerte).toHaveText(
-    /^⚠ Le jour de Pâques, la Vigile pascale tient lieu d’office des lectures\.$/,
+  // Une note, pas une erreur (choix du porteur du projet, 2026-10-08).
+  await page.goto('/office/lectures/2027-03-28')
+  await expect(page.locator('.office-note')).toContainText(
+    'Le jour de Pâques, la Vigile pascale tient lieu d’office des lectures.',
   )
+  await expect(page.getByRole('alert')).toHaveCount(0)
   await expect(page.getByRole('button', { name: 'Réessayer' })).toHaveCount(0)
-  await page.getByRole('button', { name: 'Revenir à l’accueil' }).click()
-  await expect(page).toHaveURL('/')
+  await expect(page.getByRole('button', { name: 'Revenir à l’accueil' })).toBeVisible()
+  await page.getByRole('button', { name: 'Prier les laudes' }).click()
+  await expect(page).toHaveURL('/office/laudes/2027-03-28')
 })
 
 test('un autre office absent de l’AELF : le dire, sans parler de panne', async ({ page }) => {

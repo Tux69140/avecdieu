@@ -6,6 +6,43 @@
 @import '@fontsource-variable/literata/opsz.css';
 @import '@fontsource-variable/literata/opsz-italic.css';
 
+/* Petites capitales sans accent (choix du porteur du projet, 2026-10-08) :
+   déclarées après Cormorant SC pour les seules lettres accentuées, elles
+   l'emportent et les dessinent sans accent (« BENEDICTION »). Le texte garde
+   ses accents. Voir scripts/generer-capitales-sans-accent.py. */
+@font-face {
+  font-family: 'Cormorant SC';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url('./polices/capitales-sans-accent-400.woff2') format('woff2');
+  unicode-range:
+    U+00C0-00C5, U+00C8-00CF, U+00D1-00D6, U+00D9-00DD, U+00E0-00E5, U+00E8-00EF, U+00F1-00F6,
+    U+00F9-00FD, U+00FF, U+0178;
+}
+
+@font-face {
+  font-family: 'Cormorant SC';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url('./polices/capitales-sans-accent-500.woff2') format('woff2');
+  unicode-range:
+    U+00C0-00C5, U+00C8-00CF, U+00D1-00D6, U+00D9-00DD, U+00E0-00E5, U+00E8-00EF, U+00F1-00F6,
+    U+00F9-00FD, U+00FF, U+0178;
+}
+
+@font-face {
+  font-family: 'Cormorant SC';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600;
+  src: url('./polices/capitales-sans-accent-600.woff2') format('woff2');
+  unicode-range:
+    U+00C0-00C5, U+00C8-00CF, U+00D1-00D6, U+00D9-00DD, U+00E0-00E5, U+00E8-00EF, U+00F1-00F6,
+    U+00F9-00FD, U+00FF, U+0178;
+}
+
 :root {
   /* Bords occupés par les barres d'Android. Capacitor fournit --safe-area-inset-*
      (justes sur toutes les WebView) ; le navigateur, env(). */

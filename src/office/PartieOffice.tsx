@@ -48,6 +48,7 @@ function BlocOffice({ bloc, replier }: { bloc: Bloc; replier: boolean }) {
       className="bloc"
       data-ajoute={bloc.ajoute ? 'oui' : undefined}
       data-reprise={bloc.reprise ? 'oui' : undefined}
+      data-tous={bloc.tous ? 'oui' : undefined}
       data-testid={bloc.priere ? 'priere-courante' : undefined}
     >
       {bloc.rubrique && <p className="office-rubrique">{insecables(bloc.rubrique)}</p>}

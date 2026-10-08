@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { Navigate, useLocation, useNavigationType, useParams } from 'react-router'
+import { Navigate, useLocation, useNavigate, useNavigationType, useParams } from 'react-router'
 import { chargerOffice, ErreurAelf, type OfficeDuJour } from '../aelf/api'
 import type { Etendue } from '../aelf/cache'
 import { textesEnregistres } from '../aelf/reserve'
@@ -12,11 +12,12 @@ import { BoutonFermer, LienMenu } from '../composants/Icones'
 import { IndiceSuite } from '../composants/IndiceSuite'
 import { useRetour, useRetourAccueil } from '../composants/retour'
 import { useSuiteCachee } from '../composants/suiteCachee'
-import { dateLisible, estDate, paques, periodeLisible } from '../office/dates'
+import { dateLisible, estDate, paques } from '../office/dates'
 import { deplacerInvitatoire, ouvrirOffice } from '../office/journee'
 import { estNomOffice, NOMS_OFFICES, type NomOffice, type Partie } from '../office/modele'
 import { aideOfficeAMontrer } from '../office/aide'
 import { AideOffice } from '../office/AideOffice'
+import { AvisOffice } from '../office/AvisOffice'
 import { BandeauOffice } from '../office/BandeauOffice'
 import { etapesDe } from '../office/etapes'
 import { FilDePerles } from '../office/FilDePerles'
@@ -66,6 +67,7 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
     useState(lireReglages)
   const retour = useRetour()
   const revenirAccueil = useRetourAccueil()
+  const naviguer = useNavigate()
   const [aideOuverte, setAideOuverte] = useState(aideOfficeAMontrer)
   const { fin, cachee } = useSuiteCachee()
   // « Plus bas » ne sert qu'avant de commencer : dès qu'on lit, il ne ferait
@@ -205,14 +207,26 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
             <p className="office-date">{avecExposants(dateLisible(date))}</p>
             <LienMenu depuis={date} office={nom} />
           </div>
-          {/* Le saint du jour en petit, à droite du titre qui reste centré ; sous
-              le titre long de l'office des lectures (2026-10-08). */}
+          {/* Le saint du jour en petit à gauche du titre, qui reste centré, et
+              « ? » à droite, qui rouvre l'aide ; sous le titre long de l'office
+              des lectures (2026-10-08). */}
           <div className="office-titre" data-office={nom}>
             <h1 ref={titre}>{NOMS_OFFICES[nom]}</h1>
             {saint && (
               <p className="office-saint" data-testid="saint-du-jour">
                 {saint}
               </p>
+            )}
+            {office && (
+              <button
+                className="office-aide"
+                type="button"
+                aria-haspopup="dialog"
+                aria-label="Aide à la lecture"
+                onClick={() => setAideOuverte(true)}
+              >
+                <span aria-hidden="true">?</span>
+              </button>
             )}
           </div>
           {/* Les perles, comme dans le bandeau : un toucher ouvre le sommaire. */}
@@ -246,57 +260,14 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
         )}
 
         {etat.sorte === 'erreur' && (
-          <div className="office-erreur" role="alert">
-            {etat.absent ? (
-              // Réessayer n'y changerait rien : l'AELF n'a pas ce texte. Le seul
-              // cas connu est l'office des lectures de Pâques (2026-10-08).
-              <p className="office-erreur-titre">
-                <span aria-hidden="true">⚠ </span>
-                {nom === 'lectures' && date === paques(Number(date.slice(0, 4)))
-                  ? 'Le jour de Pâques, la Vigile pascale tient lieu d’office des lectures.'
-                  : 'L’AELF ne propose pas cet office pour ce jour.'}
-              </p>
-            ) : (
-              <>
-                {/* Textes validés par le porteur du projet le 2026-10-07. */}
-                {etat.enregistres ? (
-                  <>
-                    <p className="office-erreur-titre">
-                      <span aria-hidden="true">⚠ </span>Cet office n’est pas enregistré sur le
-                      téléphone.
-                    </p>
-                    <p>
-                      Les textes enregistrés vont{' '}
-                      {periodeLisible(etat.enregistres.debut, etat.enregistres.fin)}. Pour ce
-                      jour-ci, connectez-vous à internet, puis réessayez.
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <p className="office-erreur-titre">
-                      <span aria-hidden="true">⚠ </span>Les offices demandent une première connexion
-                      à internet.
-                    </p>
-                    <p>
-                      Une fois connecté, l’app enregistre une semaine de textes d’avance. Le
-                      chapelet, lui, se prie dès maintenant.
-                    </p>
-                  </>
-                )}
-                <button className="btn btn-secondaire" type="button" onClick={reessayer}>
-                  Réessayer
-                </button>
-              </>
-            )}
-          </div>
-        )}
-
-        {etat.sorte === 'erreur' && etat.absent && (
-          <p className="office-revenir">
-            <button className="lien-discret" type="button" onClick={revenirAccueil}>
-              Revenir à l’accueil
-            </button>
-          </p>
+          <AvisOffice
+            absent={etat.absent}
+            paques={etat.absent && nom === 'lectures' && date === paques(Number(date.slice(0, 4)))}
+            enregistres={etat.enregistres}
+            onReessayer={reessayer}
+            onAccueil={revenirAccueil}
+            onLaudes={() => naviguer(`/office/laudes/${date}`)}
+          />
         )}
 
         {etat.sorte === 'pret' && office && (
@@ -324,7 +295,7 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
         )}
 
         <div ref={fin} className="fin-ecran" />
-        <IndiceSuite visible={cachee && !aCommence && etat.sorte === 'pret'} />
+        <IndiceSuite visible={cachee && !aCommence && etat.sorte === 'pret' && !sommaire.ouvert} />
       </main>
       {office && aideOuverte && (
         <AideOffice
@@ -332,6 +303,7 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
           accents={accents}
           ajouts={signalerAjouts}
           repliees={!prieresEntieres}
+          plusieurs={plusieurs}
           onFermer={() => setAideOuverte(false)}
         />
       )}

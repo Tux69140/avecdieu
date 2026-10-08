@@ -1,4 +1,4 @@
-import { expect, type Page } from '@playwright/test'
+import { expect, type Locator, type Page } from '@playwright/test'
 import { deplierReglages, preparer, servirAelf, test } from './outils.ts'
 
 // Phase 6 : l'office complet, reconstitué selon les rubriques validées par le
@@ -149,15 +149,35 @@ test('ajouts signalés par un filet rouge, sans texte', async ({ page }) => {
   )
 })
 
-test('à plusieurs, « Tous » précède chaque Gloire au Père', async ({ page }) => {
+// À plusieurs, la part de tous en demi-gras (R10, 2026-10-08).
+const graisse = (element: Locator) => element.evaluate((e) => getComputedStyle(e).fontWeight)
+
+test('à plusieurs, la part de tous en demi-gras', async ({ page }) => {
   await servirAelf(page)
   await preparer(page, { reglages: { plusieurs: true } })
-  await ouvrir(page, 'vepres')
+  await ouvrir(page, 'laudes')
   const gloires = page.getByTestId('priere-courante').filter({ hasText: 'Gloire au Père' })
-  // L'introduction, deux psaumes, le cantique et le Magnificat.
   await expect(gloires).toHaveCount(5)
-  for (const gloire of await gloires.all())
-    await expect(gloire.locator('.office-rubrique')).toHaveText('Tous')
+  for (const gloire of await gloires.all()) {
+    expect(await graisse(gloire)).toBe('600')
+    await expect(gloire.locator('.office-rubrique')).toHaveCount(0)
+  }
+  // Les strophes du psaume alternent : celui qui mène, puis tous.
+  const strophes = partie(page, 'Psaume 84').locator('.bloc:not([data-ajoute])')
+  expect(await graisse(strophes.nth(0))).toBe('400')
+  expect(await graisse(strophes.nth(1))).toBe('600')
+  expect(await graisse(strophes.nth(2))).toBe('400')
+  // L'antienne de l'invitatoire : celui qui mène la dit, tous la reprennent.
+  const invitatoire = partie(page, 'Invitatoire').locator('.bloc')
+  expect(await graisse(invitatoire.nth(0))).toBe('400')
+  expect(await graisse(invitatoire.nth(1))).toBe('600')
+})
+
+test('seul, aucune part en demi-gras', async ({ page }) => {
+  await servirAelf(page)
+  await preparer(page)
+  await ouvrir(page, 'laudes')
+  await expect(page.locator('.bloc[data-tous]')).toHaveCount(0)
 })
 
 test('complies : examen de conscience après l’introduction', async ({ page }) => {

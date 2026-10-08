@@ -7,11 +7,15 @@ import './AideGestes.css'
 // afficher » n'est pas coché.
 export function AideGestes({ onFermer }: { onFermer: () => void }) {
   const fenetre = useRef<HTMLDialogElement>(null)
+  const compris = useRef<HTMLButtonElement>(null)
   const [nePlus, setNePlus] = useState(false)
 
+  // Le focus sur « J’ai compris » : sur la case, un appui sur Espace
+  // écarterait l'aide pour de bon.
   useEffect(() => {
     const dialogue = fenetre.current
     if (dialogue && !dialogue.open) dialogue.showModal?.()
+    compris.current?.focus()
   }, [])
 
   const fermer = () => {
@@ -62,7 +66,12 @@ export function AideGestes({ onFermer }: { onFermer: () => void }) {
         <input type="checkbox" checked={nePlus} onChange={(e) => setNePlus(e.target.checked)} />
         Ne plus afficher
       </label>
-      <button className="btn btn-principal" type="button" onClick={() => fenetre.current?.close()}>
+      <button
+        ref={compris}
+        className="btn btn-principal"
+        type="button"
+        onClick={() => fenetre.current?.close()}
+      >
         J’ai compris
       </button>
     </dialog>

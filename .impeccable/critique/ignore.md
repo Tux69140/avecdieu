@@ -8,3 +8,9 @@
 - Le titre de l'antienne mariale qui répète sa première ligne, et les références AELF comme « Psaume 93 - I » : texte de l'AELF conservé tel quel, choix du porteur du projet (2026-10-08, « au plus simple, conservons le texte de l'AELF »).
 - L'antienne d'ouverture en romain et sa reprise en italique : règle du porteur du projet (2026-10-08), le premier dit droit, le redit en italique.
 - Les consignes rouges en italique dans le fil de l'office (« On la répète aussitôt. »…) : choix du porteur du projet pour les novices (2026-10-08), masquables par un réglage.
+- Le répons de l'intercession redit après chaque intention, et l'intercession sans tiret : celui qui mène lit l'intention en entier, tous répondent par le répons (choix du porteur du projet, 2026-10-08).
+- La fenêtre « Lire un office » et sa ligne « ℣. celui qui mène, ℟. ceux qui répondent » : textes laissés tels quels par le porteur du projet (2026-10-08).
+- Les perles de couleur cerclées de sépia, la perle blanche comprise : choix du porteur du projet (2026-10-08).
+- À plusieurs, la part de tous en demi-gras (une strophe sur deux, reprises de l'invitatoire, Gloire au Père) : choix du porteur du projet sur maquette (2026-10-08).
+- Les petites capitales sans accent (« BENEDICTION », « FEVRIER »), y compris pour les titres de l'AELF : choix du porteur du projet (2026-10-08).
+- Le saint à gauche du titre et le « ? » à droite dans l'en-tête de l'office : choix du porteur du projet (2026-10-08).

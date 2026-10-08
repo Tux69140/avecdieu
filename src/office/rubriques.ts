@@ -1,5 +1,5 @@
 import { CONSIGNES, RUBRIQUE_EXAMEN, TEXTES_OFFICE } from '../recueil/office'
-import { PRIERES, RUBRIQUE_ENSEMBLE } from '../recueil/prieres'
+import { PRIERES } from '../recueil/prieres'
 import { sansAlleluia } from './dates'
 import type { Bloc, NomOffice, Office, Partie, Strophe } from './modele'
 import { redireRepons } from './intercession'
@@ -42,16 +42,32 @@ function gloire(plusieurs: boolean, ajoute = true): Bloc {
     priere: 'Gloire au Père',
     ...(ajoute && { ajoute }),
     // R10 : à plusieurs, tous disent le Gloire au Père.
-    ...(plusieurs && { rubrique: RUBRIQUE_ENSEMBLE }),
+    ...(plusieurs && { tous: true }),
   }
 }
 
-const antienneReprise = (strophes: Strophe[], consigne?: string): Bloc => ({
+const antienneReprise = (strophes: Strophe[], consigne?: string, tous = false): Bloc => ({
   strophes,
   ajoute: true,
   reprise: true,
   ...(consigne && { rubrique: consigne }),
+  ...(tous && { tous }),
 })
+
+// R10 : à plusieurs, les strophes d'un psaume ou d'un cantique alternent,
+// celui qui mène commençant ; une strophe sur deux est la part de tous.
+function alterner(blocs: Bloc[]): Bloc[] {
+  let rang = 0
+  return blocs.flatMap((bloc) =>
+    bloc.ajoute || bloc.priere
+      ? [bloc]
+      : bloc.strophes.map((strophe) => ({
+          ...bloc,
+          strophes: [strophe],
+          ...(rang++ % 2 === 1 && { tous: true }),
+        })),
+  )
+}
 
 // R1 et R2 : « Dieu, viens à mon aide », le Gloire au Père, et l'Alléluia hors Carême.
 function introductionCourante(date: string, plusieurs: boolean): Bloc[] {
@@ -71,7 +87,7 @@ function invitatoireComplet(
   consignes: boolean,
 ) {
   const refrain = strophesDeLaPartie(antienne)
-  const repetee = antienneReprise(refrain, consignes ? CONSIGNES.invitatoire : undefined)
+  const repetee = antienneReprise(refrain, consignes ? CONSIGNES.invitatoire : undefined, plusieurs)
   const parties: Partie[] = [
     { ...antienne, blocs: [{ strophes: refrain }, repetee], ajoutee: deplace },
   ]
@@ -81,10 +97,10 @@ function invitatoireComplet(
       blocs: [
         ...strophesDeLaPartie(psaume).flatMap((strophe) => [
           { strophes: [strophe] },
-          antienneReprise(refrain),
+          antienneReprise(refrain, undefined, plusieurs),
         ]),
         gloire(plusieurs),
-        antienneReprise(refrain),
+        antienneReprise(refrain, undefined, plusieurs),
       ],
       ajoutee: deplace,
     })
@@ -139,7 +155,7 @@ function psalmodie(lues: Partie[], plusieurs: boolean, consignes: boolean): Part
       antienne = undefined
       return partie
     }
-    const blocs = [...partie.blocs]
+    const blocs = plusieurs ? alterner(partie.blocs) : [...partie.blocs]
     if (!sansGloire(partie)) blocs.push(gloire(plusieurs))
     if (antienne && !estPsalmique(parties[i + 1])) {
       blocs.push(antienneReprise(strophesDeLaPartie(antienne), consigne))
@@ -156,10 +172,15 @@ const partieAjoutee = (
   ajoutee = true,
 ): Partie => ({ type, libelle, blocs, ajoutee })
 
-// R9 : l'examen de conscience des complies, et sa prière de pénitence.
-const examen = () =>
+// R9 : l'examen de conscience des complies, et sa prière de pénitence ; R13 :
+// la consigne du silence, d'abord.
+const examen = (consignes: boolean) =>
   partieAjoutee('examen', RUBRIQUE_EXAMEN, [
-    { strophes: strophesDe(TEXTES_OFFICE['je-confesse']), priere: 'Je confesse à Dieu' },
+    {
+      strophes: strophesDe(TEXTES_OFFICE['je-confesse']),
+      priere: 'Je confesse à Dieu',
+      ...(consignes && { rubrique: CONSIGNES.examen }),
+    },
     { strophes: strophesDe(TEXTES_OFFICE.absolution) },
   ])
 
@@ -208,7 +229,7 @@ export function reconstituer(office: Office, contexte: Contexte): Office {
         return [
           // Aux laudes, l'AELF ouvre toujours par l'invitatoire : le remplacer est un ajout.
           { ...partie, blocs: introductionCourante(date, plusieurs), ajoutee: nom === 'laudes' },
-          ...(nom === 'complies' ? [examen()] : []),
+          ...(nom === 'complies' ? [examen(consignes)] : []),
         ]
       case 'notre-pere':
         // R6 : l'AELF n'en donne que le titre.

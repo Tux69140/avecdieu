@@ -27,8 +27,9 @@
   color: var(--sepia);
 }
 
-/* Le titre au centre, le saint du jour en petit dans la colonne de droite ;
-   la colonne de gauche, vide, garde le titre centré. */
+/* Le titre au centre, le saint du jour en petit à gauche, « ? » à droite,
+   qui rouvre l'aide (choix du porteur du projet, 2026-10-08). Les deux
+   colonnes de côté, de même largeur, gardent le titre centré. */
 .office-titre {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
@@ -37,12 +38,14 @@
 }
 
 .office-titre h1 {
+  grid-row: 1;
   grid-column: 2;
 }
 
 .office-saint {
-  grid-column: 3;
-  justify-self: end;
+  grid-row: 1;
+  grid-column: 1;
+  justify-self: start;
   margin: 0;
   font-family: var(--sc);
   font-weight: 600;
@@ -50,20 +53,59 @@
   line-height: 1.2;
   letter-spacing: 0.04em;
   color: var(--sepia);
-  text-align: right;
+  text-align: left;
   text-wrap: balance;
 }
 
-/* « Office des lectures » prend toute la ligne : le saint passe dessous. */
-.office-titre[data-office='lectures'] {
-  grid-template-columns: 1fr;
+/* Un petit « ? » cerclé de sépia, 48 px à toucher, sous le ☰. */
+.office-aide {
+  grid-row: 1;
+  grid-column: 3;
+  justify-self: end;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-right: calc(-1 * var(--esp-sm));
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
 }
 
-.office-titre[data-office='lectures'] h1,
+.office-aide span {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--sepia);
+  border-radius: 9999px;
+  font-family: var(--texte);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--sepia);
+}
+
+/* « Office des lectures » prend toute la ligne : le saint passe dessous, au
+   centre, et « ? » au bout de sa ligne. */
+.office-titre[data-office='lectures'] {
+  grid-template-columns: 48px 1fr 48px;
+}
+
+.office-titre[data-office='lectures'] h1 {
+  grid-column: 1 / -1;
+}
+
 .office-titre[data-office='lectures'] .office-saint {
-  grid-column: 1;
+  grid-row: 2;
+  grid-column: 2;
   justify-self: center;
   text-align: center;
+}
+
+.office-titre[data-office='lectures'] .office-aide {
+  grid-row: 2;
 }
 
 .office-entete h1 {
@@ -129,6 +171,25 @@
 
 .office-erreur .btn {
   margin-top: var(--esp-sm);
+}
+
+/* Le jour de Pâques, l'office des lectures : une note, pas une erreur. */
+.office-note {
+  text-align: center;
+  color: var(--sepia);
+}
+
+.office-note p {
+  margin: 0;
+  line-height: 1.5;
+  text-wrap: balance;
+}
+
+.office-note .office-revenir {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 var(--esp-md);
 }
 
 /* La fin de l'office : la perle d'or un peu plus loin du dernier texte, puis

@@ -351,12 +351,33 @@ describe('R9 : l’examen de conscience des complies', () => {
 describe('R10 : prier à plusieurs', () => {
   const gloires = (office: Office) => office.parties.flatMap((p) => p.blocs).filter(estGloire)
 
-  it('« Tous » précède chaque Gloire au Père, et seulement à plusieurs', () => {
+  it('tous disent chaque Gloire au Père, et seulement à plusieurs', () => {
     const plusieurs = gloires(complet('laudes', '2026-10-06', { premier: true, plusieurs: true }))
     expect(plusieurs).toHaveLength(5)
-    expect(plusieurs.every((b) => b.rubrique === 'Tous')).toBe(true)
+    expect(plusieurs.every((b) => b.tous && b.rubrique === undefined)).toBe(true)
     const seul = gloires(complet('laudes', '2026-10-06', { premier: true }))
-    expect(seul.every((b) => b.rubrique === undefined)).toBe(true)
+    expect(seul.every((b) => !b.tous)).toBe(true)
+  })
+
+  it('les strophes d’un psaume alternent, celui qui mène commençant', () => {
+    const laudes = complet('laudes', '2026-10-06', { premier: true, plusieurs: true })
+    const strophes = partie(laudes, 'Psaume 84').blocs.filter((b) => !b.ajoute && !b.priere)
+    expect(strophes.length).toBeGreaterThan(3)
+    expect(strophes.every((b) => b.strophes.length === 1)).toBe(true)
+    expect(strophes.map((b) => !!b.tous)).toEqual(strophes.map((_, i) => i % 2 === 1))
+    // Seul, rien ne change.
+    const seul = complet('laudes', '2026-10-06', { premier: true })
+    expect(partie(seul, 'Psaume 84').blocs.some((b) => b.tous)).toBe(false)
+  })
+
+  it('à l’invitatoire, celui qui mène dit l’antienne et les strophes, tous la reprennent', () => {
+    const laudes = complet('laudes', '2026-10-06', { premier: true, plusieurs: true })
+    const [antienne, repetee] = partie(laudes, 'Invitatoire').blocs
+    expect(antienne.tous).toBeUndefined()
+    expect(repetee.tous).toBe(true)
+    const psaume = partie(laudes, 'Psaume 94').blocs
+    expect(psaume.filter((b) => b.reprise).every((b) => b.tous)).toBe(true)
+    expect(psaume.filter((b) => !b.ajoute).some((b) => b.tous)).toBe(false)
   })
 })
 

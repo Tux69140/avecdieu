@@ -13,3 +13,15 @@
     --unicodes=U+2123,U+211F --flavor=woff2 \
     --output-file=src/styles/polices/signes-liturgiques.woff2
   ```
+
+- `capitales-sans-accent-400.woff2`, `-500`, `-600` : les lettres accentuées de **Cormorant SC**
+  (paquet `@fontsource/cormorant-sc`), chacune dessinée par sa lettre de base, la cédille
+  gardée. Les petites capitales de l'app ne portent ainsi aucun accent (choix du porteur du
+  projet, 2026-10-08). Licence : SIL Open Font License 1.1, comme Cormorant ; la police
+  modifiée porte un autre nom (« Capitales sans accent »).
+
+  Pour la refaire (fonttools et brotli) :
+
+  ```
+  python3 scripts/generer-capitales-sans-accent.py
+  ```

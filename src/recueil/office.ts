@@ -63,6 +63,7 @@ export const CONSIGNES = {
   invitatoire: 'On la répète aussitôt.',
   antienne: 'On reprend l’antienne.',
   intercession: 'On répond après chaque intention :',
+  examen: 'Un temps de silence pour relire sa journée.',
 }
 
 // À qui s'adresse l'oraison : au Père, au Père en nommant le Fils à la fin,
@@ -99,8 +100,8 @@ export const REGLES_RUBRIQUES: string[] = [
   'R7. Conclusion de l’oraison : la forme longue se dit à l’office des lectures, aux laudes et aux vêpres ; la forme brève, à tierce, sexte, none et complies. Le choix de la forme suit l’abréviation de l’AELF quand elle existe (« Lui qui règne. », « Toi qui règnes. ») ; sans abréviation, une prière adressée au Christ prend « Toi qui… », une prière qui le nomme à la fin prend « Lui qui… », toutes les autres prennent « Par Jésus… ». Quand l’AELF donne déjà la conclusion complète, l’app la garde telle quelle et ajoute seulement « Amen » s’il manque.',
   'R8. Fin de l’office : « Que le Seigneur nous bénisse » conclut les laudes et les vêpres ; « Bénissons le Seigneur », l’office des lectures et les petites heures. Les complies gardent la bénédiction que donne l’AELF. Quand l’AELF joint à l’oraison son propre envoi (« Bénissons le Seigneur, alléluia, alléluia », dans l’octave de Pâques et à la Pentecôte), cet envoi tient lieu de fin.',
   'R9. Complies : l’examen de conscience se place juste après l’introduction, avant l’hymne.',
-  'R10. Prier à plusieurs : la rubrique « Tous » précède chaque Gloire au Père.',
+  'R10. Prier à plusieurs : la part de tous est en demi-gras. Les strophes des psaumes et des cantiques alternent, celui qui mène commençant, une strophe sur deux pour tous ; tous disent chaque reprise de l’antienne de l’invitatoire et chaque Gloire au Père.',
   'R11. Répons bref : là où l’AELF abrège la reprise du répons, l’app l’écrit en entier, signalée comme ajout : après « R/ », tout le répons ; après « * », sa seconde partie. Le signe abrégé disparaît. Les répons de l’office des lectures restent tels quels.',
   'R12. Intercession : quand l’AELF donne un répons (« R/ »), l’app le redit après chaque intention, signalé comme ajout. Celui qui mène lit chaque intention en entier : le tiret qui en ouvre la seconde moitié n’est pas affiché.',
-  'R13. Consignes pour débuter : sauf réglage contraire, une courte consigne en rouge précède, une fois par office, la reprise immédiate de l’antienne de l’invitatoire (« On la répète aussitôt. »), la première antienne reprise après un psaume (« On reprend l’antienne. ») et le répons de l’intercession (« On répond après chaque intention : »).',
+  'R13. Consignes pour débuter : sauf réglage contraire, une courte consigne en rouge précède, une fois par office, la reprise immédiate de l’antienne de l’invitatoire (« On la répète aussitôt. »), la première antienne reprise après un psaume (« On reprend l’antienne. ») le répons de l’intercession (« On répond après chaque intention : ») et la prière de pénitence des complies (« Un temps de silence pour relire sa journée. »).',
 ]

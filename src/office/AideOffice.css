@@ -9,11 +9,14 @@
 }
 
 .aide-office ul {
-  gap: 12px;
+  gap: 10px;
 }
 
+/* La taille suit celle du texte à prier, d'un cran plus petite, jusqu'à
+   19 px : qui a agrandi le texte doit pouvoir lire l'aide. Au-delà d'un
+   écran, la fenêtre défile. */
 .aide-office li {
-  font-size: 15px;
+  font-size: clamp(15px, calc(var(--taille-priere) - 3px), 19px);
   line-height: 1.35;
 }
 
@@ -75,4 +78,10 @@
 
 .aide-suite {
   color: var(--sepia);
+}
+
+.aide-gras {
+  font-family: var(--texte);
+  font-weight: 600;
+  color: var(--encre);
 }

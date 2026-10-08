@@ -11,6 +11,8 @@ interface Props {
   accents: boolean
   ajouts: boolean
   repliees: boolean
+  // À plusieurs, la part de tous est en demi-gras.
+  plusieurs: boolean
   onFermer: () => void
 }
 
@@ -18,13 +20,17 @@ interface Props {
 // l'office (textes validés par le porteur du projet, 2026-10-08). Comme l'aide
 // aux gestes du chapelet, elle revient à chaque office tant que « Ne plus
 // afficher » n'est pas coché.
-export function AideOffice({ couleur, accents, ajouts, repliees, onFermer }: Props) {
+export function AideOffice({ couleur, accents, ajouts, repliees, plusieurs, onFermer }: Props) {
   const fenetre = useRef<HTMLDialogElement>(null)
+  const compris = useRef<HTMLButtonElement>(null)
   const [nePlus, setNePlus] = useState(false)
 
+  // Le focus sur « J’ai compris » : sur la case, un appui sur Espace
+  // écarterait l'aide pour de bon.
   useEffect(() => {
     const dialogue = fenetre.current
     if (dialogue && !dialogue.open) dialogue.showModal?.()
+    compris.current?.focus()
   }, [])
 
   const fermer = () => {
@@ -72,6 +78,16 @@ export function AideOffice({ couleur, accents, ajouts, repliees, onFermer }: Pro
             les deux.
           </span>
         </li>
+        {plusieurs && (
+          <li>
+            <span className="aide-glyphe aide-gras" aria-hidden="true">
+              Aa
+            </span>
+            <span>
+              <strong>En gras</strong>, ce que disent tous.
+            </span>
+          </li>
+        )}
         <li>
           <span className="aide-glyphe" aria-hidden="true">
             * +
@@ -126,7 +142,12 @@ export function AideOffice({ couleur, accents, ajouts, repliees, onFermer }: Pro
         <input type="checkbox" checked={nePlus} onChange={(e) => setNePlus(e.target.checked)} />
         Ne plus afficher
       </label>
-      <button className="btn btn-principal" type="button" onClick={() => fenetre.current?.close()}>
+      <button
+        ref={compris}
+        className="btn btn-principal"
+        type="button"
+        onClick={() => fenetre.current?.close()}
+      >
         J’ai compris
       </button>
     </dialog>

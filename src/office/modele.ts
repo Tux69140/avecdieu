@@ -77,6 +77,8 @@ export interface Bloc {
   // Un texte redit (antienne, répons) : en italique, il se distingue de sa
   // première fois (choix du porteur du projet, 2026-10-08).
   reprise?: boolean
+  // À plusieurs, la part de tous : en demi-gras (R10).
+  tous?: boolean
 }
 
 export interface Partie {

@@ -1,7 +1,11 @@
 .aide-gestes {
   width: calc(100% - 2 * var(--gouttiere));
   max-width: 26em;
-  max-height: calc(100dvh - 2 * var(--esp-md));
+  /* Jamais sous les barres d'Android : la fenêtre se centre entre elles, et
+     défile si elle ne tient pas. */
+  inset: var(--bord-haut) var(--bord-droit) var(--bord-bas) var(--bord-gauche);
+  max-height: calc(100dvh - var(--bord-haut) - var(--bord-bas) - 2 * var(--esp-md));
+  overflow-y: auto;
   padding: var(--esp-lg) var(--esp-lg) var(--esp-md);
   border: 1px solid var(--filet);
   border-radius: var(--r-lg);
