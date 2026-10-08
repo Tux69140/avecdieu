@@ -36,7 +36,7 @@
 - **Primary** : Encre `#2B2118` — bouton principal (fond encre, texte vélin ; survol rubrique).
 - **Secondary** : Or `#B08A3E` — bouton secondaire (contour or), perles, arc du cadran, focus des champs (halo).
 - **Neutrals** : `#F6EFE2` → `#EBE0CB` → `#D6C7AB` → `#A39280` → `#6B5A48` → `#2B2118`
-- **Semantic** : success `#4E6B3A`, warning `#9A6A12`, error `#7A3B1E` (brun brique, toujours accompagné de ⚠ et d'un texte — jamais le rouge des rubriques), info `#3E5C76`. Avis = filet gauche coloré de 3 px sur fond vélin.
+- **Semantic** : success `#4E6B3A`, warning `#9A6A12`, error `#7A3B1E` (brun brique, toujours accompagné de ⚠ et d'un texte — jamais le rouge des rubriques), info `#3E5C76`. Avis = cadre de 1 px de leur couleur sur fond vélin (plus de filet latéral, 2026-10-08).
 - **Couleurs liturgiques** (pastilles, identiques jour/nuit, cerclées de sépia pâle) : blanc `#F4EFE4`, vert `#3E6A3F`, violet `#5A3E7A`, rouge `#B8231B`, rose `#D58F9C`, noir `#23201C`.
 - **Dark mode — thème nuit** : brun-noir chaud, jamais noir pur, pour les complies dans la pénombre. Nuit (fond) `#14100C` · Surface `#1D1813` · Filet `#3A3026` · Encre `#E6D9C2` · Sépia `#A6927A` · Sépia pâle `#6E604F` · Rubrique `#E07A6A` · Or `#C9A45C` · Soleil `#E2B45A` · success `#8FB07A`, warning `#D8A94A`, error `#D98A5E`, info `#8FB0CC`. Bouton principal inversé (fond encre clair, texte sombre). Activation automatique selon le réglage Android ou après le coucher du soleil.
 - **Grain** : bruit fractal très léger en surimpression (opacité 7 % le jour, 5 % la nuit).
