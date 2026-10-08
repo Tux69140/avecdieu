@@ -1,18 +1,29 @@
-import type { Bloc, Partie, Strophe } from './modele'
+import type { Bloc, Ligne, Partie, Strophe } from './modele'
 
 // R12 : l'intercession, dont l'AELF ne donne le répons qu'une fois, après
 // l'invitation à prier. L'app le redit après chaque intention : à plusieurs,
 // personne n'a à le retenir. Chaque strophe qui suit le répons est une
-// intention ; sans répons, l'intercession reste telle quelle.
+// intention ; sans répons, l'intercession garde sa forme.
 
 const estRepons = (strophe: Strophe) => strophe[0]?.[0]?.signe === 'R'
 
+// Le tiret qui ouvre la seconde moitié d'une intention ne sert qu'à qui la
+// fait dire par l'assemblée ; ici, celui qui mène lit tout (choix du porteur
+// du projet, 2026-10-08). La moitié garde sa ligne.
+const TIRET = /^\s*[—–]\s*/
+
+function sansTiret(ligne: Ligne): Ligne {
+  const [premier, ...suite] = ligne
+  if (!premier || premier.signe || !TIRET.test(premier.texte)) return ligne
+  return [{ ...premier, texte: premier.texte.replace(TIRET, '') }, ...suite]
+}
+
 // « consigne » (R13) : la phrase rouge qui précède le premier répons.
 export function redireRepons(partie: Partie, consigne?: string): Partie {
-  const strophes = partie.blocs.flatMap((b) => b.strophes)
+  const strophes = partie.blocs.flatMap((b) => b.strophes).map((s) => s.map(sansTiret))
   const i = strophes.findIndex(estRepons)
   const intentions = strophes.slice(i + 1)
-  if (i < 0 || intentions.length === 0) return partie
+  if (i < 0 || intentions.length === 0) return { ...partie, blocs: [{ strophes }] }
   const repons = strophes[i]
   const blocs: Bloc[] = [
     ...(i > 0 ? [{ strophes: strophes.slice(0, i) }] : []),

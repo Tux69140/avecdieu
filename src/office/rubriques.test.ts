@@ -487,6 +487,11 @@ describe('jeu d’offices de référence : 100 % des ajouts attendus', () => {
             const suivi = (lignes: typeof sansReprise) =>
               texteDe([lignes]).replace(/\s+/g, ' ').trim()
             expect(suivi(aelfSeul.flat())).toBe(suivi(sansReprise.filter((l) => l.length > 0)))
+          } else if (lue.type === 'intercession') {
+            // Seul tombe le tiret de la seconde moitié des intentions (R12).
+            const sansTiret = (strophes: typeof attendu) =>
+              texteDe(strophes).replace(/(^|\s)[—–]\s*/g, '$1')
+            expect(texteDe(aelfSeul)).toBe(sansTiret(attendu))
           } else if (!gardee!.blocs.every((b) => b.ajoute)) expect(aelfSeul).toEqual(attendu)
         }
         if (nom !== 'complies') expect(office.parties.at(-1)!.type).toBe('conclusion')

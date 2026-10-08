@@ -101,6 +101,6 @@ export const REGLES_RUBRIQUES: string[] = [
   'R9. Complies : l’examen de conscience se place juste après l’introduction, avant l’hymne.',
   'R10. Prier à plusieurs : la rubrique « Tous » précède chaque Gloire au Père.',
   'R11. Répons bref : là où l’AELF abrège la reprise du répons, l’app l’écrit en entier, signalée comme ajout : après « R/ », tout le répons ; après « * », sa seconde partie. Le signe abrégé disparaît. Les répons de l’office des lectures restent tels quels.',
-  'R12. Intercession : quand l’AELF donne un répons (« R/ »), l’app le redit après chaque intention, signalé comme ajout.',
+  'R12. Intercession : quand l’AELF donne un répons (« R/ »), l’app le redit après chaque intention, signalé comme ajout. Celui qui mène lit chaque intention en entier : le tiret qui en ouvre la seconde moitié n’est pas affiché.',
   'R13. Consignes pour débuter : sauf réglage contraire, une courte consigne en rouge précède, une fois par office, la reprise immédiate de l’antienne de l’invitatoire (« On la répète aussitôt. »), la première antienne reprise après un psaume (« On reprend l’antienne. ») et le répons de l’intercession (« On répond après chaque intention : »).',
 ]

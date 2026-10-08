@@ -29,21 +29,35 @@ describe('R12 : le répons de l’intercession, redit après chaque intention', 
     expect(blocs.map(texte)).toEqual([
       'Au matin de ce nouveau jour, prions le Christ Seigneur :',
       'R/Exauce-nous, Seigneur.',
-      'Jésus Christ, Premier-né avant toute créature, — éveille nos sens à la beauté de ton œuvre.',
+      'Jésus Christ, Premier-né avant toute créature, éveille nos sens à la beauté de ton œuvre.',
       'R/Exauce-nous, Seigneur.',
-      'Jésus Christ, Lumière qui se lève sur le monde, — découvre à notre esprit tes volontés.',
+      'Jésus Christ, Lumière qui se lève sur le monde, découvre à notre esprit tes volontés.',
       'R/Exauce-nous, Seigneur.',
-      'Jésus Christ, Fils bien-aimé du Père, — inspire-nous l’amour filial et fraternel.',
+      'Jésus Christ, Fils bien-aimé du Père, inspire-nous l’amour filial et fraternel.',
       'R/Exauce-nous, Seigneur.',
-      'Jésus Christ, Source jaillissante de vie, — féconde le travail de ce jour.',
+      'Jésus Christ, Source jaillissante de vie, féconde le travail de ce jour.',
       'R/Exauce-nous, Seigneur.',
-      'Jésus Christ, Ami des pauvres et des petits, — rends-nous attentifs à leur appel.',
+      'Jésus Christ, Ami des pauvres et des petits, rends-nous attentifs à leur appel.',
       'R/Exauce-nous, Seigneur.',
     ])
     // Le premier répons est celui de l'AELF ; les suivants, des ajouts redits.
     expect(blocs[1]).not.toHaveProperty('ajoute')
     for (const bloc of blocs.slice(3).filter((_, i) => i % 2 === 0))
       expect(bloc).toMatchObject({ ajoute: true, reprise: true })
+  })
+
+  it('sans le tiret de la seconde moitié : celui qui mène lit l’intention en entier', () => {
+    for (const [nom, date] of [
+      ['laudes', '2026-10-06'],
+      ['vepres', '2026-11-29'],
+      ['laudes', '2027-05-13'],
+    ] as const) {
+      const lignes = intercession(complet(nom, date, false)).blocs.flatMap((b) => b.strophes.flat())
+      expect(
+        lignes.filter((l) => /^\s*—/.test(l[0]?.texte ?? '')),
+        `${nom} ${date}`,
+      ).toEqual([])
+    }
   })
 
   it('aux vêpres de l’Avent, l’invitation est déjà une intention : le répons la suit', () => {
