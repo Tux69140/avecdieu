@@ -436,10 +436,10 @@ Reste à confirmer sur les téléphones : « Me localiser » fonctionne (vérifi
 
 ### Critères d'acceptation
 
-- [ ] Les durées du PRD s'affichent sur le seuil, l'accueil et le menu, pour le chapelet et les 7 offices (test unitaire de la table, parcours Playwright sur les trois écrans).
-- [ ] À 360 px de large, aucune ligne de l'accueil ni du menu ne passe à la ligne à cause de la durée ; le menu tient toujours sur un écran à 360 × 780.
-- [ ] Le lecteur d'écran dit la durée en toutes lettres (« environ vingt minutes »).
-- [ ] Captures des trois écrans validées par le porteur du projet.
+- [x] Les durées du PRD s'affichent sur le seuil, l'accueil et le menu, pour le chapelet et les 7 offices (test unitaire de la table, parcours Playwright sur les trois écrans).
+- [x] À 360 px de large, aucune ligne de l'accueil ni du menu ne passe à la ligne à cause de la durée ; le menu tient toujours sur un écran à 360 × 780.
+- [x] Le lecteur d'écran dit la durée en toutes lettres (« environ vingt minutes »).
+- [x] Captures des trois écrans validées par le porteur du projet.
 
 ## Bloquée par
 
@@ -459,6 +459,8 @@ Décisions du porteur du projet (2026-10-08) :
 - **Vous pour Marie et Joseph, tu pour Dieu**, comme le Je vous salue Marie, le Salve Regina et le Notre Père : les Litanies (version du Vatican, ajouts de 2018 et 2020 compris) et le Sous l'abri sont mis au vous ; l'oraison du Rosaire tutoie Dieu.
 - **Un seul verset** « Priez pour nous, sainte Mère de Dieu », juste avant l'oraison du Rosaire : oraison activée, il quitte la fin du Salve Regina et vient après les Litanies ; oraison désactivée, le Salve Regina le garde. Les Litanies n'ont pas leur oraison propre.
 - Textes rédigés et validés le 2026-10-08, à figer tels quels.
+- **Litanies sur une seule page** qu'on fait défiler, une invocation par ligne, la réponse écrite seulement quand elle change (« — priez pour nous »).
+- **Prières longues (Litanies, Salve Regina, saint Joseph…)** : un toucher qui arrête un défilement ne compte jamais ; tant que le bas de la page n'est pas affiché, un toucher fait descendre d'un écran (deux lignes gardées) ; le bas affiché, il passe à la prière suivante.
 
 ### Critères d'acceptation
 
