@@ -17,7 +17,6 @@
 .passage-texte {
   margin: 0;
   line-height: 1.6;
-  hyphens: auto;
   text-wrap: pretty;
 }
 

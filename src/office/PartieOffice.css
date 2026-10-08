@@ -35,9 +35,11 @@
   margin: 0 0 var(--esp-md);
 }
 
-/* Couper les mots aide la prose à 360 px, mais défigure un vers ou un nom. */
+/* Aucun mot coupé en fin de ligne : le texte se dit à voix haute (choix du
+   porteur du projet, 2026-10-08) ; la prose évite seulement les lignes
+   orphelines. */
 .partie[data-mise='prose'] .office-strophe {
-  hyphens: auto;
+  text-wrap: pretty;
 }
 
 .office-strophe:last-of-type {

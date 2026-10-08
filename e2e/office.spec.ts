@@ -351,3 +351,14 @@ test.describe('à 360 px', () => {
     )
   })
 })
+
+test('aucun mot coupé en fin de ligne dans le texte prié (2026-10-08)', async ({ page }) => {
+  await servirAelf(page)
+  await preparer(page)
+  await page.goto('/office/complies/2026-10-06')
+  await expect(titres(page).first()).toHaveText('Introduction')
+  const cesures = await page.evaluate(() =>
+    [...document.querySelectorAll('.office-strophe')].map((p) => getComputedStyle(p).hyphens),
+  )
+  expect(new Set(cesures)).toEqual(new Set(['manual']))
+})
