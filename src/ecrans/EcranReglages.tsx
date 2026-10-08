@@ -4,7 +4,7 @@ import { changerDeZone, textesEnregistres } from '../aelf/reserve'
 import { type Zone } from '../aelf/zones'
 import { ChoixTaille } from '../affichage/ChoixTaille'
 import { ChoixAffichage } from '../chapelet/ChoixAffichage'
-import { AIDE_VIBRATIONS } from '../chapelet/libelles'
+import { AIDE_PLUSIEURS, AIDE_VIBRATIONS } from '../chapelet/libelles'
 import { aideAMontrer, masquerAide, montrerAide } from '../chapelet/memoire'
 import { aideOfficeAMontrer, masquerAideOffice, montrerAideOffice } from '../office/aide'
 import { lireReglages, modifierReglages, type Reglages, type Theme } from '../chapelet/reglages'
@@ -32,11 +32,7 @@ const BASCULES: [Bascule, string, string?][] = [
   ['annonce', 'Annonce des mystères', 'Titre, fruit et passage avant chaque dizaine.'],
   ['oMonJesus', '« Ô mon Jésus » après chaque dizaine'],
   ['salveRegina', 'Salve Regina à la fin'],
-  [
-    'plusieurs',
-    'Prier à plusieurs',
-    'Marque en rouge la part de celui qui mène (V/) et la réponse des autres (R/).',
-  ],
+  ['plusieurs', 'Prier à plusieurs', AIDE_PLUSIEURS],
 ]
 
 const THEMES = [

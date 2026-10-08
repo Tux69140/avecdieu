@@ -193,11 +193,28 @@ test.describe('choix de la série', () => {
     ['Mystères douloureux', 'Le mardi et le vendredi', 'L’Agonie de Jésus à Gethsémani'],
     ['Mystères glorieux', 'Le mercredi et le dimanche', 'La Résurrection'],
   ]
+  // Les autres séries sont repliées sous « Prier d’autres mystères ».
+  const deplierAutres = async (page: Page) => {
+    const rubrique = page.getByRole('button', { name: 'Prier d’autres mystères' })
+    await expect(rubrique).toHaveAttribute('aria-expanded', 'false')
+    await rubrique.click()
+  }
+
+  test('les autres séries sont repliées, résumées sous leur titre', async ({ page }) => {
+    await preparer(page)
+    await page.goto('/chapelet')
+    await expect(page.getByRole('link', { name: /Mystères glorieux/ })).toBeHidden()
+    await expect(page.getByText('Lumineux, douloureux, glorieux')).toBeVisible()
+    await deplierAutres(page)
+    await expect(page.getByRole('link', { name: /Mystères glorieux/ })).toBeVisible()
+  })
+
   for (const [serie, jours, premier] of SERIES) {
     test(`${serie.toLowerCase()} s’ouvrent depuis le seuil`, async ({ page }) => {
       await preparer(page)
       await page.goto('/chapelet')
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mystères joyeux')
+      await deplierAutres(page)
       const lien = page.getByRole('link', { name: new RegExp(serie) })
       await expect(lien).toContainText(jours)
       // La flèche se voit, le lecteur d'écran ne la lit pas.
@@ -215,6 +232,7 @@ test.describe('choix de la série', () => {
   test('les mystères du jour restent à portée depuis une autre série', async ({ page }) => {
     await preparer(page)
     await page.goto('/chapelet/glorieux')
+    await deplierAutres(page)
     const lien = page.getByRole('link', { name: /Mystères joyeux/ })
     await expect(lien).toContainText('Le lundi et le samedi · aujourd’hui')
     await lien.click()
@@ -229,6 +247,7 @@ test.describe('choix de la série', () => {
     await page.goto('/')
     await page.goto('/chapelet')
     for (const serie of [/Mystères glorieux/, /Mystères douloureux/, /Mystères lumineux/]) {
+      await deplierAutres(page)
       await page.getByRole('link', { name: serie }).click()
       await expect(page.getByRole('heading', { level: 1 })).toHaveText(serie)
     }

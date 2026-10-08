@@ -284,6 +284,22 @@ test.describe('prier à plusieurs', () => {
     await expect(page.getByText('Tous', { exact: true })).toHaveCount(0)
   })
 
+  // Seul ou en groupe se décide au seuil, le même réglage que dans les
+  // réglages (choix du porteur du projet, 2026-10-08).
+  test('se choisit au seuil, et les réglages le retiennent', async ({ page }) => {
+    await preparer(page)
+    await page.goto('/chapelet')
+    await reglage(page, 'Prier à plusieurs').click()
+    await page.getByRole('button', { name: 'Commencer le chapelet' }).click()
+    await expect(page.getByTestId('strophe').locator('span').first()).toHaveCSS(
+      'font-weight',
+      '600',
+    )
+    await page.goto('/reglages')
+    await deplierReglages(page)
+    await expect(reglage(page, 'Prier à plusieurs')).toBeChecked()
+  })
+
   test('l’aide dit ℣ ℟ et le demi-gras, à plusieurs seulement', async ({ page }) => {
     await commencer(page, '/chapelet', { reglages: { plusieurs: true } })
     const aide = page.getByRole('dialog', { name: 'Prier avec l’app' })
@@ -402,6 +418,7 @@ test.describe('reprise d’un chapelet interrompu', () => {
     await ouvrirChapelet(lendemain)
     await expect(lendemain.getByRole('heading', { level: 1 })).toHaveText('Mystères douloureux')
     await expect(lendemain.getByRole('button', { name: 'Commencer le chapelet' })).toBeVisible()
+    await lendemain.getByRole('button', { name: 'Prier d’autres mystères' }).click()
     await lendemain.getByRole('link', { name: /Mystères joyeux/ }).click()
     await expect(lendemain.getByRole('button', { name: 'Commencer le chapelet' })).toBeVisible()
   })

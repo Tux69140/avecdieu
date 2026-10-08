@@ -5,12 +5,13 @@ import { IndiceSuite } from '../composants/IndiceSuite'
 import { Interrupteur } from '../composants/Interrupteur'
 import { LigneFermer } from '../composants/LigneFermer'
 import { useRetour } from '../composants/retour'
+import { Rubrique } from '../composants/Rubrique'
 import { useSuiteCachee } from '../composants/suiteCachee'
 import { dateDuJour, dateLisible } from '../office/dates'
 import { usePeutVibrer } from '../telephone/retours'
 import { SERIES, type SerieId } from '../recueil/mysteres'
 import { ChoixAffichage } from './ChoixAffichage'
-import { AIDE_VIBRATIONS } from './libelles'
+import { AIDE_PLUSIEURS, AIDE_VIBRATIONS } from './libelles'
 import { lireReglages, modifierReglages, type Reglages } from './reglages'
 import { libelleReprise, type ChapeletEnCours } from './reprise'
 import { joursDeLaSerie } from './serieDuJour'
@@ -26,15 +27,23 @@ interface Props {
   onRecommencer: () => void
 }
 
+// « Joyeux, douloureux, glorieux » : les autres séries, sous le titre replié.
+const resumerSeries = (series: SerieId[]) => {
+  const noms = series.map((s) => SERIES[s].titre.replace('Mystères ', '')).join(', ')
+  return noms.charAt(0).toUpperCase() + noms.slice(1)
+}
+
 // Le seuil du chapelet, entre l'accueil et le signe de croix : la série et ses
-// mystères, puis les choix qui se font avant de prier (autre série, affichage,
-// vibrations). Les habitudes qu'on règle une fois sont dans les réglages.
+// mystères, puis les choix qui se font avant de prier (affichage, vibrations,
+// à plusieurs), et les autres séries repliées. Les habitudes qu'on règle une
+// fois sont dans les réglages.
 export function Seuil({ serie, duJour, date, enCours, onCommencer, onRecommencer }: Props) {
   const [reglages, setReglages] = useState(lireReglages)
   const retour = useRetour()
   // Sans vibreur (tablette), le réglage n'a pas lieu d'être.
   const vibreur = usePeutVibrer()
   const { fin, cachee } = useSuiteCachee()
+  const [autresOuvertes, setAutresOuvertes] = useState(false)
   const autres = (Object.keys(SERIES) as SerieId[]).filter((s) => s !== serie)
   const modifier = (changement: Partial<Reglages>) => setReglages(modifierReglages(changement))
 
@@ -64,25 +73,6 @@ export function Seuil({ serie, duJour, date, enCours, onCommencer, onRecommencer
         </p>
       )}
 
-      <section className="seuil-section" aria-labelledby="seuil-autres">
-        <h2 id="seuil-autres">Prier d’autres mystères</h2>
-        <ul className="seuil-series">
-          {autres.map((autre) => (
-            <li key={autre}>
-              {/* Changer de mystères remplace le seuil : le retour ramène d'où l'on
-                  venait, sans repasser par chaque série parcourue. */}
-              <Link to={autre === duJour ? '/chapelet' : `/chapelet/${autre}`} replace>
-                <span className="seuil-serie-nom">{SERIES[autre].titre}</span>
-                <span className="seuil-serie-jours">
-                  {joursDeLaSerie(autre)}
-                  {autre === duJour && ' · aujourd’hui'}
-                </span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </section>
-
       <section className="seuil-section" aria-labelledby="seuil-affichage">
         <h2 id="seuil-affichage">Affichage des prières</h2>
         <ChoixAffichage
@@ -92,16 +82,50 @@ export function Seuil({ serie, duJour, date, enCours, onCommencer, onRecommencer
         />
       </section>
 
-      {vibreur && (
-        <div className="seuil-section">
+      {/* Seul ou en groupe se décide au moment de prier : le même réglage que
+          dans les réglages (choix du porteur du projet, 2026-10-08). */}
+      <div className="seuil-section">
+        {vibreur && (
           <Interrupteur
             libelle="Vibrations"
             aide={AIDE_VIBRATIONS}
             actif={reglages.vibrations}
             onBasculer={(vibrations) => modifier({ vibrations })}
           />
-        </div>
-      )}
+        )}
+        <Interrupteur
+          libelle="Prier à plusieurs"
+          aide={AIDE_PLUSIEURS}
+          actif={reglages.plusieurs}
+          onBasculer={(plusieurs) => modifier({ plusieurs })}
+        />
+      </div>
+
+      {/* Les autres séries, repliées : on prie d'ordinaire celle du jour. */}
+      <div className="seuil-section seuil-autres">
+        <Rubrique
+          titre="Prier d’autres mystères"
+          resume={resumerSeries(autres)}
+          ouverte={autresOuvertes}
+          onBasculer={() => setAutresOuvertes((o) => !o)}
+        >
+          <ul className="seuil-series">
+            {autres.map((autre) => (
+              <li key={autre}>
+                {/* Changer de mystères remplace le seuil : le retour ramène d'où l'on
+                    venait, sans repasser par chaque série parcourue. */}
+                <Link to={autre === duJour ? '/chapelet' : `/chapelet/${autre}`} replace>
+                  <span className="seuil-serie-nom">{SERIES[autre].titre}</span>
+                  <span className="seuil-serie-jours">
+                    {joursDeLaSerie(autre)}
+                    {autre === duJour && ' · aujourd’hui'}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </Rubrique>
+      </div>
 
       <div ref={fin} className="fin-ecran" />
       <IndiceSuite visible={cachee} />
