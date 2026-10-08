@@ -21,7 +21,10 @@ const demandees = (espion: ReturnType<typeof aelf>) =>
   espion.mock.calls.map(([adresse]) => new URL(String(adresse)).pathname.slice(3))
 
 beforeEach(() => localStorage.clear())
-afterEach(() => vi.unstubAllGlobals())
+afterEach(() => {
+  vi.unstubAllGlobals()
+  vi.useRealTimers()
+})
 
 describe('joursAGarder', () => {
   it('aujourd’hui d’abord, puis les 7 jours suivants, puis la veille', () => {
@@ -96,6 +99,9 @@ describe('completerReserve', () => {
 
 describe('changerDeZone', () => {
   it('oublie les textes de l’ancienne zone et refait la réserve pour la nouvelle', async () => {
+    // L'entretien part du jour présent : on le fixe au 7, sans figer les minuteries.
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(new Date(2026, 9, 7, 10, 0))
     const espion = aelf()
     await completerReserve('2026-10-07')
     espion.mockClear()
