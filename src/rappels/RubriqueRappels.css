@@ -150,10 +150,12 @@
 }
 
 /* Un refus d'Android : en brun brique, jamais en rouge (réservé aux rubriques). */
+/* En tête de la rubrique : un encadré brun brique, entier, avant les heures. */
 .rappels-avis {
-  margin-top: var(--esp-md);
+  margin: var(--esp-xs) 0 var(--esp-md);
   padding: var(--esp-md);
-  border-left: 3px solid var(--erreur);
+  border: 1px solid var(--erreur);
+  border-radius: var(--r-md);
   background: var(--velin);
 }
 

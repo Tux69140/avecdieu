@@ -96,6 +96,18 @@ export function RubriqueRappels({
 
   return (
     <>
+      {/* Ce qui empêche les rappels d'arriver passe avant tout le reste : on
+          arrive souvent ici depuis l'alerte de l'accueil. */}
+      {avis.length > 0 && (
+        <AvisRappels
+          avis={avis}
+          onMinuteOuverte={() => {
+            relire()
+            reprogrammerBientot()
+          }}
+        />
+      )}
+
       <div className="rappels-heures">
         <h3 id="rappels-heures">Heures des prières</h3>
         <Bascule
@@ -146,16 +158,6 @@ export function RubriqueRappels({
           maintenant={maintenant}
           onChanger={onChangerSolaire}
           onFermer={() => setVolet(undefined)}
-        />
-      )}
-
-      {avis.length > 0 && (
-        <AvisRappels
-          avis={avis}
-          onMinuteOuverte={() => {
-            relire()
-            reprogrammerBientot()
-          }}
         />
       )}
 
