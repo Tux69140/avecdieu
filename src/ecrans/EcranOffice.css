@@ -169,8 +169,11 @@
   color: var(--erreur);
 }
 
-.office-erreur .btn {
-  margin-top: var(--esp-sm);
+.office-erreur-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-sm);
+  margin-top: var(--esp-md);
 }
 
 /* Le jour de Pâques, l'office des lectures : une note, pas une erreur. */

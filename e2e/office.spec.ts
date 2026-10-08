@@ -2,6 +2,9 @@ import { readFileSync } from 'node:fs'
 import { expect, type Page } from '@playwright/test'
 import { deplierReglages, espionner, journal, preparer, servirAelf, test } from './outils.ts'
 
+// À l'écran, un liant invisible suit le trait d'union d'un mot composé.
+const lie = (texte: string) => texte.replace(/(?<=\p{L})-(?=\p{L})/gu, '-\u2060')
+
 // Phase 5 : les sept offices du jour, lus d'un trait depuis l'AELF, repères
 // liturgiques en rouge rubrique. Les ajouts selon les rubriques (phase 6) :
 // e2e/rubriques.spec.ts.
@@ -132,15 +135,23 @@ test('les accents de psalmodie se masquent dans les réglages', async ({ page })
   await expect(accent).toHaveCSS('text-decoration-line', 'none')
 })
 
-test('premier lancement sans réseau : un message clair et « Réessayer »', async ({ page }) => {
+test('premier lancement sans réseau : pourquoi, puis le réseau ou le chapelet', async ({
+  page,
+}) => {
   await page.route('https://api.aelf.org/**', (route) => route.abort('internetdisconnected'))
   await preparer(page)
   await page.goto('/office/vepres/2026-10-06')
   const alerte = page.getByRole('alert')
   await expect(alerte).toHaveText(
-    '⚠ Les offices demandent une première connexion à internet.' +
-      'Une fois connecté, l’app enregistre une semaine de textes d’avance. ' +
-      'Le chapelet, lui, se prie dès maintenant.Réessayer',
+    '⚠ Les textes des offices ne sont pas encore sur le téléphone.' +
+      'L’app les reçoit de l’AELF par internet, puis en garde une semaine d’avance.' +
+      lie('Activez le Wi-Fi ou les données mobiles : l’office s’affichera de lui-même.') +
+      'Ou priez le chapelet, qui ne demande aucune connexion.' +
+      'RéessayerPrier le chapelet',
+  )
+  await expect(alerte.getByRole('link', { name: 'Prier le chapelet' })).toHaveAttribute(
+    'href',
+    '/chapelet',
   )
 
   // Le réseau revient : « Réessayer » affiche l'office.

@@ -223,6 +223,8 @@ body::before {
 }
 
 .btn {
+  /* Un lien fait bouton (« Prier le chapelet ») n'est pas souligné. */
+  text-decoration: none;
   font-family: var(--texte);
   font-weight: 500;
   font-size: 17px;

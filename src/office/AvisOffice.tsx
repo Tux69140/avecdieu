@@ -1,3 +1,5 @@
+import { Link } from 'react-router'
+import { insecables } from '../chapelet/typographie'
 import type { Etendue } from '../aelf/cache'
 import { periodeLisible } from './dates'
 
@@ -54,6 +56,8 @@ export function AvisOffice({
         </p>
       </>
     )
+  // Hors réseau : pourquoi le texte manque, puis les deux solutions
+  // (textes validés par le porteur du projet, 2026-10-08).
   return (
     <div className="office-erreur" role="alert">
       {enregistres ? (
@@ -61,26 +65,30 @@ export function AvisOffice({
           <p className="office-erreur-titre">
             <span aria-hidden="true">⚠ </span>Cet office n’est pas enregistré sur le téléphone.
           </p>
-          <p>
-            Les textes enregistrés vont {periodeLisible(enregistres.debut, enregistres.fin)}. Pour
-            ce jour-ci, connectez-vous à internet, puis réessayez.
-          </p>
+          <p>Les textes enregistrés vont {periodeLisible(enregistres.debut, enregistres.fin)}.</p>
         </>
       ) : (
         <>
           <p className="office-erreur-titre">
-            <span aria-hidden="true">⚠ </span>Les offices demandent une première connexion à
-            internet.
+            <span aria-hidden="true">⚠ </span>Les textes des offices ne sont pas encore sur le
+            téléphone.
           </p>
-          <p>
-            Une fois connecté, l’app enregistre une semaine de textes d’avance. Le chapelet, lui, se
-            prie dès maintenant.
-          </p>
+          <p>L’app les reçoit de l’AELF par internet, puis en garde une semaine d’avance.</p>
         </>
       )}
-      <button className="btn btn-secondaire" type="button" onClick={onReessayer}>
-        Réessayer
-      </button>
+      {/* « lui-même » ne se coupe pas à son trait d'union. */}
+      <p>
+        {insecables('Activez le Wi-Fi ou les données mobiles : l’office s’affichera de lui-même.')}
+      </p>
+      <p>Ou priez le chapelet, qui ne demande aucune connexion.</p>
+      <div className="office-erreur-actions">
+        <button className="btn btn-secondaire" type="button" onClick={onReessayer}>
+          Réessayer
+        </button>
+        <Link className="btn btn-secondaire" to="/chapelet">
+          Prier le chapelet
+        </Link>
+      </div>
     </div>
   )
 }

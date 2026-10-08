@@ -1,6 +1,9 @@
 import { expect, type Page } from '@playwright/test'
 import { commencer, deplierReglages, preparer, servirAelf, test } from './outils.ts'
 
+// À l'écran, un liant invisible suit le trait d'union d'un mot composé.
+const lie = (texte: string) => texte.replace(/(?<=\p{L})-(?=\p{L})/gu, '-\u2060')
+
 // Phase 9 : la veille, aujourd'hui et 7 jours d'avance, enregistrés à chaque
 // ouverture avec réseau, pour prier sans réseau. Messages validés par le
 // porteur du projet le 2026-10-07.
@@ -72,13 +75,17 @@ test('les réglages disent jusqu’à quand on peut prier sans réseau', async (
   )
 })
 
-test('un office non enregistré : les dates disponibles, et « Réessayer »', async ({ page }) => {
+test('un office non enregistré : les dates disponibles, le réseau ou le chapelet', async ({
+  page,
+}) => {
   await remplirPuisCouper(page)
   await page.goto('/office/laudes/2026-10-20')
   await expect(alerte(page)).toHaveText(
     '⚠ Cet office n’est pas enregistré sur le téléphone.' +
-      'Les textes enregistrés vont du lundi 5 au mardi 13 octobre. ' +
-      'Pour ce jour-ci, connectez-vous à internet, puis réessayez.Réessayer',
+      'Les textes enregistrés vont du lundi 5 au mardi 13 octobre.' +
+      lie('Activez le Wi-Fi ou les données mobiles : l’office s’affichera de lui-même.') +
+      'Ou priez le chapelet, qui ne demande aucune connexion.' +
+      'RéessayerPrier le chapelet',
   )
 })
 
