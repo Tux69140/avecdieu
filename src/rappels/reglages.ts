@@ -1,6 +1,6 @@
 import { lireHeure, type Heure } from '../office/heure'
 import { OFFICES, type NomOffice } from '../office/modele'
-import { ecrire, estObjet, lireObjet } from '../reglages/stockage'
+import { ecrireEtSignaler, estObjet, lireObjet, RACINE } from '../reglages/stockage'
 
 // Les rappels du priant (phase 11) : pour chaque office et pour le chapelet,
 // s'il est rappelé, à quelle heure, avec quel son. Décisions du porteur du
@@ -72,7 +72,7 @@ export const RAPPELS_PAR_DEFAUT: Rappels = {
 // L'heure que l'office des lectures propose quand on active son rappel.
 export const HEURE_PROPOSEE_LECTURES: Heure = { heures: 6, minutes: 30 }
 
-const CLE = 'avec-dieu.rappels'
+const CLE = `${RACINE}rappels`
 
 const lireSon = (v: unknown): Son | undefined => {
   if (!estObjet(v)) return undefined
@@ -121,8 +121,7 @@ export function lireDemandes(): Demandes {
 export const RAPPELS_CHANGES = 'avec-dieu:rappels-changes'
 
 function enregistrer(rappels: Rappels, demandes: Demandes) {
-  ecrire(CLE, JSON.stringify({ ...rappels, demandes }))
-  window.dispatchEvent(new Event(RAPPELS_CHANGES))
+  ecrireEtSignaler(CLE, { ...rappels, demandes }, RAPPELS_CHANGES)
 }
 
 export function modifierRappel(priere: Priere, changement: Partial<Rappel>): Rappels {

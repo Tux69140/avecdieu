@@ -1,24 +1,17 @@
+import { prefixeDeZone } from '../aelf/cache'
 import { reprogrammer } from '../rappels/entretien'
 import { lireReglages, REGLAGES_PAR_DEFAUT } from './reglages'
+import { clesCommencantPar, effacer, RACINE } from './stockage'
 
 // L'app revient comme au premier lancement : tout ce qu'elle a retenu est
 // effacé, sauf les textes déjà enregistrés de la zone d'origine, que la
 // réserve devrait sinon retélécharger (et qui manqueraient sans réseau).
-const RACINE = 'avec-dieu.'
-
+// Mémoire indisponible : il n'y a rien à effacer.
 export function effacerMemoire() {
-  try {
-    const garder = `${RACINE}aelf.${REGLAGES_PAR_DEFAUT.zone}.`
-    const textesGardes = lireReglages().zone === REGLAGES_PAR_DEFAUT.zone
-    const aEffacer: string[] = []
-    for (let i = 0; i < localStorage.length; i++) {
-      const cle = localStorage.key(i)
-      if (cle?.startsWith(RACINE) && !(textesGardes && cle.startsWith(garder))) aEffacer.push(cle)
-    }
-    for (const cle of aEffacer) localStorage.removeItem(cle)
-  } catch {
-    // Mémoire indisponible : il n'y a rien à effacer.
-  }
+  const garder = prefixeDeZone(REGLAGES_PAR_DEFAUT.zone)
+  const textesGardes = lireReglages().zone === REGLAGES_PAR_DEFAUT.zone
+  for (const cle of clesCommencantPar(RACINE))
+    if (!(textesGardes && cle.startsWith(garder))) effacer(cle)
 }
 
 // Les notifications déjà confiées à Android sont annulées (plus aucun rappel

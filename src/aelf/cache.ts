@@ -1,7 +1,7 @@
 import { decaler } from '../office/dates'
 import { OFFICES, type NomOffice } from '../office/modele'
 import { lireReglages } from '../reglages/reglages'
-import { effacer, ecrire, lire } from '../reglages/stockage'
+import { clesCommencantPar, ecrire, effacer, lire, RACINE } from '../reglages/stockage'
 
 // Les réponses de l'AELF, gardées telles quelles dans la mémoire du téléphone :
 // relues par le module frontière, elles profitent de chaque correction de sa
@@ -16,8 +16,10 @@ export const RESSOURCES: readonly Ressource[] = ['informations', ...OFFICES]
 // L'AELF ne propose pas cet office ce jour-là (404) : c'est aussi une réponse.
 export const ABSENT = 'absent'
 
-const RACINE = 'avec-dieu.aelf.'
-const prefixe = () => `${RACINE}${zoneChoisie()}.`
+const RACINE_AELF = `${RACINE}aelf.`
+// Le début des clés d'une zone : la réinitialisation garde celles de la France.
+export const prefixeDeZone = (zone: string) => `${RACINE_AELF}${zone}.`
+const prefixe = () => prefixeDeZone(zoneChoisie())
 const cle = (ressource: string, date: string) => `${prefixe()}${ressource}.${date}`
 
 export function lireEnregistre(ressource: Ressource, date: string): unknown {
@@ -40,24 +42,12 @@ export function enregistrer(ressource: Ressource, date: string, reponse: unknown
 
 export const oublier = (ressource: Ressource, date: string) => effacer(cle(ressource, date))
 
-// Les clés de la mémoire qui commencent par ce préfixe.
-function clesDe(debut: string): string[] {
-  try {
-    const trouvees: string[] = []
-    for (let i = 0; i < localStorage.length; i++) {
-      const nom = localStorage.key(i)
-      if (nom?.startsWith(debut)) trouvees.push(nom)
-    }
-    return trouvees
-  } catch {
-    return []
-  }
-}
-
 // Les entrées enregistrées pour la zone choisie, lues dans les clés : [ressource, date].
 function entrees(): [string, string][] {
   const debut = prefixe()
-  return clesDe(debut).map((nom) => nom.slice(debut.length).split('.') as [string, string])
+  return clesCommencantPar(debut).map(
+    (nom) => nom.slice(debut.length).split('.') as [string, string],
+  )
 }
 
 export function effacerAvant(date: string) {
@@ -66,7 +56,7 @@ export function effacerAvant(date: string) {
 
 // Un changement de zone : les textes des autres zones n'ont plus d'usage.
 export function oublierTout() {
-  for (const nom of clesDe(RACINE)) effacer(nom)
+  for (const nom of clesCommencantPar(RACINE_AELF)) effacer(nom)
 }
 
 export interface Etendue {

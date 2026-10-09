@@ -1,5 +1,5 @@
 import { estZone, type Zone } from '../aelf/zones'
-import { ecrire, lire, lireObjet } from './stockage'
+import { ecrireEtSignaler, lire, lireObjet, RACINE } from './stockage'
 
 export type Affichage = 'complet' | 'compact'
 
@@ -98,9 +98,9 @@ const BASCULES = [
   'essentiel',
 ] as const
 
-const CLE = 'avec-dieu.reglages'
+const CLE = `${RACINE}reglages`
 // Avant les réglages (phase 3), seul l'affichage était retenu, sous sa propre clé.
-const CLE_AFFICHAGE_PHASE_3 = 'avec-dieu.affichage'
+const CLE_AFFICHAGE_PHASE_3 = `${RACINE}affichage`
 
 const estAffichage = (valeur: unknown): valeur is Affichage =>
   valeur === 'complet' || valeur === 'compact'
@@ -135,7 +135,6 @@ export const REGLAGES_CHANGES = 'avec-dieu:reglages-changes'
 
 export function modifierReglages(changement: Partial<Reglages>): Reglages {
   const reglages = { ...lireReglages(), ...changement }
-  ecrire(CLE, JSON.stringify(reglages))
-  window.dispatchEvent(new Event(REGLAGES_CHANGES))
+  ecrireEtSignaler(CLE, reglages, REGLAGES_CHANGES)
   return reglages
 }

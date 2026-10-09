@@ -2,6 +2,11 @@
 // Une mémoire indisponible (stockage bloqué, plein) ne doit jamais interrompre
 // la prière : on retombe sur les valeurs par défaut et on oublie l'écriture.
 
+// Toutes les clés de l'app commencent ainsi : la réinitialisation efface ce
+// qui porte cette marque, et rien d'une autre app. Les clés ne changent
+// jamais : les données des téléphones doivent se relire.
+export const RACINE = 'avec-dieu.'
+
 export function lire(cle: string): string | null {
   try {
     return localStorage.getItem(cle)
@@ -37,5 +42,35 @@ export function lireObjet(cle: string): Record<string, unknown> {
     return estObjet(valeur) ? valeur : {}
   } catch {
     return {}
+  }
+}
+
+// Les clés de la mémoire qui commencent par ce préfixe.
+export function clesCommencantPar(prefixe: string): string[] {
+  try {
+    const trouvees: string[] = []
+    for (let i = 0; i < localStorage.length; i++) {
+      const nom = localStorage.key(i)
+      if (nom?.startsWith(prefixe)) trouvees.push(nom)
+    }
+    return trouvees
+  } catch {
+    return []
+  }
+}
+
+// Un objet enregistré en JSON, puis signalé à la page, qui suit aussitôt.
+export function ecrireEtSignaler(cle: string, valeur: unknown, evenement: string) {
+  ecrire(cle, JSON.stringify(valeur))
+  window.dispatchEvent(new Event(evenement))
+}
+
+// Une aide qui revient tant que « Ne plus afficher » n'est pas coché ; les
+// réglages la rétablissent.
+export function aideMasquable(cle: string) {
+  return {
+    aMontrer: () => lire(cle) !== 'masquee',
+    masquer: () => ecrire(cle, 'masquee'),
+    montrer: () => effacer(cle),
   }
 }

@@ -1,12 +1,12 @@
 import type { SerieId } from '../recueil/mysteres'
-import { effacer, ecrire, lire, lireObjet } from '../reglages/stockage'
+import { aideMasquable, ecrire, lireObjet, RACINE } from '../reglages/stockage'
 
 // Ce que l'app retient d'un chapelet à l'autre, en dehors des réglages :
 // les lectures de chaque mystère et l'aide aux gestes.
 
 const CLES = {
-  lectures: 'avec-dieu.lectures',
-  aide: 'avec-dieu.aide-gestes',
+  lectures: `${RACINE}lectures`,
+  aide: `${RACINE}aide-gestes`,
 }
 
 export function lireLectures(serie: SerieId, rang: number): number {
@@ -21,15 +21,10 @@ export function compterLecture(serie: SerieId, rang: number) {
   ecrire(CLES.lectures, JSON.stringify(lectures))
 }
 
-export function aideAMontrer(): boolean {
-  return lire(CLES.aide) !== 'masquee'
-}
-
-export function masquerAide() {
-  ecrire(CLES.aide, 'masquee')
-}
-
-// Rétablie depuis les réglages : elle revient au prochain chapelet.
-export function montrerAide() {
-  effacer(CLES.aide)
-}
+// L'aide aux gestes ; rétablie depuis les réglages, elle revient au prochain
+// chapelet.
+export const {
+  aMontrer: aideAMontrer,
+  masquer: masquerAide,
+  montrer: montrerAide,
+} = aideMasquable(CLES.aide)

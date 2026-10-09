@@ -1,6 +1,6 @@
 import { dateDuJour } from '../office/dates'
 import { SERIES, type SerieId } from '../recueil/mysteres'
-import { effacer, ecrire, lireObjet } from '../reglages/stockage'
+import { ecrire, effacer, lireObjet, RACINE } from '../reglages/stockage'
 import { CHAPELET_MARIAL, type Forme, type Moment } from './definition'
 import type { Deroule, Pas } from './deroule'
 import { rangDeSerie } from './libelles'
@@ -26,8 +26,8 @@ export interface ChapeletEnCours {
 }
 
 const CLES: Record<Forme, string> = {
-  chapelet: 'avec-dieu.en-cours',
-  rosaire: 'avec-dieu.rosaire-en-cours',
+  chapelet: `${RACINE}en-cours`,
+  rosaire: `${RACINE}rosaire-en-cours`,
 }
 
 // Au Rosaire, la série retenue est celle de la dizaine, ou à défaut (ouverture,

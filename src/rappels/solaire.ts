@@ -8,13 +8,13 @@ import {
   type OfficeSolaire,
   type ReglagesSolaires,
 } from '../office/heuresSolaires'
-import { ecrire, estObjet, lireObjet } from '../reglages/stockage'
+import { ecrireEtSignaler, estObjet, lireObjet, RACINE } from '../reglages/stockage'
 import { RAPPELS_CHANGES } from './reglages'
 
 // Le choix « Fixes | Solaires » et les réglages des heures solaires, à part
 // des rappels : repasser aux heures fixes retrouve les heures d'avant.
 
-const CLE = 'avec-dieu.heures-solaires'
+const CLE = `${RACINE}heures-solaires`
 
 const lireLimite = (v: unknown, defaut: Limite): Limite => {
   if (!estObjet(v)) return { ...defaut }
@@ -50,8 +50,7 @@ export function lireSolaire(): ReglagesSolaires {
 // Les heures changent : l'accueil suit et les rappels se reprogramment.
 export function modifierSolaire(changement: Partial<ReglagesSolaires>): ReglagesSolaires {
   const reglages = { ...lireSolaire(), ...changement }
-  ecrire(CLE, JSON.stringify(reglages))
-  window.dispatchEvent(new Event(RAPPELS_CHANGES))
+  ecrireEtSignaler(CLE, reglages, RAPPELS_CHANGES)
   return reglages
 }
 

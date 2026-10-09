@@ -1,11 +1,11 @@
-import { ecrire, lireObjet } from '../reglages/stockage'
+import { ecrire, lireObjet, RACINE } from '../reglages/stockage'
 import type { NomOffice } from './modele'
 
 // R1 : l'invitatoire ouvre la journée de prière, en tête du premier des deux
 // offices ouverts ce jour-là (laudes ou office des lectures). Le téléphone
 // retient, pour chaque date, lequel des deux le porte.
 
-const CLE = 'avec-dieu.invitatoire'
+const CLE = `${RACINE}invitatoire`
 // Assez pour une semaine priée d'avance ou en retard ; le reste s'oublie.
 const DATES_RETENUES = 14
 

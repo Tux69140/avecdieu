@@ -1,5 +1,5 @@
 import { CENTRE_FRANCE, type Lieu } from '../office/soleil'
-import { ecrire, lireObjet } from '../reglages/stockage'
+import { ecrireEtSignaler, lireObjet, RACINE } from '../reglages/stockage'
 
 // Le lieu des heures solaires (phase 12), saisi une fois : une ville de la
 // liste embarquée, ou la position du GPS rattachée à la ville la plus proche.
@@ -18,7 +18,7 @@ export interface ReglagesLieu {
   actualiser: boolean
 }
 
-const CLE = 'avec-dieu.lieu'
+const CLE = `${RACINE}lieu`
 
 // Signalé à la page : les heures et les rappels se recalculent.
 export const LIEU_CHANGE = 'avec-dieu:lieu-change'
@@ -41,8 +41,7 @@ export function lireLieu(): ReglagesLieu {
 }
 
 function enregistrer(reglages: ReglagesLieu) {
-  ecrire(CLE, JSON.stringify(reglages))
-  window.dispatchEvent(new Event(LIEU_CHANGE))
+  ecrireEtSignaler(CLE, reglages, LIEU_CHANGE)
 }
 
 export function choisirLieu(lieu: LieuChoisi) {
