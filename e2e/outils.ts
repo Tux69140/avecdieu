@@ -44,6 +44,7 @@ export interface Reglages {
   annonce?: boolean
   oMonJesus?: boolean
   intentions?: boolean
+  saintPere?: boolean
   salveRegina?: boolean
   litanies?: 'octobre' | 'toujours' | 'jamais'
   oraisonRosaire?: boolean
@@ -58,6 +59,7 @@ export interface Reglages {
   tailleTexte?: number
   theme?: 'jour' | 'nuit' | 'automatique'
   forme?: 'chapelet' | 'rosaire'
+  essentiel?: boolean
 }
 
 // Les parcours ne dépendent pas du réseau : l'AELF est remplacée par ses
@@ -91,16 +93,26 @@ interface Ouverture {
   rappels?: string[]
   // Un Rosaire commencé (src/chapelet/reprise.ts), pour reprendre en chemin.
   rosaireEnCours?: Record<string, unknown>
+  // Un chapelet commencé, de même.
+  enCours?: Record<string, unknown>
 }
 
 // Prépare la mémoire du téléphone avant le premier chargement de la page.
 export async function preparer(
   page: Page,
-  { aide = false, affichage, reglages = {}, lectures, rappels, rosaireEnCours }: Ouverture = {},
+  {
+    aide = false,
+    affichage,
+    reglages = {},
+    lectures,
+    rappels,
+    rosaireEnCours,
+    enCours,
+  }: Ouverture = {},
 ) {
   const tous = affichage ? { ...reglages, affichage } : reglages
   await page.addInitScript(
-    ({ aide, tous, lectures, rappels, rosaireEnCours }) => {
+    ({ aide, tous, lectures, rappels, rosaireEnCours, enCours }) => {
       // Seulement au premier chargement : un rechargement garde ce que l'app a retenu.
       if (sessionStorage.getItem('parcours-prepare')) return
       sessionStorage.setItem('parcours-prepare', 'oui')
@@ -118,8 +130,9 @@ export async function preparer(
         )
       if (rosaireEnCours)
         localStorage.setItem('avec-dieu.rosaire-en-cours', JSON.stringify(rosaireEnCours))
+      if (enCours) localStorage.setItem('avec-dieu.en-cours', JSON.stringify(enCours))
     },
-    { aide, tous, lectures, rappels, rosaireEnCours },
+    { aide, tous, lectures, rappels, rosaireEnCours, enCours },
   )
 }
 

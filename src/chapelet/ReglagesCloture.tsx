@@ -1,18 +1,27 @@
 import { Interrupteur } from '../composants/Interrupteur'
 import { ChoixFrequence } from './ChoixFrequence'
+import { PRIERE_SAINT_PERE } from './libelles'
 import type { Reglages } from './reglages'
 
 interface Props {
   reglages: Reglages
   onModifier: (changement: Partial<Reglages>) => void
+  // Ouverte du seuil du Rosaire : « Fin du Rosaire » (phase 18).
+  rosaire?: boolean
 }
 
 // Les textes de la fin du chapelet, dans l'ordre où ils se disent (libellés
-// validés par le porteur du projet, 2026-10-08).
-export function ReglagesCloture({ reglages, onModifier }: Props) {
+// validés par le porteur du projet, 2026-10-08), précédés de la prière aux
+// intentions du Saint-Père (phase 18).
+export function ReglagesCloture({ reglages, onModifier, rosaire = false }: Props) {
   return (
     <>
-      <h2>Fin du chapelet</h2>
+      <h2>{rosaire ? 'Fin du Rosaire' : 'Fin du chapelet'}</h2>
+      <Interrupteur
+        libelle={PRIERE_SAINT_PERE}
+        actif={reglages.saintPere}
+        onBasculer={(saintPere) => onModifier({ saintPere })}
+      />
       <Interrupteur
         libelle="Salve Regina"
         actif={reglages.salveRegina}

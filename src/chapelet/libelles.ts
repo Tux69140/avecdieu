@@ -55,3 +55,35 @@ export function passageDeSerie(vient: SerieId): string {
 // Le repère toujours visible pendant le Rosaire : « Série 2 sur 4 ».
 export const repereSerie = (serie: SerieId) =>
   `Série ${rangDeSerie(serie)} sur ${SERIES_DU_ROSAIRE.length}`
+
+// Phase 18, textes validés mot à mot par le porteur du projet (2026-10-09).
+
+// La partie « Aux intentions du Saint-Père » de la page « Chapelet ou
+// Rosaire ? », en bas, après un filet ; l'intention du mois la suit. La
+// citation de Jean-Paul II vient de Rosarium Virginis Mariae, 37.
+export const AUX_INTENTIONS = {
+  titre: insecables('Aux intentions du Saint-Père'),
+  paragraphes: [
+    'Prier aux intentions du Saint-Père, c’est s’unir à la prière du pape pour l’Église et pour le monde. Il n’est pas nécessaire de connaître ces intentions : on confie au Seigneur ce que le pape porte dans son cœur. Chaque mois, il en propose une en particulier, par son Réseau mondial de prière.',
+    'Jean-Paul II y voyait un moyen « d’élargir le regard de celui qui prie aux vastes horizons des nécessités ecclésiales ».',
+    'C’est aussi l’une des conditions de l’indulgence que l’Église attache au chapelet, c’est-à-dire la remise de la peine encore due pour des péchés déjà pardonnés. Dit à l’église, en famille ou en communauté, le chapelet peut obtenir l’indulgence plénière, avec la confession, la communion et le refus de tout attachement au péché. Ailleurs, l’indulgence est partielle.',
+  ].map(insecables),
+} as const
+
+// Le réglage de la page « Prières du chapelet », sous « Fin du chapelet ».
+export const PRIERE_SAINT_PERE = 'Prière aux intentions du Saint-Père'
+
+// « L’essentiel seulement », sur le seuil et dans Réglages › Chapelet ; la
+// page des prières le rappelle en tête quand il est activé.
+export const ESSENTIEL = {
+  libelle: 'L’essentiel seulement',
+  aide: insecables(
+    'Le signe de croix, puis les cinq dizaines : l’annonce du mystère, un Notre Père, dix Je vous salue Marie, un Gloire au Père.',
+  ),
+  active: 'L’essentiel seulement est activé.',
+} as const
+
+// Sur chaque prière que « L’essentiel seulement » retire : en minuscules,
+// que la police des petites capitales dessine toutes en petites capitales, et
+// que le lecteur d'écran dit « facultatif ».
+export const FACULTATIF = 'facultatif'

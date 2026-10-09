@@ -1,12 +1,21 @@
 import { useState } from 'react'
+import { Link } from 'react-router'
 import { LITANIES } from '../recueil/litanies'
 import type { Passage } from '../recueil/passages'
 import type { PriereId } from '../recueil/prieres'
 import type { Pas } from './deroule'
+import {
+  ANCRE_AUX_INTENTIONS,
+  CE_MOIS_CI,
+  titreEnLigne,
+  type IntentionDuMois,
+} from './intentionsDuPape'
+import { Facultatif } from './Facultatif'
 import { PassageBiblique } from './PassageBiblique'
 import { TexteLitanies } from './TexteLitanies'
 import { TextePriere } from './TextePriere'
 import { priereDuPas } from './texteDuPas'
+import { insecables } from './typographie'
 
 interface Props {
   pas: Pas & { priere: PriereId | 'litanies' }
@@ -19,6 +28,8 @@ interface Props {
   passage?: Passage
   passageDeplie: boolean
   onBasculerPassage: () => void
+  // L'intention de prière du pape pour le mois, s'il y en a une (phase 18).
+  intentionDuMois?: IntentionDuMois
 }
 
 // Une prière du chapelet ; le mystère en cours s'affiche au-dessus, hors de
@@ -36,15 +47,20 @@ export function Priere(props: Props) {
     <section className="priere" data-testid="priere">
       <div className={compact ? 'priere-tete priere-tete-compacte' : 'priere-tete'}>
         <h2>{priere ? priere.titre : LITANIES.titre}</h2>
-        {pas.total > 1 && (
-          // La barre se lirait « barre oblique » : le lecteur d'écran entend « 5 sur 10 ».
-          <span className="compteur">
-            <span aria-hidden="true" data-testid="compteur">
-              {pas.rang} / {pas.total}
-            </span>
-            <span className="cache-a-l-oeil">
-              {pas.rang} sur {pas.total}
-            </span>
+        {(pas.total > 1 || pas.facultatif) && (
+          <span className="priere-marques">
+            {pas.total > 1 && (
+              // La barre se lirait « barre oblique » : le lecteur d'écran entend « 5 sur 10 ».
+              <span className="compteur">
+                <span aria-hidden="true" data-testid="compteur" data-gabarit>
+                  {pas.rang} / {pas.total}
+                </span>
+                <span className="cache-a-l-oeil">
+                  {pas.rang} sur {pas.total}
+                </span>
+              </span>
+            )}
+            {pas.facultatif && <Facultatif sousCompteur={pas.total > 1} />}
           </span>
         )}
       </div>
@@ -53,6 +69,17 @@ export function Priere(props: Props) {
       {pas.intention && (
         <p className="intention" data-testid="intention">
           {pas.intention}
+        </p>
+      )}
+      {/* Sous la ligne rouge du Notre Père aux intentions du Saint-Père, en
+          petit, l'intention du mois : un lien vers ce qu'elle veut dire, que
+          toucher n'avance pas (un lien est interactif). */}
+      {pas.intentionDuMois && props.intentionDuMois && (
+        <p className="intention-du-mois">
+          <Link className="lien-discret" to={`/chapelet-ou-rosaire#${ANCRE_AUX_INTENTIONS}`}>
+            {insecables(`${CE_MOIS_CI} ${titreEnLigne(props.intentionDuMois.titre)}`)}
+            <span aria-hidden="true">{'\u00a0›'}</span>
+          </Link>
         </p>
       )}
       {/* Les liens restent sous le titre : ce qu'ils déplient s'ouvre en dessous. */}

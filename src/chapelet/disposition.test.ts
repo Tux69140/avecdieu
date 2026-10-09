@@ -59,6 +59,7 @@ describe('disposition du chapelet dessiné', () => {
     expect(plan.points.filter((p) => p.type === 'medaille')).toHaveLength(1)
     const sansCloture = disposer(
       derouler(CHAPELET_MARIAL, {
+        saintPere: false,
         salveRegina: false,
         litanies: false,
         oraisonRosaire: false,

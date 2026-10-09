@@ -88,9 +88,10 @@
   grid-column: 2;
 }
 
-.priere-tete .compteur {
+.priere-tete .priere-marques {
   grid-column: 3;
   justify-self: end;
+  position: relative;
 }
 
 .priere-tete h2 {
@@ -110,6 +111,38 @@
   color: var(--sepia);
   font-variant-numeric: tabular-nums lining-nums;
   white-space: nowrap;
+}
+
+/* « Facultatif » sur les prières d'usage (phase 18, Facultatif.tsx) : en
+   petites capitales sépia, posé hors du flux et mis à l'échelle du compteur
+   (ou de son gabarit invisible, à sa place quand il n'y en a pas). */
+.facultatif {
+  position: absolute;
+  right: 0;
+  display: flex;
+  align-items: center;
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 10px;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  color: var(--sepia);
+  white-space: nowrap;
+}
+
+.facultatif-sous {
+  top: 100%;
+  transform-origin: top right;
+}
+
+.facultatif:not(.facultatif-sous) {
+  top: 0;
+  bottom: 0;
+  transform-origin: center right;
+}
+
+.facultatif-gabarit {
+  visibility: hidden;
 }
 
 /* Le texte de la prière : TextePriere.css. */
@@ -183,6 +216,21 @@
   font-size: calc(var(--taille-priere) * 0.889);
   line-height: 1.4;
   color: var(--rubrique);
+}
+
+/* Sous la ligne rouge des intentions du Saint-Père, en petit, l'intention
+   du pape pour le mois, qui ouvre son explication (phase 18). */
+.intention-du-mois {
+  margin: 0;
+}
+
+.intention-du-mois .lien-discret {
+  display: inline-block;
+  padding: var(--esp-sm) var(--esp-sm) var(--esp-xs);
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--sepia);
+  text-wrap: balance;
 }
 
 /* Au Rosaire, où l'on en est des quatre séries : sous la série, plus petit

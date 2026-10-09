@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { ChoixAffichage } from '../chapelet/ChoixAffichage'
-import { AIDE_PLUSIEURS, AIDE_VIBRATIONS } from '../chapelet/libelles'
+import { AIDE_PLUSIEURS, AIDE_VIBRATIONS, ESSENTIEL } from '../chapelet/libelles'
 import { aideAMontrer, masquerAide, montrerAide } from '../chapelet/memoire'
 import { Interrupteur } from '../composants/Interrupteur'
 import { LignePage } from '../composants/LignePage'
@@ -19,6 +19,14 @@ export function EcranReglagesChapelet() {
     <PageReglages titre="Chapelet" parente="/reglages">
       <div className="reglages-liste">
         <LignePage vers="/reglages/chapelet/prieres" nom="Prières du chapelet" />
+        {/* Le cœur seul : il l'emporte sur les prières réglées au-dessus,
+            sans les changer (phase 18). */}
+        <Interrupteur
+          libelle={ESSENTIEL.libelle}
+          aide={ESSENTIEL.aide}
+          actif={reglages.essentiel}
+          onBasculer={(essentiel) => modifier({ essentiel })}
+        />
       </div>
       <h2 id="reglages-affichage">Affichage des prières</h2>
       <ChoixAffichage

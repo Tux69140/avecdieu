@@ -35,6 +35,10 @@ const DEROULE: Attendu[] = [
       { priere: 'Ô mon Jésus', mystere },
     ]
   }),
+  // La prière aux intentions du Saint-Père, activée au départ (phase 18).
+  { priere: 'Notre Père' },
+  { priere: AVE },
+  { priere: 'Gloire au Père' },
   // Un lundi d'octobre, avec les réglages de départ : Litanies et saint Joseph
   // s'ajoutent, le verset passe avant l'oraison (phase 16).
   { priere: 'Salve Regina' },

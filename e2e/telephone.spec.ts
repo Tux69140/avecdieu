@@ -2,12 +2,13 @@ import { expect } from '@playwright/test'
 import { avancer, commencer, espionner, journal, test, toucher } from './outils.ts'
 
 const LUNDI = new Date(2026, 9, 5, 10, 0)
-// Ouverture (7 prières), 5 dizaines (l'annonce et 13 prières), la clôture d'un
-// lundi d'octobre (Salve Regina, Litanies, oraison, saint Joseph), l'écran de fin.
+// Ouverture (7 prières), 5 dizaines (l'annonce et 13 prières), la fin d'un
+// lundi d'octobre (la prière aux intentions du Saint-Père, puis Salve Regina,
+// Litanies, oraison, saint Joseph), l'écran de fin.
 const OUVERTURE = 7
 const DIZAINE = 14
-const SALVE = OUVERTURE + 5 * DIZAINE
-const PRIERES = SALVE + 4
+const FIN = OUVERTURE + 5 * DIZAINE
+const PRIERES = FIN + 3 + 4
 
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(LUNDI)
@@ -15,7 +16,7 @@ test.beforeEach(async ({ page }) => {
   await commencer(page)
 })
 
-test('chaque prière vibre court ; chaque annonce, l’entrée dans la clôture et la fin vibrent fort', async ({
+test('chaque prière vibre court ; chaque annonce, l’entrée dans la fin et l’écran de fin vibrent fort', async ({
   page,
 }) => {
   await avancer(page, PRIERES)

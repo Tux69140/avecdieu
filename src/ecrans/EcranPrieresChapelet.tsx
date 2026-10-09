@@ -1,4 +1,5 @@
 import { useLocation } from 'react-router'
+import { ESSENTIEL } from '../chapelet/libelles'
 import type { Reglages } from '../chapelet/reglages'
 import { ReglagesCloture } from '../chapelet/ReglagesCloture'
 import { Interrupteur } from '../composants/Interrupteur'
@@ -42,11 +43,13 @@ export function EcranPrieresChapelet() {
     ))
   return (
     <PageReglages titre={titre} parente="/reglages/chapelet">
+      {/* Les réglages fins restent tels quels, mais n'ont pas cours (phase 18). */}
+      {reglages.essentiel && <p className="reglages-avis">{ESSENTIEL.active}</p>}
       <h2>Ouverture</h2>
       {interrupteurs(OUVERTURE)}
       <h2>Chaque dizaine</h2>
       {interrupteurs(CHAQUE_DIZAINE)}
-      <ReglagesCloture reglages={reglages} onModifier={modifier} />
+      <ReglagesCloture reglages={reglages} onModifier={modifier} rosaire={depuis?.rosaire} />
     </PageReglages>
   )
 }

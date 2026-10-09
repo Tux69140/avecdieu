@@ -16,16 +16,17 @@ import {
 
 const LUNDI_5_OCTOBRE = new Date(2026, 9, 5, 20, 0)
 const MERCREDI_30_SEPTEMBRE = new Date(2026, 8, 30, 20, 0)
-// Ouverture (7 pas), puis 5 dizaines de 14 pas : la clôture commence au pas 77.
-const CLOTURE = 7 + 5 * 14
+// Ouverture (7 pas), puis 5 dizaines de 14 pas, puis la prière aux
+// intentions du Saint-Père (3 pas, phase 18) : la clôture commence au pas 80.
+const CLOTURE = 7 + 5 * 14 + 3
 
 const titre = (page: Page) => page.getByTestId('priere').getByRole('heading', { level: 2 })
 const chapelet = (page: Page) => page.locator('main.chapelet')
 const defilement = (page: Page) => page.evaluate(() => window.scrollY)
 
 // Jusqu'au premier texte de la clôture.
-async function allerALaCloture(page: Page) {
-  await avancer(page, CLOTURE)
+async function allerALaCloture(page: Page, saintPere = true) {
+  await avancer(page, saintPere ? CLOTURE : CLOTURE - 3)
 }
 
 test('un chapelet d’octobre récité jusqu’à la fin passe par chaque texte de clôture', async ({
@@ -177,8 +178,12 @@ test('les Litanies défilent au toucher, puis le toucher passe à la suite', asy
 test('le glissement recule toujours, même au milieu des Litanies', async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 780 })
   await page.clock.setFixedTime(LUNDI_5_OCTOBRE)
-  await commencer(page, '/chapelet', { reglages: { salveRegina: false } })
-  await allerALaCloture(page)
+  // Sans Salve Regina ni prière aux intentions du Saint-Père, les Litanies
+  // suivent le dernier « Ô mon Jésus ».
+  await commencer(page, '/chapelet', {
+    reglages: { salveRegina: false, saintPere: false },
+  })
+  await allerALaCloture(page, false)
   await toucher(page)
   await expect.poll(() => defilement(page)).toBeGreaterThan(300)
   await glisser(page, 160, 300)
@@ -204,6 +209,7 @@ test.describe('réglages de la fin du chapelet', () => {
       'Annonce des mystères',
       '« Ô mon Jésus » après chaque dizaine',
       'Fin du chapelet',
+      'Prière aux intentions du Saint-Père',
       'Salve Regina',
       'Litanies de la Sainte Vierge',
       'Oraison du Rosaire',

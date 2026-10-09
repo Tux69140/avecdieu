@@ -3,7 +3,7 @@ import type { NomOffice } from './modele'
 // Combien de temps prendre pour chaque prière, affiché sur le seuil du
 // chapelet, l'accueil et le menu (US-59). Des durées fixes et approximatives,
 // pas un calcul : elles seront affinées à l'usage (PRD, « Durées affichées »,
-// 2026-10-08). Le Rosaire attend son entrée dans l'app (phase 17).
+// 2026-10-08).
 export type PriereMinutee = NomOffice | 'chapelet' | 'rosaire'
 
 export interface Duree {
@@ -26,9 +26,19 @@ export const DUREES: Record<PriereMinutee, Duree> = {
   complies: environ(15),
 }
 
+// Avec « L’essentiel seulement », le chapelet et le Rosaire sans les prières
+// d'usage (phase 18, 2026-10-09).
+export const DUREES_ESSENTIEL: Partial<Record<PriereMinutee, Duree>> = {
+  chapelet: environ(15),
+  rosaire: environ(75),
+}
+
+const dureeDe = (priere: PriereMinutee, essentiel: boolean) =>
+  (essentiel && DUREES_ESSENTIEL[priere]) || DUREES[priere]
+
 // « 20 min », « ~20 min », « ~1 h 45 » : court, pour tenir sur la ligne.
-export function ecrireDuree(priere: PriereMinutee): string {
-  const { minutes, environ } = DUREES[priere]
+export function ecrireDuree(priere: PriereMinutee, essentiel = false): string {
+  const { minutes, environ } = dureeDe(priere, essentiel)
   const h = Math.floor(minutes / 60)
   const min = minutes % 60
   const texte =
@@ -38,8 +48,8 @@ export function ecrireDuree(priere: PriereMinutee): string {
 
 // Ce que dit le lecteur d'écran, qui lirait « tilde » et « min » :
 // « environ vingt minutes », « environ une heure quarante-cinq ».
-export function direDuree(priere: PriereMinutee): string {
-  const { minutes, environ } = DUREES[priere]
+export function direDuree(priere: PriereMinutee, essentiel = false): string {
+  const { minutes, environ } = dureeDe(priere, essentiel)
   const h = Math.floor(minutes / 60)
   const min = minutes % 60
   const enLettres = (n: number) => (n === 1 ? 'une' : nombreEnLettres(n))

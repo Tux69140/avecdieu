@@ -102,8 +102,9 @@ test('mode compact, prière et passage dépliés', async ({ page }) => {
 
 test('écran de fin du chapelet', async ({ page }) => {
   await commencer(page)
-  // Un lundi d'octobre : 77 pas, puis Salve, Litanies, oraison et saint Joseph.
-  await avancer(page, 81)
+  // Un lundi d'octobre : 77 pas, la prière aux intentions du Saint-Père (3),
+  // puis Salve, Litanies, oraison et saint Joseph.
+  await avancer(page, 84)
   await expect(page.getByTestId('fin-chapelet')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Fermer', exact: true })).toBeVisible()
   expect(await violationsGraves(page)).toEqual([])
@@ -167,7 +168,14 @@ async function cloture(page: Page) {
   await avancer(page, 3)
   await expect(page.getByTestId('intention')).toHaveText('Pour la foi.')
   expect(await violationsGraves(page)).toEqual([])
+  // La prière aux intentions du Saint-Père (phase 18) : la ligne rouge,
+  // l'intention du mois en lien, « facultatif ».
   await avancer(page, 74)
+  await expect(page.getByTestId('intention')).toHaveText('Aux intentions du Saint-Père.')
+  await expect(page.getByRole('link', { name: /^Ce mois-/ })).toBeVisible()
+  await expect(page.getByTestId('facultatif')).toBeVisible()
+  expect(await violationsGraves(page)).toEqual([])
+  await avancer(page, 3)
   await expect(page.getByTestId('invocation').first()).toBeVisible()
   expect(await violationsGraves(page)).toEqual([])
   await avancer(page, 1)
@@ -310,7 +318,8 @@ for (const chemin of [
   '/reglages/reinitialiser',
 ]) {
   test(`réglages ${chemin}, de jour puis de nuit`, async ({ page }) => {
-    await preparer(page, { rappels: ['laudes'] })
+    // « L’essentiel seulement » activé : son avis en tête des prières du chapelet.
+    await preparer(page, { rappels: ['laudes'], reglages: { essentiel: true } })
     await page.emulateMedia({ colorScheme: 'light' })
     await page.goto(chemin)
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible()

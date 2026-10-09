@@ -77,8 +77,13 @@ test('un Rosaire complet se récite du début à la fin', async ({ page }) => {
     }
   }
 
-  // La clôture, une seule fois, puis la fin.
+  // La prière aux intentions du Saint-Père (phase 18), puis la clôture, une
+  // seule fois, puis la fin.
+  await expect(page.getByTestId('intention')).toHaveText('Aux intentions du Saint-Père.')
   for (const nom of [
+    'Notre Père',
+    'Je vous salue Marie',
+    'Gloire au Père',
     'Salve Regina',
     'Litanies de la Sainte Vierge',
     'Oraison du Rosaire',
@@ -90,7 +95,7 @@ test('un Rosaire complet se récite du début à la fin', async ({ page }) => {
   }
   await expect(page.getByRole('region', { name: 'Fin du Rosaire' })).toBeVisible()
   await expect(page.getByRole('img', { name: 'Rosaire terminé' })).toBeVisible()
-  await expect(chapelet(page)).toHaveAttribute('data-pas', String(OUVERTURE + 20 * DIZAINE + 4))
+  await expect(chapelet(page)).toHaveAttribute('data-pas', String(OUVERTURE + 20 * DIZAINE + 3 + 4))
 })
 
 test('le grain en cours est celui de la dizaine dans sa série : une boucle, parcourue quatre fois', async ({
@@ -185,13 +190,14 @@ test('un chapelet en cours ne se reprend pas dans le Rosaire', async ({ page }) 
   await expect(page.getByRole('button', { name: 'Reprendre à la 3e dizaine' })).toBeVisible()
 })
 
-test('le Rosaire retenu, la ligne de l’accueil dit « Rosaire » et l’ouvre', async ({ page }) => {
+// Phase 18 : l'accueil montre toujours le Chapelet et le Rosaire, ce dernier
+// sans heure (e2e/simplifie.spec.ts).
+test('le Rosaire retenu, sa ligne de l’accueil l’ouvre', async ({ page }) => {
   await preparer(page, { reglages: { forme: 'rosaire' } })
   await page.goto('/')
-  const ligne = page.getByRole('list', { name: 'Rosaire' }).getByRole('link')
-  await expect(ligne).toHaveAccessibleName(/^Rosaire\s*20 h\s*, environ une heure quarante-cinq$/)
+  const ligne = page.getByRole('list', { name: 'Chapelet et Rosaire' }).getByRole('link').nth(1)
+  await expect(ligne).toHaveAccessibleName(/^Rosaire\s*, environ une heure quarante-cinq$/)
   await expect(ligne.getByTestId('duree').locator('[aria-hidden="true"]')).toHaveText('~1 h 45')
-  await expect(page.getByRole('list', { name: 'Chapelet' })).toHaveCount(0)
   await ligne.click()
   await expect(page).toHaveURL(/\/rosaire$/)
   await expect(page.getByRole('button', { name: 'Commencer le Rosaire' })).toBeVisible()

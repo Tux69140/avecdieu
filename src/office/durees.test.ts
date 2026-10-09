@@ -53,3 +53,24 @@ describe('nombres en lettres', () => {
     expect(nombreEnLettres(n)).toBe(mots)
   })
 })
+
+// Phase 18 : avec « L’essentiel seulement », le chapelet et le Rosaire se
+// prient plus vite (décision du porteur du projet, 2026-10-09).
+describe('durées avec l’essentiel seulement', () => {
+  it('Chapelet ~15 min, Rosaire ~1 h 15', () => {
+    expect(ecrireDuree('chapelet', true)).toBe('~15 min')
+    expect(ecrireDuree('rosaire', true)).toBe('~1 h 15')
+    expect(direDuree('chapelet', true)).toBe('environ quinze minutes')
+    expect(direDuree('rosaire', true)).toBe('environ une heure quinze')
+  })
+
+  it('les offices ne changent pas', () => {
+    expect(ecrireDuree('laudes', true)).toBe('~20 min')
+    expect(direDuree('complies', true)).toBe('environ quinze minutes')
+  })
+
+  it('sans lui, les durées du PRD', () => {
+    expect(ecrireDuree('chapelet', false)).toBe('20 min')
+    expect(ecrireDuree('rosaire', false)).toBe('~1 h 45')
+  })
+})

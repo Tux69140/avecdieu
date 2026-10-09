@@ -12,6 +12,7 @@ describe('réglages du chapelet', () => {
       annonce: true,
       oMonJesus: true,
       intentions: true,
+      saintPere: true,
       salveRegina: true,
       litanies: 'octobre',
       oraisonRosaire: true,
@@ -28,6 +29,7 @@ describe('réglages du chapelet', () => {
       tailleTexte: 18,
       theme: 'automatique',
       forme: 'chapelet',
+      essentiel: false,
     })
     expect(REGLAGES_PAR_DEFAUT).toEqual(lireReglages())
   })
@@ -180,11 +182,13 @@ describe('options du déroulé selon les réglages', () => {
       annonce: true,
       oMonJesus: true,
       intentions: true,
+      saintPere: true,
       salveRegina: true,
       litanies: true,
       oraisonRosaire: true,
       sousLAbri: false,
       saintJoseph: true,
+      essentiel: false,
     })
     const options = (r: Partial<typeof REGLAGES_PAR_DEFAUT>) =>
       optionsDuDeroule({ ...REGLAGES_PAR_DEFAUT, ...r }, LUNDI_5_OCTOBRE)
@@ -245,4 +249,56 @@ describe('options du déroulé selon les réglages', () => {
       expect(optionsDuDeroule(inverses, date)).toMatchObject({ litanies: false, saintJoseph: true })
     })
   }
+})
+
+// Phase 18 : la prière aux intentions du Saint-Père, activée au départ, et
+// « L’essentiel seulement », désactivé au départ, qui l'emporte sur les
+// réglages fins sans les modifier.
+describe('chapelet simplifié (phase 18)', () => {
+  it('des réglages d’avant la phase 18 se lisent encore, complétés par les valeurs de départ', () => {
+    localStorage.setItem(
+      'avec-dieu.reglages',
+      JSON.stringify({ oMonJesus: false, salveRegina: false, forme: 'rosaire' }),
+    )
+    expect(lireReglages()).toMatchObject({
+      oMonJesus: false,
+      salveRegina: false,
+      forme: 'rosaire',
+      saintPere: true,
+      essentiel: false,
+    })
+  })
+
+  it('retiennent la prière aux intentions du Saint-Père et l’essentiel seulement', () => {
+    modifierReglages({ saintPere: false })
+    modifierReglages({ essentiel: true })
+    expect(lireReglages()).toMatchObject({ saintPere: false, essentiel: true })
+  })
+
+  it('ignorent des valeurs qui ne sont pas oui ou non', () => {
+    localStorage.setItem('avec-dieu.reglages', JSON.stringify({ saintPere: 0, essentiel: 'oui' }))
+    expect(lireReglages()).toMatchObject({ saintPere: true, essentiel: false })
+  })
+
+  it('l’essentiel activé puis désactivé : les réglages fins sont retrouvés intacts', () => {
+    const fins = {
+      oMonJesus: false,
+      intentions: false,
+      saintPere: false,
+      sousLAbri: true,
+      litanies: 'toujours',
+    } as const
+    modifierReglages(fins)
+    modifierReglages({ essentiel: true })
+    expect(lireReglages()).toMatchObject(fins)
+    modifierReglages({ essentiel: false })
+    expect(lireReglages()).toMatchObject({ ...fins, essentiel: false })
+  })
+
+  it('les options du déroulé portent l’essentiel et la prière aux intentions du Saint-Père', () => {
+    const options = (r: Partial<typeof REGLAGES_PAR_DEFAUT>) =>
+      optionsDuDeroule({ ...REGLAGES_PAR_DEFAUT, ...r }, LUNDI_5_OCTOBRE)
+    expect(options({ saintPere: false }).saintPere).toBe(false)
+    expect(options({ essentiel: true })).toMatchObject({ essentiel: true, annonce: true })
+  })
 })

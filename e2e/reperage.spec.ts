@@ -286,7 +286,7 @@ test('croix et ☰ du bandeau : le retour, et le menu des prières du jour', asy
   ])
   await expect(
     page.getByRole('list', { name: 'Chapelet et prières' }).getByRole('link').first(),
-  ).toHaveText(/^Chapelet\s*20 h\s*20 min, vingt minutes$/)
+  ).toHaveText(/^Chapelet\s*~vers 20 h\s*20 min, vingt minutes$/)
   // Ouvert depuis un office, les offices sont dépliés ; celui d'où l'on vient est marqué.
   await expect(prieres.locator('[aria-current="page"]')).toHaveText(/Laudes/)
   await prieres.getByRole('link', { name: /^Vêpres/ }).click()

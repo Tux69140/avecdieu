@@ -8,6 +8,8 @@ const prieres = deroule.pas.map((p) => p.priere)
 const AVE = 'je-vous-salue-marie'
 const OUVERTURE = ['signe-de-croix', 'credo', 'notre-pere', AVE, AVE, AVE, 'gloire-au-pere']
 const dizaine = ['annonce', 'notre-pere', ...Array(10).fill(AVE), 'gloire-au-pere', 'o-mon-jesus']
+// La prière aux intentions du Saint-Père ouvre la fin (phase 18).
+const SAINT_PERE = ['notre-pere', AVE, 'gloire-au-pere']
 const CLOTURE = ['salve-regina', 'litanies', 'oraison-rosaire', 'sous-l-abri', 'saint-joseph']
 
 describe('déroulé du chapelet marial', () => {
@@ -19,6 +21,7 @@ describe('déroulé du chapelet marial', () => {
       ...dizaine,
       ...dizaine,
       ...dizaine,
+      ...SAINT_PERE,
       ...CLOTURE,
     ])
   })
@@ -30,7 +33,7 @@ describe('déroulé du chapelet marial', () => {
       const pasDizaine = deroule.pas.slice(debut, debut + 14)
       expect(pasDizaine.every((p) => p.dizaine === d)).toBe(true)
     }
-    expect(deroule.pas.slice(-5).every((p) => p.dizaine === undefined)).toBe(true)
+    expect(deroule.pas.slice(-8).every((p) => p.dizaine === undefined)).toBe(true)
   })
 
   it('compte les répétitions : 1 à 3 à l’ouverture, 1 à 10 dans la dizaine', () => {
@@ -60,7 +63,7 @@ describe('déroulé du chapelet marial', () => {
     expect(compte('medaille')).toBe(1)
     expect(
       deroule.pas
-        .filter((p) => p.priere === 'gloire-au-pere')
+        .filter((p) => p.priere === 'gloire-au-pere' && !p.fin)
         .every((p) => deroule.grains[p.grain] === 'noeud'),
     ).toBe(true)
   })
@@ -137,9 +140,10 @@ describe('intentions des trois premiers Je vous salue Marie', () => {
   })
 
   it('aucune ailleurs, ni sans le réglage', () => {
-    expect(deroule.pas.filter((p) => p.intention !== undefined)).toHaveLength(3)
+    const ouverture = (d: typeof deroule) => d.pas.filter((p) => p.intention && !p.fin)
+    expect(ouverture(deroule)).toHaveLength(3)
     const sans = derouler(CHAPELET_MARIAL, { intentions: false })
-    expect(sans.pas.filter((p) => p.intention !== undefined)).toEqual([])
+    expect(ouverture(sans)).toEqual([])
     // Les grains ne bougent pas : l'intention accompagne le grain du Je vous salue Marie.
     expect(sans.pas.map((p) => [p.priere, p.grain])).toEqual(
       deroule.pas.map((p) => [p.priere, p.grain]),
@@ -147,18 +151,20 @@ describe('intentions des trois premiers Je vous salue Marie', () => {
   })
 })
 
-// Les cinq textes de la clôture, chacun dit ou non : 32 combinaisons.
+// Les cinq textes de la clôture, chacun dit ou non : 32 combinaisons, sans la
+// prière aux intentions du Saint-Père, qui a ses propres tests.
 describe('clôture du chapelet', () => {
   const OPTIONS = ['salveRegina', 'litanies', 'oraisonRosaire', 'sousLAbri', 'saintJoseph'] as const
   for (let masque = 0; masque < 32; masque++) {
-    const options: Options = Object.fromEntries(
-      OPTIONS.map((option, i) => [option, (masque & (1 << i)) !== 0]),
-    )
+    const options: Options = {
+      saintPere: false,
+      ...Object.fromEntries(OPTIONS.map((option, i) => [option, (masque & (1 << i)) !== 0])),
+    }
     const dites = CLOTURE.filter((_, i) => (masque & (1 << i)) !== 0)
     const nom = dites.length > 0 ? dites.join(', ') : 'rien'
     it(nom, () => {
       const choisi = derouler(CHAPELET_MARIAL, options)
-      const cloture = choisi.pas.slice(prieres.length - CLOTURE.length)
+      const cloture = choisi.pas.slice(prieres.length - SAINT_PERE.length - CLOTURE.length)
       // L'ordre validé, sans rien d'autre.
       expect(cloture.map((p) => p.priere)).toEqual(dites)
       // Toute la clôture se dit sur la médaille, qui n'existe que si l'on y prie.
@@ -176,4 +182,132 @@ describe('clôture du chapelet', () => {
       else expect(versets).toEqual([])
     })
   }
+})
+
+// La prière aux intentions du Saint-Père (phase 18, 2026-10-09) : un Notre
+// Père, un Je vous salue Marie, un Gloire au Père, après la dernière dizaine
+// et avant le Salve Regina, à la médaille comme la clôture.
+describe('prière aux intentions du Saint-Père', () => {
+  const fin = deroule.pas.filter((p) => p.dizaine === undefined && p.fin)
+
+  it('suit la cinquième dizaine et précède le Salve Regina', () => {
+    expect(fin.map((p) => p.priere)).toEqual([...SAINT_PERE, ...CLOTURE])
+    const debut = deroule.pas.indexOf(fin[0])
+    expect(deroule.pas[debut - 1]).toMatchObject({ priere: 'o-mon-jesus', dizaine: 5 })
+  })
+
+  it('chacune a son écran, sans compteur, à la médaille avec la clôture', () => {
+    expect(fin.slice(0, 3).every((p) => p.rang === 1 && p.total === 1)).toBe(true)
+    expect(fin.every((p) => deroule.grains[p.grain] === 'medaille')).toBe(true)
+    expect(new Set(fin.map((p) => p.grain)).size).toBe(1)
+  })
+
+  it('le Notre Père porte la ligne rouge et l’intention du mois, lui seul', () => {
+    expect(fin[0].intention).toBe('Aux intentions du Saint-Père.')
+    expect(fin[0].intentionDuMois).toBe(true)
+    expect(deroule.pas.filter((p) => p.intentionDuMois)).toEqual([fin[0]])
+    expect(fin.slice(1).every((p) => p.intention === undefined)).toBe(true)
+  })
+
+  it('les intentions de l’ouverture coupées, la ligne rouge reste', () => {
+    const sans = derouler(CHAPELET_MARIAL, { intentions: false })
+    expect(sans.pas.filter((p) => p.intention).map((p) => p.intention)).toEqual([
+      'Aux intentions du Saint-Père.',
+    ])
+  })
+
+  it('se retire par son réglage, sans rien changer d’autre', () => {
+    const sans = derouler(CHAPELET_MARIAL, { saintPere: false })
+    expect(sans.pas.map((p) => p.priere)).toEqual([
+      ...prieres.slice(0, -SAINT_PERE.length - CLOTURE.length),
+      ...CLOTURE,
+    ])
+    expect(sans.grains).toEqual(deroule.grains)
+    expect(sans.pas.some((p) => p.intentionDuMois)).toBe(false)
+  })
+
+  it('dite seule, sans clôture, elle garde la médaille', () => {
+    const seule = derouler(CHAPELET_MARIAL, {
+      salveRegina: false,
+      litanies: false,
+      oraisonRosaire: false,
+      sousLAbri: false,
+      saintJoseph: false,
+    })
+    expect(seule.pas.slice(-3).map((p) => p.priere)).toEqual(SAINT_PERE)
+    expect(seule.grains).toEqual(deroule.grains)
+  })
+
+  it('l’ouverture et les dizaines ne sont pas de la fin', () => {
+    const avant = deroule.pas.slice(0, -SAINT_PERE.length - CLOTURE.length)
+    expect(avant.some((p) => p.fin)).toBe(false)
+  })
+})
+
+// « L’essentiel seulement » (phase 18) : le signe de croix, puis les dizaines
+// (annonce, Notre Père, dix Je vous salue Marie, Gloire au Père).
+describe('l’essentiel seulement', () => {
+  const essentiel = derouler(CHAPELET_MARIAL, { essentiel: true })
+  const coeur = ['annonce', 'notre-pere', ...Array(10).fill(AVE), 'gloire-au-pere']
+
+  it('ne garde que le signe de croix et les cinq dizaines', () => {
+    expect(essentiel.pas.map((p) => p.priere)).toEqual([
+      'signe-de-croix',
+      ...Array.from({ length: 5 }, () => coeur).flat(),
+    ])
+  })
+
+  it('l’emporte sur chaque réglage fin, sans intention ni verset', () => {
+    const tout = derouler(CHAPELET_MARIAL, {
+      essentiel: true,
+      intentions: true,
+      oMonJesus: true,
+      saintPere: true,
+      salveRegina: true,
+      litanies: true,
+      oraisonRosaire: true,
+      sousLAbri: true,
+      saintJoseph: true,
+    })
+    expect(tout).toEqual(essentiel)
+    expect(essentiel.pas.some((p) => p.intention || p.verset || p.intentionDuMois)).toBe(false)
+  })
+
+  it('garde l’annonce réglable : sans elle, la dizaine s’ouvre sur le Notre Père', () => {
+    const sansAnnonce = derouler(CHAPELET_MARIAL, { essentiel: true, annonce: false })
+    expect(sansAnnonce.pas.map((p) => p.priere)).toEqual([
+      'signe-de-croix',
+      ...Array.from({ length: 5 }, () => coeur.slice(1)).flat(),
+    ])
+  })
+
+  it('le chapelet dessiné garde ses grains ; on passe de la croix à la première dizaine', () => {
+    const sansFin = derouler(CHAPELET_MARIAL, {
+      saintPere: false,
+      salveRegina: false,
+      litanies: false,
+      oraisonRosaire: false,
+      sousLAbri: false,
+      saintJoseph: false,
+    })
+    expect(essentiel.grains).toEqual(sansFin.grains)
+    expect(essentiel.pas[0].grain).toBe(0)
+    const premiere = sansFin.pas.find((p) => p.dizaine === 1)!
+    expect(essentiel.pas[1].grain).toBe(premiere.grain)
+    expect(essentiel.pas.at(-1)!.grain).toBe(essentiel.grains.length - 1)
+  })
+})
+
+// « Facultatif » (phase 18) : chaque prière que « L’essentiel seulement » retire.
+describe('prières facultatives', () => {
+  it('toute l’ouverture sauf le signe de croix, le « Ô mon Jésus », toute la fin', () => {
+    const facultatives = deroule.pas.filter((p) => p.facultatif)
+    const essentielles = derouler(CHAPELET_MARIAL, { essentiel: true }).pas.length
+    expect(facultatives).toHaveLength(deroule.pas.length - essentielles)
+    expect(deroule.pas[0].facultatif).toBeUndefined()
+    expect(deroule.pas.slice(1, 7).every((p) => p.facultatif)).toBe(true)
+    for (const p of deroule.pas.filter((p) => p.dizaine !== undefined))
+      expect(p.facultatif).toBe(p.priere === 'o-mon-jesus' ? true : undefined)
+    expect(deroule.pas.filter((p) => p.fin).every((p) => p.facultatif)).toBe(true)
+  })
 })

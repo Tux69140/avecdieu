@@ -93,8 +93,12 @@ test('« Chapelet ou Rosaire ? » ouvre sa page, que la croix referme', async ({
   await expect(page).toHaveURL(/\/chapelet-ou-rosaire$/)
   await expect(titre(page)).toHaveText('Chapelet ou Rosaire ?')
   const main = page.locator('main')
-  await expect(main.locator('strong')).toHaveText(['Chapelet', 'Rosaire'])
-  const paragraphes = main.locator('p')
+  await expect(main.locator('.chapelet-ou-rosaire-formes strong')).toHaveText([
+    'Chapelet',
+    'Rosaire',
+  ])
+  // En bas, la partie « Aux intentions du Saint-Père » (e2e/simplifie.spec.ts).
+  const paragraphes = main.locator('p:not(.chapelet-ou-rosaire-saint-pere p)')
   await expect(paragraphes).toHaveCount(5)
   await expect(paragraphes.nth(0)).toHaveText(
     'Chapelet : cinq dizaines, la série de mystères du jour.',

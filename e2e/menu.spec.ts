@@ -19,13 +19,14 @@ const accueil = (page: import('@playwright/test').Page) =>
 
 // L'ordre choisi par le porteur du projet (2026-10-08) : offices et autres
 // prières repliés.
-test('présente, dans l’ordre, le chapelet, deux prières, les offices et les prières repliés', async ({
+test('présente, dans l’ordre, le Chapelet, le Rosaire, deux prières, les offices et les prières repliés', async ({
   page,
 }) => {
   const menu = page.getByRole('navigation', { name: 'Menu' })
   await expect(menu.getByRole('link').or(menu.getByRole('button'))).toHaveText([
     'Aujourd’hui',
     /^Chapelet/,
+    /^Rosaire/,
     'Je vous salue Marie',
     'Notre Père',
     /^Offices du jour/,
@@ -113,13 +114,13 @@ test('« A propos » donne la version et les sources des textes', async ({ page 
   await accueil(page)
 })
 
-test('le chapelet et deux prières forment un groupe, séparé par un filet d’or', async ({
+test('le Chapelet, le Rosaire et deux prières forment un groupe, séparé par un filet d’or', async ({
   page,
 }) => {
   const chapelet = page.getByRole('list', { name: 'Chapelet et prières' })
-  await expect(chapelet.getByRole('link')).toHaveCount(3)
+  await expect(chapelet.getByRole('link')).toHaveCount(4)
   await expect(chapelet.getByRole('link').first()).toHaveAccessibleName(
-    /^Chapelet\s*20 h\s*, vingt minutes$/,
+    /^Chapelet\s*vers 20 h\s*, vingt minutes$/,
   )
   const filet = await chapelet.evaluate((ul) => {
     const temoin = document.createElement('i')
@@ -135,7 +136,7 @@ test('le chapelet et deux prières forment un groupe, séparé par un filet d’
 test('des lignes de 48 px en graisse normale, le tout sur un seul écran', async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 780 })
   const lignes = page.getByRole('navigation', { name: 'Menu' }).locator('a:visible, button:visible')
-  await expect(lignes).toHaveCount(8)
+  await expect(lignes).toHaveCount(9)
   for (const ligne of await lignes.all()) {
     // Les offices repliés portent la date sous leur nom : un peu plus haut.
     expect((await ligne.boundingBox())!.height).toBeGreaterThanOrEqual(48)

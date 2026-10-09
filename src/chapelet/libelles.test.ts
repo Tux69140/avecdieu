@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest'
-import { AIDE_VIBRATIONS, CHAPELET_OU_ROSAIRE, passageDeSerie, repereSerie } from './libelles'
+import {
+  AIDE_VIBRATIONS,
+  AUX_INTENTIONS,
+  CHAPELET_OU_ROSAIRE,
+  ESSENTIEL,
+  FACULTATIF,
+  passageDeSerie,
+  PRIERE_SAINT_PERE,
+  repereSerie,
+} from './libelles'
 
 describe('AIDE_VIBRATIONS', () => {
   // Un mot composé ne se coupe pas en fin de ligne (2026-10-08).
@@ -53,5 +62,30 @@ describe('Rosaire', () => {
   it('le repère de la série en cours', () => {
     expect(repereSerie('joyeux')).toBe('Série 1 sur 4')
     expect(repereSerie('glorieux')).toBe('Série 4 sur 4')
+  })
+})
+
+// Textes validés mot à mot par le porteur du projet (phase 18, 2026-10-09).
+describe('chapelet simplifié', () => {
+  const brut = (texte: string) => texte.replace(/\u00a0/g, ' ').replace(/\u2060/g, '')
+
+  it('la partie « Aux intentions du Saint-Père » de la page d’aide', () => {
+    expect(brut(AUX_INTENTIONS.titre)).toBe('Aux intentions du Saint-Père')
+    expect(AUX_INTENTIONS.paragraphes.map(brut)).toEqual([
+      'Prier aux intentions du Saint-Père, c’est s’unir à la prière du pape pour l’Église et pour le monde. Il n’est pas nécessaire de connaître ces intentions : on confie au Seigneur ce que le pape porte dans son cœur. Chaque mois, il en propose une en particulier, par son Réseau mondial de prière.',
+      'Jean-Paul II y voyait un moyen « d’élargir le regard de celui qui prie aux vastes horizons des nécessités ecclésiales ».',
+      'C’est aussi l’une des conditions de l’indulgence que l’Église attache au chapelet, c’est-à-dire la remise de la peine encore due pour des péchés déjà pardonnés. Dit à l’église, en famille ou en communauté, le chapelet peut obtenir l’indulgence plénière, avec la confession, la communion et le refus de tout attachement au péché. Ailleurs, l’indulgence est partielle.',
+    ])
+    for (const texte of AUX_INTENTIONS.paragraphes) expect(texte).not.toMatch(/« | [»:;?]/)
+  })
+
+  it('« L’essentiel seulement », son aide et l’avis de la page des prières', () => {
+    expect(ESSENTIEL.libelle).toBe('L’essentiel seulement')
+    expect(brut(ESSENTIEL.aide)).toBe(
+      'Le signe de croix, puis les cinq dizaines : l’annonce du mystère, un Notre Père, dix Je vous salue Marie, un Gloire au Père.',
+    )
+    expect(ESSENTIEL.active).toBe('L’essentiel seulement est activé.')
+    expect(FACULTATIF).toBe('facultatif')
+    expect(PRIERE_SAINT_PERE).toBe('Prière aux intentions du Saint-Père')
   })
 })

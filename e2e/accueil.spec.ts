@@ -215,7 +215,10 @@ test('premier lancement sans réseau : la date reste, le chapelet est proposé',
   for (const office of await offices.all())
     await expect(office).toHaveAttribute('data-etat', 'passe')
   await expect(page.getByTestId('moment')).toHaveCount(0)
-  const chapelet = page.getByRole('list', { name: 'Chapelet' }).getByRole('listitem')
+  const chapelet = page
+    .getByRole('list', { name: 'Chapelet et Rosaire' })
+    .getByRole('listitem')
+    .first()
   await expect(chapelet).not.toHaveAttribute('data-etat', /./)
   // Le réseau revient : le jour se charge de lui-même, et le badge revient.
   panne = false
@@ -286,18 +289,20 @@ test.describe('glisser sur le cadran', () => {
   })
 })
 
-test('le chapelet sous les offices : du moment l’heure qui suit son heure, puis atténué', async ({
-  page,
-}) => {
+// En tête de liste depuis la phase 18, à son heure approximative (« ~20 h »).
+test('le chapelet : du moment l’heure qui suit son heure, puis atténué', async ({ page }) => {
   await ouvrir(page, MARDI(18, 10))
-  const chapelet = page.getByRole('list', { name: 'Chapelet' }).getByRole('listitem')
-  await expect(chapelet).toHaveText(/^Chapelet20 h20 min, vingt minutes$/)
+  const chapelet = page
+    .getByRole('list', { name: 'Chapelet et Rosaire' })
+    .getByRole('listitem')
+    .first()
+  await expect(chapelet).toHaveText(/^Chapelet~vers 20 h20 min, vingt minutes$/)
   await expect(chapelet).toHaveAttribute('data-etat', 'a-venir')
   // À l'heure de son rappel, le chapelet porte le badge, pas les complies.
   await page.clock.setFixedTime(MARDI(20, 5))
   await page.reload()
   await expect(chapelet).toHaveAttribute('data-etat', 'moment')
-  await expect(moment(page)).toHaveText(/^Chapelet20 h20 min, vingt minutesPrière du moment$/)
+  await expect(moment(page)).toHaveText(/^Chapelet~vers 20 h20 min, vingt minutesPrière du moment$/)
   await expect(page.getByTestId('moment')).toHaveCount(1)
   await page.clock.setFixedTime(MARDI(21, 5))
   await page.reload()

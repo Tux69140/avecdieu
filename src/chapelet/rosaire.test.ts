@@ -10,6 +10,7 @@ import { optionsDuDeroule, REGLAGES_PAR_DEFAUT } from './reglages'
 const AVE = 'je-vous-salue-marie'
 const OUVERTURE = ['signe-de-croix', 'credo', 'notre-pere', AVE, AVE, AVE, 'gloire-au-pere']
 const DIZAINE = ['annonce', 'notre-pere', ...Array(10).fill(AVE), 'gloire-au-pere', 'o-mon-jesus']
+const SAINT_PERE = ['notre-pere', AVE, 'gloire-au-pere']
 const CLOTURE = ['salve-regina', 'litanies', 'oraison-rosaire', 'sous-l-abri', 'saint-joseph']
 const ORDRE = ['joyeux', 'lumineux', 'douloureux', 'glorieux']
 
@@ -21,6 +22,7 @@ describe('déroulé du Rosaire', () => {
     expect(rosaire.pas.map((p) => p.priere)).toEqual([
       ...OUVERTURE,
       ...Array.from({ length: 20 }, () => DIZAINE).flat(),
+      ...SAINT_PERE,
       ...CLOTURE,
     ])
   })
@@ -32,7 +34,7 @@ describe('déroulé du Rosaire', () => {
     )
     // L'ouverture et la clôture n'appartiennent à aucune série.
     const horsDizaine = rosaire.pas.filter((p) => p.dizaine === undefined)
-    expect(horsDizaine).toHaveLength(OUVERTURE.length + CLOTURE.length)
+    expect(horsDizaine).toHaveLength(OUVERTURE.length + SAINT_PERE.length + CLOTURE.length)
     expect(horsDizaine.every((p) => p.serie === undefined)).toBe(true)
   })
 
@@ -74,15 +76,16 @@ describe('déroulé du Rosaire', () => {
     const sans = derouler(ROSAIRE, { annonce: false, oMonJesus: false })
     expect(sans.pas.filter((p) => p.priere === 'annonce')).toEqual([])
     expect(sans.pas.filter((p) => p.priere === 'o-mon-jesus')).toEqual([])
-    expect(sans.pas.filter((p) => p.priere === 'notre-pere')).toHaveLength(21)
-    expect(sans.pas.filter((p) => p.priere === AVE)).toHaveLength(3 + 200)
+    expect(sans.pas.filter((p) => p.priere === 'notre-pere')).toHaveLength(22)
+    expect(sans.pas.filter((p) => p.priere === AVE)).toHaveLength(3 + 200 + 1)
   })
 
-  it('les intentions à l’ouverture seulement, le verset une seule fois dans la clôture', () => {
+  it('les intentions à l’ouverture et aux intentions du Saint-Père, le verset une seule fois dans la clôture', () => {
     expect(rosaire.pas.filter((p) => p.intention).map((p) => p.intention)).toEqual([
       'Pour la foi.',
       'Pour l’espérance.',
       'Pour la charité.',
+      'Aux intentions du Saint-Père.',
     ])
     expect(rosaire.pas.filter((p) => p.verset).map((p) => [p.priere, p.verset])).toEqual([
       ['oraison-rosaire', 'avant'],
@@ -96,12 +99,17 @@ describe('déroulé du Rosaire', () => {
         .slice(OUVERTURE.length)
         .map((p) => p.priere)
     expect(cloture(new Date(2026, 9, 1))).toEqual([
+      ...SAINT_PERE,
       'salve-regina',
       'litanies',
       'oraison-rosaire',
       'saint-joseph',
     ])
-    expect(cloture(new Date(2026, 10, 1))).toEqual(['salve-regina', 'oraison-rosaire'])
+    expect(cloture(new Date(2026, 10, 1))).toEqual([
+      ...SAINT_PERE,
+      'salve-regina',
+      'oraison-rosaire',
+    ])
   })
 })
 
@@ -118,5 +126,29 @@ describe('série atteinte', () => {
   it('au chapelet, la série choisie au seuil', () => {
     expect(serieAtteinte(chapelet, 0, 'douloureux')).toBe('douloureux')
     expect(serieAtteinte(chapelet, 30, 'douloureux')).toBe('douloureux')
+  })
+})
+
+describe('le Rosaire, phase 18', () => {
+  it('la prière aux intentions du Saint-Père suit la vingtième dizaine', () => {
+    const fin = rosaire.pas.filter((p) => p.fin)
+    expect(fin.map((p) => p.priere)).toEqual([...SAINT_PERE, ...CLOTURE])
+    const debut = rosaire.pas.indexOf(fin[0])
+    expect(rosaire.pas[debut - 1]).toMatchObject({
+      priere: 'o-mon-jesus',
+      dizaine: 5,
+      serie: 'glorieux',
+    })
+    expect(fin[0].intentionDuMois).toBe(true)
+  })
+
+  it('l’essentiel seulement : le signe de croix, puis les vingt dizaines', () => {
+    const essentiel = derouler(ROSAIRE, { essentiel: true })
+    const coeur = ['annonce', 'notre-pere', ...Array(10).fill(AVE), 'gloire-au-pere']
+    expect(essentiel.pas.map((p) => p.priere)).toEqual([
+      'signe-de-croix',
+      ...Array.from({ length: 20 }, () => coeur).flat(),
+    ])
+    expect(essentiel.pas.filter((p) => p.nouvelleSerie)).toHaveLength(3)
   })
 })

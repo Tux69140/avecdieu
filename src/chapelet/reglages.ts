@@ -29,6 +29,9 @@ export interface Reglages {
   // Chapelet : la foi, l'espérance, la charité, avant les trois premiers Je
   // vous salue Marie.
   intentions: boolean
+  // Chapelet : la prière aux intentions du Saint-Père, après la dernière
+  // dizaine (phase 18).
+  saintPere: boolean
   // Chapelet : les textes de la clôture, dans leur ordre.
   salveRegina: boolean
   litanies: Frequence
@@ -56,6 +59,9 @@ export interface Reglages {
   theme: Theme
   // Le chapelet ou le Rosaire, choisi sur le seuil.
   forme: Forme
+  // « L’essentiel seulement » (phase 18) : le signe de croix et les
+  // dizaines ; il l'emporte sur les réglages fins, gardés intacts.
+  essentiel: boolean
 }
 
 // Ceux du PRD.
@@ -63,6 +69,7 @@ export const REGLAGES_PAR_DEFAUT: Reglages = {
   annonce: true,
   oMonJesus: true,
   intentions: true,
+  saintPere: true,
   salveRegina: true,
   litanies: 'octobre',
   oraisonRosaire: true,
@@ -79,12 +86,14 @@ export const REGLAGES_PAR_DEFAUT: Reglages = {
   tailleTexte: 18,
   theme: 'automatique',
   forme: 'chapelet',
+  essentiel: false,
 }
 
 const BASCULES = [
   'annonce',
   'oMonJesus',
   'intentions',
+  'saintPere',
   'salveRegina',
   'oraisonRosaire',
   'sousLAbri',
@@ -94,6 +103,7 @@ const BASCULES = [
   'prieresEntieres',
   'signalerAjouts',
   'consignes',
+  'essentiel',
 ] as const
 
 const CLE = 'avec-dieu.reglages'
@@ -151,10 +161,12 @@ export function optionsDuDeroule(reglages: Reglages, jour: Date): Options {
     annonce: reglages.annonce && reglages.affichage === 'complet',
     oMonJesus: reglages.oMonJesus,
     intentions: reglages.intentions,
+    saintPere: reglages.saintPere,
     salveRegina: reglages.salveRegina,
     litanies: ditCeJour(reglages.litanies, jour),
     oraisonRosaire: reglages.oraisonRosaire,
     sousLAbri: reglages.sousLAbri,
     saintJoseph: ditCeJour(reglages.saintJoseph, jour),
+    essentiel: reglages.essentiel,
   }
 }

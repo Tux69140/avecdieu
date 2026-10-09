@@ -7,6 +7,7 @@ import { ChapeletDessine } from '../chapelet/ChapeletDessine'
 import { CHAPELET_MARIAL, ROSAIRE } from '../chapelet/definition'
 import { derouler, serieAtteinte, type Pas } from '../chapelet/deroule'
 import { disposer } from '../chapelet/disposition'
+import { intentionDuMois } from '../chapelet/intentionsDuPape'
 import { passageDeSerie, repereSerie } from '../chapelet/libelles'
 import { aideAMontrer, compterLecture, lireLectures } from '../chapelet/memoire'
 import { avancer, classerGeste, reculer } from '../chapelet/navigation'
@@ -149,6 +150,8 @@ function Chapelet({ forme, serie, date }: { forme: Forme; serie: SerieId; date: 
   )
   const plan = useMemo(() => disposer(deroule), [deroule])
   const [passages] = useState(() => choisirPassages(definition.series ?? [serie]))
+  // L'intention du pape pour le mois du chapelet (phase 18).
+  const [duMois] = useState(() => intentionDuMois(date))
   // Reprend au grain exact un chapelet de cette série (ou le Rosaire)
   // commencé aujourd'hui.
   const [index, setIndex] = useState(() => {
@@ -352,6 +355,7 @@ function Chapelet({ forme, serie, date }: { forme: Forme; serie: SerieId; date: 
             annonce={reglages.annonce}
             passage={pas.dizaine ? passageDe(pas.dizaine) : undefined}
             passageDeplie={cleDizaine !== null && passageDeplie === cleDizaine}
+            intentionDuMois={duMois}
             onBasculerPassage={() =>
               setPassageDeplie((d) => (d === cleDizaine ? null : cleDizaine))
             }

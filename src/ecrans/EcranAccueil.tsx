@@ -2,8 +2,9 @@ import { useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router'
 import { AlerteRappels } from '../accueil/AlerteRappels'
 import { BandeauJour } from '../accueil/BandeauJour'
-import { lireReglages } from '../chapelet/reglages'
+import { lireReglages, modifierReglages, type Forme } from '../chapelet/reglages'
 import { Duree } from '../composants/Duree'
+import { HeureApprochee } from '../composants/HeureApprochee'
 import { avecExposants } from '../composants/Exposants'
 import { astre } from '../accueil/cadran'
 import { Cadran } from '../accueil/Cadran'
@@ -112,8 +113,8 @@ function Accueil({ date, aujourdhui, maintenant }: Props) {
           <BandeauJour date={date} onSansTextes={setSansTextes} />
         </Cadran>
       </div>
+      <ListeChapeletRosaire date={date} journee={sansTextes ? undefined : journee} />
       <ListeOffices date={date} journee={journee} indisponibles={sansTextes} />
-      <LigneChapelet date={date} journee={sansTextes ? undefined : journee} />
     </main>
   )
 }
@@ -159,27 +160,41 @@ function ListeOffices({
   )
 }
 
-// Le chapelet sous les offices, à son heure (celle des rappels) : du moment
-// pendant l'heure qui suit, comme un office, puis atténué (demandes du porteur
-// du projet, 2026-10-07 et 2026-10-08). Le Rosaire retenu sur le seuil prend
-// sa place, avec sa durée (phase 17).
-function LigneChapelet({ date, journee }: { date: string; journee?: Journee }) {
+// Le Chapelet et le Rosaire en tête de liste, au-dessus des offices (phase
+// 18, décision du porteur du projet, 2026-10-09), chacun ouvrant le seuil dans
+// sa forme, qui devient le choix retenu. Le Chapelet à son heure, celle de son
+// rappel, approximative : du moment pendant l'heure qui suit, comme un office,
+// puis atténué (2026-10-07 et 2026-10-08). Le Rosaire, souvent prié en
+// plusieurs fois, n'a pas d'heure.
+function ListeChapeletRosaire({ date, journee }: { date: string; journee?: Journee }) {
   const heure = heuresDuJour(date).chapelet
   const duMoment = journee?.moment === 'chapelet'
-  const [forme] = useState(() => lireReglages().forme)
-  const nom = forme === 'rosaire' ? 'Rosaire' : 'Chapelet'
+  const [essentiel] = useState(() => lireReglages().essentiel)
+  const ligne = (forme: Forme, nom: string, quand: string | null, etat?: string) => (
+    <li data-etat={etat}>
+      <Link
+        to={`/${forme}`}
+        onClick={() => modifierReglages({ forme })}
+        data-testid={etat === 'moment' ? 'moment' : undefined}
+      >
+        <span className="accueil-office-nom">{nom}</span>
+        <span className="accueil-office-quand">
+          <span className="accueil-office-heure">{quand && <HeureApprochee heure={quand} />}</span>
+          <Duree priere={forme} essentiel={essentiel} className="accueil-office-duree" />
+        </span>
+        {etat === 'moment' && <span className="accueil-moment">Prière du moment</span>}
+      </Link>
+    </li>
+  )
   return (
-    <ul className="accueil-offices accueil-chapelet" aria-label={nom}>
-      <li data-etat={journee?.etats.chapelet}>
-        <Link to={`/${forme}`} data-testid={duMoment ? 'moment' : undefined}>
-          <span className="accueil-office-nom">{nom}</span>
-          <span className="accueil-office-quand">
-            <span className="accueil-office-heure">{heure ? ecrireHeure(heure) : ''}</span>
-            <Duree priere={forme} className="accueil-office-duree" />
-          </span>
-          {duMoment && <span className="accueil-moment">Prière du moment</span>}
-        </Link>
-      </li>
+    <ul className="accueil-offices accueil-chapelet" aria-label="Chapelet et Rosaire">
+      {ligne(
+        'chapelet',
+        'Chapelet',
+        heure ? ecrireHeure(heure) : null,
+        duMoment ? 'moment' : journee?.etats.chapelet,
+      )}
+      {ligne('rosaire', 'Rosaire', null)}
     </ul>
   )
 }

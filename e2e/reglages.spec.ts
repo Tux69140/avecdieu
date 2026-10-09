@@ -18,8 +18,10 @@ const LUNDI = new Date(2026, 9, 5, 10, 0)
 const MARDI = new Date(2026, 9, 6, 7, 0)
 // Pas du déroulé complet : ouverture (0 à 6), puis 14 pas par dizaine.
 const dizaine = (d: number) => 7 + (d - 1) * 14
-// Sans aucun texte de clôture (phase 16), le dernier « Ô mon Jésus » finit le chapelet.
+// Sans aucun texte de clôture (phase 16) ni prière aux intentions du
+// Saint-Père (phase 18), le dernier « Ô mon Jésus » finit le chapelet.
 const SANS_CLOTURE: Reglages = {
+  saintPere: false,
   salveRegina: false,
   litanies: 'jamais',
   oraisonRosaire: false,
@@ -186,6 +188,11 @@ test.describe('déroulé selon les réglages', () => {
     await expect(page.getByTestId('annonce')).toBeVisible()
 
     await avancer(page, dizaine(6) - dizaine(2))
+    // La prière aux intentions du Saint-Père (phase 18), puis la clôture.
+    await expect(titrePriere(page)).toHaveText('Notre Père')
+    await expect(page.getByTestId('intention')).toHaveText('Aux intentions du Saint-Père.')
+    await expect(page.getByTestId('mystere')).toHaveCount(0)
+    await avancer(page, 3)
     await expect(titrePriere(page)).toHaveText('Salve Regina')
     await expect(page.getByTestId('mystere')).toHaveCount(0)
     // Un lundi d'octobre : Litanies, oraison et saint Joseph suivent.
@@ -272,7 +279,10 @@ test.describe('prier à plusieurs', () => {
   test('les prières dites ensemble en demi-gras, jusqu’au verset du Salve Regina', async ({
     page,
   }) => {
-    await commencer(page, '/chapelet', { reglages: { plusieurs: true, oraisonRosaire: false } })
+    // Sans la prière aux intentions du Saint-Père, le Salve suit la dernière dizaine.
+    await commencer(page, '/chapelet', {
+      reglages: { plusieurs: true, oraisonRosaire: false, saintPere: false },
+    })
     const vers = page.getByTestId('strophe').locator('span')
     await expect(page.getByText('Tous', { exact: true })).toHaveCount(0)
     await expect(vers.first()).toHaveCSS('font-weight', '600')
@@ -317,7 +327,7 @@ test.describe('prier à plusieurs', () => {
   })
 
   test('seul, ni demi-gras ni marque, sauf le verset du Salve Regina', async ({ page }) => {
-    await commencer(page, '/chapelet', { reglages: { oraisonRosaire: false } })
+    await commencer(page, '/chapelet', { reglages: { oraisonRosaire: false, saintPere: false } })
     await expect(page.getByTestId('strophe').locator('span').first()).toHaveCSS(
       'font-weight',
       '400',
@@ -361,7 +371,9 @@ test.describe('vibrations', () => {
     await page.getByRole('button', { name: 'Reprendre à la 1re dizaine' }).click()
     // Une touche pressée avant que la prière reprise soit affichée serait perdue.
     await expect(titrePriere(page)).toHaveText('Notre Père')
-    await toucher(page)
+    // Le seuil, plus long depuis la phase 18, a défilé : un toucher qui
+    // suivrait de trop près la remise en haut de la page ne compterait pas.
+    await avancer(page, 1)
     await expect(page.getByTestId('compteur')).toHaveText('1 / 10')
     await expect.poll(() => journal(page)).toContain('vibre 40')
   })

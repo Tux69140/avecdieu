@@ -56,6 +56,7 @@ describe('retrouver le grain', () => {
     dizaine: pas.dizaine,
     priere: pas.priere,
     rang: pas.rang,
+    fin: pas.fin,
   })
 
   it('reprend exactement au même pas, à chaque pas du chapelet', () => {
@@ -172,5 +173,39 @@ describe('Rosaire en cours', () => {
     )
     expect(libelle(ROSAIRE_COMPLET.pas[2])).toBe('Reprendre le Rosaire')
     expect(libelle(ROSAIRE_COMPLET.pas.at(-1)!)).toBe('Reprendre le Rosaire')
+  })
+})
+
+// Phase 18 : la prière aux intentions du Saint-Père redit le Notre Père, le
+// Je vous salue Marie et le Gloire au Père de l'ouverture ; la fin est retenue.
+describe('reprise dans la prière aux intentions du Saint-Père', () => {
+  const fin = COMPLET.pas.findIndex((p) => p.fin)
+
+  it('reprend sur son Notre Père, pas sur celui de l’ouverture', () => {
+    retenirEnCours(LUNDI, 'joyeux', COMPLET.pas[fin])
+    const enCours = lireEnCours(LUNDI)!
+    expect(enCours).toMatchObject({ priere: 'notre-pere', fin: true })
+    expect(retrouver(COMPLET, enCours)).toBe(fin)
+  })
+
+  it('retirée entre-temps, cède la place au Salve Regina', () => {
+    retenirEnCours(LUNDI, 'joyeux', COMPLET.pas[fin + 1])
+    const sans = derouler(CHAPELET_MARIAL, { saintPere: false })
+    expect(sans.pas[retrouver(sans, lireEnCours(LUNDI)!)].priere).toBe('salve-regina')
+  })
+
+  it('un Salve Regina retenu avant la phase 18 reste dans la fin', () => {
+    localStorage.setItem(
+      'avec-dieu.en-cours',
+      '{"jour":"2026-10-05","serie":"joyeux","priere":"salve-regina","rang":1}',
+    )
+    const i = retrouver(COMPLET, lireEnCours(LUNDI)!)
+    expect(COMPLET.pas[i]).toMatchObject({ priere: 'salve-regina', fin: true })
+  })
+
+  it('« L’essentiel seulement » activé entre-temps : la fin retirée mène à la fin', () => {
+    retenirEnCours(LUNDI, 'joyeux', COMPLET.pas[fin])
+    const essentiel = derouler(CHAPELET_MARIAL, { essentiel: true })
+    expect(retrouver(essentiel, lireEnCours(LUNDI)!)).toBe(essentiel.pas.length)
   })
 })

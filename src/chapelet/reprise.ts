@@ -20,6 +20,9 @@ export interface ChapeletEnCours {
   dizaine?: number
   priere: Moment
   rang: number
+  // Dans la fin (prière aux intentions du Saint-Père, clôture) : son Notre
+  // Père n'est pas celui de l'ouverture (phase 18).
+  fin?: true
 }
 
 const CLES: Record<Forme, string> = {
@@ -37,7 +40,7 @@ export function jourDe(date: Date): string {
 export function retenirEnCours(
   date: Date,
   serie: SerieId,
-  { dizaine, priere, rang, serie: serieDuPas }: Pas,
+  { dizaine, priere, rang, serie: serieDuPas, fin }: Pas,
   forme: Forme = 'chapelet',
 ) {
   const enCours: ChapeletEnCours = {
@@ -47,6 +50,7 @@ export function retenirEnCours(
     dizaine,
     priere,
     rang,
+    ...(fin && { fin }),
   }
   ecrire(CLES[forme], JSON.stringify(enCours))
 }
@@ -58,34 +62,50 @@ export function effacerEnCours(forme: Forme = 'chapelet') {
 // Le chapelet (ou le Rosaire) en cours s'il a été commencé ce jour-là, sinon
 // rien. Un chapelet retenu avant le Rosaire n'a pas de forme : c'en est un.
 export function lireEnCours(date: Date, forme: Forme = 'chapelet'): ChapeletEnCours | null {
-  const { jour, forme: retenue = 'chapelet', serie, dizaine, priere, rang } = lireObjet(CLES[forme])
+  const {
+    jour,
+    forme: retenue = 'chapelet',
+    serie,
+    dizaine,
+    priere,
+    rang,
+    fin,
+  } = lireObjet(CLES[forme])
   if (jour !== jourDe(date) || retenue !== forme) return null
   if (typeof serie !== 'string' || !(serie in SERIES)) return null
   if (typeof priere !== 'string' || typeof rang !== 'number') return null
   if (dizaine !== undefined && typeof dizaine !== 'number') return null
-  return { jour, forme, serie: serie as SerieId, dizaine, priere: priere as Moment, rang }
+  const enCours = { jour, forme, serie: serie as SerieId, dizaine, priere: priere as Moment, rang }
+  return fin === true ? { ...enCours, fin } : enCours
 }
 
-// L'ordre des textes de la clôture.
-const CLOTURE: Moment[] = CHAPELET_MARIAL.cloture.map((etape) => etape.priere)
+// L'ordre des textes de la fin, et ceux de l'ouverture.
+const FIN: Moment[] = CHAPELET_MARIAL.cloture.map((etape) => etape.priere)
+const OUVERTURE: Moment[] = CHAPELET_MARIAL.ouverture.map((etape) => etape.priere)
+
+// Retenu avant la phase 18, un texte de la clôture n'a pas la marque de la
+// fin : il est le seul hors des dizaines à ne pas être de l'ouverture.
+const dansLaFin = ({ fin, dizaine, priere }: ChapeletEnCours) =>
+  fin === true || (dizaine === undefined && !OUVERTURE.includes(priere))
 
 // Index du pas où reprendre. Une prière retirée par les réglages entre-temps
-// cède la place au début de sa dizaine ; un texte de la clôture retiré, au
-// texte suivant de la clôture, ou à la fin. Au Rosaire, la dizaine est celle
+// cède la place au début de sa dizaine ; un texte de la fin retiré, au texte
+// suivant de la fin, ou à l'écran de fin. Au Rosaire, la dizaine est celle
 // de la série retenue (les pas du chapelet n'ont pas de série).
 export function retrouver(deroule: Deroule, enCours: ChapeletEnCours): number {
+  const fin = dansLaFin(enCours)
   const memeDizaine = (p: Pas) =>
-    p.dizaine === enCours.dizaine && (p.serie === undefined || p.serie === enCours.serie)
+    p.dizaine === enCours.dizaine &&
+    (p.serie === undefined || p.serie === enCours.serie) &&
+    (p.fin === true) === fin
   const { pas } = deroule
   const exact = pas.findIndex(
     (p) => memeDizaine(p) && p.priere === enCours.priere && p.rang === enCours.rang,
   )
   if (exact >= 0) return exact
-  const rang = CLOTURE.indexOf(enCours.priere)
-  if (enCours.dizaine === undefined && rang >= 0) {
-    const suivant = pas.findIndex(
-      (p) => p.dizaine === undefined && CLOTURE.indexOf(p.priere) > rang,
-    )
+  if (fin) {
+    const rang = FIN.indexOf(enCours.priere)
+    const suivant = pas.findIndex((p) => p.fin && FIN.indexOf(p.priere) > rang)
     return suivant >= 0 ? suivant : pas.length
   }
   if (enCours.dizaine === undefined) return 0

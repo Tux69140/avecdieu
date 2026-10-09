@@ -40,10 +40,11 @@ describe('vibrationEntre', () => {
     expect(vibrationEntre(compact, notrePere - 1, notrePere)).toBe('marquee')
   })
 
-  it('une vibration marquée quand la dernière dizaine s’achève, courte dans la clôture, marquée à l’écran de fin', () => {
-    const salve = DEROULE.pas.findIndex((p) => p.priere === 'salve-regina')
-    expect(vibrationEntre(DEROULE, salve - 1, salve)).toBe('marquee')
-    for (let i = salve; i < FIN - 1; i++) expect(vibrationEntre(DEROULE, i, i + 1)).toBe('courte')
+  it('une vibration marquée quand la dernière dizaine s’achève, courte dans la fin, marquée à l’écran de fin', () => {
+    const debut = DEROULE.pas.findIndex((p) => p.fin)
+    expect(DEROULE.pas[debut].priere).toBe('notre-pere')
+    expect(vibrationEntre(DEROULE, debut - 1, debut)).toBe('marquee')
+    for (let i = debut; i < FIN - 1; i++) expect(vibrationEntre(DEROULE, i, i + 1)).toBe('courte')
     expect(DEROULE.pas[FIN - 1].priere).toBe('saint-joseph')
     expect(vibrationEntre(DEROULE, FIN - 1, FIN)).toBe('marquee')
   })
@@ -54,6 +55,7 @@ describe('vibrationEntre', () => {
 
   it('six sans aucun texte de clôture : cinq dizaines et la fin', () => {
     const sansCloture = derouler(CHAPELET_MARIAL, {
+      saintPere: false,
       salveRegina: false,
       litanies: false,
       oraisonRosaire: false,

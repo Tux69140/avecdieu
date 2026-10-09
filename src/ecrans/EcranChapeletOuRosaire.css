@@ -31,3 +31,21 @@
 .chapelet-ou-rosaire strong {
   font-weight: 600;
 }
+
+/* La prière aux intentions du Saint-Père (phase 18) : en bas, après un filet,
+   sous un petit titre ; le lien du chapelet y amène le haut de l'écran. */
+.chapelet-ou-rosaire-saint-pere {
+  margin-top: var(--esp-lg);
+  padding-top: var(--esp-sm);
+  border-top: 1px solid var(--filet);
+  scroll-margin-top: calc(var(--bord-haut) + var(--esp-md));
+}
+
+.chapelet-ou-rosaire-saint-pere h2 {
+  margin: var(--esp-sm) 0 var(--esp-sm);
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: 0.06em;
+  color: var(--sepia);
+}

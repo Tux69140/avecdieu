@@ -13,7 +13,7 @@ import { dateDuJour, dateLisible } from '../office/dates'
 import { usePeutVibrer } from '../telephone/retours'
 import { SERIES, type SerieId } from '../recueil/mysteres'
 import { ChoixAffichage } from './ChoixAffichage'
-import { AIDE_PLUSIEURS, AIDE_VIBRATIONS, CHAPELET_OU_ROSAIRE } from './libelles'
+import { AIDE_PLUSIEURS, AIDE_VIBRATIONS, CHAPELET_OU_ROSAIRE, ESSENTIEL } from './libelles'
 import { lireReglages, modifierReglages, type Forme, type Reglages } from './reglages'
 import { libelleReprise, type ChapeletEnCours } from './reprise'
 import { joursDeLaSerie } from './serieDuJour'
@@ -33,17 +33,18 @@ interface Props {
 const TOUTES = Object.keys(SERIES) as SerieId[]
 
 // Chaque forme avec sa durée sous le mot : « Chapelet, vingt minutes » au
-// lecteur d'écran (US-59).
-const FORMES = (['chapelet', 'rosaire'] as const).map(
-  (forme) =>
-    [
-      forme,
-      <>
-        <span className="seuil-forme-nom">{forme === 'chapelet' ? 'Chapelet' : 'Rosaire'}</span>
-        <Duree priere={forme} className="seuil-forme-duree" />
-      </>,
-    ] as const,
-)
+// lecteur d'écran (US-59), plus courte avec « L’essentiel seulement ».
+const formes = (essentiel: boolean) =>
+  (['chapelet', 'rosaire'] as const).map(
+    (forme) =>
+      [
+        forme,
+        <>
+          <span className="seuil-forme-nom">{forme === 'chapelet' ? 'Chapelet' : 'Rosaire'}</span>
+          <Duree priere={forme} essentiel={essentiel} className="seuil-forme-duree" />
+        </>,
+      ] as const,
+  )
 
 // Le seuil du chapelet, entre l'accueil et le signe de croix (phase 17,
 // organisation validée par le porteur du projet, 2026-10-08) : le choix du
@@ -75,7 +76,7 @@ export function Seuil({ forme, serie, duJour, date, enCours, onCommencer, onReco
         <Bascule
           className="seuil-forme"
           nom="Chapelet ou Rosaire"
-          choix={FORMES}
+          choix={formes(reglages.essentiel)}
           valeur={forme}
           onChoisir={choisirForme}
         />
@@ -123,6 +124,13 @@ export function Seuil({ forme, serie, duJour, date, enCours, onCommencer, onReco
         {/* Seul ou en groupe se décide au moment de prier : le même réglage
             que dans les réglages (choix du porteur du projet, 2026-10-08). */}
         <div className="seuil-interrupteurs">
+          {/* Le cœur seul, sans les prières d'usage (phase 18). */}
+          <Interrupteur
+            libelle={ESSENTIEL.libelle}
+            aide={ESSENTIEL.aide}
+            actif={reglages.essentiel}
+            onBasculer={(essentiel) => modifier({ essentiel })}
+          />
           {vibreur && (
             <Interrupteur
               libelle="Vibrations"

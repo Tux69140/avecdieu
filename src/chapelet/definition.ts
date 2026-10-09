@@ -1,5 +1,6 @@
 import type { SerieId } from '../recueil/mysteres'
 import { INTENTIONS, type PriereId } from '../recueil/prieres'
+import { AUX_INTENTIONS_DU_SAINT_PERE } from './intentionsDuPape'
 
 // Ce qui porte la prière sur le chapelet : la croix, un gros ou un petit grain,
 // un nœud du fil entre deux grains (le Gloire au Père se dit sur le fil), ou
@@ -16,6 +17,7 @@ export type OptionDeroule =
   | 'annonce'
   | 'oMonJesus'
   | 'intentions'
+  | 'saintPere'
   | 'salveRegina'
   | 'litanies'
   | 'oraisonRosaire'
@@ -38,6 +40,11 @@ export interface Etape {
   // qu'une fois : à la dernière étape dite qui peut le porter, avant ou après
   // sa prière.
   verset?: 'avant' | 'apres'
+  // Une prière d'usage, que « L’essentiel seulement » retire : l'écran la
+  // dit « Facultatif » (phase 18).
+  facultative?: true
+  // Sous l'intention, l'intention de prière du pape pour le mois (phase 18).
+  intentionDuMois?: true
 }
 
 // Définition déclarative d'un chapelet : ajouter un autre chapelet, c'est
@@ -53,17 +60,20 @@ export interface DefinitionChapelet {
 }
 
 export const CHAPELET_MARIAL: DefinitionChapelet = {
+  // Seul le signe de croix est de l'essentiel (phase 18, d'après Rosarium
+  // Virginis Mariae) ; le reste de l'ouverture est d'usage.
   ouverture: [
     { priere: 'signe-de-croix', grain: 'croix' },
-    { priere: 'credo', grain: 'croix', memeGrain: true },
-    { priere: 'notre-pere', grain: 'gros' },
+    { priere: 'credo', grain: 'croix', memeGrain: true, facultative: true },
+    { priere: 'notre-pere', grain: 'gros', facultative: true },
     {
       priere: 'je-vous-salue-marie',
       grain: 'petit',
       repetitions: 3,
       intentions: { textes: INTENTIONS, option: 'intentions' },
+      facultative: true,
     },
-    { priere: 'gloire-au-pere', grain: 'noeud' },
+    { priere: 'gloire-au-pere', grain: 'noeud', facultative: true },
   ],
   // L'annonce se fait sur le gros grain, juste avant le Notre Père ; le « Ô mon
   // Jésus » suit le Gloire au Père, sur le même nœud du fil.
@@ -72,26 +82,51 @@ export const CHAPELET_MARIAL: DefinitionChapelet = {
     { priere: 'notre-pere', grain: 'gros', memeGrain: true },
     { priere: 'je-vous-salue-marie', grain: 'petit', repetitions: 10 },
     { priere: 'gloire-au-pere', grain: 'noeud' },
-    { priere: 'o-mon-jesus', grain: 'noeud', memeGrain: true, option: 'oMonJesus' },
+    {
+      priere: 'o-mon-jesus',
+      grain: 'noeud',
+      memeGrain: true,
+      option: 'oMonJesus',
+      facultative: true,
+    },
   ],
   nombreDeDizaines: 5,
-  // La clôture se dit en revenant à la médaille, la boucle achevée, dans
-  // l'ordre validé par le porteur du projet (2026-10-08). Le verset marial
-  // finit le Salve Regina, sauf quand l'oraison du Rosaire est dite : il
-  // passe alors juste avant elle.
-  cloture: [
-    { priere: 'salve-regina', grain: 'medaille', option: 'salveRegina', verset: 'apres' },
-    { priere: 'litanies', grain: 'medaille', memeGrain: true, option: 'litanies' },
-    {
-      priere: 'oraison-rosaire',
-      grain: 'medaille',
-      memeGrain: true,
-      option: 'oraisonRosaire',
-      verset: 'avant',
-    },
-    { priere: 'sous-l-abri', grain: 'medaille', memeGrain: true, option: 'sousLAbri' },
-    { priere: 'saint-joseph', grain: 'medaille', memeGrain: true, option: 'saintJoseph' },
-  ],
+  // La fin se dit en revenant à la médaille, la boucle achevée, toute d'usage.
+  // D'abord la prière aux intentions du Saint-Père, chacune sur son écran,
+  // la ligne rouge et l'intention du mois sur le Notre Père (phase 18,
+  // 2026-10-09) ; puis la clôture dans l'ordre validé par le porteur du
+  // projet (2026-10-08). Le verset marial finit le Salve Regina, sauf quand
+  // l'oraison du Rosaire est dite : il passe alors juste avant elle.
+  cloture: (
+    [
+      {
+        priere: 'notre-pere',
+        grain: 'medaille',
+        option: 'saintPere',
+        intentions: { textes: [AUX_INTENTIONS_DU_SAINT_PERE], option: 'saintPere' },
+        intentionDuMois: true,
+      },
+      { priere: 'je-vous-salue-marie', grain: 'medaille', memeGrain: true, option: 'saintPere' },
+      { priere: 'gloire-au-pere', grain: 'medaille', memeGrain: true, option: 'saintPere' },
+      {
+        priere: 'salve-regina',
+        grain: 'medaille',
+        memeGrain: true,
+        option: 'salveRegina',
+        verset: 'apres',
+      },
+      { priere: 'litanies', grain: 'medaille', memeGrain: true, option: 'litanies' },
+      {
+        priere: 'oraison-rosaire',
+        grain: 'medaille',
+        memeGrain: true,
+        option: 'oraisonRosaire',
+        verset: 'avant',
+      },
+      { priere: 'sous-l-abri', grain: 'medaille', memeGrain: true, option: 'sousLAbri' },
+      { priere: 'saint-joseph', grain: 'medaille', memeGrain: true, option: 'saintJoseph' },
+    ] satisfies Etape[]
+  ).map((etape): Etape => ({ ...etape, facultative: true })),
 }
 
 // Le Rosaire (phase 17) : l'ouverture une fois, la boucle des cinq dizaines

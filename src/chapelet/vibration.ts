@@ -4,7 +4,8 @@ export type Vibration = 'courte' | 'marquee'
 
 // Pour prier sans regarder l'écran : chaque prière vibre court, et l'entrée
 // dans une nouvelle partie vibre plus fort : chaque dizaine, ce qui annonce
-// aussi le nouveau mystère, puis le Salve Regina et l'écran de fin.
+// aussi le nouveau mystère, puis la fin (prière aux intentions du Saint-Père,
+// clôture) et l’écran de fin.
 export function vibrationEntre(deroule: Deroule, avant: number, apres: number): Vibration | null {
   if (avant === apres) return null
   if (apres < avant) return 'courte'

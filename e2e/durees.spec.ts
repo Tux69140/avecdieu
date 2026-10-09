@@ -41,8 +41,13 @@ async function verifierLignes(offices: Locator, chapelet: Locator) {
     await surUneLigne(lien)
   }
   await expect(chapelet.getByTestId('duree')).toHaveText(/^20 min/)
-  await expect(chapelet).toHaveAccessibleName(/^Chapelet\s*20 h\s*, vingt minutes$/)
+  await expect(chapelet).toHaveAccessibleName(/^Chapelet\s*vers 20 h\s*, vingt minutes$/)
   await surUneLigne(chapelet)
+  // Le Rosaire, sans heure (phase 18), juste après le Chapelet.
+  const rosaire = chapelet.locator('xpath=ancestor::li[1]/following-sibling::li[1]//a')
+  await expect(rosaire.getByTestId('duree')).toHaveText(/^~1 h 45/)
+  await expect(rosaire).toHaveAccessibleName(/^Rosaire\s*, environ une heure quarante-cinq$/)
+  await surUneLigne(rosaire)
 }
 
 test('l’accueil donne la durée de chaque office et du chapelet', async ({ page }) => {
@@ -50,9 +55,9 @@ test('l’accueil donne la durée de chaque office et du chapelet', async ({ pag
   await expect(page.getByTestId('moment')).toHaveAccessibleName(/^Complies/)
   await verifierLignes(
     page.getByRole('list', { name: 'Offices du jour' }),
-    page.getByRole('list', { name: 'Chapelet' }).getByRole('link'),
+    page.getByRole('list', { name: 'Chapelet et Rosaire' }).getByRole('link').first(),
   )
-  await expect(page.getByTestId('duree')).toHaveCount(8)
+  await expect(page.getByTestId('duree')).toHaveCount(9)
 })
 
 test('le menu donne la durée des offices et du chapelet, et tient en un écran', async ({
@@ -66,7 +71,7 @@ test('le menu donne la durée des offices et du chapelet, et tient en un écran'
     page.getByRole('list', { name: 'Offices du jour' }),
     page.getByRole('list', { name: 'Chapelet et prières' }).getByRole('link').first(),
   )
-  await expect(page.getByTestId('duree')).toHaveCount(8)
+  await expect(page.getByTestId('duree')).toHaveCount(9)
 })
 
 // Phase 17 : chaque forme porte sa durée dans le commutateur, sous son nom.

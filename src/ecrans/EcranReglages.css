@@ -46,6 +46,16 @@
   border-top: 1px solid var(--filet);
 }
 
+/* En tête des prières du chapelet, quand « L’essentiel seulement » l'emporte
+   sur elles (phase 18). */
+.reglages-avis {
+  margin: 0;
+  font-size: 16px;
+  font-style: italic;
+  line-height: 1.45;
+  color: var(--encre);
+}
+
 /* Ce que l'app garde pour prier sans réseau : une information, pas un réglage. */
 .reglages-note {
   margin: var(--esp-md) 0 0;

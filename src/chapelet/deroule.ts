@@ -21,6 +21,13 @@ export interface Pas {
   intention?: string
   // Le verset marial, dit avant ou après la prière.
   verset?: 'avant' | 'apres'
+  // Une prière d'usage, que « L’essentiel seulement » retire (phase 18).
+  facultatif?: true
+  // L'intention de prière du pape pour le mois s'affiche sous l'intention.
+  intentionDuMois?: true
+  // La fin, après la dernière dizaine : la prière aux intentions du
+  // Saint-Père et la clôture. Son Notre Père n'est pas celui de l'ouverture.
+  fin?: true
 }
 
 export interface Deroule {
@@ -31,8 +38,15 @@ export interface Deroule {
 // Toutes les options sont actives par défaut. Sans annonce à part (mode
 // compact, ou annonce coupée), la dizaine s'ouvre sur le Notre Père. Les
 // options qui dépendent du mois (Litanies, saint Joseph) arrivent ici déjà
-// tranchées (reglages.ts).
-export type Options = Partial<Record<OptionDeroule, boolean>>
+// tranchées (reglages.ts). « L’essentiel seulement » (phase 18) l'emporte sur
+// elles : il retire toutes les prières d'usage, quelles que soient les options.
+export type Options = Partial<Record<OptionDeroule, boolean>> & { essentiel?: boolean }
+
+interface Partie {
+  dizaine?: number
+  fin?: boolean
+  grainsMuets?: boolean
+}
 
 export function derouler(definition: DefinitionChapelet, options: Options = {}): Deroule {
   const pas: Pas[] = []
@@ -42,15 +56,21 @@ export function derouler(definition: DefinitionChapelet, options: Options = {}):
   const porteurs: { pas: Pas; verset: 'avant' | 'apres' }[] = []
   const active = (option?: OptionDeroule) => option === undefined || options[option] !== false
 
-  const ajouter = (etapes: Etape[], dizaine?: number) => {
-    // Une étape « sur le même grain » partage celui de la dernière étape dite
-    // de la même suite ; si toutes celles d'avant sont retirées, elle le prend.
+  // Une étape « sur le même grain » partage celui de la dernière étape dite
+  // de la même suite ; si toutes celles d'avant sont retirées, elle le prend.
+  // « grainsMuets » : retirée par « L’essentiel seulement », une étape garde
+  // ses grains sans rien y dire, pour que le chapelet dessiné garde son
+  // pendentif ; la médaille, elle, n'est un grain que si l'on y prie.
+  const ajouter = (etapes: Etape[], { dizaine, fin, grainsMuets }: Partie = {}) => {
     let ditAvant = false
     for (const etape of etapes) {
       if (!active(etape.option)) continue
+      const muette = options.essentiel === true && etape.facultative === true
+      if (muette && !grainsMuets) continue
       const total = etape.repetitions ?? 1
       for (let rang = 1; rang <= total; rang++) {
         if (!(etape.memeGrain && rang === 1 && ditAvant)) grains.push(etape.grain)
+        if (muette) continue
         const nouveau: Pas = {
           priere: etape.priere,
           grain: grains.length - 1,
@@ -62,15 +82,18 @@ export function derouler(definition: DefinitionChapelet, options: Options = {}):
         if (intentions && active(intentions.option) && intentions.textes[rang - 1])
           nouveau.intention = intentions.textes[rang - 1]
         if (verset) porteurs.push({ pas: nouveau, verset })
+        if (etape.facultative) nouveau.facultatif = true
+        if (etape.intentionDuMois) nouveau.intentionDuMois = true
+        if (fin) nouveau.fin = true
         pas.push(nouveau)
       }
       ditAvant = true
     }
   }
 
-  ajouter(definition.ouverture)
+  ajouter(definition.ouverture, { grainsMuets: true })
   const debutBoucle = pas.length
-  for (let d = 1; d <= definition.nombreDeDizaines; d++) ajouter(definition.dizaine, d)
+  for (let d = 1; d <= definition.nombreDeDizaines; d++) ajouter(definition.dizaine, { dizaine: d })
   // Au Rosaire, la même boucle se reprend pour chaque série, sur les mêmes
   // grains : les pas de la première série se répètent pour les suivantes.
   const [premiere, ...suivantes] = definition.series ?? []
@@ -80,7 +103,7 @@ export function derouler(definition: DefinitionChapelet, options: Options = {}):
     for (const serie of suivantes)
       pas.push(...boucle.map((p, i) => ({ ...p, serie, ...(i === 0 && { nouvelleSerie: true }) })))
   }
-  ajouter(definition.cloture)
+  ajouter(definition.cloture, { fin: true })
   const dernier = porteurs.at(-1)
   if (dernier) dernier.pas.verset = dernier.verset
   return { pas, grains }
