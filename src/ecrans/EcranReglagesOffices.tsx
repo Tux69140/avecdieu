@@ -16,7 +16,7 @@ export function EcranReglagesOffices() {
   const [enregistres] = useState(textesEnregistres)
   const [aideOffice, setAideOffice] = useState(aideOfficeAMontrer)
   return (
-    <PageReglages titre="Offices" parente="/reglages">
+    <PageReglages titre="Offices">
       <div className="reglages-liste">
         <div className="reglages-zone">
           <LignePage

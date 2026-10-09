@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { Bascule } from '../composants/Bascule'
-import type { DepuisParente } from '../composants/retour'
+import { useDepuisIci } from '../composants/retour'
 import { nommerLieu } from '../lieu/lieu'
 import { useLieu } from '../lieu/useLieu'
 import { calculerHeures } from '../office/heures'
@@ -38,6 +38,7 @@ export function EcranReglagesRappels() {
   const { lieu } = useLieu()
   const [android, relire] = useEtatAndroid()
   const { activer, fenetre } = useAutorisations(android, relire)
+  const depuis = useDepuisIci()
   const solaires = solaire.actives && !!lieu
   const heures = calculerHeures(dateDuJour(new Date()), rappels, solaire, lieu)
 
@@ -54,7 +55,7 @@ export function EcranReglagesRappels() {
     (android?.marque === 'xiaomi' || android?.marque === 'samsung') && !avis.includes('batterie')
 
   return (
-    <PageReglages titre="Rappels" parente="/reglages">
+    <PageReglages titre="Rappels">
       {/* Ce qui empêche les rappels d'arriver passe avant tout le reste : on
           arrive souvent ici depuis l'alerte de l'accueil. */}
       {avis.length > 0 && (
@@ -110,7 +111,7 @@ export function EcranReglagesRappels() {
         <Link
           className="lien-discret rappels-batterie"
           to="/reglages/rappels/batterie"
-          state={{ parente: '/reglages/rappels' } satisfies DepuisParente}
+          state={depuis}
         >
           Rappels bloqués ? Régler la batterie ›
         </Link>

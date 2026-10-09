@@ -7,8 +7,6 @@ import { PageReglages } from '../reglages/PageReglages'
 import { lireReglages } from '../reglages/reglages'
 import './EcranZone.css'
 
-const PARENTE = '/reglages/offices'
-
 // « ceux de la zone Belgique », mais « ceux du calendrier romain général ».
 const ceuxDe = (zone: Zone) =>
   zone === 'romain' ? 'ceux du calendrier romain général' : `ceux de la zone ${ZONES[zone]}`
@@ -18,7 +16,7 @@ const ceuxDe = (zone: Zone) =>
 // l'avertissement s'affiche sous la liste avant de valider (textes validés par
 // le porteur du projet, 2026-10-08).
 export function EcranZone() {
-  const remonter = useRemonter(PARENTE)
+  const remonter = useRemonter()
   const [zone] = useState(() => lireReglages().zone)
   const [textesGardes] = useState(() => !!textesEnregistres())
   // La zone touchée, en attente de confirmation.
@@ -44,7 +42,7 @@ export function EcranZone() {
   }
 
   return (
-    <PageReglages titre="Zone liturgique" parente={PARENTE}>
+    <PageReglages titre="Zone liturgique">
       <div className="zone-liste" role="radiogroup" aria-label="Zone liturgique">
         {(Object.entries(ZONES) as [Zone, string][]).map(([cle, nom]) => (
           <label key={cle} className="zone-option">

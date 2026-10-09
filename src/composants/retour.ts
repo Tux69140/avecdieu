@@ -41,12 +41,23 @@ export interface DepuisParente {
   rosaire?: boolean
 }
 
+// L'adresse d'une page des réglages dit sa place : sa page parente est
+// l'adresse sans son dernier morceau (« /reglages/rappels/laudes » →
+// « /reglages/rappels »).
+export const pageParente = (chemin: string) => chemin.slice(0, chemin.lastIndexOf('/')) || '/'
+
+// Ce qu'emporte une page des réglages ouverte d'ici : sa croix y remonte.
+export function useDepuisIci(): DepuisParente {
+  return { parente: useLocation().pathname }
+}
+
 // La croix d'une page des réglages remonte d'un niveau, comme le retour
 // d'Android : ouverte depuis sa page parente, l'historique y revient ;
 // ouverte directement, la page parente la remplace.
-export function useRemonter(parente: string): () => void {
+export function useRemonter(): () => void {
   const naviguer = useNavigate()
-  const { state } = useLocation()
+  const { pathname, state } = useLocation()
+  const parente = pageParente(pathname)
   return () => {
     const depuis = state as DepuisParente | null
     if (depuis?.parente === parente || depuis?.revenir) naviguer(-1)

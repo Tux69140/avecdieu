@@ -1,6 +1,6 @@
 import { useRef } from 'react'
-import { Link, useLocation } from 'react-router'
-import type { DepuisParente } from '../composants/retour'
+import { Link } from 'react-router'
+import { useDepuisIci } from '../composants/retour'
 import type { Heure } from '../office/heure'
 import { Interrupteur } from '../composants/Interrupteur'
 import { basculerRappel } from './basculer'
@@ -34,11 +34,11 @@ export function LigneRappel({
   solaire,
 }: Props) {
   const champ = useRef<HTMLInputElement>(null)
-  const { pathname } = useLocation()
+  const depuis = useDepuisIci()
   const { actif, heure, son, vibreur } = rappel
   const page = {
     to: `/reglages/rappels/${priere}`,
-    state: { parente: pathname } satisfies DepuisParente,
+    state: depuis,
   }
 
   return (

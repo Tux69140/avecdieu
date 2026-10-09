@@ -5,16 +5,14 @@ import '../ecrans/EcranReglages.css'
 
 interface Props {
   titre: string
-  // La page d'où l'on vient, où la croix remonte.
-  parente: string
   children: ReactNode
 }
 
 // Une page emboîtée des réglages (décision du porteur du projet,
 // 2026-10-08) : la croix en haut à gauche remonte d'un niveau, comme le
 // retour d'Android, et le titre est centré.
-export function PageReglages({ titre, parente, children }: Props) {
-  const remonter = useRemonter(parente)
+export function PageReglages({ titre, children }: Props) {
+  const remonter = useRemonter()
   return (
     <main className="reglages">
       <LigneFermer onFermer={remonter}>

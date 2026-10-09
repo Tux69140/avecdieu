@@ -15,7 +15,7 @@ const THEMES = [
 export function EcranReglagesAffichage() {
   const [reglages, modifier] = useReglages()
   return (
-    <PageReglages titre="Affichage" parente="/reglages">
+    <PageReglages titre="Affichage">
       <h2 id="reglages-taille">Taille du texte</h2>
       <ChoixTaille
         titre="reglages-taille"

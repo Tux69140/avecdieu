@@ -14,7 +14,7 @@ export function EcranReglagesChapelet() {
   const [reglages, modifier] = useReglages()
   const [aide, setAide] = useState(aideAMontrer)
   return (
-    <PageReglages titre="Chapelet" parente="/reglages">
+    <PageReglages titre="Chapelet">
       <div className="reglages-liste">
         <LignePage vers="/reglages/chapelet/prieres" nom={prieresDe('chapelet')} />
         {/* Le cœur seul : il l'emporte sur les prières réglées au-dessus,

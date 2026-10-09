@@ -42,7 +42,7 @@ export function EcranPrieresChapelet() {
       />
     ))
   return (
-    <PageReglages titre={titre} parente="/reglages/chapelet">
+    <PageReglages titre={titre}>
       {/* Les réglages fins restent tels quels, mais n'ont pas cours (phase 18). */}
       {reglages.essentiel && <p className="reglages-avis">{ESSENTIEL.active}</p>}
       <h2>Ouverture</h2>

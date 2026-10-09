@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
-import { Link, useLocation } from 'react-router'
-import type { DepuisParente } from './retour'
+import { Link } from 'react-router'
+import { useDepuisIci } from './retour'
 import './LignePage.css'
 
 interface Props {
@@ -21,8 +21,7 @@ interface Props {
 // dire « ouvre un autre écran »). La page ouverte sait d'où elle vient : sa
 // croix y remonte (`useRemonter`).
 export function LignePage({ vers, nom, resume, resumeCache, remplacer }: Props) {
-  const { pathname } = useLocation()
-  const depuis: DepuisParente = { parente: pathname }
+  const depuis = useDepuisIci()
   return (
     <Link className="ligne-page" to={vers} replace={remplacer} state={depuis}>
       <span className="ligne-page-nom">{nom}</span>
