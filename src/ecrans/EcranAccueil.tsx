@@ -3,9 +3,8 @@ import { Link, Navigate, useNavigate, useParams } from 'react-router'
 import { AlerteRappels } from '../accueil/AlerteRappels'
 import { BandeauJour } from '../accueil/BandeauJour'
 import type { Forme } from '../chapelet/definition'
-import { Duree } from '../composants/Duree'
-import { HeureApprochee } from '../composants/HeureApprochee'
 import { avecExposants } from '../composants/Exposants'
+import { QuandPriere } from '../composants/QuandPriere'
 import { astre } from '../accueil/cadran'
 import { Cadran } from '../accueil/Cadran'
 import { useGlisserLesJours } from '../accueil/glisserLesJours'
@@ -149,12 +148,11 @@ function ListeOffices({
           <li key={office} data-etat={indisponibles ? 'passe' : journee?.etats[office]}>
             <Link to={cheminOffice(office, date)} data-testid={duMoment ? 'moment' : undefined}>
               <span className="accueil-office-nom">{NOMS_OFFICES[office]}</span>
-              <span className="accueil-office-quand">
-                <span className="accueil-office-heure">
-                  {heure ? ecrireHeure(heure) : 'à toute heure'}
-                </span>
-                <Duree priere={office} className="accueil-office-duree" />
-              </span>
+              <QuandPriere
+                priere={office}
+                heure={heure ? ecrireHeure(heure) : 'à toute heure'}
+                className="accueil-office-quand"
+              />
               {duMoment && <span className="accueil-moment">Prière du moment</span>}
             </Link>
           </li>
@@ -174,14 +172,17 @@ function ListeChapeletRosaire({ date, journee }: { date: string; journee?: Journ
   const heure = heuresDuJour(date).chapelet
   const duMoment = journee?.moment === 'chapelet'
   const [essentiel] = useState(() => lireReglages().essentiel)
-  const ligne = (forme: Forme, nom: string, quand: string | null, etat?: string) => (
+  const ligne = (forme: Forme, nom: string, quand: string | undefined, etat?: string) => (
     <li data-etat={etat}>
       <Link to={`/${forme}`} data-testid={etat === 'moment' ? 'moment' : undefined}>
         <span className="accueil-office-nom">{nom}</span>
-        <span className="accueil-office-quand">
-          <span className="accueil-office-heure">{quand && <HeureApprochee heure={quand} />}</span>
-          <Duree priere={forme} essentiel={essentiel} className="accueil-office-duree" />
-        </span>
+        <QuandPriere
+          priere={forme}
+          heure={quand}
+          approchee
+          essentiel={essentiel}
+          className="accueil-office-quand"
+        />
         {etat === 'moment' && <span className="accueil-moment">Prière du moment</span>}
       </Link>
     </li>
@@ -191,10 +192,10 @@ function ListeChapeletRosaire({ date, journee }: { date: string; journee?: Journ
       {ligne(
         'chapelet',
         'Chapelet',
-        heure ? ecrireHeure(heure) : null,
+        heure && ecrireHeure(heure),
         duMoment ? 'moment' : journee?.etats.chapelet,
       )}
-      {ligne('rosaire', 'Rosaire', null)}
+      {ligne('rosaire', 'Rosaire', undefined)}
     </ul>
   )
 }

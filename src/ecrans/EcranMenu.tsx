@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
-import { Duree } from '../composants/Duree'
-import { HeureApprochee } from '../composants/HeureApprochee'
 import { LigneFermer } from '../composants/LigneFermer'
+import { QuandPriere } from '../composants/QuandPriere'
 import { avecExposants } from '../composants/Exposants'
 import { useRetour } from '../composants/retour'
 import { Rubrique } from '../composants/Rubrique'
@@ -71,20 +70,19 @@ export function EcranMenu() {
           <li>
             <Link to="/chapelet" replace>
               <span className="menu-priere">Chapelet</span>
-              <span className="menu-quand">
-                <span className="menu-heure">
-                  {heures.chapelet && <HeureApprochee heure={ecrireHeure(heures.chapelet)} />}
-                </span>
-                <Duree priere="chapelet" essentiel={essentiel} className="menu-duree" />
-              </span>
+              <QuandPriere
+                priere="chapelet"
+                heure={heures.chapelet && ecrireHeure(heures.chapelet)}
+                approchee
+                essentiel={essentiel}
+                discret
+              />
             </Link>
           </li>
           <li>
             <Link to="/rosaire" replace>
               <span className="menu-priere">Rosaire</span>
-              <span className="menu-quand">
-                <Duree priere="rosaire" essentiel={essentiel} className="menu-duree" />
-              </span>
+              <QuandPriere priere="rosaire" essentiel={essentiel} discret />
             </Link>
           </li>
           {PRIERES_DIRECTES.map(lienPriere)}
@@ -112,12 +110,11 @@ export function EcranMenu() {
                         {ouvert && <PerleEtape etat="courante" />}
                         {NOMS_OFFICES[nom]}
                       </span>
-                      <span className="menu-quand">
-                        <span className="menu-heure">
-                          {heure ? ecrireHeure(heure) : 'à toute heure'}
-                        </span>
-                        <Duree priere={nom} className="menu-duree" />
-                      </span>
+                      <QuandPriere
+                        priere={nom}
+                        heure={heure ? ecrireHeure(heure) : 'à toute heure'}
+                        discret
+                      />
                     </Link>
                   </li>
                 )

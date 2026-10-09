@@ -1,0 +1,40 @@
+/* L'heure, et sous elle la durée, plus petite : à droite, dans la hauteur
+   des 48 px de la ligne, sans rien repousser (US-59). */
+.quand-priere {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.quand-heure,
+.quand-duree {
+  font-family: var(--sc);
+  letter-spacing: 0.04em;
+  color: var(--sepia);
+  font-variant-numeric: lining-nums;
+}
+
+.quand-heure {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.quand-duree {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* Au menu : l'heure en graisse 500 sans espacement, et les chiffres du texte
+   pour l'heure comme pour la durée. Écart avec l'accueil à trancher par le
+   porteur du projet (revue du 2026-10-09) ; gardé tel quel en attendant. */
+.quand-priere-discret .quand-heure {
+  font-weight: 500;
+  letter-spacing: normal;
+}
+
+.quand-priere-discret .quand-heure,
+.quand-priere-discret .quand-duree {
+  font-variant-numeric: normal;
+}
