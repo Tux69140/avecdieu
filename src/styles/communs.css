@@ -151,3 +151,22 @@
   letter-spacing: 0.06em;
   color: var(--sepia);
 }
+
+/* Le chevron d'or au bout d'une ligne (accueil, menu, pages des réglages) :
+   › veut dire « ouvre un autre écran ». Il ne se lit pas dans le nom de la
+   ligne (texte de remplacement vide). */
+.avec-chevron::after {
+  content: '›' / '';
+  font-size: 26px;
+  line-height: 1;
+  color: var(--or-fonce);
+}
+
+/* L'aide sous un choix (bascule, fréquence, taille, zone, lieu) : petite et
+   sépia. */
+.choix-aide {
+  margin: var(--esp-sm) 0 0;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--sepia);
+}

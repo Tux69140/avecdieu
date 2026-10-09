@@ -113,6 +113,9 @@
      (phase 10) ; ce qui s'y mêle suit en em. */
   --taille-priere: 18px;
   --gouttiere: 24px;
+  /* L'aide sous un interrupteur s'arrête avant son curseur : sa largeur
+     (46 px) et l'écart qui l'en sépare (16 px). */
+  --marge-interrupteur: 62px;
 
   color-scheme: light;
 }

@@ -23,7 +23,7 @@ interface Props {
 export function LignePage({ vers, nom, resume, resumeCache, remplacer }: Props) {
   const depuis = useDepuisIci()
   return (
-    <Link className="ligne-page" to={vers} replace={remplacer} state={depuis}>
+    <Link className="ligne-page avec-chevron" to={vers} replace={remplacer} state={depuis}>
       <span className="ligne-page-nom">{nom}</span>
       {resume && (
         <span className="ligne-page-resume" aria-hidden={resumeCache || undefined}>

@@ -14,14 +14,9 @@
 }
 
 .ligne-page::after {
-  /* Le chevron ne se lit pas dans le nom de la ligne (texte de remplacement vide). */
-  content: '›' / '';
   grid-column: 2;
   grid-row: 1 / span 2;
   align-self: center;
-  font-size: 26px;
-  line-height: 1;
-  color: var(--or-fonce);
 }
 
 .ligne-page:active {

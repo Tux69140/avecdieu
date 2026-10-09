@@ -52,16 +52,6 @@
   cursor: pointer;
 }
 
-.menu-liste a::after,
-.menu-liste button::after {
-  /* › veut dire « ouvre un autre écran » ; il ne se lit pas dans le nom
-     de la ligne (texte de remplacement vide). */
-  content: '›' / '';
-  font-size: 26px;
-  line-height: 1;
-  color: var(--or-fonce);
-}
-
 .menu-liste a:active,
 .menu-liste button:active {
   background: var(--halo);

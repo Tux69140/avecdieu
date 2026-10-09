@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { LigneFermer } from '../composants/LigneFermer'
 import { useRemonter } from '../composants/retour'
-import '../ecrans/EcranReglages.css'
+import './Reglages.css'
 
 interface Props {
   titre: string

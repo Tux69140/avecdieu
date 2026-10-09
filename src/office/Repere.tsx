@@ -1,4 +1,5 @@
 import type { CouleurLiturgique } from './modele'
+import '../styles/perle-liturgique.css'
 import './Repere.css'
 
 // Entre deux parties : un filet fin, et au milieu une perle de la couleur

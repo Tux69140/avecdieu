@@ -8,7 +8,7 @@ import { lireRappels } from '../rappels/reglages'
 import { lireSolaire } from '../rappels/solaire'
 import { RAPPELS_BLOQUES, resumerRappels } from '../rappels/textes'
 import { useEtatAndroid } from '../rappels/useEtatAndroid'
-import './EcranReglages.css'
+import '../reglages/Reglages.css'
 
 // Les réglages, en pages emboîtées comme les Paramètres d'Android
 // (arborescence validée par le porteur du projet, 2026-10-08) : chaque ligne

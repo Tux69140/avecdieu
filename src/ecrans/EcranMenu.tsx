@@ -22,7 +22,7 @@ import './EcranMenu.css'
 // Une prière seule : sa page remplace le menu, comme les autres écrans.
 const lienPriere = (id: PriereSeuleId) => (
   <li key={id}>
-    <Link to={`/priere/${id}`} replace>
+    <Link className="avec-chevron" to={`/priere/${id}`} replace>
       {PRIERES_SEULES[id].titre}
     </Link>
   </li>
@@ -56,7 +56,7 @@ export function EcranMenu() {
       <nav aria-label="Menu">
         <ul className="menu-liste">
           <li>
-            <button type="button" onClick={aujourdhui}>
+            <button className="avec-chevron" type="button" onClick={aujourdhui}>
               Aujourd’hui
             </button>
           </li>
@@ -68,7 +68,7 @@ export function EcranMenu() {
             Rosaire n'en a pas. */}
         <ul className="menu-liste menu-prieres" aria-label="Chapelet et prières">
           <li>
-            <Link to="/chapelet" replace>
+            <Link className="avec-chevron" to="/chapelet" replace>
               <span className="menu-priere">Chapelet</span>
               <QuandPriere
                 priere="chapelet"
@@ -80,7 +80,7 @@ export function EcranMenu() {
             </Link>
           </li>
           <li>
-            <Link to="/rosaire" replace>
+            <Link className="avec-chevron" to="/rosaire" replace>
               <span className="menu-priere">Rosaire</span>
               <QuandPriere priere="rosaire" essentiel={essentiel} discret />
             </Link>
@@ -102,6 +102,7 @@ export function EcranMenu() {
                 return (
                   <li key={nom}>
                     <Link
+                      className="avec-chevron"
                       to={cheminOffice(nom, date)}
                       replace
                       aria-current={ouvert ? 'page' : undefined}
@@ -133,12 +134,12 @@ export function EcranMenu() {
         </div>
         <ul className="menu-liste">
           <li>
-            <Link to="/reglages" replace>
+            <Link className="avec-chevron" to="/reglages" replace>
               Réglages
             </Link>
           </li>
           <li>
-            <Link to="/a-propos" replace>
+            <Link className="avec-chevron" to="/a-propos" replace>
               A propos
             </Link>
           </li>

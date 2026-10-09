@@ -82,7 +82,7 @@
 
 .interrupteur-aide {
   margin: 0;
-  padding-right: 62px;
+  padding-right: var(--marge-interrupteur);
   font-size: 15px;
   line-height: 1.45;
   color: var(--sepia);

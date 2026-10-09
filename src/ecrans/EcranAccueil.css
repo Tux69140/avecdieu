@@ -199,13 +199,8 @@
 }
 
 .accueil-offices a::after {
-  /* Décorative : hors du nom lu par les lecteurs d'écran. */
-  content: '›' / '';
   grid-row: 1;
   grid-column: 4;
-  font-size: 26px;
-  line-height: 1;
-  color: var(--or-fonce);
 }
 
 .accueil-offices a:active {

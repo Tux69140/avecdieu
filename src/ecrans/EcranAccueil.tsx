@@ -143,7 +143,11 @@ function ListeOffices({
         const duMoment = journee?.moment === office && heure !== undefined
         return (
           <li key={office} data-etat={indisponibles ? 'passe' : journee?.etats[office]}>
-            <Link to={cheminOffice(office, date)} data-testid={duMoment ? 'moment' : undefined}>
+            <Link
+              className="avec-chevron"
+              to={cheminOffice(office, date)}
+              data-testid={duMoment ? 'moment' : undefined}
+            >
               <span className="accueil-office-nom">{NOMS_OFFICES[office]}</span>
               <QuandPriere
                 priere={office}
@@ -171,7 +175,11 @@ function ListeChapeletRosaire({ date, journee }: { date: string; journee?: Journ
   const [essentiel] = useState(() => lireReglages().essentiel)
   const ligne = (forme: Forme, nom: string, quand: string | undefined, etat?: string) => (
     <li data-etat={etat}>
-      <Link to={`/${forme}`} data-testid={etat === 'moment' ? 'moment' : undefined}>
+      <Link
+        className="avec-chevron"
+        to={`/${forme}`}
+        data-testid={etat === 'moment' ? 'moment' : undefined}
+      >
         <span className="accueil-office-nom">{nom}</span>
         <QuandPriere
           priere={forme}

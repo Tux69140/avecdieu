@@ -4,8 +4,8 @@ import { chargerJour } from '../aelf/api'
 import { textesEnregistres } from '../aelf/reserve'
 import { avecExposants } from '../composants/Exposants'
 import { dateLisible } from '../office/dates'
-import '../office/Repere.css'
 import { presenterJour, type Bandeau } from './bandeau'
+import '../styles/perle-liturgique.css'
 
 // « premiere » : aucun texte enregistré, l'app n'a encore jamais eu de réseau.
 type Etat =

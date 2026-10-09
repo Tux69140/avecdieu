@@ -13,33 +13,3 @@
   flex: 1;
   border-top: 1px solid var(--filet);
 }
-
-/* Une pastille cerclée de sépia : cerclée de sépia pâle, la perle blanche des
-   fêtes et mémoires ne se voyait plus sur le parchemin (1,14:1 ; choix du
-   porteur du projet, 2026-10-08). */
-.repere-perle {
-  width: 9px;
-  height: 9px;
-  border-radius: 9999px;
-  border: 1px solid var(--sepia);
-  background: var(--or);
-}
-
-.repere-perle[data-couleur='blanc'] {
-  background: var(--liturgique-blanc);
-}
-.repere-perle[data-couleur='vert'] {
-  background: var(--liturgique-vert);
-}
-.repere-perle[data-couleur='violet'] {
-  background: var(--liturgique-violet);
-}
-.repere-perle[data-couleur='rouge'] {
-  background: var(--liturgique-rouge);
-}
-.repere-perle[data-couleur='rose'] {
-  background: var(--liturgique-rose);
-}
-.repere-perle[data-couleur='noir'] {
-  background: var(--liturgique-noir);
-}

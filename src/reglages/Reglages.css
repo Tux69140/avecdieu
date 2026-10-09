@@ -97,7 +97,7 @@
 
 .reglages-zone .choix-aide {
   margin: 0;
-  padding-right: 62px;
+  padding-right: var(--marge-interrupteur);
 }
 
 /* Le réglage à choisir dans la page du téléphone, comme dans les fenêtres. */
