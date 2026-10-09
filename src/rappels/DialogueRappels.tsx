@@ -63,7 +63,6 @@ export function DialogueRappels({ etape, marque, onAccepter, onRenoncer }: Props
         onRenoncer()
       }}
     >
-      {/* Sépia comme les petits titres des réglages, sur lesquels elle s'ouvre. */}
       <h2 className="petit-titre" id={titre}>
         {intitule}
       </h2>

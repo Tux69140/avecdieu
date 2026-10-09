@@ -27,6 +27,8 @@
   font-size: 21px;
   letter-spacing: 0.05em;
   line-height: 1.25;
+  /* À l'encre, comme l'avertissement de changement de zone (2026-10-09). */
+  color: var(--encre);
 }
 
 .dialogue p,
