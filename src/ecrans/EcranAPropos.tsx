@@ -33,7 +33,7 @@ export function EcranAPropos() {
       <LigneFermer onFermer={retour}>
         <h1>Avec Dieu</h1>
       </LigneFermer>
-      <p className="a-propos-version">Version {version}</p>
+      <p className="petit-titre a-propos-version">Version {version}</p>
       <p>Prier la liturgie des heures et le chapelet, au fil du jour.</p>
       <p>Gratuite, sans publicité, sans compte. Rien ne quitte votre téléphone.</p>
       <div className="a-propos-rubriques">

@@ -21,7 +21,9 @@ export function EcranReglagesChapelet() {
             sans les changer (phase 18). */}
         <InterrupteursPriere choix={['essentiel']} reglages={reglages} onModifier={modifier} />
       </div>
-      <h2 id="reglages-affichage">Affichage des prières</h2>
+      <h2 className="petit-titre" id="reglages-affichage">
+        Affichage des prières
+      </h2>
       <ChoixAffichage
         titre="reglages-affichage"
         affichage={reglages.affichage}

@@ -1,0 +1,153 @@
+/* Classes communes à tous les écrans : voiles des barres, dates, boutons,
+   liens, icônes. Les jetons et la base de la page sont dans jetons.css. */
+
+/* Sous les barres d'Android, transparentes, deux bandes de parchemin cachent ce
+   qui défile : le texte ne passe jamais sous l'heure ni sous les boutons du
+   système. Elles n'ont de hauteur que sur le téléphone. Contrôlé par
+   e2e/barres.spec.ts. */
+.voile-barre {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--parchemin);
+}
+
+.voile-barre-haut {
+  top: 0;
+  height: var(--bord-haut);
+}
+
+.voile-barre-bas {
+  bottom: 0;
+  height: var(--bord-bas);
+}
+
+/* La date sur la ligne de la croix, dans l'office comme au chapelet : sépia,
+   sur une ligne (2026-10-08). */
+.ligne-date {
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.06em;
+  color: var(--sepia);
+  margin: 0;
+}
+
+.etiquette {
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  color: var(--rubrique);
+  margin: 0;
+}
+
+.btn {
+  /* Un lien fait bouton (« Prier le chapelet ») n'est pas souligné. */
+  text-decoration: none;
+  font-family: var(--texte);
+  font-weight: 500;
+  font-size: 17px;
+  min-height: 48px;
+  border-radius: var(--r-md);
+  padding: 10px 20px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition:
+    background-color 0.2s ease-out,
+    color 0.2s ease-out,
+    border-color 0.2s ease-out;
+}
+
+.btn-principal {
+  background: var(--encre);
+  color: var(--velin);
+  border-color: var(--encre);
+}
+
+.btn-principal:active {
+  transform: scale(0.97);
+}
+
+.btn-secondaire {
+  background: transparent;
+  color: var(--encre);
+  border-color: var(--or);
+}
+
+.btn-secondaire:hover,
+.btn-secondaire:focus-visible {
+  background: var(--halo);
+}
+
+/* Pour le seul lecteur d'écran : ce que l'œil lit déjà ailleurs. */
+.cache-a-l-oeil {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Lien discret : une action secondaire, soulignée d'or. */
+.lien-discret {
+  min-height: 48px;
+  padding: var(--esp-sm);
+  border: none;
+  background: none;
+  font-family: var(--texte);
+  font-size: 16px;
+  color: var(--encre);
+  text-decoration: underline;
+  text-decoration-color: var(--or);
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
+/* Une icône à toucher (croix, ☰ menu) : 48 px de cible, trait d'encre. */
+.bouton-icone {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--encre);
+  cursor: pointer;
+}
+
+.bouton-icone svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* La croix qui ferme : plus fine et plus discrète que ☰, en sépia, un dessin
+   de 18 px (décision du porteur du projet, 2026-10-08). */
+.bouton-icone.bouton-fermer svg {
+  width: 18px;
+  height: 18px;
+  stroke: var(--sepia);
+  stroke-width: 1.5;
+}
+
+/* Un petit titre, en petites capitales sépia : ceux des réglages (« Thème »,
+   « Fin du chapelet »), du seuil, de « Chapelet ou Rosaire ? », la version
+   d'« A propos », le « ou » du lieu. Chacun garde ses marges. */
+.petit-titre {
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: 0.06em;
+  color: var(--sepia);
+}

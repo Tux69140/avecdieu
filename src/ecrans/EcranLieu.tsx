@@ -110,7 +110,7 @@ export function EcranLieu() {
         </p>
       )}
 
-      <p className="lieu-ou">ou</p>
+      <p className="petit-titre lieu-ou">ou</p>
 
       <input
         className="lieu-champ"

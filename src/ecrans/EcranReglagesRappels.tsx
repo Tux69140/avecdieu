@@ -69,7 +69,9 @@ export function EcranReglagesRappels() {
       )}
 
       <div className="rappels-heures">
-        <h2 id="rappels-heures">Heures des prières</h2>
+        <h2 className="petit-titre" id="rappels-heures">
+          Heures des prières
+        </h2>
         <Bascule
           titre="rappels-heures"
           choix={HEURES}

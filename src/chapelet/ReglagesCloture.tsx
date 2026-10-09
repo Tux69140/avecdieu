@@ -16,7 +16,7 @@ interface Props {
 export function ReglagesCloture({ reglages, onModifier, rosaire = false }: Props) {
   return (
     <>
-      <h2>{finDe(rosaire ? 'rosaire' : 'chapelet')}</h2>
+      <h2 className="petit-titre">{finDe(rosaire ? 'rosaire' : 'chapelet')}</h2>
       <Interrupteur
         libelle={PRIERE_SAINT_PERE}
         actif={reglages.saintPere}

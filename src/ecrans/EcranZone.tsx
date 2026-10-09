@@ -58,7 +58,7 @@ export function EcranZone() {
       </div>
       {enAttente && (
         <section ref={avertissement} className="zone-avertissement" aria-label="Changer de zone ?">
-          <h2>Changer de zone ?</h2>
+          <h2 className="petit-titre">Changer de zone ?</h2>
           <p className="reglages-texte">
             Les textes gardés pour prier sans connexion seront effacés et remplacés par{' '}
             {ceuxDe(enAttente)}. Il faudra une connexion pour les recharger, sinon aucun texte ne

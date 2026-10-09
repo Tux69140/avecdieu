@@ -62,7 +62,7 @@ export function ChoixSon({ id, nom, rappel, vibreurPossible, onChanger }: Props)
 
   return (
     <div id={id} className="choix-son">
-      <h2>Son</h2>
+      <h2 className="petit-titre">Son</h2>
       <div role="radiogroup" aria-label={`Son, ${nom}`}>
         {CLOCHES.map((cloche) => {
           const valeur: Son = { sorte: 'cloche', cloche }

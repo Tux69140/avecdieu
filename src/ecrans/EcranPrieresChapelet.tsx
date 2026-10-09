@@ -45,9 +45,9 @@ export function EcranPrieresChapelet() {
     <PageReglages titre={titre}>
       {/* Les réglages fins restent tels quels, mais n'ont pas cours (phase 18). */}
       {reglages.essentiel && <p className="reglages-avis">{ESSENTIEL.active}</p>}
-      <h2>Ouverture</h2>
+      <h2 className="petit-titre">Ouverture</h2>
       {interrupteurs(OUVERTURE)}
-      <h2>Chaque dizaine</h2>
+      <h2 className="petit-titre">Chaque dizaine</h2>
       {interrupteurs(CHAQUE_DIZAINE)}
       <ReglagesCloture reglages={reglages} onModifier={modifier} rosaire={depuis?.rosaire} />
     </PageReglages>

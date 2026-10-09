@@ -26,6 +26,7 @@ import { EcranZone } from './ecrans/EcranZone'
 import { suivreLesVoyages } from './lieu/voyage'
 import { entretenirRappels, ouvrirLesNotifications } from './rappels/entretien'
 import './styles/jetons.css'
+import './styles/communs.css'
 
 const routeur = createBrowserRouter([
   {

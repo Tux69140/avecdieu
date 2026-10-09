@@ -16,13 +16,17 @@ export function EcranReglagesAffichage() {
   const [reglages, modifier] = useReglages()
   return (
     <PageReglages titre="Affichage">
-      <h2 id="reglages-taille">Taille du texte</h2>
+      <h2 className="petit-titre" id="reglages-taille">
+        Taille du texte
+      </h2>
       <ChoixTaille
         titre="reglages-taille"
         taille={reglages.tailleTexte}
         onChoisir={(tailleTexte) => modifier({ tailleTexte })}
       />
-      <h2 id="reglages-theme">Thème</h2>
+      <h2 className="petit-titre" id="reglages-theme">
+        Thème
+      </h2>
       <Bascule
         titre="reglages-theme"
         choix={THEMES}

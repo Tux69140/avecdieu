@@ -14,11 +14,6 @@
 .a-propos-version {
   margin: var(--esp-xs) 0 var(--esp-lg);
   text-align: center;
-  font-family: var(--sc);
-  font-weight: 600;
-  font-size: 17px;
-  letter-spacing: 0.06em;
-  color: var(--sepia);
 }
 
 .a-propos p {

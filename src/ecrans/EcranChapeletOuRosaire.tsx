@@ -44,7 +44,9 @@ export function EcranChapeletOuRosaire() {
         className="chapelet-ou-rosaire-saint-pere"
         aria-labelledby="titre-aux-intentions"
       >
-        <h2 id="titre-aux-intentions">{AUX_INTENTIONS.titre}</h2>
+        <h2 className="petit-titre" id="titre-aux-intentions">
+          {AUX_INTENTIONS.titre}
+        </h2>
         {AUX_INTENTIONS.paragraphes.map((paragraphe) => (
           <p key={paragraphe.slice(0, 20)}>{paragraphe}</p>
         ))}

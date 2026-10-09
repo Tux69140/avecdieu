@@ -90,7 +90,9 @@ export function Seuil({ forme, serie, duJour, date, enCours, onCommencer, onReco
       )}
 
       <section className="seuil-section seuil-prier" aria-labelledby="seuil-affichage">
-        <h2 id="seuil-affichage">Affichage des prières</h2>
+        <h2 className="petit-titre" id="seuil-affichage">
+          Affichage des prières
+        </h2>
         <ChoixAffichage
           titre="seuil-affichage"
           affichage={reglages.affichage}
@@ -114,7 +116,9 @@ export function Seuil({ forme, serie, duJour, date, enCours, onCommencer, onReco
           par chaque série parcourue. */}
       {!rosaire && (
         <section className="seuil-section" aria-labelledby="seuil-autres">
-          <h2 id="seuil-autres">Prier d’autres mystères</h2>
+          <h2 className="petit-titre" id="seuil-autres">
+            Prier d’autres mystères
+          </h2>
           <div className="seuil-liste">
             {TOUTES.filter((s) => s !== serie).map((autre) => (
               <LignePage
