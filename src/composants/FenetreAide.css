@@ -1,4 +1,6 @@
-.aide-gestes {
+/* Une fenêtre d’aide (gestes du chapelet, lecture de l’office) : une ligne par
+   geste ou par signe, l’icône à gauche. */
+.fenetre-aide {
   width: calc(100% - 2 * var(--gouttiere));
   max-width: 26em;
   /* Jamais sous les barres d'Android : la fenêtre se centre entre elles, et
@@ -14,11 +16,11 @@
   cursor: default;
 }
 
-.aide-gestes::backdrop {
+.fenetre-aide::backdrop {
   background: var(--voile);
 }
 
-.aide-gestes h2 {
+.fenetre-aide h2 {
   margin: 0 0 var(--esp-md);
   font-family: var(--display);
   font-weight: 400;
@@ -27,7 +29,7 @@
   text-align: center;
 }
 
-.aide-gestes ul {
+.fenetre-aide ul {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -35,7 +37,7 @@
   gap: var(--esp-md);
 }
 
-.aide-gestes li {
+.fenetre-aide li {
   display: grid;
   grid-template-columns: 40px 1fr;
   gap: var(--esp-md);
@@ -47,11 +49,11 @@
   line-height: 1.4;
 }
 
-.aide-gestes strong {
+.fenetre-aide strong {
   font-weight: 600;
 }
 
-.aide-gestes svg {
+.fenetre-aide svg {
   width: 40px;
   height: 40px;
   fill: none;
@@ -61,19 +63,19 @@
   stroke-linejoin: round;
 }
 
-.aide-gestes .plein {
+.fenetre-aide .plein {
   fill: var(--or);
   stroke: none;
 }
 
-.aide-gestes .soleil {
+.fenetre-aide .soleil {
   fill: var(--soleil);
   stroke: var(--soleil-ombre);
   stroke-width: 1;
 }
 
 /* Les signes eux-mêmes (℣ ℟, demi-gras), en rouge rubrique comme dans le
-   texte ; partagés avec l'aide de l'office. */
+   texte. */
 .aide-glyphe {
   width: 40px;
   font-size: 22px;
@@ -110,7 +112,7 @@
   accent-color: var(--or-fonce);
 }
 
-.aide-gestes .btn-principal {
+.fenetre-aide .btn-principal {
   display: block;
   width: 100%;
   margin-top: var(--esp-xs);

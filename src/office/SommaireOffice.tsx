@@ -1,4 +1,5 @@
-import { useEffect, useId, useRef } from 'react'
+import { useId, useRef } from 'react'
+import { useFenetreModale } from '../composants/useFenetreModale'
 import type { Etape } from './etapes'
 import { PerleEtape } from './FilDePerles'
 import { etatDePerle } from './reperage'
@@ -20,15 +21,9 @@ export function SommaireOffice({ office, etapes, courante, onChoisir, onFermer }
   const enCours = useRef<HTMLButtonElement>(null)
   const titre = useId()
 
-  useEffect(() => {
-    const dialogue = fenetre.current
-    if (dialogue && !dialogue.open) dialogue.showModal?.()
-    // On retrouve d'emblée où l'on en est.
-    enCours.current?.focus()
-    // Le texte, dessous, ne défile pas avec le doigt qui parcourt le volet.
-    document.documentElement.classList.add('sans-defilement')
-    return () => document.documentElement.classList.remove('sans-defilement')
-  }, [])
+  // On retrouve d'emblée où l'on en est ; le texte, dessous, ne défile pas
+  // avec le doigt qui parcourt le volet.
+  useFenetreModale(fenetre, { focus: enCours, fixerLaPage: true })
 
   return (
     <dialog

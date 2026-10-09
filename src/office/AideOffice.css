@@ -1,4 +1,4 @@
-/* L'aide de l'office reprend celle du chapelet (AideGestes.css), en plus
+/* L'aide de l'office reprend la fenêtre d'aide commune (FenetreAide.css), en plus
    serré : huit lignes au lieu de quatre tiennent sur un écran de 360 × 780. */
 .aide-office {
   padding-top: var(--esp-md);
@@ -12,7 +12,7 @@
   gap: 10px;
 }
 
-/* La taille suit celle du texte à prier, comme au chapelet (AideGestes.css). */
+/* La taille suit celle du texte à prier, comme au chapelet (FenetreAide.css). */
 .aide-office li {
   line-height: 1.35;
 }

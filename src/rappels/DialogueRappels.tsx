@@ -1,4 +1,5 @@
-import { useEffect, useId, useRef } from 'react'
+import { useId, useRef } from 'react'
+import { useFenetreModale } from '../composants/useFenetreModale'
 import type { Fabricant } from '../telephone/sonnerie'
 import type { Etape } from './autorisations'
 import { guideBatterie } from './textes'
@@ -48,11 +49,7 @@ export function DialogueRappels({ etape, marque, onAccepter, onRenoncer }: Props
   const { titre: intitule, texte, accepter, renoncer, ...reste } = contenu(etape, marque)
   const reglages = 'reglages' in reste ? reste.reglages : undefined
 
-  useEffect(() => {
-    const dialogue = fenetre.current
-    if (dialogue && !dialogue.open) dialogue.showModal?.()
-    return () => dialogue?.close()
-  }, [etape])
+  useFenetreModale(fenetre, { cle: etape })
 
   return (
     <dialog
