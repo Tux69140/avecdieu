@@ -1,5 +1,5 @@
 import type { Ref } from 'react'
-import { BoutonFermer, LienMenu } from '../composants/Icones'
+import { BoutonFermer, FlecheBas, LienMenu } from '../composants/Icones'
 import { decrirePerles, type Etape } from './etapes'
 import { FilDePerles } from './FilDePerles'
 import './BandeauOffice.css'
@@ -43,9 +43,7 @@ export function BandeauOffice(props: Props) {
             <span className="bandeau-office-etape" data-testid="etape-courante">
               {etape?.libelle}
             </span>
-            <svg viewBox="0 0 16 10" aria-hidden="true">
-              <path d="M2 2l6 6 6-6" />
-            </svg>
+            <FlecheBas />
           </span>
           <FilDePerles nombre={etapes.length} courante={courante} />
         </button>

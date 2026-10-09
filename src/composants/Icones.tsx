@@ -1,6 +1,7 @@
 import { Link } from 'react-router'
 
-// La croix et ☰, partout les mêmes : en tête des écrans, d'un office et dans sa barre.
+// Les icônes dessinées, partout les mêmes : la croix et ☰ en tête des écrans,
+// d'un office et dans sa barre, la flèche vers le bas.
 
 // Fermer : une croix fine en haut à gauche, le même dessin sur chaque écran.
 // Elle ramène là d'où l'on vient, comme le retour d'Android (décision du
@@ -17,6 +18,17 @@ export function BoutonFermer({ onClick }: { onClick: () => void }) {
         <path d="M3.5 3.5l11 11M14.5 3.5l-11 11" />
       </svg>
     </button>
+  )
+}
+
+// Une flèche vers le bas, dessinée : › veut dire « ouvre un autre écran », et
+// le caractère retombait sur une police système. Rubriques, « Plus bas »,
+// étape en cours du bandeau de l'office.
+export function FlecheBas() {
+  return (
+    <svg viewBox="0 0 16 10" aria-hidden="true">
+      <path d="M2 2l6 6 6-6" />
+    </svg>
   )
 }
 

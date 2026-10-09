@@ -1,4 +1,5 @@
 import { glissement } from './defilement'
+import { FlecheBas } from './Icones'
 import './IndiceSuite.css'
 
 interface Props {
@@ -19,9 +20,7 @@ export function IndiceSuite({ visible, variante = 'flottant' }: Props) {
       onClick={() => window.scrollBy({ top: window.innerHeight * 0.7, behavior: glissement() })}
     >
       Plus bas
-      <svg viewBox="0 0 16 10" aria-hidden="true">
-        <path d="M2 2l6 6 6-6" />
-      </svg>
+      <FlecheBas />
     </button>
   )
 }

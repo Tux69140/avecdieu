@@ -1,4 +1,5 @@
 import { useId, type ReactNode } from 'react'
+import { FlecheBas } from './Icones'
 import './Rubrique.css'
 
 interface Props {
@@ -24,12 +25,8 @@ export function Rubrique({ titre, resume, ouverte, onBasculer, children }: Props
               {resume}
             </span>
           )}
-          {/* Une flèche vers le bas, dessinée : › veut dire « ouvre un autre
-              écran », et le caractère retombait sur une police système. */}
           <span className="rubrique-chevron" aria-hidden="true">
-            <svg viewBox="0 0 16 10">
-              <path d="M2 2l6 6 6-6" />
-            </svg>
+            <FlecheBas />
           </span>
         </button>
       </h2>
