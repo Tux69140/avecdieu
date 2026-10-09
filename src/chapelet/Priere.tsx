@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router'
+import { LienSuite } from '../composants/LienSuite'
 import { LITANIES } from '../recueil/litanies'
 import type { Passage } from '../recueil/passages'
 import type { PriereId } from '../recueil/prieres'
@@ -76,10 +76,9 @@ export function Priere(props: Props) {
           toucher n'avance pas (un lien est interactif). */}
       {pas.intentionDuMois && props.intentionDuMois && (
         <p className="intention-du-mois">
-          <Link className="lien-discret" to={`/chapelet-ou-rosaire#${ANCRE_AUX_INTENTIONS}`}>
+          <LienSuite to={`/chapelet-ou-rosaire#${ANCRE_AUX_INTENTIONS}`}>
             {insecables(`${CE_MOIS_CI} ${titreEnLigne(props.intentionDuMois.titre)}`)}
-            <span aria-hidden="true">{'\u00a0›'}</span>
-          </Link>
+          </LienSuite>
         </p>
       )}
       {/* Les liens restent sous le titre : ce qu'ils déplient s'ouvre en dessous. */}

@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router'
+import { useNavigate } from 'react-router'
 import { Bascule } from '../composants/Bascule'
+import { LienSuite } from '../composants/LienSuite'
 import { useDepuisIci } from '../composants/retour'
 import { nommerLieu } from '../lieu/lieu'
 import { useLieu } from '../lieu/useLieu'
@@ -83,9 +84,9 @@ export function EcranReglagesRappels() {
             <p className="choix-aide">
               Selon la course du soleil {dansLeLieu(lieu)}, du lever au coucher.
             </p>
-            <Link className="lien-discret rappels-lieu" to="/lieu">
-              Lieu : {nommerLieu(lieu)} ›
-            </Link>
+            <LienSuite className="rappels-lieu" to="/lieu">
+              Lieu : {nommerLieu(lieu)}
+            </LienSuite>
           </>
         )}
       </div>
@@ -110,13 +111,9 @@ export function EcranReglagesRappels() {
       </ul>
 
       {guide && (
-        <Link
-          className="lien-discret rappels-batterie"
-          to="/reglages/rappels/batterie"
-          state={depuis}
-        >
-          Rappels bloqués ? Régler la batterie ›
-        </Link>
+        <LienSuite className="rappels-batterie" to="/reglages/rappels/batterie" state={depuis}>
+          Rappels bloqués ? Régler la batterie
+        </LienSuite>
       )}
 
       {fenetre}

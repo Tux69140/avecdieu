@@ -1,7 +1,7 @@
-import { Link } from 'react-router'
 import { Duree } from '../composants/Duree'
 import { avecExposants } from '../composants/Exposants'
 import { IndiceSuite } from '../composants/IndiceSuite'
+import { LienSuite } from '../composants/LienSuite'
 import { LigneFermer } from '../composants/LigneFermer'
 import { LignePage } from '../composants/LignePage'
 import { useRetour, type DepuisParente } from '../composants/retour'
@@ -57,10 +57,7 @@ export function Seuil({ forme, serie, duJour, date, enCours, onCommencer, onReco
         {/* Ce qui distingue le chapelet du Rosaire : une page à part, ouverte
             des deux seuils. */}
         <p className="seuil-aide">
-          <Link className="lien-discret" to="/chapelet-ou-rosaire">
-            {CHAPELET_OU_ROSAIRE.titre}
-            <span aria-hidden="true">{'\u00a0›'}</span>
-          </Link>
+          <LienSuite to="/chapelet-ou-rosaire">{CHAPELET_OU_ROSAIRE.titre}</LienSuite>
         </p>
       </header>
 
@@ -139,14 +136,12 @@ export function Seuil({ forme, serie, duJour, date, enCours, onCommencer, onReco
           Rosaire, elle porte son nom (décision du porteur du projet,
           2026-10-09) ; les réglages sont les mêmes. */}
       <p className="seuil-aide seuil-prieres">
-        <Link
-          className="lien-discret"
+        <LienSuite
           to="/reglages/chapelet/prieres"
           state={{ revenir: true, rosaire } satisfies DepuisParente}
         >
           {prieresDe(forme)}
-          <span aria-hidden="true">{'\u00a0›'}</span>
-        </Link>
+        </LienSuite>
       </p>
 
       <div ref={fin} className="fin-ecran" />

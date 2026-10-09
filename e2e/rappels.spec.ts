@@ -277,7 +277,9 @@ test('Xiaomi bien réglé : ni guide ni avis, le lien reste', async ({ page }) =
   await expect(page.getByRole('dialog')).toHaveCount(0)
   await expect(page.locator('.rappels-avis')).toHaveCount(0)
   // Le guide de batterie est une page (2026-10-08), même texte que la fenêtre.
-  await page.getByRole('link', { name: 'Rappels bloqués ? Régler la batterie ›' }).click()
+  await page
+    .getByRole('link', { name: 'Rappels bloqués ? Régler la batterie', exact: true })
+    .click()
   await expect(page).toHaveURL('/reglages/rappels/batterie')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sur un Xiaomi')
   await expect(page.locator('main')).toContainText(
@@ -288,7 +290,9 @@ test('Xiaomi bien réglé : ni guide ni avis, le lien reste', async ({ page }) =
   await page.getByRole('button', { name: 'Plus tard' }).click()
   await expect(page).toHaveURL('/reglages/rappels')
   // « Ouvrir la page » ouvre la fiche de l'app, puis ramène aux rappels.
-  await page.getByRole('link', { name: 'Rappels bloqués ? Régler la batterie ›' }).click()
+  await page
+    .getByRole('link', { name: 'Rappels bloqués ? Régler la batterie', exact: true })
+    .click()
   await page.getByRole('button', { name: 'Ouvrir la page' }).click()
   await expect(page).toHaveURL('/reglages/rappels')
   expect((await telephone(page)).journal).toContain('fiche de l’app')

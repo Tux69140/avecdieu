@@ -13,7 +13,7 @@ const ARBORESCENCE: [string[], string, string][] = [
   [['Rappels'], '/reglages/rappels', 'Rappels'],
   [['Rappels', 'Laudes'], '/reglages/rappels/laudes', 'Laudes'],
   [
-    ['Rappels', 'Rappels bloqués ? Régler la batterie ›'],
+    ['Rappels', 'Rappels bloqués ? Régler la batterie'],
     '/reglages/rappels/batterie',
     'Sur un Xiaomi',
   ],

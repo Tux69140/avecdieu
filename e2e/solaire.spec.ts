@@ -97,7 +97,7 @@ test('passer aux heures solaires : choisir une ville, puis les heures suivent le
   await expect(
     page.getByText('Selon la course du soleil à Lyon, du lever au coucher.'),
   ).toBeVisible()
-  await expect(page.getByRole('link', { name: 'Lieu : Lyon ›' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Lieu : Lyon', exact: true })).toBeVisible()
   await expect(page.locator('.rappel-priere')).toContainText([
     'Office des lectures',
     'Laudes · lever',
