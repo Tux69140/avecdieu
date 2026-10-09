@@ -345,6 +345,33 @@ test('la fin de l’office : une perle d’or, puis « Revenir à l’accueil »
   expect(await page.evaluate(() => (history.state as { idx: number }).idx)).toBe(0)
 })
 
+// À côté de « Revenir à l’accueil », l'office suivant du jour ; les complies
+// ferment la journée (2026-10-09).
+test('la fin de l’office mène à l’office suivant, qui le remplace', async ({ page }) => {
+  await servirAelf(page)
+  await preparer(page)
+  await page.goto('/')
+  await page
+    .getByRole('list', { name: 'Offices du jour' })
+    .getByRole('link', { name: /^Laudes/ })
+    .click()
+  const suivant = page.getByTestId('cloture').getByRole('link', { name: 'Tierce' })
+  await suivant.scrollIntoViewIfNeeded()
+  await expect(suivant).toBeInViewport()
+  await suivant.click()
+  await expect(page).toHaveURL('/office/tierce/2026-10-06')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Tierce')
+  // Il remplace les laudes : le retour ramène à l'accueil.
+  await page.goBack()
+  await expect(page).toHaveURL('/')
+  await page
+    .getByRole('list', { name: 'Offices du jour' })
+    .getByRole('link', { name: /Complies/ })
+    .click()
+  await expect(page.getByTestId('cloture').getByRole('button')).toHaveText('Revenir à l’accueil')
+  await expect(page.getByTestId('cloture').getByRole('link')).toHaveCount(0)
+})
+
 test('une adresse d’office inconnue mène à l’accueil', async ({ page }) => {
   await servirAelf(page)
   await preparer(page)

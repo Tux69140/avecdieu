@@ -32,6 +32,11 @@ export const estNomOffice = (valeur: string | undefined): valeur is NomOffice =>
 // La route d'un office un jour donné (AAAA-MM-JJ) : /office/vepres/2026-10-06.
 export const cheminOffice = (nom: NomOffice, date: string) => `/office/${nom}/${date}`
 
+// L'office qui suit, le même jour, proposé en fin d'office ; les complies
+// ferment la journée (2026-10-09).
+export const officeSuivant = (nom: NomOffice): NomOffice | undefined =>
+  OFFICES[OFFICES.indexOf(nom) + 1]
+
 // Les repères que le livre imprime en rouge : numéro de verset, syllabe
 // accentuée de la psalmodie, astérisque de médiante, croix de flexe, V/ et R/.
 // « emphase » : un passage en italique ou en gras dans la source.

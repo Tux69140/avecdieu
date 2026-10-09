@@ -4,6 +4,8 @@ import { Link, type LinkProps } from 'react-router'
 interface Props {
   to: LinkProps['to']
   state?: unknown
+  // L'écran ouvert prend la place de celui-ci dans l'historique.
+  replace?: boolean
   className?: string
   children: ReactNode
 }
@@ -11,12 +13,13 @@ interface Props {
 // Un lien discret qui ouvre un autre écran : « Chapelet ou Rosaire ? › ».
 // Le chevron, collé au dernier mot par une espace insécable, ne se lit pas :
 // le lecteur d'écran n'entend que le nom du lien.
-export function LienSuite({ to, state, className, children }: Props) {
+export function LienSuite({ to, state, replace, className, children }: Props) {
   return (
     <Link
       className={className ? `lien-discret ${className}` : 'lien-discret'}
       to={to}
       state={state}
+      replace={replace}
     >
       {children}
       <span aria-hidden="true">{'\u00a0›'}</span>

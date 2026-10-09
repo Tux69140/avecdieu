@@ -1,8 +1,15 @@
 import { Fragment, useMemo, type Ref } from 'react'
 import { FinDePriere } from '../composants/FinDePriere'
+import { LienSuite } from '../composants/LienSuite'
 import { clesDesParties } from './cles'
 import type { Etape } from './etapes'
-import type { CouleurLiturgique, Partie } from './modele'
+import {
+  cheminOffice,
+  NOMS_OFFICES,
+  type CouleurLiturgique,
+  type NomOffice,
+  type Partie,
+} from './modele'
 import { PartieOffice } from './PartieOffice'
 import { Repere } from './Repere'
 
@@ -13,11 +20,23 @@ interface Props {
   etapes: Etape[]
   couleur: CouleurLiturgique | undefined
   replier: boolean
+  // L'office suivant du jour, et le jour : il remplace celui-ci.
+  suivant?: NomOffice
+  date: string
   onAccueil: () => void
 }
 
 // Le texte de l'office, partie après partie, jusqu'à sa clôture.
-export function CorpsOffice({ ref, parties, etapes, couleur, replier, onAccueil }: Props) {
+export function CorpsOffice({
+  ref,
+  parties,
+  etapes,
+  couleur,
+  replier,
+  suivant,
+  date,
+  onAccueil,
+}: Props) {
   const cles = useMemo(() => clesDesParties(parties), [parties])
   const debuts = useMemo(() => new Map(etapes.map((e, k) => [e.debut, k])), [etapes])
   return (
@@ -32,7 +51,17 @@ export function CorpsOffice({ ref, parties, etapes, couleur, replier, onAccueil 
         </Fragment>
       ))}
       {/* L'écran reste allumé à la fin : on lit peut-être encore le haut (2026-10-08). */}
-      <FinDePriere testId="cloture" onAccueil={onAccueil} />
+      <FinDePriere
+        testId="cloture"
+        onAccueil={onAccueil}
+        suite={
+          suivant && (
+            <LienSuite to={cheminOffice(suivant, date)} replace>
+              {NOMS_OFFICES[suivant]}
+            </LienSuite>
+          )
+        }
+      />
     </div>
   )
 }

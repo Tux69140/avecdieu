@@ -4,3 +4,18 @@
   margin-top: var(--esp-lg);
   text-align: center;
 }
+
+/* « Revenir à l’accueil » et, à l'office, l'office suivant, côte à côte. */
+.fin-de-priere-liens {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+  gap: var(--esp-xs) var(--esp-lg);
+}
+
+/* Le lien, comme le bouton, offre au doigt ses 48 px. */
+.fin-de-priere-liens .lien-discret {
+  display: inline-flex;
+  align-items: center;
+}

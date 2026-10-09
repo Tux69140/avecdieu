@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { Repere } from '../office/Repere'
 import './FinDePriere.css'
 
@@ -6,6 +7,8 @@ interface Props {
   // nom, pas de région : l'office n'en a aucune, ses parties portent les titres.
   libelle?: string
   onAccueil: () => void
+  // À côté du chemin de l'accueil : l'office suivant (2026-10-09).
+  suite?: ReactNode
   className?: string
   testId?: string
 }
@@ -13,7 +16,7 @@ interface Props {
 // La fin d'une prière, la même partout : une perle d'or qui ferme, puis le
 // chemin de l'accueil, sans mot de plus ni « Recommencer » qu'un toucher
 // machinal relancerait (choix du porteur du projet, 2026-10-08).
-export function FinDePriere({ libelle, onAccueil, className, testId }: Props) {
+export function FinDePriere({ libelle, onAccueil, suite, className, testId }: Props) {
   const Bloc = libelle ? 'section' : 'div'
   return (
     <Bloc
@@ -22,9 +25,12 @@ export function FinDePriere({ libelle, onAccueil, className, testId }: Props) {
       aria-label={libelle}
     >
       <Repere testId="perle-de-fin" />
-      <button className="lien-discret" type="button" onClick={onAccueil}>
-        Revenir à l’accueil
-      </button>
+      <div className="fin-de-priere-liens">
+        <button className="lien-discret" type="button" onClick={onAccueil}>
+          Revenir à l’accueil
+        </button>
+        {suite}
+      </div>
     </Bloc>
   )
 }

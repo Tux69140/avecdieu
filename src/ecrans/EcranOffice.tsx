@@ -6,7 +6,13 @@ import { IndiceSuite } from '../composants/IndiceSuite'
 import { useRetour, useRetourAccueil } from '../composants/retour'
 import { useSuiteCachee } from '../composants/suiteCachee'
 import { estDate, estPaques } from '../office/dates'
-import { cheminOffice, estNomOffice, type NomOffice, NOMS_OFFICES } from '../office/modele'
+import {
+  cheminOffice,
+  estNomOffice,
+  type NomOffice,
+  NOMS_OFFICES,
+  officeSuivant,
+} from '../office/modele'
 import { aideOfficeAMontrer } from '../office/aide'
 import { AideOffice } from '../office/AideOffice'
 import { AvisOffice } from '../office/AvisOffice'
@@ -124,6 +130,8 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
             etapes={etapes}
             couleur={etat.lu.jour.couleurs[0]}
             replier={!prieresEntieres}
+            suivant={officeSuivant(nom)}
+            date={date}
             onAccueil={revenirAccueil}
           />
         )}
