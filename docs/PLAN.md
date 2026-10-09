@@ -492,7 +492,7 @@ Aucune — peut avancer en même temps que la phase 15.
 
 ### Ce qu'on livre
 
-Sur le seuil, un commutateur Chapelet / Rosaire, retenu. Le Rosaire enchaîne les 20 dizaines, joyeux, lumineux, douloureux, glorieux : ouverture une fois, une ligne en rouge à chaque passage de série, un repère « Série n sur 4 », clôture une fois. Il se reprend au grain exact le jour même. Une aide repliée « Chapelet ou Rosaire ? » éclaire le novice. La ligne de l'accueil dit « Rosaire » quand ce choix est retenu. Le seuil, qui porte désormais le commutateur, les durées et les réglages de clôture, est réorganisé (impeccable layout).
+Un seuil propre au Rosaire (*révisé le 2026-10-09* : le commutateur Chapelet / Rosaire d'abord prévu a été retiré, l'accueil et le menu montrent les deux lignes). Le Rosaire enchaîne les 20 dizaines, joyeux, lumineux, douloureux, glorieux : ouverture une fois, une ligne en rouge à chaque passage de série, un repère « Série n sur 4 », clôture une fois. Il se reprend au grain exact le jour même. Une aide repliée « Chapelet ou Rosaire ? » éclaire le novice. Le seuil est réorganisé (impeccable layout).
 
 Textes validés par le porteur du projet (2026-10-08), à reprendre mot à mot :
 - **Passage de série** (rouge rubrique) : « Les mystères joyeux sont achevés. Viennent les mystères lumineux. » (de même : lumineux → douloureux, douloureux → glorieux).
