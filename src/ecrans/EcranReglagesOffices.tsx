@@ -28,25 +28,25 @@ export function EcranReglagesOffices() {
         </div>
         <Interrupteur
           libelle="Accents de psalmodie"
-          aide="Souligne les syllabes accentuées des psaumes et cantiques."
+          aide="Souligne les syllabes accentuées des psaumes."
           actif={reglages.accents}
           onBasculer={(accents) => modifier({ accents })}
         />
         <Interrupteur
           libelle="Prières courantes en entier"
-          aide="Notre Père, Gloire au Père et Je confesse à Dieu, écrits en entier sans avoir à les déplier."
+          aide="Notre Père, Gloire au Père, Je confesse à Dieu : sans avoir à les déplier."
           actif={reglages.prieresEntieres}
           onBasculer={(prieresEntieres) => modifier({ prieresEntieres })}
         />
         <Interrupteur
           libelle="Signaler les ajouts de l’app"
-          aide="Un filet rouge marque ce que l’app ajoute au texte de l’AELF selon les rubriques."
+          aide="Un filet rouge marque ce que l’app ajoute au texte de l’AELF."
           actif={reglages.signalerAjouts}
           onBasculer={(signalerAjouts) => modifier({ signalerAjouts })}
         />
         <Interrupteur
           libelle="Consignes pour débuter"
-          aide="Rappelle en rouge, dans l’office, ce qui se répète et quand répondre."
+          aide="En rouge : ce qui se répète, quand répondre."
           actif={reglages.consignes}
           onBasculer={(consignes) => modifier({ consignes })}
         />

@@ -35,7 +35,6 @@ export function ReglagesCloture({ reglages, onModifier, rosaire = false }: Props
       />
       <Interrupteur
         libelle="Oraison du Rosaire"
-        aide="Précédée du verset “Priez pour nous, sainte Mère de Dieu”."
         actif={reglages.oraisonRosaire}
         onBasculer={(oraisonRosaire) => onModifier({ oraisonRosaire })}
       />
@@ -46,7 +45,6 @@ export function ReglagesCloture({ reglages, onModifier, rosaire = false }: Props
       />
       <ChoixFrequence
         libelle="Prière à saint Joseph"
-        aide="Demandée par Léon XIII pour le mois du Rosaire."
         valeur={reglages.saintJoseph}
         onChoisir={(saintJoseph) => onModifier({ saintJoseph })}
       />

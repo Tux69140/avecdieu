@@ -171,7 +171,7 @@ test.describe('« L’essentiel seulement »', () => {
     await page.goto('/chapelet')
     await expect(essentiel(page)).toHaveAttribute('aria-checked', 'false')
     await expect(essentiel(page)).toHaveAccessibleDescription(
-      'Le signe de croix, puis les cinq dizaines : l’annonce du mystère, un Notre Père, dix Je vous salue Marie, un Gloire au Père.',
+      'Le signe de croix et les cinq dizaines, rien d’autre.',
     )
     await expect(duree(page)).toHaveText(/, vingt minutes$/)
     await essentiel(page).click()
@@ -182,11 +182,11 @@ test.describe('« L’essentiel seulement »', () => {
     await page.goto('/rosaire')
     await expect(duree(page)).toHaveText(/^~1 h 15, environ une heure quinze$/)
     await expect(essentiel(page)).toHaveAccessibleDescription(
-      /^Le signe de croix, puis les vingt dizaines\s:/,
+      'Le signe de croix et les vingt dizaines, rien d’autre.',
     )
     await page.goto('/reglages/chapelet')
     await expect(essentiel(page)).toHaveAccessibleDescription(
-      /^Le signe de croix, puis les dizaines\s:/,
+      'Le signe de croix et les dizaines, rien d’autre.',
     )
     await page.goto('/chapelet')
 

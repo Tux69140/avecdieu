@@ -7,13 +7,17 @@ import {
   passageDeSerie,
   PRIERE_SAINT_PERE,
   repereSerie,
+  PLUSIEURS,
   VIBRATIONS,
 } from './libelles'
 
-describe('VIBRATIONS', () => {
-  // Un mot composé ne se coupe pas en fin de ligne (2026-10-08).
-  it('« Coupez-les » ne se coupe pas à son trait d’union', () => {
-    expect(VIBRATIONS.aide).toContain('Coupez-\u2060les')
+// Les aides raccourcies, validées par le porteur du projet (2026-10-09).
+describe('VIBRATIONS et PLUSIEURS', () => {
+  it('leurs aides', () => {
+    expect(VIBRATIONS.aide).toBe('Une à chaque grain, plus marquée à chaque dizaine.')
+    expect(PLUSIEURS.aide).toBe(
+      '℣ celui qui mène, ℟ ceux qui répondent ; en gras, ce que tous disent.',
+    )
   })
 })
 
@@ -81,11 +85,13 @@ describe('chapelet simplifié', () => {
 
   it('« L’essentiel seulement », son aide et l’avis de la page des prières', () => {
     expect(ESSENTIEL.libelle).toBe('L’essentiel seulement')
-    const suite =
-      ' : l’annonce du mystère, un Notre Père, dix Je vous salue Marie, un Gloire au Père.'
-    expect(brut(ESSENTIEL.aide.chapelet)).toBe(`Le signe de croix, puis les cinq dizaines${suite}`)
-    expect(brut(ESSENTIEL.aide.rosaire)).toBe(`Le signe de croix, puis les vingt dizaines${suite}`)
-    expect(brut(ESSENTIEL.aide.commune)).toBe(`Le signe de croix, puis les dizaines${suite}`)
+    expect(brut(ESSENTIEL.aide.chapelet)).toBe(
+      'Le signe de croix et les cinq dizaines, rien d’autre.',
+    )
+    expect(brut(ESSENTIEL.aide.rosaire)).toBe(
+      'Le signe de croix et les vingt dizaines, rien d’autre.',
+    )
+    expect(brut(ESSENTIEL.aide.commune)).toBe('Le signe de croix et les dizaines, rien d’autre.')
     expect(ESSENTIEL.active).toBe('L’essentiel seulement est activé.')
     expect(FACULTATIF).toBe('facultatif')
     expect(PRIERE_SAINT_PERE).toBe('Prière aux intentions du Saint-Père')

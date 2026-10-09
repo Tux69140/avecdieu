@@ -65,6 +65,20 @@ test.describe('zone liturgique', () => {
     await page.goto('/reglages/offices')
     // Une seule ligne dans la page Offices : la liste des zones a sa page.
     await expect(page.getByRole('radio')).toHaveCount(0)
+    // Les aides raccourcies (validées le 2026-10-09).
+    for (const [nom, aide] of [
+      ['Accents de psalmodie', 'Souligne les syllabes accentuées des psaumes.'],
+      [
+        'Prières courantes en entier',
+        'Notre Père, Gloire au Père, Je confesse à Dieu : sans avoir à les déplier.',
+      ],
+      [
+        'Signaler les ajouts de l’app',
+        'Un filet rouge marque ce que l’app ajoute au texte de l’AELF.',
+      ],
+      ['Consignes pour débuter', 'En rouge : ce qui se répète, quand répondre.'],
+    ])
+      await expect(page.getByRole('switch', { name: nom })).toHaveAccessibleDescription(aide)
     await expect(ligneZone(page)).toHaveText(/France/)
     await ligneZone(page).click()
     await expect(page).toHaveURL('/reglages/offices/zone')

@@ -18,9 +18,7 @@ export function ChoixAffichage({ affichage, onChoisir, titre }: Props) {
   return (
     <>
       <Bascule choix={AFFICHAGES} valeur={affichage} onChoisir={onChoisir} titre={titre} />
-      <p className="choix-aide">
-        Compact : le nom de la prière et le compteur, pour qui la sait par cœur.
-      </p>
+      <p className="choix-aide">Compact : pour qui sait les prières par cœur.</p>
     </>
   )
 }

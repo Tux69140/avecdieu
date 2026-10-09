@@ -5,7 +5,7 @@ import './ChoixFrequence.css'
 
 interface Props {
   libelle: string
-  aide: string
+  aide?: string
   valeur: Frequence
   onChoisir: (valeur: Frequence) => void
 }
@@ -26,7 +26,7 @@ export function ChoixFrequence({ libelle, aide, valeur, onChoisir }: Props) {
         {libelle}
       </p>
       <Bascule titre={id} choix={FREQUENCES} valeur={valeur} onChoisir={onChoisir} />
-      <p className="choix-aide">{aide}</p>
+      {aide && <p className="choix-aide">{aide}</p>}
     </div>
   )
 }

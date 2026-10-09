@@ -37,7 +37,6 @@ export function EcranReglagesChapelet() {
         />
         <Interrupteur
           libelle="Aide aux gestes"
-          aide="Au début du chapelet, rappelle comment avancer et revenir en arrière."
           actif={aide}
           onBasculer={(actif) => {
             if (actif) montrerAide()

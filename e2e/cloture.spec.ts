@@ -221,9 +221,8 @@ test.describe('réglages de la fin du chapelet', () => {
     await expect(
       interrupteur('Intentions des trois premiers Je vous salue Marie'),
     ).toHaveAccessibleDescription('La foi, l’espérance, la charité.')
-    await expect(interrupteur('Oraison du Rosaire')).toHaveAccessibleDescription(
-      'Précédée du verset “Priez pour nous, sainte Mère de Dieu”.',
-    )
+    // Aides raccourcies (2026-10-09) : l'oraison et saint Joseph n'en ont plus.
+    await expect(interrupteur('Oraison du Rosaire')).toHaveAccessibleDescription('')
     for (const nom of ['Intentions des trois premiers Je vous salue Marie', 'Salve Regina'])
       await expect(interrupteur(nom)).toHaveAttribute('aria-checked', 'true')
     await expect(interrupteur('Oraison du Rosaire')).toHaveAttribute('aria-checked', 'true')
@@ -239,7 +238,7 @@ test.describe('réglages de la fin du chapelet', () => {
       )
     }
     await expect(rubrique).toContainText('Octobre est le mois du Rosaire.')
-    await expect(rubrique).toContainText('Demandée par Léon XIII pour le mois du Rosaire.')
+    await expect(rubrique).not.toContainText('Léon XIII')
 
     await choix('Litanies de la Sainte Vierge').getByRole('radio', { name: 'Toujours' }).click()
     await choix('Prière à saint Joseph').getByRole('radio', { name: 'Jamais' }).click()

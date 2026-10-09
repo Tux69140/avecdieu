@@ -7,10 +7,10 @@ export const ORDINAUX = ['Premier', 'Deuxième', 'Troisième', 'Quatrième', 'Ci
 
 // Les réglages du seuil repris dans Réglages › Chapelet. L'aide de « Prier à
 // plusieurs » dit ce que l'écran montre à plusieurs (texte validé par le
-// porteur du projet, 2026-10-08).
+// porteur du projet, 2026-10-08, retouché le 2026-10-09).
 export const PLUSIEURS = {
   libelle: 'Prier à plusieurs',
-  aide: '℣ celui qui mène, ℟ ceux qui répondent ; en gras, ce que disent tous.',
+  aide: '℣ celui qui mène, ℟ ceux qui répondent ; en gras, ce que tous disent.',
 } as const
 
 // La page « Chapelet ou Rosaire ? », ouverte du seuil : pour le novice, ce qui
@@ -35,12 +35,10 @@ export const CHAPELET_OU_ROSAIRE = {
   ].map(insecables),
 } as const
 
-// « Coupez-les » ne se coupe pas en fin de ligne.
+// Les aides en une ligne, sans redire le nom du réglage (2026-10-09).
 export const VIBRATIONS = {
   libelle: 'Vibrations',
-  aide: insecables(
-    'Une courte à chaque grain, une plus marquée à chaque dizaine. Coupez-les pour prier en silence.',
-  ),
+  aide: 'Une à chaque grain, plus marquée à chaque dizaine.',
 } as const
 
 // Au Rosaire, la page des prières et sa fin en prennent le nom (phase 18,
@@ -89,9 +87,7 @@ export const PRIERE_SAINT_PERE = 'Prière aux intentions du Saint-Père'
 // compte ses dizaines ; les réglages, communs aux deux, n'en disent pas le
 // nombre (validé par le porteur du projet, 2026-10-09).
 const aideEssentiel = (dizaines: string) =>
-  insecables(
-    `Le signe de croix, puis ${dizaines} : l’annonce du mystère, un Notre Père, dix Je vous salue Marie, un Gloire au Père.`,
-  )
+  insecables(`Le signe de croix et ${dizaines}, rien d’autre.`)
 
 export const ESSENTIEL = {
   libelle: 'L’essentiel seulement',
