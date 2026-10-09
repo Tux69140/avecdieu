@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router'
 import { ecrireHeure, enMinutes, type Heure } from '../office/heure'
-import { NOMS_OFFICES, OFFICES, type NomOffice } from '../office/modele'
+import { cheminOffice, type NomOffice, NOMS_OFFICES, OFFICES } from '../office/modele'
 import {
   cheminDeLArc,
   ciblesDesPerles,
@@ -79,7 +79,7 @@ export function Cadran({ date, heures, journee, astre, soleil, children }: Props
           <Link
             key={nom}
             className="cadran-perle"
-            to={`/office/${nom}/${date}`}
+            to={cheminOffice(nom, date)}
             // 48 px, ou l'écart à la perle voisine si elle est plus proche.
             style={{ ...pourcents(points[i]), width: `min(48px, ${enLargeur(cibles[i])})` }}
             aria-label={`${NOMS_OFFICES[nom]}, ${ecrireHeure(heure)}`}

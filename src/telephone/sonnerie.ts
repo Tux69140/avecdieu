@@ -1,4 +1,4 @@
-import { registerPlugin } from '@capacitor/core'
+import { Capacitor, registerPlugin } from '@capacitor/core'
 import type { Canal } from '../rappels/programme'
 import type { Cloche, Son } from '../rappels/reglages'
 import { telephoneSimule } from './simulation'
@@ -6,6 +6,10 @@ import { telephoneSimule } from './simulation'
 // Les sons des rappels et les réglages d'Android, par le greffon propre à
 // l'app (android/…/Sonnerie.java). Dans un navigateur, les cloches s'écoutent
 // depuis public/sons/ et le reste est simulé (./simulation.ts).
+
+// Le son du téléphone et un MP3 du téléphone ne s'écoutent que dans l'APK :
+// le navigateur n'y a pas accès.
+export const ecouteNative = () => Capacitor.isNativePlatform()
 
 type SonNatif =
   { sorte: 'cloche'; cloche: Cloche } | { sorte: 'telephone' } | { sorte: 'mp3'; uri: string }

@@ -10,7 +10,7 @@ import { dateDuJour, dateLisible, estDate } from '../office/dates'
 import { ecrireHeure } from '../office/heure'
 import { heuresDuJour } from '../office/heures'
 import { PerleEtape } from '../office/FilDePerles'
-import { NOMS_OFFICES, OFFICES } from '../office/modele'
+import { cheminOffice, NOMS_OFFICES, OFFICES } from '../office/modele'
 import {
   AUTRES_PRIERES,
   PRIERES_DIRECTES,
@@ -104,7 +104,7 @@ export function EcranMenu() {
                 return (
                   <li key={nom}>
                     <Link
-                      to={`/office/${nom}/${date}`}
+                      to={cheminOffice(nom, date)}
                       replace
                       aria-current={ouvert ? 'page' : undefined}
                     >

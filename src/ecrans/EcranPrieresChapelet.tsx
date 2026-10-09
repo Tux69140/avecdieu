@@ -7,18 +7,18 @@ import { PageReglages } from '../reglages/PageReglages'
 import type { Reglages } from '../reglages/reglages'
 import { useReglages } from '../reglages/useReglages'
 
-type Bascule = 'annonce' | 'oMonJesus' | 'intentions'
+type OptionPriere = 'annonce' | 'oMonJesus' | 'intentions'
 
 // Les réglages oui ou non de l'ouverture et des dizaines (libellés validés le
 // 2026-10-07) ; la fin du chapelet a sa propre liste (ReglagesCloture).
-const OUVERTURE: [Bascule, string, string?][] = [
+const OUVERTURE: [OptionPriere, string, string?][] = [
   [
     'intentions',
     'Intentions des trois premiers Je vous salue Marie',
     'La foi, l’espérance, la charité.',
   ],
 ]
-const CHAQUE_DIZAINE: [Bascule, string, string?][] = [
+const CHAQUE_DIZAINE: [OptionPriere, string, string?][] = [
   ['annonce', 'Annonce des mystères', 'Titre, fruit et passage avant chaque dizaine.'],
   ['oMonJesus', '« Ô mon Jésus » après chaque dizaine'],
 ]
@@ -31,7 +31,7 @@ export function EcranPrieresChapelet() {
   const [reglages, modifier] = useReglages()
   const depuis = useLocation().state as DepuisParente | null
   const titre = depuis?.rosaire ? 'Prières du Rosaire' : 'Prières du chapelet'
-  const interrupteurs = (liste: [Bascule, string, string?][]) =>
+  const interrupteurs = (liste: [OptionPriere, string, string?][]) =>
     liste.map(([cle, libelle, aide]) => (
       <Interrupteur
         key={cle}

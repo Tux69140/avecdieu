@@ -14,7 +14,7 @@ import { situerOffices, type Journee } from '../accueil/moment'
 import { dateCourte, dateDuJour, dateLisible, decaler, enDate, estDate } from '../office/dates'
 import { ecrireHeure, minutesDe } from '../office/heure'
 import { heuresDesOffices, heuresDuJour, heuresSolairesEnService } from '../office/heures'
-import { NOMS_OFFICES, OFFICES } from '../office/modele'
+import { cheminOffice, NOMS_OFFICES, OFFICES } from '../office/modele'
 import { lieuDuSoleil } from '../lieu/lieu'
 import { useLieu } from '../lieu/useLieu'
 import { leverEtCoucher } from '../office/soleil'
@@ -147,7 +147,7 @@ function ListeOffices({
         const duMoment = journee?.moment === office && heure !== undefined
         return (
           <li key={office} data-etat={indisponibles ? 'passe' : journee?.etats[office]}>
-            <Link to={`/office/${office}/${date}`} data-testid={duMoment ? 'moment' : undefined}>
+            <Link to={cheminOffice(office, date)} data-testid={duMoment ? 'moment' : undefined}>
               <span className="accueil-office-nom">{NOMS_OFFICES[office]}</span>
               <span className="accueil-office-quand">
                 <span className="accueil-office-heure">

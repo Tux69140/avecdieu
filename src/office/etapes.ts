@@ -33,3 +33,8 @@ export function etapesDe(parties: readonly Partie[]): Etape[] {
   }
   return etapes
 }
+
+// Ce que le lecteur d'écran dit des perles, dans le bandeau comme sous le titre :
+// « Psaume 62, étape 3 sur 12. Ouvrir le sommaire ».
+export const decrirePerles = (etapes: readonly Etape[], courante: number) =>
+  `${etapes[courante]?.libelle ?? ''}, étape ${courante + 1} sur ${etapes.length}. Ouvrir le sommaire`

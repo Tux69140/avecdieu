@@ -1,6 +1,6 @@
 import type { Ref } from 'react'
 import { BoutonFermer, LienMenu } from '../composants/Icones'
-import type { Etape } from './etapes'
+import { decrirePerles, type Etape } from './etapes'
 import { FilDePerles } from './FilDePerles'
 import './BandeauOffice.css'
 
@@ -36,7 +36,7 @@ export function BandeauOffice(props: Props) {
           className="bandeau-office-bouton"
           type="button"
           aria-haspopup="dialog"
-          aria-label={`${etape?.libelle ?? ''}, étape ${courante + 1} sur ${etapes.length}. Ouvrir le sommaire`}
+          aria-label={decrirePerles(etapes, courante)}
           onClick={onOuvrir}
         >
           <span className="bandeau-office-ligne">

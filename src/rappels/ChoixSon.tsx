@@ -1,8 +1,8 @@
-import { Capacitor } from '@capacitor/core'
 import { useEffect, type ReactNode } from 'react'
 import { Interrupteur } from '../composants/Interrupteur'
-import { arreterEcoute, choisirMp3, ecouter } from '../telephone/sonnerie'
+import { arreterEcoute, choisirMp3, ecouteNative, ecouter } from '../telephone/sonnerie'
 import { CLOCHES, NOMS_CLOCHES, type Rappel, type Son } from './reglages'
+import { nomDuSon } from './textes'
 
 interface Props {
   id: string
@@ -12,9 +12,8 @@ interface Props {
   onChanger: (changement: Partial<Rappel>) => void
 }
 
-// Le son du téléphone et un MP3 du téléphone ne s'écoutent que dans l'APK :
-// le navigateur n'y a pas accès.
-const ECOUTE_NATIVE = Capacitor.isNativePlatform()
+const ECOUTE_NATIVE = ecouteNative()
+const TELEPHONE: Son = { sorte: 'telephone' }
 
 const memeSon = (a: Son, b: Son) =>
   a.sorte === b.sorte &&
@@ -70,9 +69,9 @@ export function ChoixSon({ id, nom, rappel, vibreurPossible, onChanger }: Props)
           return option(valeur, NOMS_CLOCHES[cloche], ecoute(valeur, NOMS_CLOCHES[cloche]))
         })}
         {option(
-          { sorte: 'telephone' },
-          'Son du téléphone',
-          ECOUTE_NATIVE && ecoute({ sorte: 'telephone' }, 'Son du téléphone'),
+          TELEPHONE,
+          nomDuSon(TELEPHONE),
+          ECOUTE_NATIVE && ecoute(TELEPHONE, nomDuSon(TELEPHONE)),
         )}
         {son.sorte === 'mp3' ? (
           option(

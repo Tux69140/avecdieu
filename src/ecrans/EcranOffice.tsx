@@ -12,14 +12,20 @@ import { BoutonFermer, LienMenu } from '../composants/Icones'
 import { IndiceSuite } from '../composants/IndiceSuite'
 import { useRetour, useRetourAccueil } from '../composants/retour'
 import { useSuiteCachee } from '../composants/suiteCachee'
-import { dateLisible, estDate, paques } from '../office/dates'
+import { dateLisible, estDate, estPaques } from '../office/dates'
 import { deplacerInvitatoire, ouvrirOffice } from '../office/journee'
-import { estNomOffice, NOMS_OFFICES, type NomOffice, type Partie } from '../office/modele'
+import {
+  cheminOffice,
+  estNomOffice,
+  type NomOffice,
+  NOMS_OFFICES,
+  type Partie,
+} from '../office/modele'
 import { aideOfficeAMontrer } from '../office/aide'
 import { AideOffice } from '../office/AideOffice'
 import { AvisOffice } from '../office/AvisOffice'
 import { BandeauOffice } from '../office/BandeauOffice'
-import { etapesDe } from '../office/etapes'
+import { decrirePerles, etapesDe } from '../office/etapes'
 import { FilDePerles } from '../office/FilDePerles'
 import { PartieOffice } from '../office/PartieOffice'
 import { Repere } from '../office/Repere'
@@ -88,7 +94,7 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
   // Comme au chapelet : le téléphone ne se verrouille pas en pleine lecture.
   useEffect(() => garderEcranAllume(), [])
   // L'office ouvert, son rappel n'a plus à rester affiché.
-  useEffect(() => void retirerNotification(`/office/${nom}/${date}`), [nom, date])
+  useEffect(() => void retirerNotification(cheminOffice(nom, date)), [nom, date])
 
   useEffect(() => {
     const abandon = new AbortController()
@@ -232,7 +238,7 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
               className="office-perles"
               type="button"
               aria-haspopup="dialog"
-              aria-label={`${etapes[courante]?.libelle ?? ''}, étape ${courante + 1} sur ${etapes.length}. Ouvrir le sommaire`}
+              aria-label={decrirePerles(etapes, courante)}
               onClick={sommaire.ouvrir}
             >
               <FilDePerles nombre={etapes.length} courante={courante} />
@@ -259,11 +265,11 @@ function LectureOffice({ nom, date }: { nom: NomOffice; date: string }) {
         {etat.sorte === 'erreur' && (
           <AvisOffice
             absent={etat.absent}
-            paques={etat.absent && nom === 'lectures' && date === paques(Number(date.slice(0, 4)))}
+            paques={etat.absent && nom === 'lectures' && estPaques(date)}
             enregistres={etat.enregistres}
             onReessayer={reessayer}
             onAccueil={revenirAccueil}
-            onLaudes={() => naviguer(`/office/laudes/${date}`)}
+            onLaudes={() => naviguer(cheminOffice('laudes', date))}
           />
         )}
 

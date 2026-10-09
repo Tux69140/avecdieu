@@ -1,6 +1,7 @@
 import { dateDuJour, decaler, enDate } from '../office/dates'
 import { enMinutes, type Heure } from '../office/heure'
 import { heuresReglees } from '../office/heures'
+import { cheminOffice } from '../office/modele'
 import { PRIERES_RAPPELEES, type Priere, type Rappel, type Rappels, type Son } from './reglages'
 import {
   nomDuSon,
@@ -98,7 +99,7 @@ const numeroDuJour = (date: string) => {
 // Le rappel du chapelet ouvre toujours son seuil : le Rosaire n'a pas d'heure,
 // donc pas de rappel (révisé le 2026-10-09).
 const routeDe = (priere: Priere, date: string) =>
-  priere === 'chapelet' ? '/chapelet' : `/office/${priere}/${date}`
+  priere === 'chapelet' ? '/chapelet' : cheminOffice(priere, date)
 
 // Toutes les notifications à venir, de maintenant à JOURS_PROGRAMMES jours,
 // à l'heure locale de chaque jour (heure d'été comprise).

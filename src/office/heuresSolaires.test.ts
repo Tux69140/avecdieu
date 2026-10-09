@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { HEURES_SOLAIRES_PAR_DEFAUT, heuresSolaires, type ReglagesSolaires } from './heuresSolaires'
+import {
+  estOfficeSolaire,
+  HEURES_SOLAIRES_PAR_DEFAUT,
+  heuresSolaires,
+  type ReglagesSolaires,
+} from './heuresSolaires'
 import { leverEtCoucher } from './soleil'
 
 const LYON = { latitude: 45.76, longitude: 4.84 }
@@ -77,5 +82,14 @@ describe('heures solaires', () => {
     expect(
       heuresSolaires(new Date(2026, 11, 21), { latitude: 78, longitude: 15 }, SANS_LIMITE),
     ).toBeUndefined()
+  })
+})
+
+describe('estOfficeSolaire', () => {
+  it('laudes, tierce, sexte, none et vêpres suivent le soleil ; les autres prières non', () => {
+    for (const office of ['laudes', 'tierce', 'sexte', 'none', 'vepres'])
+      expect(estOfficeSolaire(office)).toBe(true)
+    for (const autre of ['lectures', 'complies', 'chapelet', 'toString'])
+      expect(estOfficeSolaire(autre)).toBe(false)
   })
 })

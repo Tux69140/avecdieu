@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { lireOffice } from '../aelf/office'
 import { estNomOffice, type NomOffice, type Partie } from './modele'
-import { etapesDe } from './etapes'
+import { decrirePerles, etapesDe } from './etapes'
 import { invitatoireDe, reconstituer } from './rubriques'
 
 // Les offices de référence (src/aelf/exemples/), reconstitués comme à l'écran.
@@ -99,5 +99,15 @@ describe('étapes d’un office', () => {
   it('une antienne sans psaume après elle reste une étape', () => {
     const antienne: Partie = { type: 'antienne', libelle: 'Antienne', blocs: [], ajoutee: false }
     expect(vues([antienne])).toEqual(['Antienne'])
+  })
+})
+
+describe('decrirePerles', () => {
+  it('dit l’étape en cours et sa place, puis ce que fait le toucher', () => {
+    const etapes = [
+      { libelle: 'Introduction', debut: 0 },
+      { libelle: 'Psaume 62', debut: 1 },
+    ]
+    expect(decrirePerles(etapes, 1)).toBe('Psaume 62, étape 2 sur 2. Ouvrir le sommaire')
   })
 })

@@ -6,6 +6,7 @@ import {
   decaler,
   enDate,
   estDate,
+  estPaques,
   paques,
   periodeLisible,
   sansAlleluia,
@@ -51,6 +52,8 @@ describe('Pâques et l’Alléluia (R2)', () => {
     expect(paques(2027)).toBe('2027-03-28')
     expect(paques(2028)).toBe('2028-04-16')
     expect(paques(2038)).toBe('2038-04-25')
+    expect(estPaques('2026-04-05')).toBe(true)
+    expect(estPaques('2026-04-06')).toBe(false)
   })
 
   it('tait l’Alléluia du mercredi des Cendres au Samedi saint, solennités comprises', () => {

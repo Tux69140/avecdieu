@@ -16,6 +16,9 @@ export const OFFICES_SOLAIRES: readonly OfficeSolaire[] = [
   'vepres',
 ]
 
+export const estOfficeSolaire = (priere: string): priere is OfficeSolaire =>
+  (OFFICES_SOLAIRES as readonly string[]).includes(priere)
+
 // La part du jour écoulée à l'heure de chaque office.
 const PART_DU_JOUR: Record<OfficeSolaire, number> = {
   laudes: 0,

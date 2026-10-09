@@ -5,7 +5,7 @@ import type { DepuisParente } from '../composants/retour'
 import { nommerLieu } from '../lieu/lieu'
 import { useLieu } from '../lieu/useLieu'
 import { calculerHeures } from '../office/heures'
-import { OFFICES_SOLAIRES, type OfficeSolaire } from '../office/heuresSolaires'
+import { estOfficeSolaire } from '../office/heuresSolaires'
 import { dateDuJour } from '../office/dates'
 import { AvisRappels } from '../rappels/AvisRappels'
 import { avisDesRappels } from '../rappels/blocage'
@@ -24,9 +24,6 @@ const HEURES = [
   ['fixes', 'Fixes'],
   ['solaires', 'Solaires'],
 ] as const
-
-const estSolaire = (priere: string): priere is OfficeSolaire =>
-  (OFFICES_SOLAIRES as readonly string[]).includes(priere)
 
 // Réglages › Rappels (phases 11 et 12) : les avis quand Android ou la
 // surcouche du fabricant bloque, le choix des heures fixes ou solaires, une
@@ -101,7 +98,7 @@ export function EcranReglagesRappels() {
             onChanger={(changement) => setRappels(modifierRappel(priere, changement))}
             onActiver={activer}
             solaire={
-              solaires && estSolaire(priere)
+              solaires && estOfficeSolaire(priere)
                 ? { heure: heures[priere], repere: REPERES_SOLAIRES[priere] }
                 : undefined
             }

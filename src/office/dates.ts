@@ -63,6 +63,9 @@ export function paques(annee: number): string {
   return `${annee}-${deux(mois)}-${deux(jour)}`
 }
 
+// Une date AAAA-MM-JJ qui tombe le dimanche de Pâques.
+export const estPaques = (date: string) => date === paques(Number(date.slice(0, 4)))
+
 // R2 : l'Alléluia de l'introduction se tait du mercredi des Cendres (Pâques
 // moins 46 jours) jusqu'à la Vigile pascale, solennités comprises.
 export function sansAlleluia(date: string): boolean {

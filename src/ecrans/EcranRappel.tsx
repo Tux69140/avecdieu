@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { Navigate, useParams } from 'react-router'
 import { Interrupteur } from '../composants/Interrupteur'
 import { useLieu } from '../lieu/useLieu'
-import { OFFICES_SOLAIRES, type OfficeSolaire } from '../office/heuresSolaires'
+import { estOfficeSolaire } from '../office/heuresSolaires'
 import { basculerRappel, lireChamp, versChamp } from '../rappels/basculer'
 import { ChoixSon } from '../rappels/ChoixSon'
 import { ReglageSolaire, SousTitreSolaire } from '../rappels/ReglageSolaire'
@@ -25,8 +25,6 @@ const PARENTE = '/reglages/rappels'
 
 const estPriere = (valeur?: string): valeur is Priere =>
   (PRIERES_RAPPELEES as readonly string[]).includes(valeur ?? '')
-const estSolaire = (priere: Priere): priere is OfficeSolaire =>
-  (OFFICES_SOLAIRES as readonly string[]).includes(priere)
 
 // Réglages › Rappels › une prière (/reglages/rappels/<prière>) : son rappel,
 // son heure (l'horloge d'Android, ou en heures solaires le décalage et « Pas
@@ -47,7 +45,7 @@ function PageRappel({ priere }: { priere: Priere }) {
   const { lieu } = useLieu()
   const [android, relire] = useEtatAndroid()
   const { activer, fenetre } = useAutorisations(android, relire)
-  const office = solaire.actives && lieu && estSolaire(priere) ? priere : undefined
+  const office = solaire.actives && lieu && estOfficeSolaire(priere) ? priere : undefined
   const changer = (changement: Partial<Rappel>) =>
     setRappel(modifierRappel(priere, changement)[priere])
 

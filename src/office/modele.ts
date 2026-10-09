@@ -29,6 +29,9 @@ export const NOMS_OFFICES: Record<NomOffice, string> = {
 export const estNomOffice = (valeur: string | undefined): valeur is NomOffice =>
   (OFFICES as readonly string[]).includes(valeur ?? '')
 
+// La route d'un office un jour donné (AAAA-MM-JJ) : /office/vepres/2026-10-06.
+export const cheminOffice = (nom: NomOffice, date: string) => `/office/${nom}/${date}`
+
 // Les repères que le livre imprime en rouge : numéro de verset, syllabe
 // accentuée de la psalmodie, astérisque de médiante, croix de flexe, V/ et R/.
 // « emphase » : un passage en italique ou en gras dans la source.
