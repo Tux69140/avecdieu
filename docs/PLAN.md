@@ -540,12 +540,12 @@ Décisions du porteur du projet (2026-10-09). Référence de la composition : Je
 
 ### Critères d'acceptation
 
-- [ ] Déroulé : prière aux intentions du Saint-Père à sa place au Chapelet et au Rosaire ; « L’essentiel seulement » ne garde que le signe de croix et les dizaines ; réglages fins retrouvés intacts en le désactivant (tests unitaires).
-- [ ] L'intention du mois s'affiche pour chaque mois de 2026 et 2027 et disparaît sans intention connue ; le lien ouvre la bonne partie de la page et la croix ramène au grain exact.
-- [ ] Les textes (ligne rouge, petite ligne, page d'information, 24 intentions) sont repris mot pour mot et figés par un test.
-- [ ] « Facultatif » ne dépasse jamais la largeur du compteur et ne fait passer aucun titre à la ligne à 360 px.
-- [ ] Accueil : les deux lignes en tête de liste, « ~20 h » sur le Chapelet, aucune heure sur le Rosaire.
-- [ ] Captures validées par le porteur ; parcours Playwright et axe verts.
+- [x] Déroulé : prière aux intentions du Saint-Père à sa place au Chapelet et au Rosaire ; « L’essentiel seulement » ne garde que le signe de croix et les dizaines ; réglages fins retrouvés intacts en le désactivant (tests unitaires).
+- [x] L'intention du mois s'affiche pour chaque mois de 2026 et 2027 et disparaît sans intention connue ; le lien ouvre la bonne partie de la page et la croix ramène au grain exact.
+- [x] Les textes (ligne rouge, petite ligne, page d'information, 24 intentions) sont repris mot pour mot et figés par un test.
+- [x] « Facultatif » ne dépasse jamais la largeur du compteur et ne fait passer aucun titre à la ligne à 360 px.
+- [x] Accueil : les deux lignes en tête de liste, « ~20 h » sur le Chapelet, aucune heure sur le Rosaire.
+- [x] Captures validées par le porteur ; parcours Playwright et axe verts.
 
 ## Bloquée par
 
