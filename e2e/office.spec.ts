@@ -161,6 +161,39 @@ test('premier lancement sans réseau : pourquoi, puis le réseau ou le chapelet'
   await expect(titres(page).first()).toHaveText('Introduction')
 })
 
+test('revenu du menu par le retour d’Android, la lecture reprend où on l’avait laissée', async ({
+  page,
+}) => {
+  await servirAelf(page)
+  await preparer(page)
+  await page.goto('/office/laudes/2026-10-06')
+  await expect(titres(page).first()).toHaveText('Introduction')
+  // Chromium retrouve seul la place quand rien ne l'en empêche ; c'est celle
+  // que l'app retient qui est éprouvée ici.
+  await page.evaluate(() => (history.scrollRestoration = 'manual'))
+  await page.evaluate(() => scrollTo(0, 1500))
+  await expect.poll(() => page.evaluate(() => scrollY)).toBe(1500)
+  // Un clic du DOM : celui de Playwright ferait d'abord remonter jusqu'au lien.
+  await page.evaluate(() => document.querySelector<HTMLElement>('a[aria-label="Menu"]')!.click())
+  await expect(page).toHaveURL('/menu')
+  await page.goBack()
+  await expect(titres(page).first()).toHaveText('Introduction')
+  await expect.poll(() => page.evaluate(() => scrollY)).toBe(1500)
+})
+
+test('le réseau revenu, l’office s’affiche de lui-même, sans « Réessayer »', async ({ page }) => {
+  await page.route('https://api.aelf.org/**', (route) => route.abort('internetdisconnected'))
+  await preparer(page)
+  await page.goto('/office/vepres/2026-10-06')
+  await expect(page.getByRole('alert')).toBeVisible()
+
+  await page.unrouteAll()
+  await servirAelf(page)
+  await page.evaluate(() => window.dispatchEvent(new Event('online')))
+  await expect(page.getByRole('alert')).toHaveCount(0)
+  await expect(titres(page).first()).toHaveText('Introduction')
+})
+
 // Le saint du jour en petit, à droite du titre, qui reste centré ; rien un
 // jour de fête (choix du porteur du projet, 2026-10-08).
 const boites = (page: Page) =>
