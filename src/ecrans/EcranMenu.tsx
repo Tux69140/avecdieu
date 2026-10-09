@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
-import { lireReglages, modifierReglages } from '../chapelet/reglages'
+import { lireReglages } from '../chapelet/reglages'
 import { Duree } from '../composants/Duree'
 import { HeureApprochee } from '../composants/HeureApprochee'
 import { LigneFermer } from '../composants/LigneFermer'
@@ -64,12 +64,11 @@ export function EcranMenu() {
         {/* Le Chapelet, le Rosaire (phase 18) et les deux prières qu'on dit le
             plus, en accès direct ; les offices et les autres prières, repliés
             (choix du porteur du projet, 2026-10-08). Le Chapelet et le Rosaire
-            ouvrent le seuil dans leur forme, qui devient le choix retenu ;
-            comme sur l'accueil, l'heure du chapelet est approximative et le
+            ouvrent chacun leur seuil (2026-10-09) ; comme sur l'accueil, l'heure du chapelet est approximative et le
             Rosaire n'en a pas. */}
         <ul className="menu-liste menu-prieres" aria-label="Chapelet et prières">
           <li>
-            <Link to="/chapelet" replace onClick={() => modifierReglages({ forme: 'chapelet' })}>
+            <Link to="/chapelet" replace>
               <span className="menu-priere">Chapelet</span>
               <span className="menu-quand">
                 <span className="menu-heure">
@@ -80,7 +79,7 @@ export function EcranMenu() {
             </Link>
           </li>
           <li>
-            <Link to="/rosaire" replace onClick={() => modifierReglages({ forme: 'rosaire' })}>
+            <Link to="/rosaire" replace>
               <span className="menu-priere">Rosaire</span>
               <span className="menu-quand">
                 <Duree priere="rosaire" essentiel={essentiel} className="menu-duree" />

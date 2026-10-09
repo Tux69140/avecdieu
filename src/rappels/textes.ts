@@ -22,9 +22,6 @@ export const TITRES_NOTIFICATIONS: Record<Priere, string> = {
   chapelet: 'C’est l’heure du chapelet',
 }
 
-// Le rappel du chapelet quand le Rosaire est retenu sur le seuil (phase 17).
-export const TITRE_ROSAIRE = 'C’est l’heure du Rosaire'
-
 // Les premiers mots de la prière, tirés du recueil validé : les vers sans la
 // marque « V/ », le dernier privé de sa ponctuation et clos par un point.
 const premiersMots = (...vers: string[]) =>

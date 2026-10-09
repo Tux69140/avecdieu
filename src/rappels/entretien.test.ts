@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { telephoneSimule } from '../telephone/simulation'
-import { entretenirRappels, ouvrirLesNotifications, reprogrammer } from './entretien'
-import { modifierReglages } from '../chapelet/reglages'
+import { ouvrirLesNotifications, reprogrammer } from './entretien'
 import { choisirLieu } from '../lieu/lieu'
 import { modifierRappel } from './reglages'
 import { modifierSolaire } from './solaire'
@@ -92,6 +91,7 @@ describe('notification touchée', () => {
     const telephone = telephoneSimule()
     telephone.toucher('/office/laudes/2026-10-08')
     telephone.toucher('/chapelet')
+    // Un rappel du Rosaire encore affiché, programmé avant les deux seuils.
     telephone.toucher('/rosaire')
     telephone.toucher('https://ailleurs.example/')
     telephone.toucher('/reglages')
@@ -103,25 +103,18 @@ describe('notification touchée', () => {
   })
 })
 
-// Phase 17 : le rappel du chapelet ouvre le Rosaire quand il est retenu.
-describe('rappel du Rosaire', () => {
+// Le Rosaire n'a pas d'heure, donc pas de rappel : celui du chapelet ouvre
+// toujours le chapelet, même si l'ancien commutateur du seuil avait retenu le
+// Rosaire (révisé le 2026-10-09).
+describe('rappel du chapelet', () => {
   const chapelet = () => telephoneSimule().programmees.map((n) => [n.titre, n.route])[0]
 
-  it('suit le choix retenu sur le seuil : titre et écran ouvert', async () => {
+  it('annonce et ouvre toujours le chapelet', async () => {
     modifierRappel('chapelet', { actif: true })
     await reprogrammer(MAINTENANT)
     expect(chapelet()).toEqual(['C’est l’heure du chapelet', '/chapelet'])
-    modifierReglages({ forme: 'rosaire' })
+    localStorage.setItem('avec-dieu.reglages', JSON.stringify({ forme: 'rosaire' }))
     await reprogrammer(MAINTENANT)
-    expect(chapelet()).toEqual(['C’est l’heure du Rosaire', '/rosaire'])
-  })
-
-  it('se refait dès que le choix change sur le seuil', async () => {
-    modifierRappel('chapelet', { actif: true })
-    const arreter = entretenirRappels()
-    await vi.waitFor(() => expect(chapelet()?.[0]).toBe('C’est l’heure du chapelet'))
-    modifierReglages({ forme: 'rosaire' })
-    await vi.waitFor(() => expect(chapelet()?.[0]).toBe('C’est l’heure du Rosaire'))
-    arreter()
+    expect(chapelet()).toEqual(['C’est l’heure du chapelet', '/chapelet'])
   })
 })

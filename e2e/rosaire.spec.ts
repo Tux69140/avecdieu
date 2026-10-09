@@ -113,7 +113,7 @@ test('le grain en cours est celui de la dizaine dans sa série : une boucle, par
 
 test('sans annonce, le passage de série s’affiche au-dessus du Notre Père', async ({ page }) => {
   await preparer(page, {
-    reglages: { forme: 'rosaire', annonce: false },
+    reglages: { annonce: false },
     rosaireEnCours: {
       jour: '2026-10-08',
       forme: 'rosaire',
@@ -171,7 +171,7 @@ test('un Rosaire interrompu en deuxième série reprend au grain exact, et pass�
 })
 
 test('un chapelet en cours ne se reprend pas dans le Rosaire', async ({ page }) => {
-  await preparer(page, { reglages: { forme: 'rosaire' } })
+  await preparer(page)
   await page.addInitScript(() =>
     localStorage.setItem(
       'avec-dieu.en-cours',
@@ -192,8 +192,8 @@ test('un chapelet en cours ne se reprend pas dans le Rosaire', async ({ page }) 
 
 // Phase 18 : l'accueil montre toujours le Chapelet et le Rosaire, ce dernier
 // sans heure (e2e/simplifie.spec.ts).
-test('le Rosaire retenu, sa ligne de l’accueil l’ouvre', async ({ page }) => {
-  await preparer(page, { reglages: { forme: 'rosaire' } })
+test('la ligne du Rosaire de l’accueil ouvre son seuil', async ({ page }) => {
+  await preparer(page)
   await page.goto('/')
   const ligne = page.getByRole('list', { name: 'Chapelet et Rosaire' }).getByRole('link').nth(1)
   await expect(ligne).toHaveAccessibleName(/^Rosaire\s*, environ une heure quarante-cinq$/)
@@ -206,7 +206,7 @@ test('le Rosaire retenu, sa ligne de l’accueil l’ouvre', async ({ page }) =>
 test('« Prières du Rosaire » sur le seuil du Rosaire ; « Prières du chapelet » dans les réglages', async ({
   page,
 }) => {
-  await preparer(page, { reglages: { forme: 'rosaire' } })
+  await preparer(page)
   await page.goto('/rosaire')
   await expect(page.getByRole('link', { name: 'Prières du chapelet' })).toHaveCount(0)
   await page.getByRole('link', { name: 'Prières du Rosaire' }).click()
@@ -220,14 +220,26 @@ test('« Prières du Rosaire » sur le seuil du Rosaire ; « Prières du chapele
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Prières du chapelet')
 })
 
-test('le Rosaire retenu, le rappel du chapelet l’annonce et l’ouvre', async ({ page }) => {
+// Le Rosaire n'a pas d'heure, donc pas de rappel : celui du chapelet ouvre
+// toujours le chapelet, même si l'ancien commutateur avait retenu le Rosaire
+// (révisé le 2026-10-09). La croix de la prière ramène là où la notification
+// a été touchée.
+test('le rappel du chapelet ouvre toujours le chapelet, même un Rosaire retenu autrefois', async ({
+  page,
+}) => {
   await simulerTelephone(page, { accord: 'granted' })
-  await preparer(page, { reglages: { forme: 'rosaire' }, rappels: ['chapelet'] })
+  await page.addInitScript(() =>
+    localStorage.setItem('avec-dieu.reglages', JSON.stringify({ forme: 'rosaire' })),
+  )
+  await preparer(page, { rappels: ['chapelet'] })
   await page.goto('/')
   await expect
     .poll(async () => (await telephone(page)).programmees[0])
-    .toMatchObject({ titre: 'C’est l’heure du Rosaire', route: '/rosaire' })
-  await toucherNotification(page, '/rosaire')
-  await expect(page).toHaveURL('/rosaire')
-  await expect(page.getByRole('button', { name: 'Commencer le Rosaire' })).toBeVisible()
+    .toMatchObject({ titre: 'C’est l’heure du chapelet', route: '/chapelet' })
+  await toucherNotification(page, '/chapelet')
+  await expect(page).toHaveURL('/chapelet')
+  await page.getByRole('button', { name: 'Commencer le chapelet' }).click()
+  await expect(chapelet(page)).toHaveAttribute('data-pas', '0')
+  await page.getByRole('button', { name: 'Fermer', exact: true }).click()
+  await expect(page).toHaveURL('/')
 })

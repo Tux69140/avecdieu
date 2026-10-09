@@ -123,7 +123,6 @@ test('Rosaire, passage de série', async ({ page }) => {
 
 test('écran de fin du Rosaire', async ({ page }) => {
   await preparer(page, {
-    reglages: { forme: 'rosaire' },
     rosaireEnCours: {
       jour: '2026-10-05',
       forme: 'rosaire',
@@ -149,7 +148,8 @@ test('écran des réglages', async ({ page }) => {
 test('seuil d’un chapelet en cours', async ({ page }) => {
   await commencer(page)
   await avancer(page, 10)
-  await page.goBack()
+  await page.goto('/')
+  await page.goto('/chapelet')
   await expect(page.getByRole('button', { name: 'Recommencer du début' })).toBeVisible()
   expect(await violationsGraves(page)).toEqual([])
 })

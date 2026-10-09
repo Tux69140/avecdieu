@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router'
-import { Bascule } from '../composants/Bascule'
+import { Link } from 'react-router'
 import { Duree } from '../composants/Duree'
 import { avecExposants } from '../composants/Exposants'
 import { IndiceSuite } from '../composants/IndiceSuite'
@@ -32,40 +31,20 @@ interface Props {
 
 const TOUTES = Object.keys(SERIES) as SerieId[]
 
-// Chaque forme avec sa durée sous le mot : « Chapelet, vingt minutes » au
-// lecteur d'écran (US-59), plus courte avec « L’essentiel seulement ».
-const formes = (essentiel: boolean) =>
-  (['chapelet', 'rosaire'] as const).map(
-    (forme) =>
-      [
-        forme,
-        <>
-          <span className="seuil-forme-nom">{forme === 'chapelet' ? 'Chapelet' : 'Rosaire'}</span>
-          <Duree priere={forme} essentiel={essentiel} className="seuil-forme-duree" />
-        </>,
-      ] as const,
-  )
-
-// Le seuil du chapelet, entre l'accueil et le signe de croix (phase 17,
-// organisation validée par le porteur du projet, 2026-10-08) : le choix du
-// chapelet ou du Rosaire et ce qu'on va prier, le bouton, puis, plus calmes,
-// les choix qui se font avant de prier, les autres séries et les prières dites.
+// Le seuil du chapelet ou du Rosaire, entre l'accueil et le signe de croix
+// (phase 17, organisation validée par le porteur du projet, 2026-10-08) : ce
+// qu'on va prier et sa durée, le bouton, puis, plus calmes, les choix qui se
+// font avant de prier, les autres séries et les prières dites. Deux seuils
+// distincts, sans commutateur : on a déjà choisi le Chapelet ou le Rosaire
+// sur l'accueil ou dans le menu (révisé le 2026-10-09).
 export function Seuil({ forme, serie, duJour, date, enCours, onCommencer, onRecommencer }: Props) {
   const [reglages, setReglages] = useState(lireReglages)
   const retour = useRetour()
-  const naviguer = useNavigate()
   // Sans vibreur (tablette), le réglage n'a pas lieu d'être.
   const vibreur = usePeutVibrer()
   const { fin, cachee } = useSuiteCachee()
   const modifier = (changement: Partial<Reglages>) => setReglages(modifierReglages(changement))
   const rosaire = forme === 'rosaire'
-  // Le choix est retenu ; le seuil passe de /chapelet à /rosaire sans
-  // s'empiler dans l'historique.
-  const choisirForme = (choisie: Forme) => {
-    if (choisie === forme) return
-    modifier({ forme: choisie })
-    void naviguer(choisie === 'rosaire' ? '/rosaire' : '/chapelet', { replace: true })
-  }
 
   return (
     <main className="seuil" data-forme={forme}>
@@ -73,13 +52,14 @@ export function Seuil({ forme, serie, duJour, date, enCours, onCommencer, onReco
         <LigneFermer onFermer={retour}>
           <p className="ligne-date">{avecExposants(dateLisible(dateDuJour(date)))}</p>
         </LigneFermer>
-        <Bascule
-          className="seuil-forme"
-          nom="Chapelet ou Rosaire"
-          choix={formes(reglages.essentiel)}
-          valeur={forme}
-          onChoisir={choisirForme}
-        />
+        <h1>{rosaire ? 'Rosaire' : SERIES[serie].titre}</h1>
+        {/* Combien de temps prendre, avant de commencer (US-59), plus court
+            avec « L’essentiel seulement ». */}
+        <p className="seuil-duree">
+          <Duree priere={forme} essentiel={reglages.essentiel} />
+        </p>
+        {/* Ce qui distingue le chapelet du Rosaire : une page à part, ouverte
+            des deux seuils. */}
         <p className="seuil-aide">
           <Link className="lien-discret" to="/chapelet-ou-rosaire">
             {CHAPELET_OU_ROSAIRE.titre}
@@ -88,7 +68,6 @@ export function Seuil({ forme, serie, duJour, date, enCours, onCommencer, onReco
         </p>
       </header>
 
-      <h1>{rosaire ? 'Rosaire' : SERIES[serie].titre}</h1>
       {/* Ce qu'on va prier n'est qu'une indication : petit et sépia, pour que
           le bouton reste à l'écran (choix du porteur du projet, 2026-10-08). */}
       <ol

@@ -366,7 +366,9 @@ test.describe('vibrations', () => {
     await expect(titrePriere(page)).toHaveText('Notre Père')
     expect((await journal(page)).filter((e) => e.startsWith('vibre'))).toEqual([])
 
-    await page.goBack()
+    // La croix quitte la prière ; rouvert, le seuil propose la reprise.
+    await fermer(page)
+    await ouvrirChapelet(page)
     await reglage(page, 'Vibrations').click()
     await page.getByRole('button', { name: 'Reprendre à la 1re dizaine' }).click()
     // Une touche pressée avant que la prière reprise soit affichée serait perdue.
@@ -413,7 +415,9 @@ test.describe('reprise d’un chapelet interrompu', () => {
       'data-grain-courant',
       grain!,
     )
-    await relance.goBack()
+    await fermer(relance)
+    await accueil(relance)
+    await ouvrirChapelet(relance)
     await relance.getByRole('button', { name: 'Recommencer du début' }).click()
     await expect(titrePriere(relance)).toHaveText('Signe de croix')
   })
@@ -441,8 +445,7 @@ test.describe('reprise d’un chapelet interrompu', () => {
   test('un réglage changé en cours de route reprend à la même prière', async ({ page }) => {
     await commencer(page)
     await avancer(page, AVE_3_4)
-    await page.goBack()
-    await page.getByRole('button', { name: 'Fermer', exact: true }).click()
+    await fermer(page)
     await ouvrirReglages(page, 'Chapelet', 'Prières du chapelet')
     // Sans « Ô mon Jésus », les deux premières dizaines ont une prière de moins.
     await reglage(page, /Ô mon Jésus/).click()
@@ -459,7 +462,8 @@ test.describe('reprise d’un chapelet interrompu', () => {
     await commencer(page, '/chapelet', { reglages: SANS_CLOTURE })
     await avancer(page, dizaine(6))
     await expect(page.getByTestId('fin-chapelet')).toBeVisible()
-    await page.goBack()
+    await fermer(page)
+    await ouvrirChapelet(page)
     await expect(page.getByRole('button', { name: 'Commencer le chapelet' })).toBeVisible()
   })
 })

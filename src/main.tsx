@@ -35,7 +35,7 @@ const routeur = createBrowserRouter([
       { path: '/jour/:date', element: <EcranAccueil /> },
       { path: '/chapelet', element: <EcranChapelet /> },
       { path: '/chapelet/:serie', element: <EcranChapelet /> },
-      // Le Rosaire du jour ; son déroulé viendra après la maquette du seuil (phase 17).
+      // Le Rosaire du jour, sur son propre seuil (phases 17 et 18).
       { path: '/rosaire', element: <EcranChapelet forme="rosaire" /> },
       { path: '/chapelet-ou-rosaire', element: <EcranChapeletOuRosaire /> },
       { path: '/office/:office/:date', element: <EcranOffice /> },

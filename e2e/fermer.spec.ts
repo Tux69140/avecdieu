@@ -117,41 +117,106 @@ test('la même croix partout, office et chapelet compris', async ({ page }) => {
   expect([...chemins]).toHaveLength(1)
 })
 
-// Pendant la prière, la croix ramène au seuil, comme le retour d'Android ;
-// celle du seuil ramène là d'où le chapelet a été ouvert (décision du porteur
-// du projet, 2026-10-08).
-test('chapelet : la croix ramène au seuil, puis celle du seuil d’où il a été ouvert', async ({
+// Pendant la prière, la croix ramène là d'où le seuil a été ouvert, comme le
+// retour d'Android : le seuil est un écran de passage, il ne reste pas
+// derrière la prière (décision du porteur du projet, 2026-10-09). Rouvrir le
+// chapelet repasse par son seuil, qui propose la reprise.
+const ligneAccueil = (page: Page, nom: 'Chapelet' | 'Rosaire') =>
+  page
+    .getByRole('list', { name: 'Chapelet et Rosaire' })
+    .getByRole('link', { name: new RegExp(`^${nom}`) })
+const quitter = {
+  'la croix': async (page: Page) => {
+    // Le toucher sur la croix ne fait pas avancer le chapelet.
+    const boite = (await croix(page).boundingBox())!
+    await page.touchscreen.tap(boite.x + boite.width / 2, boite.y + boite.height / 2)
+  },
+  'le retour d’Android': (page: Page) => page.goBack(),
+}
+
+for (const [nom, sortir] of Object.entries(quitter))
+  for (const [priere, bouton, reprise] of [
+    ['Chapelet', 'Commencer le chapelet', 'Reprendre le chapelet'],
+    ['Rosaire', 'Commencer le Rosaire', 'Reprendre le Rosaire'],
+  ] as const)
+    test(`${priere} commencé depuis l’accueil : ${nom} ramène à l’accueil, pas au seuil`, async ({
+      page,
+    }) => {
+      await preparer(page)
+      await page.goto('/')
+      await ligneAccueil(page, priere).click()
+      await page.getByRole('button', { name: bouton }).click()
+      const chapelet = page.locator('main.chapelet')
+      await expect(chapelet).toHaveAttribute('data-pas', '0')
+      await verifierCroix(page)
+      await verifierCentre(page, page.locator('.chapelet-entete .ligne-date'))
+      await avancer(page, 2)
+      await sortir(page)
+      await expect(page).toHaveURL('/')
+      await expect(page.getByTestId('bandeau')).toBeVisible()
+      // Rouvert, il repasse par son seuil, qui propose la reprise au grain exact.
+      await ligneAccueil(page, priere).click()
+      await page.getByRole('button', { name: reprise }).click()
+      await expect(chapelet).toHaveAttribute('data-pas', '2')
+      await croix(page).click()
+      await expect(page).toHaveURL('/')
+    })
+
+test('chapelet ouvert par le menu : la croix de la prière ramène là d’où le menu a été ouvert', async ({
   page,
 }) => {
   await preparer(page)
   await page.goto('/')
-  await page.getByRole('list', { name: 'Chapelet et Rosaire' }).getByRole('link').first().click()
-  await page.getByRole('button', { name: 'Commencer le chapelet' }).click()
-  const chapelet = page.locator('main.chapelet')
-  await expect(chapelet).toHaveAttribute('data-pas', '0')
-  await verifierCroix(page)
-  await verifierCentre(page, page.locator('.chapelet-entete .ligne-date'))
-  // Le toucher sur la croix ramène au seuil sans faire avancer le chapelet.
-  const boite = (await croix(page).boundingBox())!
-  await page.touchscreen.tap(boite.x + boite.width / 2, boite.y + boite.height / 2)
-  const reprendre = page.getByRole('button', { name: 'Reprendre le chapelet' })
-  await expect(reprendre).toBeVisible()
-  await expect(page).toHaveURL(/\/chapelet$/)
-  // Le chapelet reprend où on l'avait laissé : au signe de croix.
-  await reprendre.click()
-  await expect(chapelet).toHaveAttribute('data-pas', '0')
+  await page.getByRole('link', { name: 'Menu' }).click()
+  const groupe = page.getByRole('list', { name: 'Chapelet et prières' })
+  await groupe.getByRole('link', { name: /^Rosaire/ }).click()
+  await page.getByRole('button', { name: 'Commencer le Rosaire' }).click()
+  await expect(page.locator('main.chapelet')).toHaveAttribute('data-pas', '0')
   await croix(page).click()
+  await expect(page).toHaveURL('/')
+  await page.getByRole('link', { name: 'Menu' }).click()
+  await groupe.getByRole('link', { name: /^Chapelet/ }).click()
+  await page.getByRole('button', { name: 'Commencer le chapelet' }).click()
+  await expect(page.locator('main.chapelet')).toHaveAttribute('data-pas', '0')
+  await page.goBack()
+  await expect(page).toHaveURL('/')
+})
+
+// Ouvert directement (une notification touchée app fermée), sans page avant
+// lui : la croix de la prière mène à l'accueil.
+test('chapelet ouvert directement : la croix de la prière mène à l’accueil', async ({ page }) => {
+  await commencer(page)
   await croix(page).click()
   await expect(page).toHaveURL('/')
   await expect(page.getByTestId('bandeau')).toBeVisible()
 })
 
-test('écran de fin du chapelet : la croix ramène au seuil', async ({ page }) => {
-  await commencer(page)
+// Changer de mystères remplace le seuil : la prière ne revient pas non plus à
+// la première série regardée.
+test('autres mystères : la croix de la prière ramène à l’accueil', async ({ page }) => {
+  await preparer(page)
+  await page.goto('/')
+  await ligneAccueil(page, 'Chapelet').click()
+  await page.getByRole('link', { name: /^Mystères glorieux/ }).click()
+  await expect(page).toHaveURL('/chapelet/glorieux')
+  await page.getByRole('button', { name: 'Commencer le chapelet' }).click()
+  await expect(page.locator('main.chapelet')).toHaveAttribute('data-pas', '0')
+  await croix(page).click()
+  await expect(page).toHaveURL('/')
+})
+
+test('écran de fin du chapelet : la croix ramène là d’où le seuil a été ouvert', async ({
+  page,
+}) => {
+  await preparer(page)
+  await page.goto('/')
+  await ligneAccueil(page, 'Chapelet').click()
+  await page.getByRole('button', { name: 'Commencer le chapelet' }).click()
   // Un lundi d'octobre : 77 pas, la prière aux intentions du Saint-Père (3),
   // puis Salve, Litanies, oraison et saint Joseph.
   await avancer(page, 84)
   await expect(page.getByTestId('fin-chapelet')).toBeVisible()
   await croix(page).click()
-  await expect(page.getByRole('button', { name: 'Commencer le chapelet' })).toBeVisible()
+  await expect(page).toHaveURL('/')
+  await expect(page.getByTestId('bandeau')).toBeVisible()
 })

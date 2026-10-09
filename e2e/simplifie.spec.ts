@@ -151,7 +151,7 @@ test.describe('prière aux intentions du Saint-Père', () => {
   test('ouverte du seuil du Rosaire, la page des prières dit « Fin du Rosaire »', async ({
     page,
   }) => {
-    await preparer(page, { reglages: { forme: 'rosaire' } })
+    await preparer(page)
     await page.goto('/rosaire')
     await page.getByRole('link', { name: 'Prières du Rosaire' }).click()
     await expect(page.locator('h2', { hasText: 'Fin du Rosaire' })).toBeVisible()
@@ -161,10 +161,8 @@ test.describe('prière aux intentions du Saint-Père', () => {
 
 test.describe('« L’essentiel seulement »', () => {
   const essentiel = (page: Page) => page.getByRole('switch', { name: 'L’essentiel seulement' })
-  const forme = (page: Page, nom: string) =>
-    page
-      .getByRole('radiogroup', { name: 'Chapelet ou Rosaire' })
-      .getByRole('radio', { name: new RegExp(`^${nom}`) })
+  // La durée sous le titre du seuil.
+  const duree = (page: Page) => page.locator('.seuil-duree').getByTestId('duree')
 
   test('sur le seuil : son aide, les durées raccourcies, le signe de croix puis les dizaines', async ({
     page,
@@ -175,13 +173,14 @@ test.describe('« L’essentiel seulement »', () => {
     await expect(essentiel(page)).toHaveAccessibleDescription(
       'Le signe de croix, puis les cinq dizaines : l’annonce du mystère, un Notre Père, dix Je vous salue Marie, un Gloire au Père.',
     )
-    await expect(forme(page, 'Chapelet')).toHaveAccessibleName(/, vingt minutes$/)
+    await expect(duree(page)).toHaveText(/, vingt minutes$/)
     await essentiel(page).click()
     await expect(essentiel(page)).toHaveAttribute('aria-checked', 'true')
-    await expect(forme(page, 'Chapelet').getByTestId('duree')).toHaveText(/^~15 min/)
-    await expect(forme(page, 'Chapelet')).toHaveAccessibleName(/, environ quinze minutes$/)
-    await expect(forme(page, 'Rosaire').getByTestId('duree')).toHaveText(/^~1 h 15/)
-    await expect(forme(page, 'Rosaire')).toHaveAccessibleName(/, environ une heure quinze$/)
+    await expect(duree(page)).toHaveText(/^~15 min, environ quinze minutes$/)
+    // Le seuil du Rosaire raccourcit de même.
+    await page.goto('/rosaire')
+    await expect(duree(page)).toHaveText(/^~1 h 15, environ une heure quinze$/)
+    await page.goBack()
 
     await page.getByRole('button', { name: 'Commencer le chapelet' }).click()
     await expect(titre(page)).toHaveText('Signe de croix')
@@ -374,22 +373,18 @@ test.describe('accueil et menu', () => {
       expect((await ligne.boundingBox())!.height).toBe(48)
   })
 
-  test('chaque ligne ouvre le seuil dans sa forme, et le choix suit', async ({ page }) => {
+  // Chaque ligne ouvre son seuil, sans rien retenir : le Rosaire ouvert, la
+  // ligne du Chapelet ouvre toujours le chapelet (révisé le 2026-10-09).
+  test('chaque ligne ouvre son seuil', async ({ page }) => {
     await preparer(page)
     await page.goto('/')
     await lignes(page).nth(1).click()
     await expect(page).toHaveURL('/rosaire')
-    await expect(page.getByRole('radio', { name: /^Rosaire/ })).toHaveAttribute(
-      'aria-checked',
-      'true',
-    )
+    await expect(page.getByRole('button', { name: 'Commencer le Rosaire' })).toBeVisible()
     await page.goBack()
     await lignes(page).nth(0).click()
     await expect(page).toHaveURL('/chapelet')
-    await expect(page.getByRole('radio', { name: /^Chapelet/ })).toHaveAttribute(
-      'aria-checked',
-      'true',
-    )
+    await expect(page.getByRole('button', { name: 'Commencer le chapelet' })).toBeVisible()
   })
 
   test('« Prière du moment » ne concerne que le Chapelet', async ({ page }) => {
@@ -405,7 +400,7 @@ test.describe('accueil et menu', () => {
   test('le menu montre aussi le Chapelet et le Rosaire, qui ouvrent leur seuil', async ({
     page,
   }) => {
-    await preparer(page, { reglages: { forme: 'rosaire' } })
+    await preparer(page)
     await page.goto('/')
     await page.getByRole('link', { name: 'Menu' }).click()
     const groupe = page.getByRole('list', { name: 'Chapelet et prières' }).getByRole('link')

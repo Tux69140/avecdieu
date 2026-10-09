@@ -1,52 +1,15 @@
-/* Seuil du chapelet (phase 17) : en haut, serrés, le choix Chapelet / Rosaire
-   et ce qu'on va prier, jusqu'au bouton ; tout cela tient dans le premier
-   écran, même à 360 × 640. Dessous, après un grand blanc, les choix plus
-   calmes, en lignes sous des filets comme les réglages. */
+/* Seuil du chapelet ou du Rosaire (phase 17) : en haut, serrés, ce qu'on va
+   prier et sa durée, jusqu'au bouton ; tout cela tient dans le premier écran,
+   même à 360 × 640. Dessous, après un grand blanc, les choix plus calmes, en
+   lignes sous des filets comme les réglages. */
 .seuil {
   max-width: calc(34em + 2 * var(--gouttiere));
   margin: 0 auto;
   padding: var(--esp-sm) var(--gouttiere) var(--esp-3xl);
 }
 
-/* Le commutateur, comme les choix segmentés des réglages, chaque forme avec
-   sa durée sous le mot, plus petite. */
-.seuil-forme {
-  margin-top: var(--esp-sm);
-}
-
-.seuil-forme button {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 56px;
-  padding: var(--esp-xs) var(--esp-sm);
-}
-
-.seuil-forme-nom {
-  font-size: 17px;
-  line-height: 1.25;
-}
-
-/* La durée dans le style des heures de l'accueil : petites capitales sépia,
-   qui ne prennent pas le demi-gras de la forme choisie. */
-.seuil-forme-duree {
-  font-family: var(--sc);
-  font-weight: 500;
-  font-size: 15px;
-  line-height: 1.2;
-  letter-spacing: 0.04em;
-  color: var(--sepia);
-  font-variant-numeric: lining-nums;
-}
-
-/* Sur le halo de la forme choisie, le sépia n'a plus assez de contraste. */
-.seuil-forme [aria-checked='true'] .seuil-forme-duree {
-  color: var(--encre);
-}
-
-/* « Chapelet ou Rosaire ? › » : un lien discret centré sous le commutateur,
-   qui ouvre l'aide à part. */
+/* « Chapelet ou Rosaire ? › » : un lien discret centré sous la durée, qui
+   ouvre l'aide à part. */
 .seuil-aide {
   margin: 0;
   text-align: center;
@@ -60,7 +23,7 @@
 }
 
 .seuil h1 {
-  margin: var(--esp-sm) 0 0;
+  margin: var(--esp-xs) 0 0;
   font-family: var(--display);
   font-weight: 400;
   /* 32 px, comme le titre de l'office (2026-10-08). */
@@ -68,6 +31,20 @@
   line-height: 1.1;
   text-align: center;
   text-wrap: balance;
+}
+
+/* La durée, sous le titre : une indication, dans le style des heures de
+   l'accueil (petites capitales sépia). */
+.seuil-duree {
+  margin: var(--esp-2xs) 0 0;
+  font-family: var(--sc);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  text-align: center;
+  color: var(--sepia);
+  font-variant-numeric: lining-nums;
 }
 
 /* Les mystères, ou les séries du Rosaire, ne sont qu'une indication : petits

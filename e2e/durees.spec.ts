@@ -74,28 +74,18 @@ test('le menu donne la durée des offices et du chapelet, et tient en un écran'
   await expect(page.getByTestId('duree')).toHaveCount(9)
 })
 
-// Phase 17 : chaque forme porte sa durée dans le commutateur, sous son nom.
-test('le seuil donne la durée du chapelet et du Rosaire dans le commutateur', async ({ page }) => {
-  await page.goto('/chapelet')
-  const commutateur = page.getByRole('radiogroup', { name: 'Chapelet ou Rosaire' })
-  await expect(page.getByTestId('duree')).toHaveCount(2)
-  for (const [nom, vue, dite] of [
-    ['Chapelet', '20 min', 'vingt minutes'],
-    ['Rosaire', '~1 h 45', 'environ une heure quarante-cinq'],
-  ]) {
-    const forme = commutateur.getByRole('radio', { name: new RegExp(`^${nom}`) })
-    await expect(forme).toHaveAccessibleName(new RegExp(`^${nom}\\s*, ${dite}$`))
-    const duree = forme.getByTestId('duree')
-    await expect(duree.locator('[aria-hidden="true"]')).toHaveText(vue)
-    // La durée sous le mot, dans le bouton.
-    const mot = (await forme.locator('.seuil-forme-nom').boundingBox())!
-    const boite = (await duree.boundingBox())!
-    expect(boite.y).toBeGreaterThanOrEqual(mot.y + mot.height - 1)
-    expect(boite.y + boite.height).toBeLessThanOrEqual(
-      (await forme.boundingBox())!.y + (await forme.boundingBox())!.height,
-    )
-  }
-})
+// Chaque seuil donne sa durée sous son titre (deux seuils distincts, révisé
+// le 2026-10-09 ; détail dans e2e/seuil.spec.ts).
+for (const [chemin, vue, dite] of [
+  ['/chapelet', '20 min', 'vingt minutes'],
+  ['/rosaire', '~1 h 45', 'environ une heure quarante-cinq'],
+])
+  test(`le seuil ${chemin} donne sa durée sous le titre`, async ({ page }) => {
+    await page.goto(chemin)
+    const duree = page.getByTestId('duree')
+    await expect(duree).toHaveCount(1)
+    await expect(duree).toHaveText(`${vue}, ${dite}`)
+  })
 
 test('l’office ouvert et le chapelet commencé ne donnent pas de durée', async ({ page }) => {
   await page.goto('/office/complies/2026-10-06')

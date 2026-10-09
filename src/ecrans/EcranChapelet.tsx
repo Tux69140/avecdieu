@@ -65,8 +65,11 @@ function mesurerPage(depuisDefilement: number) {
   }
 }
 
-// Le chapelet s'ouvre sur son seuil ; « Commencer » ajoute une entrée à
-// l'historique, si bien que le retour d'Android y ramène.
+// Le chapelet s'ouvre sur son seuil, écran de passage : commencer (ou
+// reprendre, ou recommencer) le remplace dans l'historique, si bien que la
+// croix de la prière, comme le retour d'Android, ramène là d'où le seuil a été
+// ouvert (décision du porteur du projet, 2026-10-09). Rouvrir le chapelet
+// repasse par son seuil, qui propose la reprise.
 export function EcranChapelet({ forme = 'chapelet' }: { forme?: Forme }) {
   const { serie: serieChoisie } = useParams()
   const { pathname, state } = useLocation()
@@ -75,13 +78,12 @@ export function EcranChapelet({ forme = 'chapelet' }: { forme?: Forme }) {
   const duJour = serieDuJour(aujourdhui)
   const prier = (state as { prier?: boolean } | null)?.prier === true
   const enCours = lireEnCours(aujourdhui, forme)
-  // Le chapelet ouvert, son rappel n'a plus à rester affiché, qu'il ait
-  // annoncé le chapelet ou le Rosaire.
+  // Le chapelet ouvert, son rappel n'a plus à rester affiché (le Rosaire n'a
+  // plus de rappel, mais l'un programmé avant les deux seuils peut l'être).
   useEffect(() => {
-    void retirerNotification('/chapelet')
-    void retirerNotification('/rosaire')
-  }, [])
-  const commencer = () => naviguer(pathname, { state: { prier: true } })
+    void retirerNotification(`/${forme}`)
+  }, [forme])
+  const commencer = () => naviguer(pathname, { replace: true, state: { prier: true } })
   const recommencer = () => {
     effacerEnCours(forme)
     commencer()
@@ -105,10 +107,6 @@ export function EcranChapelet({ forme = 'chapelet' }: { forme?: Forme }) {
     )
   if (serieChoisie !== undefined && !estSerie(serieChoisie))
     return <Navigate to="/chapelet" replace />
-  // Le choix retenu : le chapelet du jour cède la place au Rosaire quand on
-  // l'a choisi (relu à chaque fois : le commutateur vient de le changer).
-  if (serieChoisie === undefined && !prier && lireReglages().forme === 'rosaire')
-    return <Navigate to="/rosaire" replace />
   const serie = serieChoisie ?? duJour
   if (!prier)
     return (
@@ -287,9 +285,10 @@ function Chapelet({ forme, serie, date }: { forme: Forme; serie: SerieId; date: 
       onPointerCancel={() => (debutGeste.current = null)}
     >
       <header className="chapelet-entete">
-        {/* La croix ramène au seuil, comme le retour d'Android : on y change de
-            série ou on reprend (décision du porteur du projet, 2026-10-08). Un
-            toucher sur elle n'avance pas le chapelet (estInteractif). */}
+        {/* La croix ramène là d'où le seuil a été ouvert, comme le retour
+            d'Android : le seuil ne reste pas derrière la prière (décision du
+            porteur du projet, 2026-10-09). Un toucher sur elle n'avance pas
+            le chapelet (estInteractif). */}
         <LigneFermer onFermer={retour}>
           <p className="ligne-date">{avecExposants(dateLisible(dateDuJour(date)))}</p>
           {/* En face de la croix, « ? » rouvre l'aide aux gestes, comme dans

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router'
 import { AlerteRappels } from '../accueil/AlerteRappels'
 import { BandeauJour } from '../accueil/BandeauJour'
-import { lireReglages, modifierReglages, type Forme } from '../chapelet/reglages'
+import { lireReglages, type Forme } from '../chapelet/reglages'
 import { Duree } from '../composants/Duree'
 import { HeureApprochee } from '../composants/HeureApprochee'
 import { avecExposants } from '../composants/Exposants'
@@ -168,22 +168,18 @@ function ListeOffices({
 }
 
 // Le Chapelet et le Rosaire en tête de liste, au-dessus des offices (phase
-// 18, décision du porteur du projet, 2026-10-09), chacun ouvrant le seuil dans
-// sa forme, qui devient le choix retenu. Le Chapelet à son heure, celle de son
-// rappel, approximative : du moment pendant l'heure qui suit, comme un office,
-// puis atténué (2026-10-07 et 2026-10-08). Le Rosaire, souvent prié en
-// plusieurs fois, n'a pas d'heure.
+// 18, décision du porteur du projet, 2026-10-09), chacun ouvrant son seuil,
+// sans rien retenir (deux seuils distincts, 2026-10-09). Le Chapelet à son
+// heure, celle de son rappel, approximative : du moment pendant l'heure qui
+// suit, comme un office, puis atténué (2026-10-07 et 2026-10-08). Le Rosaire,
+// souvent prié en plusieurs fois, n'a pas d'heure.
 function ListeChapeletRosaire({ date, journee }: { date: string; journee?: Journee }) {
   const heure = heuresDuJour(date).chapelet
   const duMoment = journee?.moment === 'chapelet'
   const [essentiel] = useState(() => lireReglages().essentiel)
   const ligne = (forme: Forme, nom: string, quand: string | null, etat?: string) => (
     <li data-etat={etat}>
-      <Link
-        to={`/${forme}`}
-        onClick={() => modifierReglages({ forme })}
-        data-testid={etat === 'moment' ? 'moment' : undefined}
-      >
+      <Link to={`/${forme}`} data-testid={etat === 'moment' ? 'moment' : undefined}>
         <span className="accueil-office-nom">{nom}</span>
         <span className="accueil-office-quand">
           <span className="accueil-office-heure">{quand && <HeureApprochee heure={quand} />}</span>

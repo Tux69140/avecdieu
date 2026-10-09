@@ -58,7 +58,6 @@ export interface Reglages {
   signalerAjouts?: boolean
   tailleTexte?: number
   theme?: 'jour' | 'nuit' | 'automatique'
-  forme?: 'chapelet' | 'rosaire'
   essentiel?: boolean
 }
 
@@ -162,7 +161,6 @@ export async function commencerRosaire(page: Page, ouverture: Ouverture = {}) {
 export async function rosaireAuPassage(page: Page, jour: string, ouverture: Ouverture = {}) {
   await preparer(page, {
     ...ouverture,
-    reglages: { ...ouverture.reglages, forme: 'rosaire' },
     rosaireEnCours: {
       jour,
       forme: 'rosaire',

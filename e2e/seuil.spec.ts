@@ -2,51 +2,53 @@ import { expect, type Page } from '@playwright/test'
 import { preparer, test } from './outils.ts'
 
 // Phase 17 : le seuil réorganisé (organisation validée par le porteur du
-// projet, 2026-10-08). Le choix Chapelet / Rosaire en premier, retenu ; ce
-// qu'on va prier et le bouton dans le premier écran ; dessous, les choix pour
-// prier, les autres séries en lignes directes et les prières du chapelet.
+// projet, 2026-10-08) : ce qu'on va prier et le bouton dans le premier écran ;
+// dessous, les choix pour prier, les autres séries en lignes directes et les
+// prières du chapelet. Deux seuils distincts, sans commutateur : on a déjà
+// choisi le Chapelet ou le Rosaire sur l'accueil ou dans le menu (révisé le
+// 2026-10-09).
 
 const JEUDI = new Date(2026, 9, 8, 10, 0)
 const titre = (page: Page) => page.getByRole('heading', { level: 1 })
-const commutateur = (page: Page) => page.getByRole('radiogroup', { name: 'Chapelet ou Rosaire' })
-const forme = (page: Page, nom: 'Chapelet' | 'Rosaire') =>
-  commutateur(page).getByRole('radio', { name: new RegExp(`^${nom}`) })
+const duree = (page: Page) => page.locator('.seuil-duree').getByTestId('duree')
 
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(JEUDI)
 })
 
-test('le Rosaire choisi est retenu, et le chapelet de même', async ({ page }) => {
+for (const [chemin, nom, vue, dite] of [
+  ['/chapelet', 'Mystères lumineux', '20 min', 'vingt minutes'],
+  ['/rosaire', 'Rosaire', '~1 h 45', 'environ une heure quarante-cinq'],
+] as const)
+  test(`${chemin} : son seuil, sans commutateur, la durée sous le titre`, async ({ page }) => {
+    await preparer(page)
+    await page.goto(chemin)
+    await expect(titre(page)).toHaveText(nom)
+    await expect(page.getByRole('radiogroup', { name: 'Chapelet ou Rosaire' })).toHaveCount(0)
+    await expect(page.getByTestId('duree')).toHaveCount(1)
+    await expect(duree(page).locator('[aria-hidden="true"]')).toHaveText(vue)
+    // Le lecteur d'écran la dit en toutes lettres.
+    await expect(duree(page).locator('.cache-a-l-oeil')).toHaveText(`, ${dite}`)
+    const sousTitre = (await titre(page).boundingBox())!
+    expect((await duree(page).boundingBox())!.y).toBeGreaterThanOrEqual(
+      sousTitre.y + sousTitre.height - 1,
+    )
+    await expect(page.getByRole('link', { name: 'Chapelet ou Rosaire ?' })).toBeVisible()
+  })
+
+// Un Rosaire choisi avec l'ancien commutateur est simplement oublié.
+test('un ancien choix du Rosaire enregistré n’ouvre plus le Rosaire', async ({ page }) => {
+  await page.addInitScript(() =>
+    localStorage.setItem('avec-dieu.reglages', JSON.stringify({ forme: 'rosaire' })),
+  )
   await preparer(page)
-  await page.goto('/')
   await page.goto('/chapelet')
   await expect(titre(page)).toHaveText('Mystères lumineux')
-  await expect(forme(page, 'Chapelet')).toHaveAttribute('aria-checked', 'true')
-
-  await forme(page, 'Rosaire').click()
-  await expect(page).toHaveURL(/\/rosaire$/)
-  await expect(titre(page)).toHaveText('Rosaire')
-  await expect(forme(page, 'Rosaire')).toHaveAttribute('aria-checked', 'true')
-  // Le seuil a changé de place, sans s'empiler : un retour ramène à l'accueil.
-  await page.goBack()
-  await expect(page).toHaveURL(/\/$/)
-
-  // Retenu après redémarrage : le chapelet du jour ouvre le Rosaire.
-  await page.goto('/chapelet')
-  await expect(page).toHaveURL(/\/rosaire$/)
-  await page.reload()
-  await expect(titre(page)).toHaveText('Rosaire')
-
-  await forme(page, 'Chapelet').click()
   await expect(page).toHaveURL(/\/chapelet$/)
-  await expect(titre(page)).toHaveText('Mystères lumineux')
-  await page.reload()
-  await expect(titre(page)).toHaveText('Mystères lumineux')
-  await expect(forme(page, 'Chapelet')).toHaveAttribute('aria-checked', 'true')
 })
 
 test('le Rosaire liste ses quatre séries, sans autres mystères à choisir', async ({ page }) => {
-  await preparer(page, { reglages: { forme: 'rosaire' } })
+  await preparer(page)
   await page.goto('/rosaire')
   await expect(titre(page)).toHaveText('Rosaire')
   await expect(
@@ -68,9 +70,9 @@ test('de haut en bas, dans l’ordre validé', async ({ page }) => {
   const haut = async (element: ReturnType<Page['locator']>) => (await element.boundingBox())!.y
   const ordre = [
     page.locator('.ligne-date'),
-    commutateur(page),
-    page.getByRole('link', { name: 'Chapelet ou Rosaire ?' }),
     titre(page),
+    duree(page),
+    page.getByRole('link', { name: 'Chapelet ou Rosaire ?' }),
     page.getByRole('list', { name: 'Les cinq mystères' }),
     page.getByRole('button', { name: 'Commencer le chapelet' }),
     page.getByRole('heading', { name: 'Affichage des prières' }),
@@ -116,12 +118,22 @@ test('« Prières du chapelet » ouvre la page des réglages, dont la croix ram�
   page,
 }) => {
   await preparer(page)
-  await page.goto('/chapelet')
+  await page.goto('/')
+  await page
+    .getByRole('list', { name: 'Chapelet et Rosaire' })
+    .getByRole('link', { name: /^Chapelet/ })
+    .click()
   await page.getByRole('link', { name: 'Prières du chapelet' }).click()
   await expect(page).toHaveURL('/reglages/chapelet/prieres')
   await expect(titre(page)).toHaveText('Prières du chapelet')
-  await page.getByRole('button', { name: 'Fermer', exact: true }).click()
+  const fermer = page.getByRole('button', { name: 'Fermer', exact: true })
+  await fermer.click()
   await expect(page).toHaveURL(/\/chapelet$/)
+  // Puis la prière commencée : sa croix ramène à l'accueil, pas à cette page.
+  await page.getByRole('button', { name: 'Commencer le chapelet' }).click()
+  await expect(page.locator('main.chapelet')).toHaveAttribute('data-pas', '0')
+  await fermer.click()
+  await expect(page).toHaveURL('/')
 })
 
 // Le premier écran, de la croix au bouton, sans défiler ni rien sous « Plus

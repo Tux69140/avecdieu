@@ -1,4 +1,3 @@
-import type { Forme } from '../chapelet/reglages'
 import { dateDuJour, decaler, enDate } from '../office/dates'
 import type { Heure } from '../office/heures'
 import { PRIERES_RAPPELEES, type Priere, type Rappel, type Rappels, type Son } from './reglages'
@@ -10,7 +9,6 @@ import {
   OUVERTURE_DES_HEURES,
   OUVERTURE_DU_CHAPELET,
   OUVERTURE_DU_JOUR,
-  TITRE_ROSAIRE,
   TITRES_NOTIFICATIONS,
 } from './textes'
 
@@ -100,11 +98,10 @@ const numeroDuJour = (date: string) => {
   return Date.UTC(a, m - 1, j) / 86_400_000
 }
 
-// Le rappel du chapelet annonce et ouvre le Rosaire quand il est retenu.
-const titreDe = (priere: Priere, forme: Forme) =>
-  priere === 'chapelet' && forme === 'rosaire' ? TITRE_ROSAIRE : TITRES_NOTIFICATIONS[priere]
-const routeDe = (priere: Priere, date: string, forme: Forme) =>
-  priere === 'chapelet' ? `/${forme}` : `/office/${priere}/${date}`
+// Le rappel du chapelet ouvre toujours son seuil : le Rosaire n'a pas d'heure,
+// donc pas de rappel (révisé le 2026-10-09).
+const routeDe = (priere: Priere, date: string) =>
+  priere === 'chapelet' ? '/chapelet' : `/office/${priere}/${date}`
 
 // Toutes les notifications à venir, de maintenant à JOURS_PROGRAMMES jours,
 // à l'heure locale de chaque jour (heure d'été comprise).
@@ -113,7 +110,6 @@ export function programmer(
   maintenant: Date,
   jours = JOURS_PROGRAMMES,
   heuresDuJour = heuresFixes(rappels),
-  forme: Forme = 'chapelet',
 ): NotificationPrevue[] {
   const premier = dateDuJour(maintenant)
   const prevues: NotificationPrevue[] = []
@@ -134,9 +130,9 @@ export function programmer(
         priere,
         date,
         quand,
-        titre: titreDe(priere, forme),
+        titre: TITRES_NOTIFICATIONS[priere],
         texte: texteDe(priere, matin),
-        route: routeDe(priere, date, forme),
+        route: routeDe(priere, date),
         canal: canalDe(rappel).id,
       })
     })

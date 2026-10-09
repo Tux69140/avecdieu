@@ -87,7 +87,9 @@ test.describe('passages qui tournent', () => {
     await glisser(page, 160)
     await perle(page).tap()
 
-    await page.goBack()
+    // Rouvert, le seuil propose de recommencer.
+    await page.goto('/')
+    await page.goto('/chapelet')
     await page.getByRole('button', { name: 'Recommencer du début' }).click()
     await expect(titrePriere(page)).toHaveText('Signe de croix')
     await jusquALAnnonce(page)
@@ -252,11 +254,17 @@ test.describe('choix de la série', () => {
     await expect(page).toHaveURL(/\/$/)
   })
 
-  test('le retour d’Android ramène du chapelet à son seuil', async ({ page }) => {
-    await commencer(page)
+  // Le seuil ne reste pas derrière la prière (2026-10-09) : le retour
+  // d'Android ramène là d'où il a été ouvert, même après d'autres mystères.
+  test('le retour d’Android ramène du chapelet là d’où le seuil a été ouvert', async ({ page }) => {
+    await preparer(page)
+    await page.goto('/')
+    await page.goto('/chapelet')
+    await page.getByRole('link', { name: /Mystères glorieux/ }).click()
+    await page.getByRole('button', { name: 'Commencer le chapelet' }).click()
     await toucher(page)
     await page.goBack()
-    await expect(page.getByRole('button', { name: 'Reprendre le chapelet' })).toBeVisible()
+    await expect(page).toHaveURL(/\/$/)
   })
 })
 
@@ -273,7 +281,8 @@ test.describe('aide aux gestes', () => {
     await expect(titrePriere(page)).toHaveText('Signe de croix')
 
     // Elle revient à l'ouverture suivante, faute d'avoir coché « Ne plus afficher ».
-    await page.goBack()
+    await page.goto('/')
+    await page.goto('/chapelet')
     await page.getByRole('button', { name: 'Reprendre le chapelet' }).click()
     await expect(aide).toBeVisible()
   })
