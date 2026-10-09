@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { CHAPELET_MARIAL } from './definition'
+import { CHAPELET_MARIAL, ROSAIRE } from './definition'
 import { derouler } from './deroule'
 import {
   effacerEnCours,
@@ -26,6 +26,7 @@ describe('chapelet en cours', () => {
     retenirEnCours(LUNDI, 'joyeux', COMPLET.pas[AVE_3_4])
     expect(lireEnCours(LUNDI_SOIR)).toEqual({
       jour: '2026-10-05',
+      forme: 'chapelet',
       serie: 'joyeux',
       dizaine: 3,
       priere: 'je-vous-salue-marie',
@@ -50,6 +51,7 @@ describe('chapelet en cours', () => {
 describe('retrouver le grain', () => {
   const repere = (pas: (typeof COMPLET.pas)[number]): ChapeletEnCours => ({
     jour: '2026-10-05',
+    forme: 'chapelet',
     serie: 'joyeux',
     dizaine: pas.dizaine,
     priere: pas.priere,
@@ -91,10 +93,84 @@ describe('retrouver le grain', () => {
 describe('libellé du bouton de reprise', () => {
   it('nomme la dizaine, ou le chapelet hors des dizaines', () => {
     const libelle = (pas: (typeof COMPLET.pas)[number]) =>
-      libelleReprise({ jour: '2026-10-05', serie: 'joyeux', ...pas })
+      libelleReprise({ jour: '2026-10-05', forme: 'chapelet', ...pas, serie: 'joyeux' })
     expect(libelle(COMPLET.pas[AVE_3_4])).toBe('Reprendre à la 3e dizaine')
     expect(libelle(COMPLET.pas.find((p) => p.dizaine === 1)!)).toBe('Reprendre à la 1re dizaine')
     expect(libelle(COMPLET.pas[2])).toBe('Reprendre le chapelet')
     expect(libelle(COMPLET.pas.at(-1)!)).toBe('Reprendre le chapelet')
+  })
+})
+
+// Phase 17 : le Rosaire en cours retient aussi sa forme et la série atteinte.
+const ROSAIRE_COMPLET = derouler(ROSAIRE)
+// 2e série (lumineux), 3e dizaine, 4e Je vous salue Marie.
+const ROSAIRE_2_3_4 = ROSAIRE_COMPLET.pas.findIndex(
+  (p) =>
+    p.serie === 'lumineux' && p.dizaine === 3 && p.priere === 'je-vous-salue-marie' && p.rang === 4,
+)
+
+describe('Rosaire en cours', () => {
+  it('retient la forme et la série atteinte, le jour même', () => {
+    retenirEnCours(LUNDI, 'joyeux', ROSAIRE_COMPLET.pas[ROSAIRE_2_3_4], 'rosaire')
+    expect(lireEnCours(LUNDI_SOIR, 'rosaire')).toEqual({
+      jour: '2026-10-05',
+      forme: 'rosaire',
+      serie: 'lumineux',
+      dizaine: 3,
+      priere: 'je-vous-salue-marie',
+      rang: 4,
+    })
+  })
+
+  it('est abandonné passé minuit', () => {
+    retenirEnCours(LUNDI, 'joyeux', ROSAIRE_COMPLET.pas[ROSAIRE_2_3_4], 'rosaire')
+    expect(lireEnCours(MARDI, 'rosaire')).toBeNull()
+  })
+
+  it('ne se confond pas avec un chapelet en cours : chacun garde le sien', () => {
+    retenirEnCours(LUNDI, 'joyeux', ROSAIRE_COMPLET.pas[ROSAIRE_2_3_4], 'rosaire')
+    expect(lireEnCours(LUNDI)).toBeNull()
+    retenirEnCours(LUNDI, 'douloureux', COMPLET.pas[AVE_3_4])
+    expect(lireEnCours(LUNDI)).toMatchObject({ forme: 'chapelet', serie: 'douloureux' })
+    expect(lireEnCours(LUNDI, 'rosaire')).toMatchObject({ forme: 'rosaire', serie: 'lumineux' })
+    effacerEnCours()
+    expect(lireEnCours(LUNDI)).toBeNull()
+    expect(lireEnCours(LUNDI, 'rosaire')).not.toBeNull()
+    effacerEnCours('rosaire')
+    expect(lireEnCours(LUNDI, 'rosaire')).toBeNull()
+  })
+
+  it('reprend exactement au même pas, à chaque pas du Rosaire', () => {
+    ROSAIRE_COMPLET.pas.forEach((pas, i) => {
+      retenirEnCours(LUNDI, 'joyeux', pas, 'rosaire')
+      expect(retrouver(ROSAIRE_COMPLET, lireEnCours(LUNDI, 'rosaire')!), `pas ${i}`).toBe(i)
+    })
+  })
+
+  it('une annonce retirée entre-temps cède la place au début de la même dizaine, dans la même série', () => {
+    const annonce = ROSAIRE_COMPLET.pas.find(
+      (p) => p.serie === 'douloureux' && p.dizaine === 2 && p.priere === 'annonce',
+    )!
+    retenirEnCours(LUNDI, 'joyeux', annonce, 'rosaire')
+    const sansAnnonce = derouler(ROSAIRE, { annonce: false })
+    const i = retrouver(sansAnnonce, lireEnCours(LUNDI, 'rosaire')!)
+    expect(sansAnnonce.pas[i]).toMatchObject({
+      serie: 'douloureux',
+      dizaine: 2,
+      priere: 'notre-pere',
+    })
+  })
+
+  it('le bouton dit la série et la dizaine où l’on reprend', () => {
+    const libelle = (pas: (typeof ROSAIRE_COMPLET.pas)[number], serie = 'glorieux' as const) => {
+      retenirEnCours(LUNDI, serie, pas, 'rosaire')
+      return libelleReprise(lireEnCours(LUNDI, 'rosaire')!)
+    }
+    expect(libelle(ROSAIRE_COMPLET.pas[ROSAIRE_2_3_4])).toBe('Reprendre à la 2e série, 3e dizaine')
+    expect(libelle(ROSAIRE_COMPLET.pas.find((p) => p.dizaine === 1)!)).toBe(
+      'Reprendre à la 1re série, 1re dizaine',
+    )
+    expect(libelle(ROSAIRE_COMPLET.pas[2])).toBe('Reprendre le Rosaire')
+    expect(libelle(ROSAIRE_COMPLET.pas.at(-1)!)).toBe('Reprendre le Rosaire')
   })
 })

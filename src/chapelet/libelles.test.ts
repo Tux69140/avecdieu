@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { AIDE_VIBRATIONS, CHAPELET_OU_ROSAIRE } from './libelles'
+import { AIDE_VIBRATIONS, CHAPELET_OU_ROSAIRE, passageDeSerie, repereSerie } from './libelles'
 
 describe('AIDE_VIBRATIONS', () => {
   // Un mot composé ne se coupe pas en fin de ligne (2026-10-08).
@@ -33,5 +33,25 @@ describe('CHAPELET_OU_ROSAIRE', () => {
       ...CHAPELET_OU_ROSAIRE.paragraphes,
     ]
     for (const texte of textes) expect(texte).not.toMatch(/« | [»:;?]/)
+  })
+})
+
+describe('Rosaire', () => {
+  const brut = (texte: string) => texte.replace(/\u00a0/g, ' ').replace(/\u2060/g, '')
+
+  // Texte validé mot à mot par le porteur du projet (phase 17, 2026-10-08).
+  it('le passage de série, mot à mot, pour chacun des trois passages', () => {
+    expect(
+      (['lumineux', 'douloureux', 'glorieux'] as const).map((s) => brut(passageDeSerie(s))),
+    ).toEqual([
+      'Les mystères joyeux sont achevés. Viennent les mystères lumineux.',
+      'Les mystères lumineux sont achevés. Viennent les mystères douloureux.',
+      'Les mystères douloureux sont achevés. Viennent les mystères glorieux.',
+    ])
+  })
+
+  it('le repère de la série en cours', () => {
+    expect(repereSerie('joyeux')).toBe('Série 1 sur 4')
+    expect(repereSerie('glorieux')).toBe('Série 4 sur 4')
   })
 })

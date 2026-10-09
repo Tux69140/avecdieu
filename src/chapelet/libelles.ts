@@ -1,3 +1,5 @@
+import type { SerieId } from '../recueil/mysteres'
+import { ROSAIRE } from './definition'
 import { insecables } from './typographie'
 
 // « Premier mystère », « Deuxième mystère »… : rang de la dizaine, de 1 à 5.
@@ -35,3 +37,21 @@ export const CHAPELET_OU_ROSAIRE = {
 export const AIDE_VIBRATIONS = insecables(
   'Une courte à chaque grain, une plus marquée à chaque dizaine. Coupez-les pour prier en silence.',
 )
+
+// Au Rosaire, le rang de la série dans l'ordre joyeux, lumineux, douloureux,
+// glorieux, de 1 à 4.
+const SERIES_DU_ROSAIRE = ROSAIRE.series ?? []
+export const rangDeSerie = (serie: SerieId) => SERIES_DU_ROSAIRE.indexOf(serie) + 1
+
+// La ligne en rouge qui ouvre les séries 2 à 4 du Rosaire (texte validé mot
+// à mot par le porteur du projet, phase 17, 2026-10-08) : « Les mystères
+// joyeux sont achevés. Viennent les mystères lumineux. » L'identifiant de la
+// série est son adjectif.
+export function passageDeSerie(vient: SerieId): string {
+  const finie = SERIES_DU_ROSAIRE[rangDeSerie(vient) - 2]
+  return insecables(`Les mystères ${finie} sont achevés. Viennent les mystères ${vient}.`)
+}
+
+// Le repère toujours visible pendant le Rosaire : « Série 2 sur 4 ».
+export const repereSerie = (serie: SerieId) =>
+  `Série ${rangDeSerie(serie)} sur ${SERIES_DU_ROSAIRE.length}`

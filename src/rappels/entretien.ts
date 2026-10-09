@@ -5,6 +5,7 @@ import {
   surToucherNotification,
 } from '../telephone/notifications'
 import { creerCanal, supprimerCanaux } from '../telephone/sonnerie'
+import { lireReglages, REGLAGES_CHANGES } from '../chapelet/reglages'
 import { LIEU_CHANGE, lireLieu } from '../lieu/lieu'
 import { calculerHeures } from '../office/heures'
 import { canauxNecessaires, JOURS_PROGRAMMES, programmer } from './programme'
@@ -30,8 +31,12 @@ export async function reprogrammer(maintenant = new Date()) {
   await supprimerCanaux(canaux.map((c) => c.id)).catch(() => {})
   const solaire = lireSolaire()
   const { lieu } = lireLieu()
-  const prevues = programmer(rappels, maintenant, JOURS_PROGRAMMES, (date) =>
-    calculerHeures(date, rappels, solaire, lieu),
+  const prevues = programmer(
+    rappels,
+    maintenant,
+    JOURS_PROGRAMMES,
+    (date) => calculerHeures(date, rappels, solaire, lieu),
+    lireReglages().forme,
   )
   await remplacerNotifications(prevues, await minuteExacte())
 }
@@ -48,11 +53,22 @@ export function entretenirRappels(): () => void {
   const auPremierPlan = () => {
     if (document.visibilityState !== 'hidden') reprogrammerBientot()
   }
+  // Le choix du chapelet ou du Rosaire change le titre et l'écran du rappel ;
+  // les autres réglages (thème, taille du texte) ne le touchent pas.
+  let forme = lireReglages().forme
+  const auChangementDeForme = () => {
+    const choisie = lireReglages().forme
+    if (choisie === forme) return
+    forme = choisie
+    reprogrammerBientot()
+  }
   reprogrammerBientot()
   document.addEventListener('visibilitychange', auPremierPlan)
   window.addEventListener(RAPPELS_CHANGES, reprogrammerBientot)
   window.addEventListener(LIEU_CHANGE, reprogrammerBientot)
+  window.addEventListener(REGLAGES_CHANGES, auChangementDeForme)
   return () => {
+    window.removeEventListener(REGLAGES_CHANGES, auChangementDeForme)
     window.removeEventListener(LIEU_CHANGE, reprogrammerBientot)
     document.removeEventListener('visibilitychange', auPremierPlan)
     window.removeEventListener(RAPPELS_CHANGES, reprogrammerBientot)
@@ -60,7 +76,7 @@ export function entretenirRappels(): () => void {
 }
 
 // Seules les routes des prières s'ouvrent depuis une notification.
-const ROUTE_DE_PRIERE = /^\/(office\/[a-z]+\/\d{4}-\d{2}-\d{2}|chapelet)$/
+const ROUTE_DE_PRIERE = /^\/(office\/[a-z]+\/\d{4}-\d{2}-\d{2}|chapelet|rosaire)$/
 
 // Installé avant le premier affichage : une notification touchée app fermée
 // ouvre directement sa prière.

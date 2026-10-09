@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router'
 import { AlerteRappels } from '../accueil/AlerteRappels'
 import { BandeauJour } from '../accueil/BandeauJour'
+import { lireReglages } from '../chapelet/reglages'
 import { Duree } from '../composants/Duree'
 import { avecExposants } from '../composants/Exposants'
 import { astre } from '../accueil/cadran'
@@ -160,18 +161,21 @@ function ListeOffices({
 
 // Le chapelet sous les offices, à son heure (celle des rappels) : du moment
 // pendant l'heure qui suit, comme un office, puis atténué (demandes du porteur
-// du projet, 2026-10-07 et 2026-10-08).
+// du projet, 2026-10-07 et 2026-10-08). Le Rosaire retenu sur le seuil prend
+// sa place, avec sa durée (phase 17).
 function LigneChapelet({ date, journee }: { date: string; journee?: Journee }) {
   const heure = heuresDuJour(date).chapelet
   const duMoment = journee?.moment === 'chapelet'
+  const [forme] = useState(() => lireReglages().forme)
+  const nom = forme === 'rosaire' ? 'Rosaire' : 'Chapelet'
   return (
-    <ul className="accueil-offices accueil-chapelet" aria-label="Chapelet">
+    <ul className="accueil-offices accueil-chapelet" aria-label={nom}>
       <li data-etat={journee?.etats.chapelet}>
-        <Link to="/chapelet" data-testid={duMoment ? 'moment' : undefined}>
-          <span className="accueil-office-nom">Chapelet</span>
+        <Link to={`/${forme}`} data-testid={duMoment ? 'moment' : undefined}>
+          <span className="accueil-office-nom">{nom}</span>
           <span className="accueil-office-quand">
             <span className="accueil-office-heure">{heure ? ecrireHeure(heure) : ''}</span>
-            <Duree priere="chapelet" className="accueil-office-duree" />
+            <Duree priere={forme} className="accueil-office-duree" />
           </span>
           {duMoment && <span className="accueil-moment">Prière du moment</span>}
         </Link>

@@ -1,6 +1,8 @@
+import { useLocation } from 'react-router'
 import type { Reglages } from '../chapelet/reglages'
 import { ReglagesCloture } from '../chapelet/ReglagesCloture'
 import { Interrupteur } from '../composants/Interrupteur'
+import type { DepuisParente } from '../composants/retour'
 import { PageReglages } from '../reglages/PageReglages'
 import { useReglages } from '../reglages/useReglages'
 
@@ -22,8 +24,12 @@ const CHAQUE_DIZAINE: [Bascule, string, string?][] = [
 
 // Réglages › Chapelet › Prières du chapelet : ce qui se dit, dans l'ordre du
 // chapelet (arborescence validée par le porteur du projet, 2026-10-08).
+// Ouverte du seuil du Rosaire, elle en prend le nom ; les réglages sont les
+// mêmes (2026-10-09).
 export function EcranPrieresChapelet() {
   const [reglages, modifier] = useReglages()
+  const depuis = useLocation().state as DepuisParente | null
+  const titre = depuis?.rosaire ? 'Prières du Rosaire' : 'Prières du chapelet'
   const interrupteurs = (liste: [Bascule, string, string?][]) =>
     liste.map(([cle, libelle, aide]) => (
       <Interrupteur
@@ -35,7 +41,7 @@ export function EcranPrieresChapelet() {
       />
     ))
   return (
-    <PageReglages titre="Prières du chapelet" parente="/reglages/chapelet">
+    <PageReglages titre={titre} parente="/reglages/chapelet">
       <h2>Ouverture</h2>
       {interrupteurs(OUVERTURE)}
       <h2>Chaque dizaine</h2>

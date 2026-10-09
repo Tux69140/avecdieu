@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { CHAPELET_MARIAL } from './definition'
+import { CHAPELET_MARIAL, ROSAIRE } from './definition'
 import { derouler } from './deroule'
 import { disposer } from './disposition'
 
@@ -71,5 +71,11 @@ describe('disposition du chapelet dessiné', () => {
 
   it('tient dans un cadre au moins deux fois plus large que haut', () => {
     expect(plan.hauteur * 2).toBeLessThanOrEqual(plan.largeur)
+  })
+})
+
+describe('disposition du Rosaire', () => {
+  it('une seule boucle de cinq dizaines, le même dessin que le chapelet', () => {
+    expect(disposer(derouler(ROSAIRE))).toEqual(plan)
   })
 })

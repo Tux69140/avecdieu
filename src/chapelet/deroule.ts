@@ -1,3 +1,4 @@
+import type { SerieId } from '../recueil/mysteres'
 import type { DefinitionChapelet, Etape, Moment, OptionDeroule, TypeGrain } from './definition'
 
 // Une prière à dire, à sa place sur le chapelet.
@@ -7,6 +8,12 @@ export interface Pas {
   grain: number
   // 1 à 5 dans les dizaines, absent à l'ouverture.
   dizaine?: number
+  // Au Rosaire, la série de la dizaine ; absente au chapelet, dont la série
+  // est choisie au seuil.
+  serie?: SerieId
+  // Au Rosaire, le premier pas des séries 2 à 4 : la ligne qui marque le
+  // passage d'une série à l'autre s'y affiche.
+  nouvelleSerie?: boolean
   // Rang de la répétition (3e Je vous salue Marie sur 10).
   rang: number
   total: number
@@ -62,9 +69,27 @@ export function derouler(definition: DefinitionChapelet, options: Options = {}):
   }
 
   ajouter(definition.ouverture)
+  const debutBoucle = pas.length
   for (let d = 1; d <= definition.nombreDeDizaines; d++) ajouter(definition.dizaine, d)
+  // Au Rosaire, la même boucle se reprend pour chaque série, sur les mêmes
+  // grains : les pas de la première série se répètent pour les suivantes.
+  const [premiere, ...suivantes] = definition.series ?? []
+  if (premiere) {
+    const boucle = pas.splice(debutBoucle)
+    pas.push(...boucle.map((p) => ({ ...p, serie: premiere })))
+    for (const serie of suivantes)
+      pas.push(...boucle.map((p, i) => ({ ...p, serie, ...(i === 0 && { nouvelleSerie: true }) })))
+  }
   ajouter(definition.cloture)
   const dernier = porteurs.at(-1)
   if (dernier) dernier.pas.verset = dernier.verset
   return { pas, grains }
+}
+
+// La série que l'écran montre à ce pas : au Rosaire, celle de la dizaine, ou
+// la dernière commencée (clôture, fin), ou la première (ouverture) ; au
+// chapelet, celle choisie au seuil.
+export function serieAtteinte({ pas }: Deroule, index: number, choisie: SerieId): SerieId {
+  const avant = pas.slice(0, index + 1).findLast((p) => p.serie !== undefined)
+  return avant?.serie ?? pas.find((p) => p.serie !== undefined)?.serie ?? choisie
 }

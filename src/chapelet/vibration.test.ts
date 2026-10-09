@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { CHAPELET_MARIAL } from './definition'
+import { CHAPELET_MARIAL, ROSAIRE } from './definition'
 import { derouler } from './deroule'
 import { vibrationEntre } from './vibration'
 
@@ -71,5 +71,26 @@ describe('vibrationEntre', () => {
   it('rien quand la position ne change pas', () => {
     expect(vibrationEntre(DEROULE, 0, 0)).toBeNull()
     expect(vibrationEntre(DEROULE, FIN, FIN)).toBeNull()
+  })
+})
+
+describe('vibrations du Rosaire', () => {
+  const rosaire = derouler(ROSAIRE)
+
+  it('le passage de série vibre fort, comme l’entrée de chaque dizaine', () => {
+    const passages = rosaire.pas.flatMap((p, i) => (p.nouvelleSerie ? [i] : []))
+    expect(passages).toHaveLength(3)
+    for (const i of passages) expect(vibrationEntre(rosaire, i - 1, i)).toBe('marquee')
+  })
+
+  it('vingt-deux vibrations marquées : vingt dizaines, la clôture et la fin', () => {
+    expect(marquees(rosaire)).toHaveLength(22)
+  })
+
+  it('d’une série à l’autre, la même dizaine reste une autre partie', () => {
+    // Ce qui compte, c'est la série et la dizaine : joyeux 1 n'est pas lumineux 1.
+    const premierJoyeux = rosaire.pas.findIndex((p) => p.serie === 'joyeux' && p.dizaine === 1)
+    const premierLumineux = rosaire.pas.findIndex((p) => p.nouvelleSerie)
+    expect(vibrationEntre(rosaire, premierJoyeux, premierLumineux)).toBe('marquee')
   })
 })

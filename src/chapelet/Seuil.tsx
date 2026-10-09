@@ -7,7 +7,7 @@ import { IndiceSuite } from '../composants/IndiceSuite'
 import { Interrupteur } from '../composants/Interrupteur'
 import { LigneFermer } from '../composants/LigneFermer'
 import { LignePage } from '../composants/LignePage'
-import { useRetour } from '../composants/retour'
+import { useRetour, type DepuisParente } from '../composants/retour'
 import { useSuiteCachee } from '../composants/suiteCachee'
 import { dateDuJour, dateLisible } from '../office/dates'
 import { usePeutVibrer } from '../telephone/retours'
@@ -163,10 +163,16 @@ export function Seuil({ forme, serie, duJour, date, enCours, onCommencer, onReco
 
       {/* Les prières dites (ouverture, dizaines, fin) : la page des réglages,
           dont la croix ramène ici. Un lien discret, comme l'aide du haut :
-          une ligne à filets de plus faisait une bande vide sous la liste. */}
+          une ligne à filets de plus faisait une bande vide sous la liste. Au
+          Rosaire, elle porte son nom (décision du porteur du projet,
+          2026-10-09) ; les réglages sont les mêmes. */}
       <p className="seuil-aide seuil-prieres">
-        <Link className="lien-discret" to="/reglages/chapelet/prieres" state={{ revenir: true }}>
-          Prières du chapelet
+        <Link
+          className="lien-discret"
+          to="/reglages/chapelet/prieres"
+          state={{ revenir: true, rosaire } satisfies DepuisParente}
+        >
+          {rosaire ? 'Prières du Rosaire' : 'Prières du chapelet'}
           <span aria-hidden="true">{'\u00a0›'}</span>
         </Link>
       </p>

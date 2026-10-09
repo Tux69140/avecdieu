@@ -57,7 +57,8 @@ test('le Rosaire liste ses quatre séries, sans autres mystères à choisir', as
   // Les choix pour prier restent, comme au chapelet.
   await expect(page.getByRole('radiogroup', { name: 'Affichage des prières' })).toBeVisible()
   await expect(page.getByRole('switch', { name: /Prier à plusieurs/ })).toBeVisible()
-  await expect(page.getByRole('link', { name: 'Prières du chapelet' })).toBeVisible()
+  // Au Rosaire, le lien porte son nom (décision du porteur du projet, 2026-10-09).
+  await expect(page.getByRole('link', { name: 'Prières du Rosaire' })).toBeVisible()
 })
 
 test('de haut en bas, dans l’ordre validé', async ({ page }) => {
@@ -111,41 +112,44 @@ test('« Prières du chapelet » ouvre la page des réglages, dont la croix ram�
   page,
 }) => {
   await preparer(page)
-  await page.goto('/rosaire')
+  await page.goto('/chapelet')
   await page.getByRole('link', { name: 'Prières du chapelet' }).click()
   await expect(page).toHaveURL('/reglages/chapelet/prieres')
   await expect(titre(page)).toHaveText('Prières du chapelet')
   await page.getByRole('button', { name: 'Fermer', exact: true }).click()
-  await expect(page).toHaveURL(/\/rosaire$/)
+  await expect(page).toHaveURL(/\/chapelet$/)
 })
 
 // Le premier écran, de la croix au bouton, sans défiler ni rien sous « Plus
 // bas », sur le plus petit téléphone visé : la série du jeudi a un mystère
 // sur deux lignes.
 for (const [nom, chemin, bouton, enCours] of [
-  ['chapelet', '/chapelet', 'Commencer le chapelet', false],
-  ['Rosaire', '/rosaire', 'Commencer le Rosaire', false],
-  ['chapelet en cours', '/chapelet', 'Recommencer du début', true],
+  ['chapelet', '/chapelet', 'Commencer le chapelet', null],
+  ['Rosaire', '/rosaire', 'Commencer le Rosaire', null],
+  ['chapelet en cours', '/chapelet', 'Recommencer du début', 'Reprendre à la 3e dizaine'],
+  ['Rosaire en cours', '/rosaire', 'Recommencer du début', 'Reprendre à la 2e série, 3e dizaine'],
 ] as const) {
   test(`à 360 × 640, ${nom} : tout tient de la croix au bouton`, async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 640 })
     await preparer(page)
     if (enCours)
-      await page.addInitScript(() =>
-        localStorage.setItem(
-          'avec-dieu.en-cours',
-          JSON.stringify({
-            jour: '2026-10-08',
-            serie: 'lumineux',
-            dizaine: 3,
-            priere: 'je-vous-salue',
-            rang: 4,
-          }),
-        ),
+      await page.addInitScript(
+        (rosaire) =>
+          localStorage.setItem(
+            rosaire ? 'avec-dieu.rosaire-en-cours' : 'avec-dieu.en-cours',
+            JSON.stringify({
+              jour: '2026-10-08',
+              forme: rosaire ? 'rosaire' : 'chapelet',
+              serie: 'lumineux',
+              dizaine: 3,
+              priere: 'je-vous-salue',
+              rang: 4,
+            }),
+          ),
+        chemin === '/rosaire',
       )
     await page.goto(chemin)
-    if (enCours)
-      await expect(page.getByRole('button', { name: 'Reprendre à la 3e dizaine' })).toBeVisible()
+    if (enCours) await expect(page.getByRole('button', { name: enCours })).toBeVisible()
     const dernier = page.getByRole('button', { name: bouton })
     await expect(dernier).toBeVisible()
     await expect.poll(() => page.evaluate(() => document.getAnimations().length)).toBe(0)

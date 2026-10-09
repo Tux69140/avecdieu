@@ -1,4 +1,4 @@
-import type { Deroule } from './deroule'
+import type { Deroule, Pas } from './deroule'
 
 // Chaque mystère a plusieurs passages, qui tournent : le même passage revient
 // six lectures de suite, pour laisser le temps de le méditer (choix du porteur
@@ -11,11 +11,19 @@ export function rangDuPassage(lectures: number, nombreDePassages: number): numbe
 }
 
 // Une lecture compte quand on passe la première étape d'une dizaine pour la
-// commencer : l'annonce, ou en mode compact le Notre Père qui la porte.
-export function dizaineCommencee(deroule: Deroule, avant: number, apres: number): number | null {
+// commencer : l'annonce, ou en mode compact le Notre Père qui la porte. Rend
+// le premier pas de la dizaine, qui dit sa série au Rosaire.
+export function dizaineCommencee(
+  deroule: Deroule,
+  avant: number,
+  apres: number,
+): (Pas & { dizaine: number }) | null {
   if (apres !== avant + 1) return null
   const pas = deroule.pas[avant]
   if (pas?.dizaine === undefined) return null
   const precedent = deroule.pas[avant - 1]
-  return precedent?.dizaine === pas.dizaine ? null : pas.dizaine
+  return precedent && memePartie(precedent, pas) ? null : { ...pas, dizaine: pas.dizaine }
 }
+
+// Deux pas de la même dizaine : même rang et, au Rosaire, même série.
+export const memePartie = (a: Pas, b: Pas) => a.dizaine === b.dizaine && a.serie === b.serie

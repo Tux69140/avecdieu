@@ -1,3 +1,4 @@
+import type { SerieId } from '../recueil/mysteres'
 import { INTENTIONS, type PriereId } from '../recueil/prieres'
 
 // Ce qui porte la prière sur le chapelet : la croix, un gros ou un petit grain,
@@ -45,6 +46,9 @@ export interface DefinitionChapelet {
   ouverture: Etape[]
   dizaine: Etape[]
   nombreDeDizaines: number
+  // Les séries dites l'une après l'autre sur la même boucle (le Rosaire) ;
+  // absentes, la boucle se dit une fois, sur la série choisie au seuil.
+  series?: readonly SerieId[]
   cloture: Etape[]
 }
 
@@ -88,4 +92,12 @@ export const CHAPELET_MARIAL: DefinitionChapelet = {
     { priere: 'sous-l-abri', grain: 'medaille', memeGrain: true, option: 'sousLAbri' },
     { priere: 'saint-joseph', grain: 'medaille', memeGrain: true, option: 'saintJoseph' },
   ],
+}
+
+// Le Rosaire (phase 17) : l'ouverture une fois, la boucle des cinq dizaines
+// parcourue quatre fois, des mystères joyeux aux glorieux, la clôture une
+// fois. Le reste est celui du chapelet.
+export const ROSAIRE: DefinitionChapelet = {
+  ...CHAPELET_MARIAL,
+  series: ['joyeux', 'lumineux', 'douloureux', 'glorieux'],
 }

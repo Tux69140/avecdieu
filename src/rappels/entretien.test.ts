@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { telephoneSimule } from '../telephone/simulation'
-import { ouvrirLesNotifications, reprogrammer } from './entretien'
+import { entretenirRappels, ouvrirLesNotifications, reprogrammer } from './entretien'
+import { modifierReglages } from '../chapelet/reglages'
 import { choisirLieu } from '../lieu/lieu'
 import { modifierRappel } from './reglages'
 import { modifierSolaire } from './solaire'
@@ -91,8 +92,36 @@ describe('notification touchée', () => {
     const telephone = telephoneSimule()
     telephone.toucher('/office/laudes/2026-10-08')
     telephone.toucher('/chapelet')
+    telephone.toucher('/rosaire')
     telephone.toucher('https://ailleurs.example/')
     telephone.toucher('/reglages')
-    expect(naviguer.mock.calls).toEqual([['/office/laudes/2026-10-08'], ['/chapelet']])
+    expect(naviguer.mock.calls).toEqual([
+      ['/office/laudes/2026-10-08'],
+      ['/chapelet'],
+      ['/rosaire'],
+    ])
+  })
+})
+
+// Phase 17 : le rappel du chapelet ouvre le Rosaire quand il est retenu.
+describe('rappel du Rosaire', () => {
+  const chapelet = () => telephoneSimule().programmees.map((n) => [n.titre, n.route])[0]
+
+  it('suit le choix retenu sur le seuil : titre et écran ouvert', async () => {
+    modifierRappel('chapelet', { actif: true })
+    await reprogrammer(MAINTENANT)
+    expect(chapelet()).toEqual(['C’est l’heure du chapelet', '/chapelet'])
+    modifierReglages({ forme: 'rosaire' })
+    await reprogrammer(MAINTENANT)
+    expect(chapelet()).toEqual(['C’est l’heure du Rosaire', '/rosaire'])
+  })
+
+  it('se refait dès que le choix change sur le seuil', async () => {
+    modifierRappel('chapelet', { actif: true })
+    const arreter = entretenirRappels()
+    await vi.waitFor(() => expect(chapelet()?.[0]).toBe('C’est l’heure du chapelet'))
+    modifierReglages({ forme: 'rosaire' })
+    await vi.waitFor(() => expect(chapelet()?.[0]).toBe('C’est l’heure du Rosaire'))
+    arreter()
   })
 })

@@ -37,6 +37,8 @@ export interface DepuisParente {
   // Ouverte d'un autre écran que sa parente (le seuil du chapelet) : la croix
   // y revient, comme le retour d'Android.
   revenir?: boolean
+  // Ouverte du seuil du Rosaire : « Prières du Rosaire » (phase 17).
+  rosaire?: boolean
 }
 
 // La croix d'une page des réglages remonte d'un niveau, comme le retour

@@ -184,3 +184,28 @@
   line-height: 1.4;
   color: var(--rubrique);
 }
+
+/* Au Rosaire, où l'on en est des quatre séries : sous la série, plus petit
+   encore, une indication qu'on retrouve d'un coup d'œil (phase 17). */
+.repere-serie {
+  margin: var(--esp-2xs) 0 0;
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.3;
+  letter-spacing: 0.06em;
+  color: var(--sepia);
+  font-variant-numeric: lining-nums;
+}
+
+/* Le passage d'une série à l'autre du Rosaire : une rubrique en rouge, comme
+   l'intention, au-dessus du mystère qui commence (texte validé, phase 17). */
+.passage-serie {
+  margin: var(--esp-sm) 0 0;
+  text-align: center;
+  font-style: italic;
+  font-size: calc(var(--taille-priere) * 0.889);
+  line-height: 1.4;
+  color: var(--rubrique);
+  text-wrap: balance;
+}

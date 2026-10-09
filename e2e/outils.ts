@@ -89,16 +89,18 @@ interface Ouverture {
   lectures?: Record<string, number>
   // Les prières dont le rappel est déjà activé.
   rappels?: string[]
+  // Un Rosaire commencé (src/chapelet/reprise.ts), pour reprendre en chemin.
+  rosaireEnCours?: Record<string, unknown>
 }
 
 // Prépare la mémoire du téléphone avant le premier chargement de la page.
 export async function preparer(
   page: Page,
-  { aide = false, affichage, reglages = {}, lectures, rappels }: Ouverture = {},
+  { aide = false, affichage, reglages = {}, lectures, rappels, rosaireEnCours }: Ouverture = {},
 ) {
   const tous = affichage ? { ...reglages, affichage } : reglages
   await page.addInitScript(
-    ({ aide, tous, lectures, rappels }) => {
+    ({ aide, tous, lectures, rappels, rosaireEnCours }) => {
       // Seulement au premier chargement : un rechargement garde ce que l'app a retenu.
       if (sessionStorage.getItem('parcours-prepare')) return
       sessionStorage.setItem('parcours-prepare', 'oui')
@@ -114,8 +116,10 @@ export async function preparer(
           'avec-dieu.rappels',
           JSON.stringify(Object.fromEntries(rappels.map((priere) => [priere, { actif: true }]))),
         )
+      if (rosaireEnCours)
+        localStorage.setItem('avec-dieu.rosaire-en-cours', JSON.stringify(rosaireEnCours))
     },
-    { aide, tous, lectures, rappels },
+    { aide, tous, lectures, rappels, rosaireEnCours },
   )
 }
 
@@ -124,6 +128,16 @@ export async function commencer(page: Page, chemin = '/chapelet', ouverture: Ouv
   await preparer(page, ouverture)
   await page.goto(chemin)
   await page.getByRole('button', { name: 'Commencer le chapelet' }).click()
+  await expect(page.getByTestId('priere').getByRole('heading', { level: 2 })).toHaveText(
+    'Signe de croix',
+  )
+}
+
+// Ouvre le seuil du Rosaire puis le commence.
+export async function commencerRosaire(page: Page, ouverture: Ouverture = {}) {
+  await preparer(page, ouverture)
+  await page.goto('/rosaire')
+  await page.getByRole('button', { name: 'Commencer le Rosaire' }).click()
   await expect(page.getByTestId('priere').getByRole('heading', { level: 2 })).toHaveText(
     'Signe de croix',
   )

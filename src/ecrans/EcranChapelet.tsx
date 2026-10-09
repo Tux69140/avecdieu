@@ -4,9 +4,10 @@ import { usePincement } from '../affichage/usePincement'
 import { AideGestes } from '../chapelet/AideGestes'
 import { Annonce } from '../chapelet/Annonce'
 import { ChapeletDessine } from '../chapelet/ChapeletDessine'
-import { CHAPELET_MARIAL } from '../chapelet/definition'
-import { derouler, type Pas } from '../chapelet/deroule'
+import { CHAPELET_MARIAL, ROSAIRE } from '../chapelet/definition'
+import { derouler, serieAtteinte, type Pas } from '../chapelet/deroule'
 import { disposer } from '../chapelet/disposition'
+import { passageDeSerie, repereSerie } from '../chapelet/libelles'
 import { aideAMontrer, compterLecture, lireLectures } from '../chapelet/memoire'
 import { avancer, classerGeste, reculer } from '../chapelet/navigation'
 import { MystereEnCours } from '../chapelet/MystereEnCours'
@@ -28,7 +29,7 @@ import { useSuiteCachee } from '../composants/suiteCachee'
 import { dateDuJour, dateLisible } from '../office/dates'
 import { Repere } from '../office/Repere'
 import { SERIES, type SerieId } from '../recueil/mysteres'
-import { PASSAGES } from '../recueil/passages'
+import { PASSAGES, type Passage } from '../recueil/passages'
 import type { PriereId } from '../recueil/prieres'
 import { retirerNotification } from '../telephone/notifications'
 import { garderEcranAllume, vibrer } from '../telephone/retours'
@@ -72,22 +73,33 @@ export function EcranChapelet({ forme = 'chapelet' }: { forme?: Forme }) {
   const [aujourdhui] = useState(() => new Date())
   const duJour = serieDuJour(aujourdhui)
   const prier = (state as { prier?: boolean } | null)?.prier === true
-  const enCours = lireEnCours(aujourdhui)
-  // Le chapelet ouvert, son rappel n'a plus à rester affiché.
-  useEffect(() => void retirerNotification('/chapelet'), [])
+  const enCours = lireEnCours(aujourdhui, forme)
+  // Le chapelet ouvert, son rappel n'a plus à rester affiché, qu'il ait
+  // annoncé le chapelet ou le Rosaire.
+  useEffect(() => {
+    void retirerNotification('/chapelet')
+    void retirerNotification('/rosaire')
+  }, [])
+  const commencer = () => naviguer(pathname, { state: { prier: true } })
+  const recommencer = () => {
+    effacerEnCours(forme)
+    commencer()
+  }
 
-  // Le seuil du Rosaire ; son déroulé viendra une fois la maquette validée.
+  // Le Rosaire : les quatre séries à la suite, de la joyeuse à la glorieuse.
   if (forme === 'rosaire')
-    return (
+    return prier ? (
+      <Chapelet key="rosaire" forme="rosaire" serie={duJour} date={aujourdhui} />
+    ) : (
       <Seuil
         key="rosaire"
         forme="rosaire"
         serie={duJour}
         duJour={duJour}
         date={aujourdhui}
-        enCours={null}
-        onCommencer={() => undefined}
-        onRecommencer={() => undefined}
+        enCours={enCours}
+        onCommencer={commencer}
+        onRecommencer={recommencer}
       />
     )
   if (serieChoisie !== undefined && !estSerie(serieChoisie))
@@ -97,7 +109,6 @@ export function EcranChapelet({ forme = 'chapelet' }: { forme?: Forme }) {
   if (serieChoisie === undefined && !prier && lireReglages().forme === 'rosaire')
     return <Navigate to="/rosaire" replace />
   const serie = serieChoisie ?? duJour
-  const commencer = () => naviguer(pathname, { state: { prier: true } })
   if (!prier)
     return (
       <Seuil
@@ -108,37 +119,45 @@ export function EcranChapelet({ forme = 'chapelet' }: { forme?: Forme }) {
         date={aujourdhui}
         enCours={enCours?.serie === serie ? enCours : null}
         onCommencer={commencer}
-        onRecommencer={() => {
-          effacerEnCours()
-          commencer()
-        }}
+        onRecommencer={recommencer}
       />
     )
-  return <Chapelet key={serie} serie={serie} date={aujourdhui} />
+  return <Chapelet key={serie} forme="chapelet" serie={serie} date={aujourdhui} />
 }
 
-function Chapelet({ serie, date }: { serie: SerieId; date: Date }) {
+// Le passage de chaque mystère, choisi une fois pour tout le chapelet (ou
+// tout le Rosaire), par série.
+const choisirPassages = (series: readonly SerieId[]) =>
+  Object.fromEntries(
+    series.map((serie) => [
+      serie,
+      PASSAGES[serie].map(
+        (liste, i) => liste[rangDuPassage(lireLectures(serie, i + 1), liste.length)],
+      ),
+    ]),
+  ) as Partial<Record<SerieId, Passage[]>>
+
+function Chapelet({ forme, serie, date }: { forme: Forme; serie: SerieId; date: Date }) {
   const [reglages] = useState(lireReglages)
   const compact = reglages.affichage === 'compact'
+  const rosaire = forme === 'rosaire'
+  const definition = rosaire ? ROSAIRE : CHAPELET_MARIAL
   // Les Litanies et saint Joseph « en octobre » suivent le jour du chapelet.
   const deroule = useMemo(
-    () => derouler(CHAPELET_MARIAL, optionsDuDeroule(reglages, date)),
-    [reglages, date],
+    () => derouler(definition, optionsDuDeroule(reglages, date)),
+    [definition, reglages, date],
   )
   const plan = useMemo(() => disposer(deroule), [deroule])
-  // Le passage de chaque mystère est choisi une fois pour tout le chapelet.
-  const [passages] = useState(() =>
-    PASSAGES[serie].map(
-      (liste, i) => liste[rangDuPassage(lireLectures(serie, i + 1), liste.length)],
-    ),
-  )
-  // Reprend au grain exact un chapelet de cette série commencé aujourd'hui.
+  const [passages] = useState(() => choisirPassages(definition.series ?? [serie]))
+  // Reprend au grain exact un chapelet de cette série (ou le Rosaire)
+  // commencé aujourd'hui.
   const [index, setIndex] = useState(() => {
-    const enCours = lireEnCours(date)
-    return enCours?.serie === serie ? retrouver(deroule, enCours) : 0
+    const enCours = lireEnCours(date, forme)
+    return enCours && (rosaire || enCours.serie === serie) ? retrouver(deroule, enCours) : 0
   })
   const [aideOuverte, setAideOuverte] = useState(aideAMontrer)
-  const [passageDeplie, setPassageDeplie] = useState<number | null>(null)
+  // Le passage déplié, en compact : celui d'une dizaine, dans sa série.
+  const [passageDeplie, setPassageDeplie] = useState<string | null>(null)
   const debutGeste = useRef<{
     id: number
     x: number
@@ -151,7 +170,7 @@ function Chapelet({ serie, date }: { serie: SerieId; date: Date }) {
   const dernierDefilement = useRef(-Infinity)
   const remiseEnHaut = useRef(false)
   const indexPrecedent = useRef(index)
-  const dizainesLues = useRef(new Set<number>())
+  const dizainesLues = useRef(new Set<string>())
   const { fin, cachee } = useSuiteCachee()
   const pincer = usePincement<HTMLElement>()
   const retour = useRetour()
@@ -162,18 +181,26 @@ function Chapelet({ serie, date }: { serie: SerieId; date: Date }) {
   const pas = termine ? undefined : deroule.pas[index]
   // L'annonce ne s'avance que par la grosse perle.
   const surAnnonce = pas?.priere === 'annonce'
+  // Au Rosaire, la série où l'on en est ; au chapelet, celle du seuil.
+  const serieEnCours = serieAtteinte(deroule, index, serie)
+  const passageDe = (dizaine: number) => passages[serieEnCours]?.[dizaine - 1]
+  const cleDizaine = pas?.dizaine === undefined ? null : `${serieEnCours}-${pas.dizaine}`
+  const nom = rosaire ? 'Rosaire' : 'Chapelet'
 
   useEffect(() => {
     const avant = indexPrecedent.current
     indexPrecedent.current = index
     const vibration = vibrationEntre(deroule, avant, index)
     if (vibration && reglages.vibrations) vibrer(vibration)
-    // Chaque dizaine commencée compte une lecture de son mystère, une fois par chapelet.
-    const dizaine = dizaineCommencee(deroule, avant, index)
-    if (dizaine !== null && !dizainesLues.current.has(dizaine)) {
-      dizainesLues.current.add(dizaine)
-      compterLecture(serie, dizaine)
-    }
+    // Chaque dizaine commencée compte une lecture de son mystère, une fois par
+    // chapelet ; au Rosaire, dans sa série.
+    const commencee = dizaineCommencee(deroule, avant, index)
+    if (commencee === null) return
+    const serieLue = commencee.serie ?? serie
+    const cle = `${serieLue}-${commencee.dizaine}`
+    if (dizainesLues.current.has(cle)) return
+    dizainesLues.current.add(cle)
+    compterLecture(serieLue, commencee.dizaine)
   }, [index, deroule, serie, reglages])
 
   // Chaque prière s'ouvre en haut, comme tout écran : après une annonce qu'on
@@ -197,9 +224,9 @@ function Chapelet({ serie, date }: { serie: SerieId; date: Date }) {
 
   // Retenu à chaque pas, oublié une fois le chapelet terminé.
   useEffect(() => {
-    if (index < deroule.pas.length) retenirEnCours(date, serie, deroule.pas[index])
-    else effacerEnCours()
-  }, [index, deroule, date, serie])
+    if (index < deroule.pas.length) retenirEnCours(date, serieEnCours, deroule.pas[index], forme)
+    else effacerEnCours(forme)
+  }, [index, deroule, date, serieEnCours, forme])
 
   // L'écran reste allumé du signe de croix à la fin du chapelet.
   useEffect(() => (termine ? undefined : garderEcranAllume()), [termine])
@@ -266,13 +293,19 @@ function Chapelet({ serie, date }: { serie: SerieId; date: Date }) {
               l'office (2026-10-08). */}
           <BoutonAide libelle="Aide aux gestes" onClick={() => setAideOuverte(true)} />
         </LigneFermer>
-        <h1>{SERIES[serie].titre}</h1>
+        <h1>{SERIES[serieEnCours].titre}</h1>
+        {/* Au Rosaire, où l'on en est des quatre séries, toujours visible. */}
+        {rosaire && (
+          <p className="repere-serie" data-testid="repere-serie">
+            {repereSerie(serieEnCours)}
+          </p>
+        )}
       </header>
 
       <ChapeletDessine
         plan={plan}
         grainCourant={pas ? pas.grain : plan.points.length}
-        libelle={termine ? 'Chapelet terminé' : `Chapelet, prière ${index + 1} sur ${nombre}`}
+        libelle={termine ? `${nom} terminé` : `${nom}, prière ${index + 1} sur ${nombre}`}
       />
 
       {/* Une seule région annonce chaque prière au lecteur d'écran : une
@@ -280,10 +313,18 @@ function Chapelet({ serie, date }: { serie: SerieId; date: Date }) {
           lu quand il change : en compact, sans écran d'annonce, c'est lui qui
           dit le mystère qui commence. */}
       <div aria-live="polite">
+        {/* Au Rosaire, la série qui commence : une ligne en rouge en tête de
+            l'annonce du premier mystère, ou au-dessus du Notre Père sans
+            annonce à part. */}
+        {pas?.nouvelleSerie && (
+          <p className="passage-serie" data-testid="passage-serie">
+            {passageDeSerie(serieEnCours)}
+          </p>
+        )}
         {/* Sans annonce, rien du mystère : des prières vocales seules. */}
         {pas && estPriere(pas) && pas.dizaine !== undefined && reglages.annonce && (
           <MystereEnCours
-            serie={serie}
+            serie={serieEnCours}
             dizaine={pas.dizaine}
             fruit={compact && pas.priere === 'notre-pere'}
           />
@@ -292,7 +333,11 @@ function Chapelet({ serie, date }: { serie: SerieId; date: Date }) {
           // La fin comme celle de l'office : une perle d'or qui ferme, puis le
           // chemin de l'accueil, sans mot de plus ni « Recommencer » qu'un
           // toucher machinal relancerait (choix du porteur du projet, 2026-10-08).
-          <section className="fin" data-testid="fin-chapelet" aria-label="Fin du chapelet">
+          <section
+            className="fin"
+            data-testid="fin-chapelet"
+            aria-label={rosaire ? 'Fin du Rosaire' : 'Fin du chapelet'}
+          >
             <Repere />
             <button className="lien-discret" type="button" onClick={revenirAccueil}>
               Revenir à l’accueil
@@ -305,18 +350,18 @@ function Chapelet({ serie, date }: { serie: SerieId; date: Date }) {
             compact={compact}
             plusieurs={reglages.plusieurs}
             annonce={reglages.annonce}
-            passage={pas.dizaine ? passages[pas.dizaine - 1] : undefined}
-            passageDeplie={passageDeplie === pas.dizaine}
+            passage={pas.dizaine ? passageDe(pas.dizaine) : undefined}
+            passageDeplie={cleDizaine !== null && passageDeplie === cleDizaine}
             onBasculerPassage={() =>
-              setPassageDeplie((d) => (d === pas.dizaine ? null : (pas.dizaine ?? null)))
+              setPassageDeplie((d) => (d === cleDizaine ? null : cleDizaine))
             }
           />
         ) : (
           <Annonce
             key={index}
-            serie={serie}
+            serie={serieEnCours}
             dizaine={pas.dizaine!}
-            passage={passages[pas.dizaine! - 1]}
+            passage={passageDe(pas.dizaine!)!}
             onCommencer={() => setIndex((i) => avancer(i, nombre))}
           />
         )}
