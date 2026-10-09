@@ -1,3 +1,5 @@
+import type { SerieId } from '../recueil/mysteres'
+import { PASSAGES, type Passage } from '../recueil/passages'
 import type { Deroule, Pas } from './deroule'
 
 // Chaque mystère a plusieurs passages, qui tournent : le même passage revient
@@ -9,6 +11,20 @@ const LECTURES_PAR_PASSAGE = 6
 export function rangDuPassage(lectures: number, nombreDePassages: number): number {
   return Math.floor(lectures / LECTURES_PAR_PASSAGE) % nombreDePassages
 }
+
+// Le passage de chaque mystère, choisi une fois pour tout le chapelet (ou
+// tout le Rosaire), par série, d'après les lectures déjà faites de chaque
+// mystère (rang de 1 à 5 dans sa série).
+export const choisirPassages = (
+  series: readonly SerieId[],
+  lectures: (serie: SerieId, rang: number) => number,
+) =>
+  Object.fromEntries(
+    series.map((serie) => [
+      serie,
+      PASSAGES[serie].map((liste, i) => liste[rangDuPassage(lectures(serie, i + 1), liste.length)]),
+    ]),
+  ) as Partial<Record<SerieId, Passage[]>>
 
 // Une lecture compte quand on passe la première étape d'une dizaine pour la
 // commencer : l'annonce, ou en mode compact le Notre Père qui la porte. Rend

@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { CHAPELET_MARIAL, ROSAIRE } from './definition'
 import { derouler } from './deroule'
-import { dizaineCommencee, rangDuPassage } from './rotation'
+import { PASSAGES } from '../recueil/passages'
+import type { SerieId } from '../recueil/mysteres'
+import { choisirPassages, dizaineCommencee, rangDuPassage } from './rotation'
 
 describe('rangDuPassage', () => {
   it('garde le même passage pendant 6 lectures, puis passe au suivant', () => {
@@ -60,5 +62,30 @@ describe('dizaineCommencee au Rosaire', () => {
     expect(commencees).toHaveLength(20)
     expect(new Set(commencees).size).toBe(20)
     expect(commencees.slice(5, 7)).toEqual(['lumineux-1', 'lumineux-2'])
+  })
+})
+
+describe('choisirPassages', () => {
+  const jamaisLu = () => 0
+
+  it('prend le premier passage de chaque mystère tant qu’aucun n’a été lu', () => {
+    const passages = choisirPassages(['joyeux'], jamaisLu)
+    expect(Object.keys(passages)).toEqual(['joyeux'])
+    expect(passages.joyeux).toEqual(PASSAGES.joyeux.map((liste) => liste[0]))
+  })
+
+  it('chaque mystère tourne d’après ses propres lectures', () => {
+    const lectures = (serie: SerieId, rang: number) =>
+      serie === 'douloureux' && rang === 2 ? 6 : 0
+    const passages = choisirPassages(['douloureux'], lectures)
+    const attendu = PASSAGES.douloureux[1][rangDuPassage(6, PASSAGES.douloureux[1].length)]
+    expect(passages.douloureux?.[1]).toBe(attendu)
+    expect(passages.douloureux?.[0]).toBe(PASSAGES.douloureux[0][0])
+  })
+
+  it('au Rosaire, choisit pour les quatre séries', () => {
+    const passages = choisirPassages(ROSAIRE.series!, jamaisLu)
+    expect(Object.keys(passages)).toEqual(['joyeux', 'lumineux', 'douloureux', 'glorieux'])
+    expect(Object.values(passages).every((liste) => liste?.length === 5)).toBe(true)
   })
 })
