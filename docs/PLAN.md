@@ -31,7 +31,7 @@ Décisions durables qui s'appliquent à toutes les phases :
 - **Design** : jetons, polices et composants conformes à `docs/DESIGN.md`. Polices auto-hébergées pour fonctionner hors-ligne dès le premier lancement.
 - **Navigation et en-têtes**, décisions du porteur du projet :
   - **Fermer, une croix partout** (2026-10-08) : la même croix fine (sépia, dessin de 18 px, cible de 48 px), en haut à gauche, nommée « Fermer », remplace « ‹ Retour » et le chevron ‹ sur le menu, les réglages, « A propos », le lieu, le seuil du chapelet et l'office (dans l'office, sur la ligne de la date) ; elle fait ce que fait le retour d'Android.
-  - **Chapelet pendant la prière** (2026-10-08) : la même croix, sur la ligne de la date, pendant la prière et sur l'écran de fin ; elle ramène au seuil, comme le retour d'Android, où l'on change de série ou reprend ; la croix du seuil ramène là d'où le chapelet a été ouvert. La progression reste gardée ; un toucher sur la croix ne fait jamais avancer le chapelet.
+  - **Chapelet pendant la prière** (révisé le 2026-10-09) : la même croix, sur la ligne de la date, pendant la prière et sur l'écran de fin ; elle ramène là d'où le seuil a été ouvert (accueil, menu, notification), comme le retour d'Android : le seuil est un écran de passage, il ne reste pas derrière la prière. Rouvrir le chapelet ou le Rosaire repasse par son seuil, qui propose la reprise. La progression reste gardée ; un toucher sur la croix ne fait jamais avancer le chapelet.
   - **Titres centrés sur la ligne de la croix** (2026-10-08) : menu, réglages, « A propos » et lieu ; au seuil et au chapelet, la ligne de la croix porte la date (« Chapelet du jour · jeudi 8 octobre », coupée après le point sur un petit écran) et le titre de la série vient dessous.
   - **Chevrons** (2026-10-08) : › veut toujours dire « ouvre un autre écran » ; une rubrique des réglages qui se déplie sur place porte une flèche vers le bas, retournée vers le haut une fois ouverte.
   - **Menu** (2026-10-08) : le chapelet forme son propre groupe sous les offices, séparé par un filet d'or comme sur l'accueil ; toutes les lignes à 48 px, noms en graisse normale (l'office d'où l'on vient reste marqué) ; à 360 × 780, le menu tient sur un seul écran ; › ne se lit pas dans le nom des lignes.
@@ -421,7 +421,7 @@ Reste à confirmer sur les téléphones : « Me localiser » fonctionne (vérifi
 > **Phases 15 à 17** (décision du porteur du projet, 2026-10-08) : le Rosaire, la clôture enrichie et les durées entrent dans le périmètre **avant la recette**. Elles gardent ces numéros pour ne pas renuméroter la recette et la publication.
 >
 > Décisions durables propres à ces phases :
-> - **Route** `/rosaire` : le Rosaire du jour. Le commutateur du seuil passe de `/chapelet` à `/rosaire` ; l'accueil et le rappel du chapelet ouvrent celle que le choix retenu désigne.
+> - **Route** `/rosaire` : le Rosaire du jour. *Révisé le 2026-10-09 :* deux seuils distincts, `/chapelet` et `/rosaire`, sans commutateur (on a déjà choisi sur l'accueil ou le menu, qui montrent les deux lignes) ; le rappel du chapelet ouvre toujours `/chapelet` (le Rosaire n'a pas d'heure).
 > - **Réglages** : le choix Chapelet / Rosaire (Chapelet au départ) ; une bascule par texte de clôture ; pour les Litanies et saint Joseph, trois valeurs : en octobre, toujours, jamais.
 > - **Chapelet en cours** : retient aussi Chapelet ou Rosaire et la série atteinte ; même règle de reprise (le jour même).
 > - **Durées** : une table fixe, hors du recueil des textes sacrés, pas un calcul.
