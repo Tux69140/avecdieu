@@ -305,7 +305,7 @@ Décisions du porteur du projet (2026-10-07) :
 - **Taille du texte** : 5 crans (16, 18, 20, 22, 24 px ; 18 d'origine), boutons `A−` et `A+` autour de 5 points, avec en exemple le début du Notre Père (`Notre Père, qui es aux cieux, / que ton nom soit sanctifié,`) qui change en direct ; lien `Taille d’origine` seulement hors de 18 ; aide `Dans un office ou au chapelet, pincez ou écartez deux doigts.` Lecteur d'écran : `Réduire le texte`, `Agrandir le texte`, `Taille 2 sur 5`.
 - **Ce qui grandit** : le texte à prier des offices et du chapelet, et à la même échelle ce qui s'y mêle (V/ R/, versets, astérisques, libellés des parties). Titres, accueil, menu et réglages ne changent pas.
 - **Pincement** : il saute de cran en cran, sans aucun repère à l'écran : seul le texte change.
-- **Thème** : `Thème` à trois choix `Automatique | Jour | Nuit`, aide `Automatique : nuit après le coucher du soleil, ou si le téléphone est en mode sombre.` (coucher du soleil du cadran : centre de la France, ou lieu des heures solaires dès qu'il est choisi).
+- **Thème** : `Thème` à trois choix `Automatique | Jour | Nuit`, sans aide depuis le 2026-10-09 (coucher du soleil du cadran : centre de la France, ou lieu des heures solaires dès qu'il est choisi).
 
 ### Critères d'acceptation
 
@@ -398,7 +398,7 @@ Décisions du porteur du projet (2026-10-07, cadrage en cours) :
   - `⚠ Aucune ville de ce nom dans la liste. Essayez une ville voisine de plus de 15 000 habitants, ou « Me localiser ».` ;
   - `⚠ Android refuse l’accès à la position. Cherchez plutôt une ville, ou autorisez la position dans les Paramètres du téléphone.` / `Ouvrir les Paramètres du téléphone` ;
   - `⚠ La position n’a pas pu être trouvée. Vérifiez que la localisation du téléphone est allumée, ou cherchez une ville.`
-- **Voyage** : sur l'écran du lieu, `Actualiser à chaque ouverture` (désactivé d'origine), aide `A plus de 50 km du lieu enregistré, l’app recalcule les heures. La position reste sur le téléphone.` Le recalcul est silencieux : seule la ligne `Lieu :` change.
+- **Voyage** : sur l'écran du lieu, `Actualiser à chaque ouverture` (désactivé d'origine), aide `Au-delà de 50 km, l’app recalcule les heures.` Le recalcul est silencieux : seule la ligne `Lieu :` change.
 - **Cadran solaire** : arc doré du lever au coucher, prolongé en pointillés aux deux bouts pour les offices de la nuit (complies au bout). Repères `LEVER 7 H 52` · `MIDI` · `COUCHER 18 H 40`.
 - **A propos**, nouvelle rubrique `Heures solaires` : `Liste des villes de plus de 15 000 habitants : GeoNames (CC BY 4.0). Lever et coucher du soleil calculés sur le téléphone.`
 

@@ -1,4 +1,4 @@
-# Mettre Avec Dieu sur le téléphone
+n# Mettre Avec Dieu sur le téléphone
 
 Une page pour le porteur du projet. Les commandes se tapent dans un terminal ouvert dans le
 dossier `Avec_Dieu/`.

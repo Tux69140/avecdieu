@@ -52,7 +52,7 @@ export function EcranReglagesOffices() {
         />
         <Interrupteur
           libelle="Aide à la lecture"
-          aide="A l’ouverture d’un office, rappelle ce que veulent dire les perles et les signes."
+          aide="Sens des perles et signes."
           actif={aideOffice}
           onBasculer={(actif) => {
             if (actif) montrerAideOffice()

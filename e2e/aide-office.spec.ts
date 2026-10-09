@@ -81,6 +81,7 @@ test('« Lire un office » s’ouvre à l’office, et « Ne plus afficher » l�
   // Le réglage la rétablit.
   await page.goto('/reglages/offices')
   const reglage = page.getByRole('switch', { name: 'Aide à la lecture' })
+  await expect(reglage).toHaveAccessibleDescription('Sens des perles et signes.')
   await expect(reglage).toHaveAttribute('aria-checked', 'false')
   await reglage.click()
   await page.goto('/office/vepres/2026-10-06')

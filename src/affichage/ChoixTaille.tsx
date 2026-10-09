@@ -58,7 +58,7 @@ export function ChoixTaille({ taille, onChoisir, titre }: Props) {
           Taille d’origine
         </button>
       )}
-      <p className="choix-aide">Dans un office ou au chapelet, pincez ou écartez deux doigts.</p>
+      <p className="choix-aide">Dans l’Office ou Chapelet, pincez ou écartez les doigts.</p>
     </div>
   )
 }

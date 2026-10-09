@@ -161,6 +161,9 @@ test('« Me localiser » : la position du téléphone, nommée d’après la vil
   await expect(page).not.toHaveURL(/\/lieu$/)
   await page.goto('/lieu')
   await expect(page.getByTestId('lieu-actuel')).toHaveText(/^Lieu actuel : Près de \S/)
+  await expect(
+    page.getByRole('switch', { name: 'Actualiser à chaque ouverture' }),
+  ).toHaveAccessibleDescription('Au-delà de 50 km, l’app recalcule les heures.')
 })
 
 test('position refusée par Android : le message et le chemin vers ses réglages', async ({

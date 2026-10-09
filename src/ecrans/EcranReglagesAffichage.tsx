@@ -33,9 +33,6 @@ export function EcranReglagesAffichage() {
         valeur={reglages.theme}
         onChoisir={(theme) => modifier({ theme })}
       />
-      <p className="choix-aide">
-        Automatique : nuit après le coucher du soleil, ou si le téléphone est en mode sombre.
-      </p>
     </PageReglages>
   )
 }

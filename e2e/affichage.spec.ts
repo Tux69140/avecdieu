@@ -142,6 +142,12 @@ test.describe('taille du texte', () => {
   }) => {
     await preparer(page)
     await page.goto('/reglages/affichage')
+    // Aides retouchées par le porteur du projet (2026-10-09) : celle du thème
+    // retirée.
+    await expect(
+      page.getByText('Dans l’Office ou Chapelet, pincez ou écartez les doigts.'),
+    ).toBeVisible()
+    await expect(page.getByText(/^Automatique :/)).toHaveCount(0)
     const reduire = page.getByRole('button', { name: 'Réduire le texte' })
     const agrandir = page.getByRole('button', { name: 'Agrandir le texte' })
     await expect(page.getByRole('img', { name: 'Taille 2 sur 5' })).toBeVisible()
