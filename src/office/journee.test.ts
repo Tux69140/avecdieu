@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { deplacerInvitatoire, ouvrirOffice } from './journee'
+import { deplacerInvitatoire, ouvrirOffice, peutRecevoirInvitatoire } from './journee'
 
 describe('R1 : l’office qui ouvre la journée', () => {
   beforeEach(() => localStorage.clear())
@@ -46,5 +46,24 @@ describe('R1 : l’office qui ouvre la journée', () => {
     for (let jour = 10; jour <= 25; jour++) ouvrirOffice('laudes', `2026-10-${jour}`)
     expect(ouvrirOffice('lectures', '2026-10-01')).toBe(true)
     expect(ouvrirOffice('laudes', '2026-10-01')).toBe(false)
+  })
+})
+
+describe('le lien « Le dire ici »', () => {
+  it('offert aux laudes et à l’office des lectures quand l’autre porte l’invitatoire', () => {
+    expect(peutRecevoirInvitatoire('laudes', { premier: false, invitatoire: true })).toBe(true)
+    expect(peutRecevoirInvitatoire('lectures', { premier: false, invitatoire: true })).toBe(true)
+  })
+
+  it('pas à l’office qui le porte déjà', () => {
+    expect(peutRecevoirInvitatoire('laudes', { premier: true, invitatoire: true })).toBe(false)
+  })
+
+  it('pas sans invitatoire à dire (laudes introuvables)', () => {
+    expect(peutRecevoirInvitatoire('lectures', { premier: false, invitatoire: false })).toBe(false)
+  })
+
+  it('jamais aux autres offices', () => {
+    expect(peutRecevoirInvitatoire('vepres', { premier: false, invitatoire: true })).toBe(false)
   })
 })

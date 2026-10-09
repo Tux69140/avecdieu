@@ -38,3 +38,11 @@ export function ouvrirOffice(nom: NomOffice, date: string): boolean {
 export function deplacerInvitatoire(nom: NomOffice, date: string) {
   if (ouvreLaJournee(nom)) retenir(date, nom)
 }
+
+// Le lien « Le dire ici » : offert à l'office qui pourrait ouvrir la journée
+// quand l'autre porte l'invitatoire, et seulement s'il y a un invitatoire à
+// dire (sans les laudes, l'office des lectures n'en a pas).
+export const peutRecevoirInvitatoire = (
+  nom: NomOffice,
+  { premier, invitatoire }: { premier: boolean; invitatoire: boolean },
+) => ouvreLaJournee(nom) && !premier && invitatoire
