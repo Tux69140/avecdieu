@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Raccourci « Prière du moment » : le soleil du cadran. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path android:fillColor="#EBE0CB" android:pathData="M0.00,24.00a24.00,24.00 0 1,0 48.00,0a24.00,24.00 0 1,0 -48.00,0Z" />
+    <path android:fillColor="#C8962E" android:pathData="M17.50,24.00a6.50,6.50 0 1,0 13.00,0a6.50,6.50 0 1,0 -13.00,0ZM22.90,15.00L25.10,15.00L24.55,10.00L23.45,10.00ZM29.59,16.86L31.14,18.41L34.29,14.49L33.51,13.71ZM33.00,22.90L33.00,25.10L38.00,24.55L38.00,23.45ZM31.14,29.59L29.59,31.14L33.51,34.29L34.29,33.51ZM25.10,33.00L22.90,33.00L23.45,38.00L24.55,38.00ZM18.41,31.14L16.86,29.59L13.71,33.51L14.49,34.29ZM15.00,25.10L15.00,22.90L10.00,23.45L10.00,24.55ZM16.86,18.41L18.41,16.86L14.49,13.71L13.71,14.49Z" />
+</vector>

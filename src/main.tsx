@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router'
 import { entretenirReserve } from './aelf/reserve'
 import { suivreApparence } from './affichage/apparence'
+import { ouvrirLesRaccourcis } from './telephone/raccourcis'
 import { retenirDefilement } from './composants/defilement'
 import { Racine } from './composants/Racine'
 import { EcranAccueil } from './ecrans/EcranAccueil'
@@ -75,6 +76,8 @@ entretenirReserve()
 // mois à venir sont refaits à chaque ouverture (phase 11).
 ouvrirLesNotifications((route) => routeur.navigate(route))
 entretenirRappels()
+// Un raccourci de l'icône de l'app ouvre son écran (appui long sur l'icône).
+ouvrirLesRaccourcis((route) => routeur.navigate(route))
 // En voyage, avec l'option, le lieu des heures solaires suit le téléphone (phase 12).
 suivreLesVoyages()
 

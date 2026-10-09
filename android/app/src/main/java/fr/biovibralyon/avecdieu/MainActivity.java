@@ -12,5 +12,6 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(Sonnerie.class);
         registerPlugin(Position.class);
         super.onCreate(savedInstanceState);
+        Raccourcis.publier(this);
     }
 }
