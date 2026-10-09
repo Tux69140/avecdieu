@@ -44,12 +44,12 @@ Les règles détaillées vivent dans `.claude/rules/` :
 - `src/accueil/` : l'accueil « Aujourd'hui » : cadran (géométrie, soleil ou lune), bandeau du jour tiré de l'AELF, prière du moment (`moment.ts` : une prière, chapelet compris, est « du moment » de 30 minutes avant son heure à une heure après).
 - `src/lieu/` : le lieu des heures solaires (phase 12) : ville de la liste embarquée `public/villes.tsv` (GeoNames, villes de plus de 15 000 habitants, refaite par `scripts/generer-villes.mjs`) ou position du GPS, et le recalcul en voyage au-delà de 50 km. Les heures temporaires se calculent dans `src/office/heuresSolaires.ts`, leurs réglages vivent dans `src/rappels/solaire.ts`.
 - `src/affichage/` : thème jour ou nuit (automatique : mode sombre d'Android ou soleil couché), taille du texte à prier (réglée ou pincée), posés sur la page par `apparence.ts`.
-- `src/composants/` : composants partagés entre écrans (croix qui ferme et sa ligne de titre, signal « Plus bas », rubrique en accordéon, bascule, style des fenêtres de dialogue).
+- `src/composants/` : composants partagés entre écrans (croix qui ferme et sa ligne de titre, ☰ et flèche vers le bas, signal « Plus bas », rubrique en accordéon, bascule, interrupteur, fenêtre d'aide et ouverture des fenêtres modales, fin d'une prière, heure et durée d'une prière, lien discret à chevron, style des fenêtres de dialogue).
 - `src/reglages/` : les réglages communs au chapelet et aux offices (`reglages.ts`), la mémoire du téléphone et ses utilitaires (`stockage.ts`, toutes les clés sous `avec-dieu.`), la page de réglages commune, et la réinitialisation de l'app (tout est effacé sauf les textes AELF enregistrés de la zone France, rappels annulés).
 - `src/ecrans/` : un écran par route ; routes déclarées dans `src/main.tsx`.
 - `src/telephone/` : ce qui passe par les greffons Capacitor (vibrations, écran allumé, notifications, sonnerie) et la position (géolocalisation de la WebView, autorisation approximative) ; dans le navigateur, ils retombent sur les API web, espionnées par `e2e/telephone.spec.ts`.
 - `android/` : projet Android généré par Capacitor puis retouché (icône, démarrage, signature, sauvegarde Google coupée) ; empreinte de la clé épinglée dans `android/empreinte-cle.txt`.
-- `src/styles/jetons.css` : jetons de `docs/DESIGN.md` et polices auto-hébergées (paquets `@fontsource`).
+- `src/styles/jetons.css` : jetons de `docs/DESIGN.md`, polices auto-hébergées (paquets `@fontsource`) et base de la page ; `communs.css` : classes communes (boutons, liens discrets, icônes, petit titre, chevron d'or, aide d'un choix) ; `perle-liturgique.css` : la perle de la couleur du jour.
 - `e2e/` : parcours Playwright, un par phase au moins.
 - `scripts/` : contrôles lancés par les commandes ci-dessus.
 
