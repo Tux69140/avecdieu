@@ -100,10 +100,11 @@ test('à plusieurs : la réponse des Litanies en demi-gras, l’Amen de l’orai
   await expect(titre(page)).toHaveText('Litanies de la Sainte Vierge')
   const invocations = page.getByTestId('invocation')
   await expect(invocations).toHaveCount(66)
-  // L'invocation en graisse normale, la réponse, écrite quand elle change, en demi-gras.
+  // L'invocation en graisse normale (un peu allégée la nuit), la réponse,
+  // écrite quand elle change, en demi-gras.
   const sainteMarie = invocations.filter({ hasText: /^Sainte Marie,/ })
   await expect(sainteMarie).toHaveText('Sainte Marie, — priez pour nous.')
-  await expect(sainteMarie).toHaveCSS('font-weight', '400')
+  await expect(sainteMarie).toHaveCSS('font-weight', /^(400|380)$/)
   await expect(sainteMarie.locator('.reponse')).toHaveCSS('font-weight', '600')
   await expect(invocations.filter({ hasText: /^Mère du Christ,$/ })).toHaveCount(1)
 
