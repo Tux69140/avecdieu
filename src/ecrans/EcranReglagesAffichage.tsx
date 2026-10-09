@@ -1,7 +1,7 @@
 import { ChoixTaille } from '../affichage/ChoixTaille'
-import type { Theme } from '../chapelet/reglages'
 import { Bascule } from '../composants/Bascule'
 import { PageReglages } from '../reglages/PageReglages'
+import type { Theme } from '../reglages/reglages'
 import { useReglages } from '../reglages/useReglages'
 
 const THEMES = [

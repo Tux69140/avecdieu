@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type RefObject } from 'react'
-import { REGLAGES_CHANGES } from '../chapelet/reglages'
+import { REGLAGES_CHANGES } from '../reglages/reglages'
 import { suivreBarre, type Barre } from './barre'
 import { etapeALaLigne, ligneDeLecture } from './reperage'
 

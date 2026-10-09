@@ -1,6 +1,6 @@
-import { lireReglages, REGLAGES_CHANGES, type Reglages, type Theme } from '../chapelet/reglages'
 import { lieuDuSoleil, LIEU_CHANGE } from '../lieu/lieu'
 import { CENTRE_FRANCE, leverEtCoucher, type Lieu } from '../office/soleil'
+import { lireReglages, REGLAGES_CHANGES, type Reglages, type Theme } from '../reglages/reglages'
 import { accorderLesBarres } from '../telephone/barres'
 
 // Le thème et la taille du texte à prier, posés sur la page entière : les

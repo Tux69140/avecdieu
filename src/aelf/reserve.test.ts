@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { lireReglages } from '../reglages/reglages'
 import { contient, enregistrer, etendue, RESSOURCES } from './cache'
-import { lireReglages } from '../chapelet/reglages'
 import { changerDeZone, completerReserve, entretenirReserve, joursAGarder } from './reserve'
 
 // L'AELF simulée : chaque ressource rend la réponse enregistrée du 6 octobre,

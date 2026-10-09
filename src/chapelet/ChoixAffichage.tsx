@@ -1,5 +1,5 @@
 import { Bascule } from '../composants/Bascule'
-import type { Affichage } from './reglages'
+import type { Affichage } from '../reglages/reglages'
 
 interface Props {
   affichage: Affichage

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { lireReglages, modifierReglages, TAILLES } from '../chapelet/reglages'
+import { lireReglages, modifierReglages, TAILLES } from '../reglages/reglages'
 import { creerPincement } from './pincement'
 
 // Dans un office ou au chapelet, pincer ou écarter deux doigts règle la taille

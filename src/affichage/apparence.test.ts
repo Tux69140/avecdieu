@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { modifierReglages } from '../chapelet/reglages'
+import { modifierReglages } from '../reglages/reglages'
 import { appliquerApparence, estNuit, suivreApparence } from './apparence'
 
 // Le 6 octobre 2026 au centre de la France : lever vers 8 h, coucher vers 19 h 20.

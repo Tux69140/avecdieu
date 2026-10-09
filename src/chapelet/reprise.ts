@@ -1,10 +1,9 @@
 import { dateDuJour } from '../office/dates'
 import { SERIES, type SerieId } from '../recueil/mysteres'
-import { CHAPELET_MARIAL, type Moment } from './definition'
+import { effacer, ecrire, lireObjet } from '../reglages/stockage'
+import { CHAPELET_MARIAL, type Forme, type Moment } from './definition'
 import type { Deroule, Pas } from './deroule'
 import { rangDeSerie } from './libelles'
-import type { Forme } from './reglages'
-import { effacer, ecrire, lireObjet } from './stockage'
 
 // Le chapelet en cours, pour reprendre au grain exact après une interruption
 // (appel, changement d'app). Il ne vaut que pour le jour où il a été commencé :

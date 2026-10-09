@@ -1,5 +1,5 @@
-import { TAILLES, type TailleTexte } from '../chapelet/reglages'
 import { PRIERES } from '../recueil/prieres'
+import { TAILLES, type TailleTexte } from '../reglages/reglages'
 import './ChoixTaille.css'
 
 interface Props {

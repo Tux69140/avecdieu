@@ -1,5 +1,5 @@
 import type { SerieId } from '../recueil/mysteres'
-import { effacer, ecrire, lire, lireObjet } from './stockage'
+import { effacer, ecrire, lire, lireObjet } from '../reglages/stockage'
 
 // Ce que l'app retient d'un chapelet à l'autre, en dehors des réglages :
 // les lectures de chaque mystère et l'aide aux gestes.

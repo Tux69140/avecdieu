@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
+import { modifierReglages } from '../reglages/reglages'
 import {
   ABSENT,
   contient,
@@ -9,7 +10,6 @@ import {
   oublierTout,
   RESSOURCES,
 } from './cache'
-import { modifierReglages } from '../chapelet/reglages'
 
 beforeEach(() => localStorage.clear())
 

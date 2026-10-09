@@ -1,6 +1,6 @@
 import { useId } from 'react'
 import { Bascule } from '../composants/Bascule'
-import type { Frequence } from './reglages'
+import type { Frequence } from '../reglages/reglages'
 import './ChoixFrequence.css'
 
 interface Props {

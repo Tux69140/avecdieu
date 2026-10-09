@@ -1,5 +1,5 @@
-import { lireReglages, REGLAGES_PAR_DEFAUT } from '../chapelet/reglages'
 import { reprogrammer } from '../rappels/entretien'
+import { lireReglages, REGLAGES_PAR_DEFAUT } from './reglages'
 
 // L'app revient comme au premier lancement : tout ce qu'elle a retenu est
 // effacé, sauf les textes déjà enregistrés de la zone d'origine, que la

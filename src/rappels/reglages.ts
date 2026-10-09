@@ -1,6 +1,6 @@
-import { ecrire, lireObjet } from '../chapelet/stockage'
 import type { Heure } from '../office/heures'
 import { OFFICES, type NomOffice } from '../office/modele'
+import { ecrire, lireObjet } from '../reglages/stockage'
 
 // Les rappels du priant (phase 11) : pour chaque office et pour le chapelet,
 // s'il est rappelé, à quelle heure, avec quel son. Décisions du porteur du

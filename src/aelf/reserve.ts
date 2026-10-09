@@ -1,5 +1,5 @@
-import { lireReglages, modifierReglages, type Reglages } from '../chapelet/reglages'
 import { dateDuJour, decaler } from '../office/dates'
+import { lireReglages, modifierReglages, type Reglages } from '../reglages/reglages'
 import { chargerJour, chargerOffice, ErreurAelf } from './api'
 import { contient, effacerAvant, etendue, oublierTout, RESSOURCES, type Ressource } from './cache'
 import type { Zone } from './zones'

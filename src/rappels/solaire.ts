@@ -1,4 +1,3 @@
-import { ecrire, lireObjet } from '../chapelet/stockage'
 import type { Heure } from '../office/heures'
 import {
   DECALAGE_MAX,
@@ -9,6 +8,7 @@ import {
   type OfficeSolaire,
   type ReglagesSolaires,
 } from '../office/heuresSolaires'
+import { ecrire, lireObjet } from '../reglages/stockage'
 import { RAPPELS_CHANGES } from './reglages'
 
 // Le choix « Fixes | Solaires » et les réglages des heures solaires, à part

@@ -1,7 +1,7 @@
 import { Interrupteur } from '../composants/Interrupteur'
+import type { Reglages } from '../reglages/reglages'
 import { ChoixFrequence } from './ChoixFrequence'
 import { PRIERE_SAINT_PERE } from './libelles'
-import type { Reglages } from './reglages'
 
 interface Props {
   reglages: Reglages

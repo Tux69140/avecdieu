@@ -1,4 +1,4 @@
-import { ecrire, lireObjet } from '../chapelet/stockage'
+import { ecrire, lireObjet } from '../reglages/stockage'
 import type { NomOffice } from './modele'
 
 // R1 : l'invitatoire ouvre la journée de prière, en tête du premier des deux

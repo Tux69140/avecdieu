@@ -1,5 +1,5 @@
-import { ecrire, lireObjet } from '../chapelet/stockage'
 import { CENTRE_FRANCE, type Lieu } from '../office/soleil'
+import { ecrire, lireObjet } from '../reglages/stockage'
 
 // Le lieu des heures solaires (phase 12), saisi une fois : une ville de la
 // liste embarquée, ou la position du GPS rattachée à la ville la plus proche.

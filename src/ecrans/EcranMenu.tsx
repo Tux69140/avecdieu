@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
-import { lireReglages } from '../chapelet/reglages'
 import { Duree } from '../composants/Duree'
 import { HeureApprochee } from '../composants/HeureApprochee'
 import { LigneFermer } from '../composants/LigneFermer'
@@ -17,6 +16,7 @@ import {
   PRIERES_SEULES,
   type PriereSeuleId,
 } from '../prieres/seules'
+import { lireReglages } from '../reglages/reglages'
 import './EcranMenu.css'
 
 // Une prière seule : sa page remplace le menu, comme les autres écrans.

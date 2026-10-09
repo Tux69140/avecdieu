@@ -1,5 +1,4 @@
 import { estZone, type Zone } from '../aelf/zones'
-import type { Options } from './deroule'
 import { ecrire, lire, lireObjet } from './stockage'
 
 export type Affichage = 'complet' | 'compact'
@@ -16,11 +15,6 @@ const THEMES: readonly Theme[] = ['automatique', 'jour', 'nuit']
 // Rosaire, ou toujours, ou jamais (décision du porteur du projet, 2026-10-08).
 export type Frequence = 'octobre' | 'toujours' | 'jamais'
 const FREQUENCES: readonly Frequence[] = ['octobre', 'toujours', 'jamais']
-
-// Cinq dizaines, ou les vingt à la suite : chacun son seuil, /chapelet ou
-// /rosaire (deux seuils distincts, révisé le 2026-10-09). Ce n'est plus un
-// réglage : un ancien choix « forme » enregistré est ignoré.
-export type Forme = 'chapelet' | 'rosaire'
 
 // Un seul enregistrement pour tous les réglages, ceux du chapelet et ceux des
 // offices.
@@ -144,25 +138,4 @@ export function modifierReglages(changement: Partial<Reglages>): Reglages {
   ecrire(CLE, JSON.stringify(reglages))
   window.dispatchEvent(new Event(REGLAGES_CHANGES))
   return reglages
-}
-
-// « En octobre » : du 1er au 31 octobre, selon la date du téléphone le jour du
-// chapelet.
-const ditCeJour = (frequence: Frequence, jour: Date) =>
-  frequence === 'toujours' || (frequence === 'octobre' && jour.getMonth() === 9)
-
-// En mode compact, l'annonce n'a pas d'écran à part : le Notre Père la porte.
-export function optionsDuDeroule(reglages: Reglages, jour: Date): Options {
-  return {
-    annonce: reglages.annonce && reglages.affichage === 'complet',
-    oMonJesus: reglages.oMonJesus,
-    intentions: reglages.intentions,
-    saintPere: reglages.saintPere,
-    salveRegina: reglages.salveRegina,
-    litanies: ditCeJour(reglages.litanies, jour),
-    oraisonRosaire: reglages.oraisonRosaire,
-    sousLAbri: reglages.sousLAbri,
-    saintJoseph: ditCeJour(reglages.saintJoseph, jour),
-    essentiel: reglages.essentiel,
-  }
 }

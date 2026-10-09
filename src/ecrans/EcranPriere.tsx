@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Navigate, useParams } from 'react-router'
 import { usePincement } from '../affichage/usePincement'
-import { lireReglages } from '../chapelet/reglages'
 import { TextePriere } from '../chapelet/TextePriere'
 import { avecExposants } from '../composants/Exposants'
 import { IndiceSuite } from '../composants/IndiceSuite'
@@ -11,6 +10,7 @@ import { useSuiteCachee } from '../composants/suiteCachee'
 import { dateDuJour, dateLisible } from '../office/dates'
 import { Repere } from '../office/Repere'
 import { estPriereSeule, PRIERES_SEULES } from '../prieres/seules'
+import { lireReglages } from '../reglages/reglages'
 import './EcranPriere.css'
 
 // Une prière seule, ouverte par le menu : comme une prière du chapelet, sans

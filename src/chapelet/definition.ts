@@ -2,6 +2,11 @@ import type { SerieId } from '../recueil/mysteres'
 import { INTENTIONS, type PriereId } from '../recueil/prieres'
 import { AUX_INTENTIONS_DU_SAINT_PERE } from './intentionsDuPape'
 
+// Cinq dizaines, ou les vingt à la suite : chacun son seuil, /chapelet ou
+// /rosaire (deux seuils distincts, révisé le 2026-10-09). Ce n'est plus un
+// réglage : un ancien choix « forme » enregistré est ignoré.
+export type Forme = 'chapelet' | 'rosaire'
+
 // Ce qui porte la prière sur le chapelet : la croix, un gros ou un petit grain,
 // un nœud du fil entre deux grains (le Gloire au Père se dit sur le fil), ou
 // la médaille qui ferme la boucle.

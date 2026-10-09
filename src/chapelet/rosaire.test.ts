@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
+import { REGLAGES_PAR_DEFAUT } from '../reglages/reglages'
 import { CHAPELET_MARIAL, ROSAIRE } from './definition'
 import { derouler, serieAtteinte } from './deroule'
-import { optionsDuDeroule, REGLAGES_PAR_DEFAUT } from './reglages'
+import { optionsDuDeroule } from './options'
 
 // Phase 17, critère de succès 9 : l'ouverture une fois, les vingt dizaines
 // de la série joyeuse à la glorieuse, trois passages de série, la clôture une

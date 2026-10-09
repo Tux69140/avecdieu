@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { lireReglages, modifierReglages, type Reglages } from '../chapelet/reglages'
+import { lireReglages, modifierReglages, type Reglages } from './reglages'
 
 // Les réglages retenus sur le téléphone, relus à l'ouverture de chaque page
 // et enregistrés à chaque changement.

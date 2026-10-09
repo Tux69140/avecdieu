@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { modifierReglages } from '../chapelet/reglages'
+import { modifierReglages } from '../reglages/reglages'
 import { chargerJour, chargerOffice, ErreurAelf } from './api'
 
 const laudes = readFileSync('src/aelf/exemples/laudes-2026-10-06.json', 'utf8')

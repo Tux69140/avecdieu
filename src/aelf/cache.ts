@@ -1,7 +1,7 @@
-import { lireReglages } from '../chapelet/reglages'
-import { effacer, ecrire, lire } from '../chapelet/stockage'
 import { decaler } from '../office/dates'
 import { OFFICES, type NomOffice } from '../office/modele'
+import { lireReglages } from '../reglages/reglages'
+import { effacer, ecrire, lire } from '../reglages/stockage'
 
 // Les réponses de l'AELF, gardées telles quelles dans la mémoire du téléphone :
 // relues par le module frontière, elles profitent de chaque correction de sa

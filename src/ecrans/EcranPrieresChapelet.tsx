@@ -1,10 +1,10 @@
 import { useLocation } from 'react-router'
 import { ESSENTIEL } from '../chapelet/libelles'
-import type { Reglages } from '../chapelet/reglages'
 import { ReglagesCloture } from '../chapelet/ReglagesCloture'
 import { Interrupteur } from '../composants/Interrupteur'
 import type { DepuisParente } from '../composants/retour'
 import { PageReglages } from '../reglages/PageReglages'
+import type { Reglages } from '../reglages/reglages'
 import { useReglages } from '../reglages/useReglages'
 
 type Bascule = 'annonce' | 'oMonJesus' | 'intentions'

@@ -1,4 +1,4 @@
-import { effacer, ecrire, lire } from '../chapelet/stockage'
+import { effacer, ecrire, lire } from '../reglages/stockage'
 
 // L'aide à la lecture de l'office (« Lire un office ») : elle revient à chaque
 // office tant que « Ne plus afficher » n'est pas coché, ou que le réglage ne

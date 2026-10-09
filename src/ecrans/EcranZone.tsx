@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { changerDeZone, textesEnregistres } from '../aelf/reserve'
 import { ZONES, type Zone } from '../aelf/zones'
-import { lireReglages } from '../chapelet/reglages'
 import { glissement } from '../composants/defilement'
 import { useRemonter } from '../composants/retour'
 import { PageReglages } from '../reglages/PageReglages'
+import { lireReglages } from '../reglages/reglages'
 import './EcranZone.css'
 
 const PARENTE = '/reglages/offices'
