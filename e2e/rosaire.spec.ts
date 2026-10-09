@@ -1,5 +1,13 @@
 import { expect, type Page } from '@playwright/test'
-import { avancer, commencerRosaire, preparer, test } from './outils.ts'
+import {
+  avancer,
+  commencerRosaire,
+  preparer,
+  simulerTelephone,
+  telephone,
+  test,
+  toucherNotification,
+} from './outils.ts'
 
 // Phase 17 : le Rosaire. Ouverture une fois, vingt dizaines de la série
 // joyeuse à la glorieuse, une ligne en rouge à chaque passage de série, un
@@ -204,4 +212,16 @@ test('« Prières du Rosaire » sur le seuil du Rosaire ; « Prières du chapele
   await page.goto('/reglages/chapelet')
   await page.getByRole('link', { name: /^Prières du chapelet/ }).click()
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Prières du chapelet')
+})
+
+test('le Rosaire retenu, le rappel du chapelet l’annonce et l’ouvre', async ({ page }) => {
+  await simulerTelephone(page, { accord: 'granted' })
+  await preparer(page, { reglages: { forme: 'rosaire' }, rappels: ['chapelet'] })
+  await page.goto('/')
+  await expect
+    .poll(async () => (await telephone(page)).programmees[0])
+    .toMatchObject({ titre: 'C’est l’heure du Rosaire', route: '/rosaire' })
+  await toucherNotification(page, '/rosaire')
+  await expect(page).toHaveURL('/rosaire')
+  await expect(page.getByRole('button', { name: 'Commencer le Rosaire' })).toBeVisible()
 })

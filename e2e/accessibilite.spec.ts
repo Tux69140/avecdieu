@@ -5,6 +5,7 @@ import {
   avancer,
   commencer,
   preparer,
+  rosaireAuPassage,
   servirAelf,
   simulerTelephone,
   test,
@@ -105,6 +106,35 @@ test('écran de fin du chapelet', async ({ page }) => {
   await avancer(page, 81)
   await expect(page.getByTestId('fin-chapelet')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Fermer', exact: true })).toBeVisible()
+  expect(await violationsGraves(page)).toEqual([])
+})
+
+// Phase 17 : le passage de série et le repère « Série 2 sur 4 », de jour puis de nuit.
+test('Rosaire, passage de série', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'light' })
+  await rosaireAuPassage(page, '2026-10-05')
+  await expect(page.getByTestId('repere-serie')).toHaveText('Série 2 sur 4')
+  expect(await violationsGraves(page)).toEqual([])
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'nuit')
+  expect(await violationsGraves(page)).toEqual([])
+})
+
+test('écran de fin du Rosaire', async ({ page }) => {
+  await preparer(page, {
+    reglages: { forme: 'rosaire' },
+    rosaireEnCours: {
+      jour: '2026-10-05',
+      forme: 'rosaire',
+      serie: 'glorieux',
+      priere: 'saint-joseph',
+      rang: 1,
+    },
+  })
+  await page.goto('/rosaire')
+  await page.getByRole('button', { name: 'Reprendre le Rosaire' }).click()
+  await avancer(page, 1)
+  await expect(page.getByRole('region', { name: 'Fin du Rosaire' })).toBeVisible()
   expect(await violationsGraves(page)).toEqual([])
 })
 

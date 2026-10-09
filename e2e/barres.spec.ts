@@ -7,6 +7,7 @@ import {
   defilementArrete,
   derniereLigneVisible,
   preparer,
+  rosaireAuPassage,
   servirAelf,
   simulerTelephone,
   test,
@@ -132,6 +133,11 @@ test('chapelet : rien sous les barres d’Android', async ({ page }) => {
   // La croix qui ferme le chapelet se touche sous la barre d'état, pas dedans.
   const croix = page.getByRole('button', { name: 'Fermer', exact: true })
   expect((await croix.boundingBox())!.y).toBeGreaterThanOrEqual(HAUT)
+})
+
+test('Rosaire, passage de série : rien sous les barres d’Android', async ({ page }) => {
+  await rosaireAuPassage(page, '2026-10-05')
+  await verifierBarres(page)
 })
 
 test('office : le bandeau et le sommaire s’écartent des barres d’Android', async ({ page }) => {

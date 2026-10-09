@@ -143,6 +143,31 @@ export async function commencerRosaire(page: Page, ouverture: Ouverture = {}) {
   )
 }
 
+// Reprend un Rosaire à la fin de la première série (le « Ô mon Jésus » de la
+// 5e dizaine), le jour `jour` (AAAA-MM-JJ), puis passe à la série suivante :
+// l'écran porte la ligne du passage de série et le repère « Série 2 sur 4 ».
+export async function rosaireAuPassage(page: Page, jour: string, ouverture: Ouverture = {}) {
+  await preparer(page, {
+    ...ouverture,
+    reglages: { ...ouverture.reglages, forme: 'rosaire' },
+    rosaireEnCours: {
+      jour,
+      forme: 'rosaire',
+      serie: 'joyeux',
+      dizaine: 5,
+      priere: 'o-mon-jesus',
+      rang: 1,
+    },
+  })
+  await page.goto('/rosaire')
+  await page.getByRole('button', { name: 'Reprendre à la 1re série, 5e dizaine' }).click()
+  await expect(page.getByTestId('priere').getByRole('heading', { level: 2 })).toHaveText(
+    'Ô mon Jésus',
+  )
+  await avancer(page, 1)
+  await expect(page.getByTestId('passage-serie')).toBeVisible()
+}
+
 // Avance de plusieurs étapes, en attendant chacune : un toucher donné avant que
 // l'annonce soit affichée tomberait à côté de sa grosse perle. Sur une prière
 // plus haute que l'écran, le toucher fait d'abord descendre la page (phase
