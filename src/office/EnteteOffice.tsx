@@ -1,7 +1,8 @@
 import type { Ref } from 'react'
 import { BoutonAide } from '../composants/BoutonAide'
 import { avecExposants } from '../composants/Exposants'
-import { BoutonFermer, LienMenu } from '../composants/Icones'
+import { LienMenu } from '../composants/Icones'
+import { LigneFermer } from '../composants/LigneFermer'
 import { dateLisible } from './dates'
 import { decrirePerles, type Etape } from './etapes'
 import { FilDePerles } from './FilDePerles'
@@ -28,11 +29,10 @@ export function EnteteOffice({ nom, date, titre, saint, perles, ...props }: Prop
     <header className="office-entete">
       {/* Une seule ligne pour sortir, se repérer dans la journée et ouvrir
           le menu : la prière commence haut sur l'écran. */}
-      <div className="office-barre">
-        <BoutonFermer onClick={props.onFermer} />
+      <LigneFermer onFermer={props.onFermer}>
         <p className="office-date ligne-date">{avecExposants(dateLisible(date))}</p>
         <LienMenu depuis={date} office={nom} />
-      </div>
+      </LigneFermer>
       {/* Le saint du jour en petit à gauche du titre, qui reste centré, et
           « ? » à droite, qui rouvre l'aide ; sous le titre long de l'office
           des lectures (2026-10-08). */}

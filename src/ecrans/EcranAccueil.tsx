@@ -4,6 +4,7 @@ import { AlerteRappels } from '../accueil/AlerteRappels'
 import { BandeauJour } from '../accueil/BandeauJour'
 import type { Forme } from '../chapelet/definition'
 import { avecExposants } from '../composants/Exposants'
+import { LienMenu } from '../composants/Icones'
 import { QuandPriere } from '../composants/QuandPriere'
 import { astre } from '../accueil/cadran'
 import { Cadran } from '../accueil/Cadran'
@@ -68,11 +69,7 @@ function Accueil({ date, aujourdhui, maintenant }: Props) {
   return (
     <main className="accueil">
       <div className="accueil-haut">
-        <Link className="bouton-menu" to="/menu" state={{ depuis: date }} aria-label="Menu">
-          <svg viewBox="0 0 20 20" aria-hidden="true">
-            <path d="M3 5h14M3 10h14M3 15h14" />
-          </svg>
-        </Link>
+        <LienMenu depuis={date} className="accueil-menu" />
         {/* Les jours sur la ligne du ☰ : une ligne de gagnée, pour que les
             complies tiennent dans le premier écran (2026-10-09). */}
         <nav className="accueil-jours" aria-label="Autres jours">

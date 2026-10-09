@@ -20,7 +20,9 @@
   align-self: start;
 }
 
-/* Au chapelet, « ? » occupe la colonne de droite, en face de la croix. */
-.ligne-fermer > .bouton-aide {
+/* Au chapelet, « ? » occupe la colonne de droite, en face de la croix ; à
+   l'office, ☰. */
+.ligne-fermer > .bouton-aide,
+.ligne-fermer > .lien-menu {
   grid-column: 3;
 }

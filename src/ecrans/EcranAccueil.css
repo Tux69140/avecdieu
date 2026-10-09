@@ -14,12 +14,8 @@
   margin-top: calc(-1 * var(--esp-sm));
 }
 
-.bouton-menu {
-  display: grid;
+.accueil-menu {
   flex: none;
-  place-items: center;
-  width: 48px;
-  height: 48px;
   margin-left: calc(-1 * var(--esp-sm));
 }
 
@@ -41,15 +37,6 @@
 
 .accueil-alerte:active {
   background: var(--halo);
-}
-
-.bouton-menu svg {
-  width: 22px;
-  height: 22px;
-  fill: none;
-  stroke: var(--encre);
-  stroke-width: 1.8;
-  stroke-linecap: round;
 }
 
 /* Le jour d'avant, aujourd'hui, le jour d'après, en petites capitales. */

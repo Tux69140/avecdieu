@@ -10,14 +10,6 @@
   text-align: center;
 }
 
-/* La croix à gauche, la date au milieu, ☰ à droite, sur une ligne de 48 px. */
-.office-barre {
-  display: grid;
-  grid-template-columns: 48px 1fr 48px;
-  align-items: center;
-  margin: 0 calc(-1 * var(--esp-sm));
-}
-
 /* Le titre au centre, le saint du jour en petit à gauche, « ? » à droite,
    qui rouvre l'aide (choix du porteur du projet, 2026-10-08). Les deux
    colonnes de côté, de même largeur, gardent le titre centré. */

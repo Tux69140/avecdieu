@@ -33,9 +33,22 @@ export function FlecheBas() {
 }
 
 // Le menu sait d'où il est ouvert : le jour, et l'office en cours s'il y en a un.
-export function LienMenu({ depuis, office }: { depuis: string; office?: string }) {
+export function LienMenu({
+  depuis,
+  office,
+  className,
+}: {
+  depuis: string
+  office?: string
+  className?: string
+}) {
   return (
-    <Link className="bouton-icone" to="/menu" state={{ depuis, office }} aria-label="Menu">
+    <Link
+      className={className ? `bouton-icone lien-menu ${className}` : 'bouton-icone lien-menu'}
+      to="/menu"
+      state={{ depuis, office }}
+      aria-label="Menu"
+    >
       <svg viewBox="0 0 20 20" aria-hidden="true">
         <path d="M3 5h14M3 10h14M3 15h14" />
       </svg>
