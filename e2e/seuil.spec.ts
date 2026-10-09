@@ -36,6 +36,16 @@ for (const [chemin, nom, vue, dite] of [
     await expect(page.getByRole('link', { name: 'Chapelet ou Rosaire ?' })).toBeVisible()
   })
 
+// toString est une propriété héritée de tout objet, pas une série.
+test('une série inconnue dans l’adresse mène au seuil du chapelet', async ({ page }) => {
+  await preparer(page)
+  await page.goto('/chapelet/toString')
+  await expect(page).toHaveURL(/\/chapelet$/)
+  await expect(titre(page)).toHaveText('Mystères lumineux')
+  await page.goto('/priere/toString')
+  await expect(page).toHaveURL('/')
+})
+
 test('le Rosaire liste ses quatre séries, sans autres mystères à choisir', async ({ page }) => {
   await preparer(page)
   await page.goto('/rosaire')

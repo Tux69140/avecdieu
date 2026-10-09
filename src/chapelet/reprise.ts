@@ -68,7 +68,7 @@ export function lireEnCours(date: Date, forme: Forme): ChapeletEnCours | null {
     fin,
   } = lireObjet(CLES[forme])
   if (jour !== dateDuJour(date) || retenue !== forme) return null
-  if (typeof serie !== 'string' || !(serie in SERIES)) return null
+  if (typeof serie !== 'string' || !Object.hasOwn(SERIES, serie)) return null
   if (typeof priere !== 'string' || typeof rang !== 'number') return null
   if (dizaine !== undefined && typeof dizaine !== 'number') return null
   const enCours = { jour, forme, serie: serie as SerieId, dizaine, priere: priere as Moment, rang }

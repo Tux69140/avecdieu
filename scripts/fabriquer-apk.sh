@@ -40,8 +40,10 @@ fi
 VERSION_CODE=$(git rev-list --count HEAD)
 VERSION_NOM=$(node -p "require('./package.json').version")
 
-pnpm build
-pnpm exec cap sync android
+# Seul Gradle a besoin du mot de passe : la construction web et ses greffons
+# (Vite, Capacitor, dépendances) ne le voient pas dans leur environnement.
+env -u AVECDIEU_CLE_MDP pnpm build
+env -u AVECDIEU_CLE_MDP pnpm exec cap sync android
 rm -f android/app/build/outputs/apk/release/*.apk
 (
     cd android

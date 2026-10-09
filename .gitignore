@@ -31,5 +31,11 @@ playwright-report
 # APK fabriqué (scripts/fabriquer-apk.sh)
 dist-apk
 
+# Clés et secrets : toujours hors du dépôt (gitleaks les bloque aussi)
+*.jks
+*.keystore
+*.p12
+.env*
+
 # Copies de travail des sous-agents
 .claude/worktrees/

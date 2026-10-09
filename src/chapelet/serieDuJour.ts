@@ -1,4 +1,4 @@
-import type { SerieId } from '../recueil/mysteres'
+import { SERIES, type SerieId } from '../recueil/mysteres'
 
 // Indexé par Date.getDay() : 0 = dimanche.
 const SERIE_PAR_JOUR: SerieId[] = [
@@ -25,3 +25,7 @@ export function joursDeLaSerie(serie: SerieId): string {
   const phrase = jours.join(' et ')
   return phrase.charAt(0).toUpperCase() + phrase.slice(1)
 }
+
+// Une série du recueil : une adresse peut en nommer une inconnue (seules les
+// propriétés propres comptent, toString n'en est pas une).
+export const estSerie = (valeur: string): valeur is SerieId => Object.hasOwn(SERIES, valeur)

@@ -26,4 +26,5 @@ export const AUTRES_PRIERES: PriereSeuleId[] = [
   'je-confesse',
 ]
 
-export const estPriereSeule = (valeur: string): valeur is PriereSeuleId => valeur in PRIERES_SEULES
+export const estPriereSeule = (valeur: string): valeur is PriereSeuleId =>
+  Object.hasOwn(PRIERES_SEULES, valeur)

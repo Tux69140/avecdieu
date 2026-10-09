@@ -17,7 +17,7 @@ import { lireReglages, optionsDuDeroule, type Forme } from '../chapelet/reglages
 import { effacerEnCours, lireEnCours, retenirEnCours, retrouver } from '../chapelet/reprise'
 import { dizaineCommencee, rangDuPassage } from '../chapelet/rotation'
 import { Seuil } from '../chapelet/Seuil'
-import { serieDuJour } from '../chapelet/serieDuJour'
+import { estSerie, serieDuJour } from '../chapelet/serieDuJour'
 import { deciderToucher } from '../chapelet/toucher'
 import { vibrationEntre } from '../chapelet/vibration'
 import { BoutonAide } from '../composants/BoutonAide'
@@ -39,7 +39,6 @@ import './EcranChapelet.css'
 const TOUCHES_AVANCER = new Set([' ', 'Enter', 'ArrowRight', 'ArrowDown', 'PageDown'])
 const TOUCHES_RECULER = new Set(['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'])
 
-const estSerie = (valeur: string): valeur is SerieId => valeur in SERIES
 const estInteractif = (cible: EventTarget) =>
   cible instanceof Element && cible.closest('button, a, input, label, dialog') !== null
 const estPriere = (pas: Pas): pas is Pas & { priere: PriereId | 'litanies' } =>

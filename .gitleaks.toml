@@ -8,7 +8,7 @@ useDefault = true
 [[rules]]
 id = "android-keystore"
 description = "Clé de signature Android dans le dépôt (elle doit rester hors dépôt)"
-path = '''\.(jks|keystore)$'''
+path = '''\.(jks|keystore|p12)$'''
 
 [[rules]]
 id = "keystore-password"

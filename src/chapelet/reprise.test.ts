@@ -45,6 +45,12 @@ describe('chapelet en cours', () => {
     expect(lireEnCours(LUNDI, 'chapelet')).toBeNull()
     localStorage.setItem('avec-dieu.en-cours', '{"jour":"2026-10-05","serie":"inconnue"}')
     expect(lireEnCours(LUNDI, 'chapelet')).toBeNull()
+    // Une propriété héritée de tout objet n'est pas une série.
+    localStorage.setItem(
+      'avec-dieu.en-cours',
+      '{"jour":"2026-10-05","serie":"toString","priere":"notre-pere","rang":1}',
+    )
+    expect(lireEnCours(LUNDI, 'chapelet')).toBeNull()
   })
 })
 

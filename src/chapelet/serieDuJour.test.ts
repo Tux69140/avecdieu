@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { joursDeLaSerie, serieDuJour } from './serieDuJour'
+import { estSerie, joursDeLaSerie, serieDuJour } from './serieDuJour'
 
 describe('serieDuJour', () => {
   // Semaine du lundi 5 au dimanche 11 octobre 2026.
@@ -27,5 +27,16 @@ describe('joursDeLaSerie', () => {
     expect(joursDeLaSerie('douloureux')).toBe('Le mardi et le vendredi')
     expect(joursDeLaSerie('glorieux')).toBe('Le mercredi et le dimanche')
     expect(joursDeLaSerie('lumineux')).toBe('Le jeudi')
+  })
+})
+
+// Une adresse comme /chapelet/toString ne doit pas passer pour une série :
+// toString est une propriété héritée de tout objet.
+describe('estSerie', () => {
+  it('reconnaît les quatre séries, et elles seules', () => {
+    for (const serie of ['joyeux', 'lumineux', 'douloureux', 'glorieux'])
+      expect(estSerie(serie)).toBe(true)
+    for (const autre of ['toString', 'constructor', '__proto__', 'hasOwnProperty', 'inconnue'])
+      expect(estSerie(autre)).toBe(false)
   })
 })
