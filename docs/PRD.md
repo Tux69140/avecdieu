@@ -69,6 +69,14 @@ Avec Dieu accompagne la prière de toute la journée sur un téléphone Android.
 - **US-58** En tant que priant, je veux qu'en octobre les Litanies et la prière à saint Joseph s'ajoutent d'elles-mêmes et se retirent le reste de l'année, sauf si j'ai choisi « toujours » ou « jamais », afin de vivre le mois du Rosaire sans rien régler.
 - **US-59** En tant que priant, je veux voir la durée approximative du chapelet, du Rosaire et de chaque office sur le seuil, l'accueil et le menu, afin de choisir ce que j'ai le temps de prier.
 
+**Chapelet simplifié** *(ajouté le 2026-10-09)*
+
+- **US-60** En tant que priant, je veux dire la prière aux intentions du Saint-Père (Notre Père, Je vous salue Marie, Gloire au Père) après la dernière dizaine, avec l'intention du mois sous les yeux, afin de prier avec le pape.
+- **US-61** En tant que novice, je veux comprendre ce que sont les intentions du Saint-Père et l'indulgence attachée au chapelet, afin de savoir pourquoi je les prie.
+- **US-62** En tant que priant pressé ou débutant, je veux un seul commutateur « L’essentiel seulement » qui réduit le chapelet et le Rosaire au cœur (signe de croix, puis les dizaines), afin de prier sans les usages ajoutés.
+- **US-63** En tant que novice, je veux voir « Facultatif » sur chaque prière d'usage, afin d'apprendre en priant ce qui est essentiel et ce qui ne l'est pas.
+- **US-64** En tant que priant, je veux voir sur l'accueil le Chapelet et le Rosaire, afin de savoir que les deux existent sans passer par le seuil.
+
 **Offices**
 
 - **US-24** En tant que priant, je veux lire l'office complet (antienne répétée avant et après le psaume, Gloire au Père sauf exceptions, Notre Père en entier, conclusion de l'oraison complète), afin de prier correctement sans connaître les rubriques.
@@ -145,7 +153,8 @@ Avec Dieu accompagne la prière de toute la journée sur un téléphone Android.
 18. L'office selon le Bréviaire romain de 1960 (Divinum Officium) *(à étudier en fin de développement)*.
 19. Un examen de conscience rédigé et guidé aux complies *(plus tard ; la phase 6 n'en donne que la rubrique et le « Je confesse à Dieu »)*.
 22. Des durées calculées sur les textes du jour : elles sont fixes, affinées à l'usage (décision du porteur du projet, 2026-10-08).
-23. La prière pour les intentions du Pape à la fin du chapelet (décision du porteur du projet, 2026-10-08).
+23. ~~La prière pour les intentions du Pape à la fin du chapelet.~~ *Entrée dans le périmètre le 2026-10-09 (US-60).*
+24. Interroger un autre site que l'AELF, même pour l'intention de prière du mois : les intentions de l'année sont embarquées dans l'app (décision du porteur du projet, 2026-10-09).
 
 ## Décisions d'implémentation
 

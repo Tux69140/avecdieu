@@ -505,17 +505,51 @@ Textes validés par le porteur du projet (2026-10-08), à reprendre mot à mot :
 
 ### Critères d'acceptation
 
-- [ ] Le déroulé du Rosaire : une ouverture, 20 dizaines dans l'ordre, trois passages de série, une clôture (tests unitaires ; critère de succès 9).
-- [ ] Le texte de l'aide « Chapelet ou Rosaire ? » (les deux phrases validées, puis l'histoire et le sens) et les lignes de passage de série sont validés mot à mot par le porteur du projet.
-- [ ] Le choix est retenu d'une ouverture à l'autre ; l'accueil et le rappel du chapelet ouvrent le Rosaire quand il est choisi.
-- [ ] Un Rosaire interrompu en deuxième série reprend au grain exact le jour même et est abandonné passé minuit.
-- [ ] La disposition du seuil est validée sur maquette puis sur capture à 360 px.
-- [ ] Parcours Playwright : un Rosaire complet récité du début à la fin ; analyse axe du seuil et du Rosaire ; le seuil ajouté au contrôle des barres d'Android.
+- [x] Le déroulé du Rosaire : une ouverture, 20 dizaines dans l'ordre, trois passages de série, une clôture (tests unitaires ; critère de succès 9).
+- [x] Le texte de l'aide « Chapelet ou Rosaire ? » (les deux phrases validées, puis l'histoire et le sens) et les lignes de passage de série sont validés mot à mot par le porteur du projet.
+- [x] Le choix est retenu d'une ouverture à l'autre ; l'accueil et le rappel du chapelet ouvrent le Rosaire quand il est choisi.
+- [x] Un Rosaire interrompu en deuxième série reprend au grain exact le jour même et est abandonné passé minuit.
+- [x] La disposition du seuil est validée sur maquette puis sur capture à 360 px.
+- [x] Parcours Playwright : un Rosaire complet récité du début à la fin ; analyse axe du seuil et du Rosaire ; le seuil ajouté au contrôle des barres d'Android.
 
 ## Bloquée par
 
 - Phase 15 (les durées sur le seuil)
 - Phase 16 (la clôture partagée et ses réglages)
+
+---
+
+## Phase 18 : Chapelet simplifié
+
+**User stories** : US-60, US-61, US-62, US-63, US-64
+
+Décisions du porteur du projet (2026-10-09). Référence de la composition : Jean-Paul II, *Rosarium Virginis Mariae* (2002) ; usage d'octobre : Léon XIII.
+- **Réglages de départ** : l'usage courant (ouverture, intentions des trois premiers Je vous salue Marie, annonce, « Ô mon Jésus »), plus la prière aux intentions du Saint-Père, le Salve Regina et l'oraison du Rosaire ; Litanies et saint Joseph *en octobre* ; Sous l'abri désactivé. Tout reste réglable finement sur la page « Prières du chapelet » (curieux et avancés).
+- **Prière aux intentions du Saint-Père** : après la dernière dizaine (la 5ᵉ, ou la 20ᵉ au Rosaire), avant le Salve Regina ; un Notre Père, un Je vous salue Marie, un Gloire au Père, chacun son écran ; sur le Notre Père, la ligne rouge « Aux intentions du Saint-Père. », et dessous, en petit, « Ce mois-ci : <titre du mois en minuscule initiale> › », lien vers la partie « Aux intentions du Saint-Père » de la page « Chapelet ou Rosaire ? » (la croix ramène au grain exact). Sans intention connue pour le mois, la petite ligne disparaît.
+- **Intentions du mois** : les douze intentions de l'année, embarquées, texte français officiel du Réseau mondial de prière du pape (2026 : livret officiel ; 2027 : site français du Réseau), validées le 2026-10-09 ; une version de l'app par an apporte l'année suivante. Aucun autre site que l'AELF n'est interrogé.
+- **Page « Chapelet ou Rosaire ? »**, en bas, après un filet, sous le petit titre « Aux intentions du Saint-Père », le texte validé :
+  - « Prier aux intentions du Saint-Père, c’est s’unir à la prière du pape pour l’Église et pour le monde. Il n’est pas nécessaire de connaître ces intentions : on confie au Seigneur ce que le pape porte dans son cœur. Chaque mois, il en propose une en particulier, par son Réseau mondial de prière. »
+  - « Jean-Paul II y voyait un moyen « d’élargir le regard de celui qui prie aux vastes horizons des nécessités ecclésiales ». »
+  - « C’est aussi l’une des conditions de l’indulgence que l’Église attache au chapelet, c’est-à-dire la remise de la peine encore due pour des péchés déjà pardonnés. Dit à l’église, en famille ou en communauté, le chapelet peut obtenir l’indulgence plénière, avec la confession, la communion et le refus de tout attachement au péché. Ailleurs, l’indulgence est partielle. »
+  - puis l'intention du mois en entier : « Ce mois-ci : » et le texte « Prions pour… ».
+- **« L’essentiel seulement »** : un interrupteur, aide « Le signe de croix, puis les cinq dizaines : l’annonce du mystère, un Notre Père, dix Je vous salue Marie, un Gloire au Père. » ; il retire tout l'usage (ouverture sauf le signe de croix, « Ô mon Jésus », intentions, prière aux intentions du Saint-Père, toute la fin) au Chapelet comme au Rosaire ; sur le seuil (« Pour prier ») et dans Réglages › Chapelet ; les réglages fins restent intacts et leur page dit en tête « L’essentiel seulement est activé. » ; durées affichées alors : Chapelet ~15 min, Rosaire ~1 h 15.
+- **« Facultatif »** sur chaque prière que « L’essentiel seulement » retire : en petites capitales sépia, sous le compteur (« 1 / 3 »), aligné strictement dessous et jamais plus large que lui, quitte à une très petite taille ; sans compteur, à sa place. Pas de pictogramme.
+- **Accueil** : deux lignes **en haut de la liste**, au-dessus de l'office des lectures : « Chapelet » avec « ~20 h » (l'heure de son rappel, approximative : l'Église ne fixe aucune heure) et sa durée, puis « Rosaire » avec sa durée seulement, sans heure (il se prie souvent en plusieurs fois). Chaque ligne ouvre le seuil dans sa forme.
+- **Rosaire** : la page des prières ouverte depuis le Rosaire dit « Fin du Rosaire » ; le menu montre aussi les deux lignes.
+- Plus tard (noté le 2026-10-09) : refonte de l'arborescence du menu.
+
+### Critères d'acceptation
+
+- [ ] Déroulé : prière aux intentions du Saint-Père à sa place au Chapelet et au Rosaire ; « L’essentiel seulement » ne garde que le signe de croix et les dizaines ; réglages fins retrouvés intacts en le désactivant (tests unitaires).
+- [ ] L'intention du mois s'affiche pour chaque mois de 2026 et 2027 et disparaît sans intention connue ; le lien ouvre la bonne partie de la page et la croix ramène au grain exact.
+- [ ] Les textes (ligne rouge, petite ligne, page d'information, 24 intentions) sont repris mot pour mot et figés par un test.
+- [ ] « Facultatif » ne dépasse jamais la largeur du compteur et ne fait passer aucun titre à la ligne à 360 px.
+- [ ] Accueil : les deux lignes en tête de liste, « ~20 h » sur le Chapelet, aucune heure sur le Rosaire.
+- [ ] Captures validées par le porteur ; parcours Playwright et axe verts.
+
+## Bloquée par
+
+- Phase 17
 
 ---
 
@@ -540,7 +574,7 @@ Points laissés pour la recette au fil des phases :
 
 ## Bloquée par
 
-- Toutes les phases précédentes, phases 15 à 17 comprises
+- Toutes les phases précédentes, phases 15 à 18 comprises
 
 ---
 
