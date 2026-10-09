@@ -44,7 +44,7 @@ export function ReglageSolaire({ office, reglages, lieu, maintenant, onChanger }
     onChanger({ decalages: decaler(reglages.decalages, office, decalage + pas) })
 
   return (
-    <div>
+    <div className="reglage-solaire">
       <h2 className="petit-titre">Décalage</h2>
       <div className="volet-decalage">
         <button

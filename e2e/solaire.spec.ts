@@ -220,8 +220,8 @@ test('la page d’un office solaire : décalage, limite, et l’heure du jour', 
   await expect(aujourdhui).toHaveText('Aujourd’hui : 8 h 30')
   await volet.getByRole('switch', { name: 'Pas avant, limite' }).click()
   await expect(aujourdhui).not.toHaveText('Aujourd’hui : 8 h 30')
-  // Le son se choisit sur la même page.
-  await expect(page.getByRole('radiogroup', { name: 'Son, Laudes' })).toBeVisible()
+  // Le son se choisit depuis la même page, par sa ligne.
+  await expect(page.getByRole('link', { name: /^Son/ })).toBeVisible()
   await fermer(page)
   await expect(page).toHaveURL('/reglages/rappels')
 

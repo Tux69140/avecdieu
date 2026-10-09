@@ -89,6 +89,7 @@ for (const [nom, chemin] of [
   ['réglages', '/reglages'],
   ['réglages · rappels', '/reglages/rappels'],
   ['réglages · page d’une prière', '/reglages/rappels/laudes'],
+  ['réglages · son d’une prière', '/reglages/rappels/laudes/son'],
   ['réglages · batterie', '/reglages/rappels/batterie'],
   ['réglages · chapelet', '/reglages/chapelet'],
   ['réglages · prières du chapelet', '/reglages/chapelet/prieres'],

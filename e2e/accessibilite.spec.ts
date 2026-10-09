@@ -309,6 +309,7 @@ for (const chemin of [
   '/reglages',
   '/reglages/rappels',
   '/reglages/rappels/laudes',
+  '/reglages/rappels/laudes/son',
   '/reglages/rappels/batterie',
   '/reglages/chapelet',
   '/reglages/chapelet/prieres',
@@ -372,6 +373,7 @@ async function fenetresDesRappels(page: Page) {
   await expect(page.locator('.rappels-avis')).toHaveCount(4)
   expect(await violationsGraves(page)).toEqual([])
   await page.locator('.rappel-nom').nth(1).click()
+  await page.getByRole('link', { name: /^Son/ }).click()
   await expect(page.getByRole('radiogroup', { name: 'Son, Laudes' })).toBeVisible()
   expect(await violationsGraves(page)).toEqual([])
 }

@@ -12,6 +12,7 @@ const fermer = (page: Page) => page.getByRole('button', { name: 'Fermer', exact:
 const ARBORESCENCE: [string[], string, string][] = [
   [['Rappels'], '/reglages/rappels', 'Rappels'],
   [['Rappels', 'Laudes'], '/reglages/rappels/laudes', 'Laudes'],
+  [['Rappels', 'Laudes', 'Son'], '/reglages/rappels/laudes/son', 'Son'],
   [
     ['Rappels', 'Rappels bloqués ? Régler la batterie'],
     '/reglages/rappels/batterie',

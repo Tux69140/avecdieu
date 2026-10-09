@@ -184,3 +184,13 @@ a.rappel-heure {
   margin: calc(-1 * var(--esp-md)) 0 var(--esp-lg);
   text-align: center;
 }
+
+/* Le son et le vibreur suivent l'heure sans redoubler son filet ; après le
+   réglage solaire, ils s'en écartent. */
+.reglages-liste + .rappel-page-son {
+  border-top: none;
+}
+
+.reglage-solaire + .rappel-page-son {
+  margin-top: var(--esp-lg);
+}

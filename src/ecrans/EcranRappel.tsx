@@ -1,21 +1,21 @@
 import { useRef, useState } from 'react'
 import { Navigate, useParams } from 'react-router'
 import { Interrupteur } from '../composants/Interrupteur'
+import { LignePage } from '../composants/LignePage'
 import { useLieu } from '../lieu/useLieu'
 import { estOfficeSolaire } from '../office/heuresSolaires'
 import { basculerRappel } from '../rappels/basculer'
 import { ChampHeure } from '../rappels/ChampHeure'
-import { ChoixSon } from '../rappels/ChoixSon'
 import { ReglageSolaire, SousTitreSolaire } from '../rappels/ReglageSolaire'
 import {
+  estPriere,
   lireRappels,
   modifierRappel,
-  PRIERES_RAPPELEES,
   type Priere,
   type Rappel,
 } from '../rappels/reglages'
 import { lireSolaire, modifierSolaire } from '../rappels/solaire'
-import { NOMS_PRIERES } from '../rappels/textes'
+import { NOMS_PRIERES, nomDuSon } from '../rappels/textes'
 import { useAutorisations } from '../rappels/useAutorisations'
 import { useEtatAndroid } from '../rappels/useEtatAndroid'
 import { PageReglages } from '../reglages/PageReglages'
@@ -24,13 +24,11 @@ import '../rappels/Rappels.css'
 
 const PARENTE = '/reglages/rappels'
 
-const estPriere = (valeur?: string): valeur is Priere =>
-  (PRIERES_RAPPELEES as readonly string[]).includes(valeur ?? '')
-
 // Réglages › Rappels › une prière (/reglages/rappels/<prière>) : son rappel,
 // son heure (l'horloge d'Android, ou en heures solaires le décalage et « Pas
 // avant / Pas après »), son son et le vibreur (arborescence validée par le
-// porteur du projet, 2026-10-08).
+// porteur du projet, 2026-10-08). Le son tient sur une ligne qui ouvre sa page,
+// comme la zone liturgique (2026-10-09).
 export function EcranRappel() {
   const { priere } = useParams()
   if (!estPriere(priere)) return <Navigate to={PARENTE} replace />
@@ -80,13 +78,16 @@ function PageRappel({ priere }: { priere: Priere }) {
           onChanger={(changement) => setSolaire(modifierSolaire(changement))}
         />
       )}
-      <ChoixSon
-        id={`son-${priere}`}
-        nom={nom}
-        rappel={rappel}
-        vibreurPossible={vibreurPossible}
-        onChanger={changer}
-      />
+      <div className="reglages-liste rappel-page-son">
+        <LignePage vers={`${PARENTE}/${priere}/son`} nom="Son" resume={nomDuSon(rappel.son)} />
+        {vibreurPossible && (
+          <Interrupteur
+            libelle="Vibreur"
+            actif={rappel.vibreur}
+            onBasculer={(vibreur) => changer({ vibreur })}
+          />
+        )}
+      </div>
       {fenetre}
     </PageReglages>
   )

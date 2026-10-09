@@ -12,6 +12,10 @@ export type Priere = NomOffice | 'chapelet'
 // Dans l'ordre du jour, comme la page Réglages › Rappels les présente.
 export const PRIERES_RAPPELEES: readonly Priere[] = [...OFFICES, 'chapelet']
 
+// Une adresse /reglages/rappels/<prière> qui nomme bien une prière rappelée.
+export const estPriere = (valeur?: string): valeur is Priere =>
+  (PRIERES_RAPPELEES as readonly string[]).includes(valeur ?? '')
+
 // Mêmes noms que les sons de res/raw dans l'APK.
 export type Cloche = 'bourdon_notre_dame' | 'cloche_marcel' | 'angelus_village'
 export const CLOCHES: readonly Cloche[] = ['bourdon_notre_dame', 'cloche_marcel', 'angelus_village']

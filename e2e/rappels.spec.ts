@@ -357,6 +357,13 @@ test('la page de la prière : le rappel, l’heure, le son, le vibreur', async (
   await expect(rappel).toHaveAttribute('aria-checked', 'true')
   await page.getByLabel('Chapelet, heure').fill('20:45')
 
+  // Le son tient sur une ligne, qui ouvre sa page (décision du porteur du
+  // projet, 2026-10-09).
+  const ligneSon = page.getByRole('link', { name: /^Son/ })
+  await expect(ligneSon).toContainText('Angélus de village')
+  await ligneSon.click()
+  await expect(page).toHaveURL('/reglages/rappels/chapelet/son')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Son')
   const sons = page.getByRole('radiogroup', { name: 'Son, Chapelet' })
   await expect(sons.getByRole('radio', { name: 'Angélus de village' })).toBeChecked()
   await sons.getByRole('button', { name: 'Ecouter Bourdon de Notre-Dame' }).click()
@@ -366,6 +373,9 @@ test('la page de la prière : le rappel, l’heure, le son, le vibreur', async (
   await sons.getByRole('radio', { name: 'Son du téléphone' }).check()
   await sons.getByRole('radio', { name: 'Choisir un MP3…' }).click()
   await expect(sons.getByRole('radio', { name: 'Mon MP3.mp3' })).toBeChecked()
+  await fermer(page)
+  await expect(page).toHaveURL('/reglages/rappels/chapelet')
+  await expect(ligneSon).toContainText('Mon MP3.mp3')
   await page.getByRole('switch', { name: 'Vibreur' }).click()
   await expect
     .poll(async () => (await programmees(page))[0]?.canal)
