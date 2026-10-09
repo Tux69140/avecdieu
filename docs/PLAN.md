@@ -536,7 +536,7 @@ Décisions du porteur du projet (2026-10-09). Référence de la composition : Je
 - **« Facultatif »** sur chaque prière que « L’essentiel seulement » retire : en petites capitales sépia, sous le compteur (« 1 / 3 »), aligné strictement dessous et jamais plus large que lui, quitte à une très petite taille ; sans compteur, à sa place. Pas de pictogramme.
 - **Accueil** : deux lignes **en haut de la liste**, au-dessus de l'office des lectures : « Chapelet » avec « ~20 h » (l'heure de son rappel, approximative : l'Église ne fixe aucune heure) et sa durée, puis « Rosaire » avec sa durée seulement, sans heure (il se prie souvent en plusieurs fois). Chaque ligne ouvre le seuil dans sa forme.
 - **Rosaire** : la page des prières ouverte depuis le Rosaire dit « Fin du Rosaire » ; le menu montre aussi les deux lignes.
-- Plus tard (noté le 2026-10-09) : refonte de l'arborescence du menu.
+- Plus tard (noté le 2026-10-09) : refonte de l'arborescence du menu ; la page du lieu, cachée sous Réglages › Rappels › Solaires, doit s'y trouver plus facilement.
 
 ### Critères d'acceptation
 
