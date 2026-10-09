@@ -44,8 +44,17 @@ function enregistrer(reglages: ReglagesLieu) {
   ecrireEtSignaler(CLE, reglages, LIEU_CHANGE)
 }
 
+// Au centième de degré, environ un kilomètre : assez pour le soleil (quelques
+// secondes), et le téléphone ne garde pas la position exacte du priant.
+const arrondir = (degres: number) => Math.round(degres * 100) / 100
+
 export function choisirLieu(lieu: LieuChoisi) {
-  enregistrer({ ...lireLieu(), lieu })
+  const arrondi = {
+    ...lieu,
+    latitude: arrondir(lieu.latitude),
+    longitude: arrondir(lieu.longitude),
+  }
+  enregistrer({ ...lireLieu(), lieu: arrondi })
 }
 
 export function changerActualisation(actualiser: boolean) {

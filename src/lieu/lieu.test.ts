@@ -32,6 +32,12 @@ describe('lieu des heures solaires', () => {
     expect(lieuDuSoleil()).toEqual(LYON)
   })
 
+  it('arrondit la position enregistrée à 0,01° près, environ un kilomètre', () => {
+    choisirLieu({ nom: 'Lyon', pres: true, latitude: 45.818436, longitude: -4.885494 })
+    expect(localStorage.getItem('avec-dieu.lieu')).not.toContain('818436')
+    expect(lireLieu().lieu).toMatchObject({ latitude: 45.82, longitude: -4.89 })
+  })
+
   it('retient l’actualisation à l’ouverture', () => {
     changerActualisation(true)
     expect(lireLieu().actualiser).toBe(true)
