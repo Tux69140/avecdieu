@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Repere } from '../office/Repere'
+import { FinDePriere } from '../composants/FinDePriere'
 import type { SerieId } from '../recueil/mysteres'
 import type { Passage } from '../recueil/passages'
 import type { PriereId } from '../recueil/prieres'
@@ -61,19 +61,13 @@ export function PasEnCours({ pas, index, serie, passages, reglages, rosaire, ...
         />
       )}
       {!pas ? (
-        // La fin comme celle de l'office : une perle d'or qui ferme, puis le
-        // chemin de l'accueil, sans mot de plus ni « Recommencer » qu'un
-        // toucher machinal relancerait (choix du porteur du projet, 2026-10-08).
-        <section
+        // La fin comme celle de l'office.
+        <FinDePriere
+          libelle={rosaire ? 'Fin du Rosaire' : 'Fin du chapelet'}
           className="fin"
-          data-testid="fin-chapelet"
-          aria-label={rosaire ? 'Fin du Rosaire' : 'Fin du chapelet'}
-        >
-          <Repere />
-          <button className="lien-discret" type="button" onClick={props.onAccueil}>
-            Revenir à l’accueil
-          </button>
-        </section>
+          testId="fin-chapelet"
+          onAccueil={props.onAccueil}
+        />
       ) : estPriere(pas) ? (
         <Priere
           key={index}

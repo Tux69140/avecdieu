@@ -37,11 +37,9 @@
   animation: fondu 0.22s ease-out;
 }
 
-/* La fin : la perle d'or entre ses deux filets tient lieu du filet de la
-   prière, puis « Revenir à l’accueil » au centre, comme à la fin d'un office. */
+/* La fin (FinDePriere) : sa perle d'or tient lieu du filet de la prière ;
+   elle entre en fondu, comme chaque prière. */
 .fin {
-  margin-top: var(--esp-lg);
-  text-align: center;
   cursor: default;
   animation: fondu 0.22s ease-out;
 }

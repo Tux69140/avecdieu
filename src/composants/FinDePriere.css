@@ -1,0 +1,6 @@
+/* La perle d'or un peu plus loin du dernier texte, puis « Revenir à
+   l’accueil » au centre. */
+.fin-de-priere {
+  margin-top: var(--esp-lg);
+  text-align: center;
+}

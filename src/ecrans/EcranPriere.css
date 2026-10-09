@@ -15,13 +15,6 @@
   text-wrap: balance;
 }
 
-/* La fin d'un office : la perle d'or entre ses deux filets, puis
-   « Revenir à l’accueil » au centre. */
-.priere-seule-fin {
-  margin-top: var(--esp-lg);
-  text-align: center;
-}
-
 .priere-seule .fin-ecran {
   height: 1px;
 }

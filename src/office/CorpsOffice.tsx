@@ -1,4 +1,5 @@
 import { Fragment, useMemo, type Ref } from 'react'
+import { FinDePriere } from '../composants/FinDePriere'
 import { clesDesParties } from './cles'
 import type { Etape } from './etapes'
 import type { CouleurLiturgique, Partie } from './modele'
@@ -30,16 +31,8 @@ export function CorpsOffice({ ref, parties, etapes, couleur, replier, onAccueil 
           <PartieOffice partie={partie} replier={replier} />
         </Fragment>
       ))}
-      {/* La fin : une perle d'or qui ferme, puis le chemin de l'accueil,
-          sans mot de plus ; l'écran reste allumé (2026-10-08). */}
-      <div className="repere office-cloture" aria-hidden="true" data-testid="cloture">
-        <span className="repere-perle" data-couleur="or" />
-      </div>
-      <p className="office-revenir">
-        <button className="lien-discret" type="button" onClick={onAccueil}>
-          Revenir à l’accueil
-        </button>
-      </p>
+      {/* L'écran reste allumé à la fin : on lit peut-être encore le haut (2026-10-08). */}
+      <FinDePriere testId="cloture" onAccueil={onAccueil} />
     </div>
   )
 }

@@ -164,12 +164,6 @@
   gap: 0 var(--esp-md);
 }
 
-/* La fin de l'office : la perle d'or un peu plus loin du dernier texte, puis
-   « Revenir à l’accueil » au centre. */
-.office-cloture {
-  margin-top: var(--esp-lg);
-}
-
 /* Pourquoi l'invitatoire manque, puis le lien qui le ramène ici. */
 .office-invitatoire {
   margin: var(--esp-xs) 0 0;
