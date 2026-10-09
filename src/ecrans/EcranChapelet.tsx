@@ -6,8 +6,8 @@ import { ChapeletDessine } from '../chapelet/ChapeletDessine'
 import { CHAPELET_MARIAL, ROSAIRE, type Forme } from '../chapelet/definition'
 import { derouler, serieAtteinte } from '../chapelet/deroule'
 import { disposer } from '../chapelet/disposition'
+import { EnteteChapelet } from '../chapelet/EnteteChapelet'
 import { intentionDuMois } from '../chapelet/intentionsDuPape'
-import { repereSerie } from '../chapelet/libelles'
 import { aideAMontrer, lireLectures } from '../chapelet/memoire'
 import { avancer } from '../chapelet/navigation'
 import { optionsDuDeroule } from '../chapelet/options'
@@ -18,14 +18,10 @@ import { Seuil } from '../chapelet/Seuil'
 import { estSerie, serieDuJour } from '../chapelet/serieDuJour'
 import { useGestesChapelet } from '../chapelet/useGestesChapelet'
 import { useSuiviDuChapelet } from '../chapelet/useSuiviDuChapelet'
-import { BoutonAide } from '../composants/BoutonAide'
-import { avecExposants } from '../composants/Exposants'
 import { IndiceSuite } from '../composants/IndiceSuite'
-import { LigneFermer } from '../composants/LigneFermer'
 import { useRetour, useRetourAccueil } from '../composants/retour'
 import { useSuiteCachee } from '../composants/suiteCachee'
-import { dateDuJour, dateLisible } from '../office/dates'
-import { SERIES, type SerieId } from '../recueil/mysteres'
+import type { SerieId } from '../recueil/mysteres'
 import { lireReglages } from '../reglages/reglages'
 import { retirerNotification } from '../telephone/notifications'
 import './EcranChapelet.css'
@@ -136,25 +132,13 @@ function Chapelet({ forme, serie, date }: { forme: Forme; serie: SerieId; date: 
 
   return (
     <main ref={pincer} className="chapelet" data-pas={index} {...gestes}>
-      <header className="chapelet-entete">
-        {/* La croix ramène là d'où le seuil a été ouvert, comme le retour
-            d'Android : le seuil ne reste pas derrière la prière (décision du
-            porteur du projet, 2026-10-09). Un toucher sur elle n'avance pas
-            le chapelet (useGestesChapelet). */}
-        <LigneFermer onFermer={retour}>
-          <p className="ligne-date">{avecExposants(dateLisible(dateDuJour(date)))}</p>
-          {/* En face de la croix, « ? » rouvre l'aide aux gestes, comme dans
-              l'office (2026-10-08). */}
-          <BoutonAide libelle="Aide aux gestes" onClick={() => setAideOuverte(true)} />
-        </LigneFermer>
-        <h1>{SERIES[serieEnCours].titre}</h1>
-        {/* Au Rosaire, où l'on en est des quatre séries, toujours visible. */}
-        {rosaire && (
-          <p className="repere-serie" data-testid="repere-serie">
-            {repereSerie(serieEnCours)}
-          </p>
-        )}
-      </header>
+      <EnteteChapelet
+        date={date}
+        serie={serieEnCours}
+        rosaire={rosaire}
+        onFermer={retour}
+        onAide={() => setAideOuverte(true)}
+      />
 
       <ChapeletDessine
         plan={plan}
