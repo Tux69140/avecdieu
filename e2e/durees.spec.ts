@@ -34,12 +34,20 @@ async function surUneLigne(lien: Locator) {
 }
 
 async function verifierLignes(offices: Locator, chapelet: Locator) {
+  await verifierOffices(offices)
+  await verifierChapelet(chapelet)
+}
+
+async function verifierOffices(offices: Locator) {
   for (const [i, [nom, vue, dite]] of DUREES.entries()) {
     const lien = offices.getByRole('link').nth(i)
     await expect(lien.getByTestId('duree')).toHaveText(new RegExp(`^${vue}`))
     await expect(lien).toHaveAccessibleName(new RegExp(`^${nom}.*, ${dite}`))
     await surUneLigne(lien)
   }
+}
+
+async function verifierChapelet(chapelet: Locator) {
   await expect(chapelet.getByTestId('duree')).toHaveText(/^20 min/)
   await expect(chapelet).toHaveAccessibleName(/^Chapelet\s*vers 20 h\s*, vingt minutes$/)
   await surUneLigne(chapelet)
@@ -66,12 +74,14 @@ test('le menu donne la durée des offices et du chapelet, et tient en un écran'
   await page.goto('/menu')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Avec Dieu')
   expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(780)
-  await page.getByRole('button', { name: 'Offices du jour' }).click()
-  await verifierLignes(
-    page.getByRole('list', { name: 'Offices du jour' }),
+  await verifierChapelet(
     page.getByRole('list', { name: 'Chapelet et prières' }).getByRole('link').first(),
   )
-  await expect(page.getByTestId('duree')).toHaveCount(9)
+  await expect(page.getByTestId('duree')).toHaveCount(2)
+  // Les offices ont leur page (2026-10-09).
+  await page.getByRole('link', { name: /^Offices du jour/ }).click()
+  await verifierOffices(page.getByRole('list', { name: 'Offices du jour' }))
+  await expect(page.getByTestId('duree')).toHaveCount(7)
 })
 
 // Chaque seuil donne sa durée sous son titre (deux seuils distincts, révisé

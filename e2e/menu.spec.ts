@@ -17,9 +17,9 @@ test.beforeEach(async ({ page }) => {
 const accueil = (page: import('@playwright/test').Page) =>
   expect(page.getByTestId('bandeau')).toBeVisible()
 
-// L'ordre choisi par le porteur du projet (2026-10-08) : offices et autres
-// prières repliés.
-test('présente, dans l’ordre, le Chapelet, le Rosaire, deux prières, les offices et les prières repliés', async ({
+// L'ordre choisi par le porteur du projet (2026-10-08) ; les offices et les
+// autres prières sur leur page, plus en repli (2026-10-09).
+test('présente, dans l’ordre, le Chapelet, le Rosaire, deux prières, puis les pages des offices et des prières', async ({
   page,
 }) => {
   const menu = page.getByRole('navigation', { name: 'Menu' })
@@ -34,16 +34,22 @@ test('présente, dans l’ordre, le Chapelet, le Rosaire, deux prières, les off
     'Réglages',
     'A propos',
   ])
-  await expect(menu.getByRole('link', { name: /^Laudes/ })).toBeHidden()
-  await expect(menu.getByRole('link', { name: 'Je crois en Dieu' })).toBeHidden()
-  // La date des offices se voit sous leur nom, replié.
-  await expect(menu.getByRole('button', { name: 'Offices du jour' })).toContainText(
-    'lundi 5 octobre',
-  )
-  await menu.getByRole('button', { name: 'Offices du jour' }).click()
-  await expect(menu.getByRole('list', { name: 'Offices du jour' }).getByRole('link')).toHaveCount(7)
-  await menu.getByRole('button', { name: 'Prières' }).click()
-  const prieres = menu.getByRole('list', { name: 'Prières', exact: true })
+  await expect(page.getByRole('link', { name: /^Laudes/ })).toHaveCount(0)
+  // La date des offices se voit sous leur nom ; leur page la redit sous son titre.
+  const offices = menu.getByRole('link', { name: /^Offices du jour/ })
+  await expect(offices).toContainText('lundi 5 octobre')
+  await offices.click()
+  await expect(page).toHaveURL('/menu/offices')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Offices du jour')
+  await expect(page.getByText('lundi 5 octobre')).toBeVisible()
+  await expect(page.getByRole('list', { name: 'Offices du jour' }).getByRole('link')).toHaveCount(7)
+  // La croix remonte au menu, comme le retour d'Android.
+  await page.getByRole('button', { name: 'Fermer', exact: true }).click()
+  await expect(page).toHaveURL('/menu')
+  await menu.getByRole('link', { name: 'Prières', exact: true }).click()
+  await expect(page).toHaveURL('/menu/prieres')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Prières')
+  const prieres = page.getByRole('navigation', { name: 'Prières' })
   await expect(prieres.getByRole('link')).toHaveText([
     'Je crois en Dieu',
     'Gloire au Père',
@@ -60,12 +66,28 @@ test('une prière ouverte par le menu se dit seule, puis ramène à l’accueil'
   await page.goBack()
   await accueil(page)
   await page.getByRole('link', { name: 'Menu' }).click()
-  await page.getByRole('button', { name: 'Prières' }).click()
+  await page.getByRole('link', { name: 'Prières', exact: true }).click()
+  await page.goBack()
+  await expect(page).toHaveURL('/menu')
+  await page.getByRole('link', { name: 'Prières', exact: true }).click()
   await page.getByRole('link', { name: 'Je confesse à Dieu' }).click()
+  await expect(page).toHaveURL('/priere/je-confesse')
   // « tout-puissant » ne se coupe pas : un liant invisible suit le trait d'union.
   await expect(page.getByTestId('strophe')).toContainText(/^Je confesse à Dieu tout-⁠?puissant/)
-  await page.getByRole('button', { name: 'Revenir à l’accueil' }).click()
+  // Le menu et sa page ont été remplacés : le retour ramène à l'accueil.
+  await page.goBack()
   await accueil(page)
+})
+
+test('un office choisi dans la page des offices : le retour ramène à l’accueil', async ({
+  page,
+}) => {
+  await page.getByRole('link', { name: /^Offices du jour/ }).click()
+  await page.getByRole('link', { name: /^Vêpres/ }).click()
+  await expect(page).toHaveURL('/office/vepres/2026-10-05')
+  await page.goBack()
+  await accueil(page)
+  await expect(page).toHaveURL('/')
 })
 
 test('le retour d’Android, la croix et « Aujourd’hui » ramènent à l’accueil', async ({ page }) => {
@@ -138,7 +160,7 @@ test('des lignes de 48 px en graisse normale, le tout sur un seul écran', async
   const lignes = page.getByRole('navigation', { name: 'Menu' }).locator('a:visible, button:visible')
   await expect(lignes).toHaveCount(9)
   for (const ligne of await lignes.all()) {
-    // Les offices repliés portent la date sous leur nom : un peu plus haut.
+    // La ligne des offices porte la date sous leur nom : un peu plus haute.
     expect((await ligne.boundingBox())!.height).toBeGreaterThanOrEqual(48)
     expect((await ligne.boundingBox())!.height).toBeLessThanOrEqual(56)
   }
@@ -146,19 +168,19 @@ test('des lignes de 48 px en graisse normale, le tout sur un seul écran', async
     l.evaluate((e) => getComputedStyle(e).fontWeight)
   expect(await graisse(page.getByRole('link', { name: 'Réglages' }))).toBe('400')
   expect(await graisse(page.getByRole('button', { name: 'Aujourd’hui' }))).toBe('400')
-  expect(await graisse(page.locator('.rubrique-nom').first())).toBe('400')
+  expect(await graisse(page.getByRole('link', { name: /^Offices du jour/ }))).toBe('400')
   expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(780)
-  await page.getByRole('button', { name: 'Offices du jour' }).click()
+  await page.getByRole('link', { name: /^Offices du jour/ }).click()
   expect(await graisse(page.getByRole('link', { name: /^Laudes/ }))).toBe('400')
   expect((await page.getByRole('link', { name: /^Laudes/ }).boundingBox())!.height).toBe(48)
 })
 
 test('le chevron › ne se lit pas dans le nom des lignes', async ({ page }) => {
-  await page.getByRole('button', { name: 'Offices du jour' }).click()
   await expect(page.getByRole('link', { name: 'Réglages' })).toHaveAccessibleName('Réglages')
   await expect(page.getByRole('button', { name: 'Aujourd’hui' })).toHaveAccessibleName(
     'Aujourd’hui',
   )
+  await page.getByRole('link', { name: /^Offices du jour/ }).click()
   await expect(page.getByRole('link', { name: /^Laudes/ })).toHaveAccessibleName(
     /^Laudes\s*7 h\s*, environ vingt minutes$/,
   )

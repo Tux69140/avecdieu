@@ -28,7 +28,7 @@ const interrupteur = (page: Page, nom: string) =>
   page.getByRole('switch', { name: `${nom}, rappel` })
 const programmees = async (page: Page) => (await telephone(page)).programmees
 const dialogue = (page: Page, titre: string) => page.getByRole('dialog', { name: titre })
-const ligneRappels = (page: Page) => page.getByRole('link', { name: /^Rappels/ })
+const ligneRappels = (page: Page) => page.getByRole('link', { name: /^Heures et rappels/ })
 const fermer = (page: Page) => page.getByRole('button', { name: 'Fermer', exact: true }).click()
 
 test('par défaut : aucun rappel, les heures du PRD, l’office des lectures sans heure', async ({

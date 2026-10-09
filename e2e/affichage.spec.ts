@@ -25,15 +25,15 @@ test.describe('la page des réglages', () => {
     await preparer(page)
     await page.goto('/reglages')
     await expect(page.locator('.ligne-page-nom')).toHaveText([
-      'Rappels',
-      'Chapelet',
+      'Heures et rappels',
+      'Chapelet et Rosaire',
       'Offices',
       'Affichage',
       'Réinitialiser l’app',
     ])
     for (const [nom, resume] of [
-      ['Rappels', 'Aucun rappel'],
-      ['Chapelet', 'Annonce, prières, vibrations'],
+      ['Heures et rappels', 'Aucun rappel'],
+      ['Chapelet et Rosaire', 'Annonce, prières, vibrations'],
       ['Offices', 'Zone, accents, textes hors connexion'],
       ['Affichage', 'Taille du texte, thème'],
     ]) {

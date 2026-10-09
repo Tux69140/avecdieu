@@ -11,6 +11,8 @@ import { EcranChapelet } from './ecrans/EcranChapelet'
 import { EcranChapeletOuRosaire } from './ecrans/EcranChapeletOuRosaire'
 import { EcranLieu } from './ecrans/EcranLieu'
 import { EcranMenu } from './ecrans/EcranMenu'
+import { EcranMenuOffices } from './ecrans/EcranMenuOffices'
+import { EcranMenuPrieres } from './ecrans/EcranMenuPrieres'
 import { EcranOffice } from './ecrans/EcranOffice'
 import { EcranPriere } from './ecrans/EcranPriere'
 import { EcranBatterie } from './ecrans/EcranBatterie'
@@ -56,6 +58,8 @@ const routeur = createBrowserRouter([
       { path: '/reglages/reinitialiser', element: <EcranReinitialiser /> },
       { path: '/lieu', element: <EcranLieu /> },
       { path: '/menu', element: <EcranMenu /> },
+      { path: '/menu/offices', element: <EcranMenuOffices /> },
+      { path: '/menu/prieres', element: <EcranMenuPrieres /> },
       { path: '/a-propos', element: <EcranAPropos /> },
       { path: '*', element: <Navigate to="/" replace /> },
     ],

@@ -15,7 +15,8 @@ test.beforeEach(async ({ page }) => {
   await servirAelf(page)
 })
 
-const ligneRappels = (page: Page) => page.getByRole('link', { name: 'Rappels', exact: true })
+const ligneRappels = (page: Page) =>
+  page.getByRole('link', { name: 'Heures et rappels', exact: true })
 const resume = (page: Page) => page.locator('.reglages-rappels .ligne-page-resume')
 const titre = (page: Page) => page.getByRole('heading', { level: 1 })
 const ligneAlerte = (page: Page) =>
@@ -111,7 +112,7 @@ test('l’accueil le signale, sans cacher les complies ; un toucher ouvre les Ra
 
   await ligne.click()
   await expect(page).toHaveURL('/reglages/rappels')
-  await expect(titre(page)).toHaveText('Rappels')
+  await expect(titre(page)).toHaveText('Heures et rappels')
   await expect(page.locator('.rappels-avis')).toHaveCount(1)
   // Le retour d'Android remonte aux Réglages, puis à l'accueil.
   await page.goBack()

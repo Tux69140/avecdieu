@@ -63,8 +63,8 @@ test.describe('écran des réglages', () => {
   }) => {
     await preparer(page)
     await page.goto('/')
-    await ouvrirReglages(page, 'Chapelet')
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chapelet')
+    await ouvrirReglages(page, 'Chapelet et Rosaire')
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chapelet et Rosaire')
     await expect(reglage(page, 'Prier à plusieurs')).toHaveAttribute('aria-checked', 'false')
     await expect(page.getByRole('radio', { name: 'Texte complet' })).toHaveAttribute(
       'aria-checked',
@@ -78,7 +78,7 @@ test.describe('écran des réglages', () => {
 
     // La croix remonte d'un niveau à chaque fois, jusqu'à l'accueil.
     await fermer(page)
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chapelet')
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chapelet et Rosaire')
     await fermer(page)
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Réglages')
     await fermer(page)
@@ -166,7 +166,7 @@ test.describe('écran des réglages', () => {
     await accueil(page)
     await expect(page).toHaveURL(/\/$/)
 
-    await ouvrirReglages(page, 'Chapelet')
+    await ouvrirReglages(page, 'Chapelet et Rosaire')
     // L'aide aux gestes, écartée au départ du parcours, revient elle aussi.
     await expect(reglage(page, 'Aide aux gestes')).toHaveAttribute('aria-checked', 'true')
     await page.getByRole('link', { name: 'Prières du chapelet' }).click()
@@ -446,7 +446,7 @@ test.describe('reprise d’un chapelet interrompu', () => {
     await commencer(page)
     await avancer(page, AVE_3_4)
     await fermer(page)
-    await ouvrirReglages(page, 'Chapelet', 'Prières du chapelet')
+    await ouvrirReglages(page, 'Chapelet et Rosaire', 'Prières du chapelet')
     // Sans « Ô mon Jésus », les deux premières dizaines ont une prière de moins.
     await reglage(page, /Ô mon Jésus/).click()
     for (let i = 0; i < 3; i++) await fermer(page)

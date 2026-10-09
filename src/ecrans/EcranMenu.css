@@ -62,50 +62,32 @@
   gap: var(--esp-sm);
 }
 
-/* Offices du jour et autres prières, repliés : un groupe sous son filet d'or,
-   chaque rubrique une ligne du menu (Literata 18 px), la flèche vers le bas.
-   La date des offices, sous leur nom, en petites capitales sépia. */
-.menu-rubriques {
-  margin: 0 0 var(--esp-md);
-  border-top: 1px solid var(--or);
-}
-
-.menu-rubriques + .menu-liste {
-  border-top-color: var(--or);
-}
-
-.menu .rubrique-titre button {
-  min-height: 48px;
+/* « Offices du jour », la date sous son nom, en petites capitales sépia. */
+.menu-ligne {
+  display: flex;
+  flex-direction: column;
   padding: var(--esp-xs) 0;
-  align-items: center;
+  line-height: 1.3;
 }
 
-.menu .rubrique-nom {
-  font-family: var(--texte);
-  font-weight: 400;
-  font-size: 18px;
-  letter-spacing: normal;
-}
-
-.menu .rubrique-resume {
+.menu-ligne-resume {
   font-family: var(--sc);
   font-weight: 600;
   font-size: 15px;
   line-height: 1.3;
   letter-spacing: 0.06em;
+  color: var(--sepia);
 }
 
-/* Dépliée, la liste prend la place des filets de la rubrique. */
-.menu .rubrique-contenu {
-  padding-bottom: 0;
-}
-
-.menu .rubrique-contenu .menu-liste {
-  margin: 0;
-}
-
-.menu .rubrique-contenu .menu-liste li:last-child {
-  border-bottom: none;
+/* Sous le titre d'une page du menu : le jour de ses offices. */
+.menu-sous-titre {
+  margin: 0 0 var(--esp-md);
+  font-family: var(--sc);
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: 0.06em;
+  text-align: center;
+  color: var(--sepia);
 }
 
 .menu-priere {

@@ -36,7 +36,7 @@ export function EcranReglages() {
           {bloques && <p className="cache-a-l-oeil">{RAPPELS_BLOQUES}.</p>}
           <LignePage
             vers="/reglages/rappels"
-            nom="Rappels"
+            nom="Heures et rappels"
             resume={
               bloques ? `⚠ ${RAPPELS_BLOQUES}` : resumerRappels(rappels, solaire.actives && !!lieu)
             }
@@ -45,7 +45,7 @@ export function EcranReglages() {
         </div>
         <LignePage
           vers="/reglages/chapelet"
-          nom="Chapelet"
+          nom="Chapelet et Rosaire"
           resume="Annonce, prières, vibrations"
           resumeCache
         />

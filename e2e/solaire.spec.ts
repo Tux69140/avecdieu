@@ -58,10 +58,11 @@ test('le cadran solaire va du lever au coucher, les complies au bout des pointil
 const ouvrirRappels = async (page: Page) => {
   await page.goto('/reglages')
   await ligneRappels(page).click()
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Rappels')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Heures et rappels')
 }
 const heures = (page: Page) => page.getByRole('radiogroup', { name: 'Heures des prières' })
-const ligneRappels = (page: Page) => page.getByRole('link', { name: 'Rappels', exact: true })
+const ligneRappels = (page: Page) =>
+  page.getByRole('link', { name: 'Heures et rappels', exact: true })
 const fermer = (page: Page) => page.getByRole('button', { name: 'Fermer', exact: true }).click()
 
 test('passer aux heures solaires : choisir une ville, puis les heures suivent le soleil', async ({
@@ -89,7 +90,7 @@ test('passer aux heures solaires : choisir une ville, puis les heures suivent le
     .click()
 
   // Retour aux rappels, en heures solaires.
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Rappels')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Heures et rappels')
   await expect(heures(page).getByRole('radio', { name: 'Solaires' })).toHaveAttribute(
     'aria-checked',
     'true',
@@ -131,7 +132,7 @@ test('revenir de l’écran du lieu sans choisir garde les heures fixes', async 
   await ouvrirRappels(page)
   await heures(page).getByRole('radio', { name: 'Solaires' }).click()
   await fermer(page)
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Rappels')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Heures et rappels')
   await expect(heures(page).getByRole('radio', { name: 'Fixes' })).toHaveAttribute(
     'aria-checked',
     'true',

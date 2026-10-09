@@ -31,6 +31,24 @@ export function useRetourAccueil(): () => void {
   }
 }
 
+// Depuis une page du menu (Offices du jour, Prières), ouverte par-dessus lui :
+// l'écran choisi remplace le menu et sa page, si bien que son retour ramène là
+// d'où le menu a été ouvert, comme depuis le menu lui-même.
+export function useQuitterLeMenu(): (chemin: string) => void {
+  const naviguer = useNavigate()
+  const { state } = useLocation()
+  return (chemin) => {
+    if ((state as DepuisParente | null)?.parente !== '/menu') {
+      void naviguer(chemin, { replace: true })
+      return
+    }
+    window.addEventListener('popstate', () => void naviguer(chemin, { replace: true }), {
+      once: true,
+    })
+    void naviguer(-1)
+  }
+}
+
 // Ce qu'une page des réglages reçoit de la page qui l'ouvre (`LignePage`).
 export interface DepuisParente {
   parente?: string
@@ -39,6 +57,10 @@ export interface DepuisParente {
   revenir?: boolean
   // Ouverte du seuil du Rosaire : « Prières du Rosaire » (phase 17).
   rosaire?: boolean
+  // Une page du menu : le jour de ses offices, et l'office d'où le menu a été
+  // ouvert.
+  depuis?: string
+  office?: string
 }
 
 // L'adresse d'une page des réglages dit sa place : sa page parente est

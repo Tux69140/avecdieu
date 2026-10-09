@@ -201,8 +201,11 @@ test('menu, offices et prières dépliés', async ({ page }) => {
   await page.goto('/menu')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Avec Dieu')
   expect(await violationsGraves(page)).toEqual([])
-  await page.getByRole('button', { name: 'Offices du jour' }).click()
-  await page.getByRole('button', { name: 'Prières' }).click()
+  await page.getByRole('link', { name: /^Offices du jour/ }).click()
+  await expect(page.getByRole('link', { name: /^Laudes/ })).toBeVisible()
+  expect(await violationsGraves(page)).toEqual([])
+  await page.goBack()
+  await page.getByRole('link', { name: 'Prières', exact: true }).click()
   await expect(page.getByRole('link', { name: 'Je crois en Dieu' })).toBeVisible()
   expect(await violationsGraves(page)).toEqual([])
 })
@@ -451,10 +454,11 @@ test.describe('de nuit', () => {
 
   test('menu', async ({ page }) => {
     await preparer(page)
-    await page.goto('/menu')
-    await page.getByRole('button', { name: 'Offices du jour' }).click()
-    await page.getByRole('button', { name: 'Prières' }).click()
-    expect(await violationsGraves(page)).toEqual([])
+    for (const chemin of ['/menu', '/menu/offices', '/menu/prieres']) {
+      await page.goto(chemin)
+      await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+      expect(await violationsGraves(page)).toEqual([])
+    }
   })
 
   test('prière seule', async ({ page }) => {

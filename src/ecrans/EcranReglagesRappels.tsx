@@ -56,7 +56,7 @@ export function EcranReglagesRappels() {
     (android?.marque === 'xiaomi' || android?.marque === 'samsung') && !avis.includes('batterie')
 
   return (
-    <PageReglages titre="Rappels">
+    <PageReglages titre="Heures et rappels">
       {/* Ce qui empêche les rappels d'arriver passe avant tout le reste : on
           arrive souvent ici depuis l'alerte de l'accueil. */}
       {avis.length > 0 && (
@@ -80,15 +80,15 @@ export function EcranReglagesRappels() {
           onChoisir={choisirHeures}
         />
         {solaires && lieu && (
-          <>
-            <p className="choix-aide">
-              Selon la course du soleil {dansLeLieu(lieu)}, du lever au coucher.
-            </p>
-            <LienSuite className="rappels-lieu" to="/lieu">
-              Lieu : {nommerLieu(lieu)}
-            </LienSuite>
-          </>
+          <p className="choix-aide">
+            Selon la course du soleil {dansLeLieu(lieu)}, du lever au coucher.
+          </p>
         )}
+        {/* Toujours là : le lieu règle aussi le cadran et le thème de nuit,
+            même en heures fixes (arborescence validée le 2026-10-09). */}
+        <LienSuite className="rappels-lieu" to="/lieu">
+          Lieu : {lieu ? nommerLieu(lieu) : 'à choisir'}
+        </LienSuite>
       </div>
 
       <ul className="rappels">

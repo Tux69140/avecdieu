@@ -86,6 +86,8 @@ for (const [nom, chemin] of [
   ['seuil du Rosaire', '/rosaire'],
   ['chapelet ou Rosaire ?', '/chapelet-ou-rosaire'],
   ['menu', '/menu'],
+  ['menu · offices du jour', '/menu/offices'],
+  ['menu · prières', '/menu/prieres'],
   ['réglages', '/reglages'],
   ['réglages · rappels', '/reglages/rappels'],
   ['réglages · page d’une prière', '/reglages/rappels/laudes'],

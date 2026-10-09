@@ -10,16 +10,20 @@ const fermer = (page: Page) => page.getByRole('button', { name: 'Fermer', exact:
 
 // Le chemin depuis Réglages, ligne par ligne, avec l'adresse et le titre de chaque page.
 const ARBORESCENCE: [string[], string, string][] = [
-  [['Rappels'], '/reglages/rappels', 'Rappels'],
-  [['Rappels', 'Laudes'], '/reglages/rappels/laudes', 'Laudes'],
-  [['Rappels', 'Laudes', 'Son'], '/reglages/rappels/laudes/son', 'Son'],
+  [['Heures et rappels'], '/reglages/rappels', 'Heures et rappels'],
+  [['Heures et rappels', 'Laudes'], '/reglages/rappels/laudes', 'Laudes'],
+  [['Heures et rappels', 'Laudes', 'Son'], '/reglages/rappels/laudes/son', 'Son'],
   [
-    ['Rappels', 'Rappels bloqués ? Régler la batterie'],
+    ['Heures et rappels', 'Rappels bloqués ? Régler la batterie'],
     '/reglages/rappels/batterie',
     'Sur un Xiaomi',
   ],
-  [['Chapelet'], '/reglages/chapelet', 'Chapelet'],
-  [['Chapelet', 'Prières du chapelet'], '/reglages/chapelet/prieres', 'Prières du chapelet'],
+  [['Chapelet et Rosaire'], '/reglages/chapelet', 'Chapelet et Rosaire'],
+  [
+    ['Chapelet et Rosaire', 'Prières du chapelet'],
+    '/reglages/chapelet/prieres',
+    'Prières du chapelet',
+  ],
   [['Offices'], '/reglages/offices', 'Offices'],
   [['Offices', 'Zone liturgique'], '/reglages/offices/zone', 'Zone liturgique'],
   [['Affichage'], '/reglages/affichage', 'Affichage'],
@@ -91,5 +95,5 @@ test('ouverte directement, une page profonde remonte à sa page parente', async 
 test('une prière inconnue ramène à la page des rappels', async ({ page }) => {
   await page.goto('/reglages/rappels/inconnue')
   await expect(page).toHaveURL('/reglages/rappels')
-  await expect(titre(page)).toHaveText('Rappels')
+  await expect(titre(page)).toHaveText('Heures et rappels')
 })
