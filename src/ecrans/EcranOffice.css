@@ -105,6 +105,10 @@
 /* Le texte de l'office, à la taille choisie (Réglages, ou pincement). */
 .office-texte {
   font-size: var(--taille-priere);
+  line-height: calc(1.65 + var(--priere-air));
+  letter-spacing: var(--priere-lettres);
+  word-spacing: var(--priere-mots);
+  font-weight: var(--priere-graisse);
 }
 
 /* Avis d’erreur : encadré brun brique, jamais le rouge des rubriques ; le même

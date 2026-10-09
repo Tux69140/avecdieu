@@ -112,6 +112,11 @@
   /* Le texte à prier des offices et du chapelet, réglable de 16 à 24 px
      (phase 10) ; ce qui s'y mêle suit en em. */
   --taille-priere: 18px;
+  /* Le texte à prier, tel quel le jour ; aéré la nuit (plus bas). */
+  --priere-lettres: normal;
+  --priere-mots: normal;
+  --priere-graisse: 400;
+  --priere-air: 0;
   --gouttiere: 24px;
   /* L'aide sous un interrupteur s'arrête avant son curseur : sa largeur
      (46 px) et l'écart qui l'en sépare (16 px). */
@@ -122,12 +127,14 @@
 
 /* Thème nuit (docs/DESIGN.md) : brun-noir chaud, jamais noir pur, pour les
    complies dans la pénombre. Posé par src/affichage/apparence.ts. Les
-   couleurs liturgiques ne changent pas. */
+   couleurs liturgiques ne changent pas. Fond à 7 % de luminosité, encre
+   adoucie, texte à prier aéré et un peu allégé : un texte clair sur fond
+   sombre semble baver (choix du porteur du projet, 2026-10-09). */
 :root[data-theme='nuit'] {
-  --parchemin: #14100c;
+  --parchemin: #16120d;
   --velin: #1d1813;
   --filet: #3a3026;
-  --encre: #e6d9c2;
+  --encre: #dacdb6;
   --sepia: #a6927a;
   --sepia-pale: #6e604f;
   --rubrique: #e07a6a;
@@ -138,7 +145,7 @@
   --halo: rgba(226, 180, 90, 0.22);
   --halo-perle: rgba(224, 122, 106, 0.3);
   --interrupteur-actif: #c9a45c;
-  --interrupteur-curseur: #14100c;
+  --interrupteur-curseur: #16120d;
   --or-reflet: #e9cf8e;
   --soleil-reflet: #f5dc98;
   --soleil-ombre: #9a6c1c;
@@ -153,6 +160,10 @@
   --erreur: #d98a5e;
   --info: #8fb0cc;
   --grain-opacite: 0.05;
+  --priere-lettres: 0.01em;
+  --priere-mots: 0.06em;
+  --priere-graisse: 380;
+  --priere-air: 0.1;
 
   color-scheme: dark;
 }

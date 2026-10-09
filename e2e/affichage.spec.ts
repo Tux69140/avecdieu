@@ -215,7 +215,8 @@ test.describe('thème', () => {
     await expect.poll(() => theme(page)).toBe('jour')
     await page.emulateMedia({ colorScheme: 'dark' })
     await expect.poll(() => theme(page)).toBe('nuit')
-    await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(20, 16, 12)')
+    // Le fond de nuit à 7 % de luminosité (choix du porteur du projet, 2026-10-09).
+    await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(22, 18, 13)')
     await page.emulateMedia({ colorScheme: 'light' })
     await expect.poll(() => theme(page)).toBe('jour')
     // Le soleil se couche vers 19 h 20 au centre de la France.
@@ -239,6 +240,20 @@ test.describe('thème', () => {
     await expect.poll(() => theme(page)).toBe('nuit')
     await page.reload()
     await expect.poll(() => theme(page)).toBe('nuit')
+  })
+
+  // La nuit, le texte à prier s'aère et s'allège un peu, pour qu'il ne bave pas
+  // sur le fond sombre (2026-10-09) ; le jour, rien ne change.
+  test('la nuit, le texte à prier est plus aéré', async ({ page }) => {
+    await commencer(page, '/chapelet', { reglages: { theme: 'jour' } as never })
+    const texte = page.locator('.priere-texte')
+    await expect(texte).toHaveCSS('letter-spacing', 'normal')
+    await expect(texte).toHaveCSS('word-spacing', '0px')
+    await expect(texte).toHaveCSS('font-weight', '400')
+    await page.evaluate(() => (document.documentElement.dataset.theme = 'nuit'))
+    await expect(texte).not.toHaveCSS('letter-spacing', 'normal')
+    await expect(texte).not.toHaveCSS('word-spacing', '0px')
+    await expect(texte).toHaveCSS('font-weight', '380')
   })
 })
 

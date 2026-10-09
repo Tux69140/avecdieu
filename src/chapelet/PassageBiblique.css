@@ -1,6 +1,10 @@
 .passage {
   margin-top: var(--esp-lg);
   font-size: var(--taille-priere);
+  line-height: calc(1.65 + var(--priere-air));
+  letter-spacing: var(--priere-lettres);
+  word-spacing: var(--priere-mots);
+  font-weight: var(--priere-graisse);
   text-align: left;
 }
 

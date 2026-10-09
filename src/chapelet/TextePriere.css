@@ -3,6 +3,9 @@
   text-align: center;
   /* La taille choisie (Réglages, ou pincement). */
   font-size: var(--taille-priere);
+  letter-spacing: var(--priere-lettres);
+  word-spacing: var(--priere-mots);
+  font-weight: var(--priere-graisse);
 }
 
 .strophe {
@@ -22,7 +25,7 @@
 /* Un vers par ligne, centré ; un vers trop long se coupe en deux lignes équilibrées. */
 .priere-texte span {
   display: block;
-  line-height: 1.45;
+  line-height: calc(1.45 + var(--priere-air));
   text-wrap: balance;
 }
 
