@@ -81,9 +81,11 @@ describe('chapelet simplifié', () => {
 
   it('« L’essentiel seulement », son aide et l’avis de la page des prières', () => {
     expect(ESSENTIEL.libelle).toBe('L’essentiel seulement')
-    expect(brut(ESSENTIEL.aide)).toBe(
-      'Le signe de croix, puis les cinq dizaines : l’annonce du mystère, un Notre Père, dix Je vous salue Marie, un Gloire au Père.',
-    )
+    const suite =
+      ' : l’annonce du mystère, un Notre Père, dix Je vous salue Marie, un Gloire au Père.'
+    expect(brut(ESSENTIEL.aide.chapelet)).toBe(`Le signe de croix, puis les cinq dizaines${suite}`)
+    expect(brut(ESSENTIEL.aide.rosaire)).toBe(`Le signe de croix, puis les vingt dizaines${suite}`)
+    expect(brut(ESSENTIEL.aide.commune)).toBe(`Le signe de croix, puis les dizaines${suite}`)
     expect(ESSENTIEL.active).toBe('L’essentiel seulement est activé.')
     expect(FACULTATIF).toBe('facultatif')
     expect(PRIERE_SAINT_PERE).toBe('Prière aux intentions du Saint-Père')

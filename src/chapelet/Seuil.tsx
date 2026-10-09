@@ -101,6 +101,7 @@ export function Seuil({ forme, serie, duJour, date, enCours, onCommencer, onReco
           {/* Le cœur seul, sans les prières d'usage (phase 18), en tête. */}
           <InterrupteursPriere
             choix={['essentiel', 'vibrations', 'plusieurs']}
+            forme={forme}
             reglages={reglages}
             onModifier={modifier}
           />

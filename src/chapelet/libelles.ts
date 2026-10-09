@@ -85,12 +85,21 @@ export const AUX_INTENTIONS = {
 export const PRIERE_SAINT_PERE = 'Prière aux intentions du Saint-Père'
 
 // « L’essentiel seulement », sur le seuil et dans Réglages › Chapelet ; la
-// page des prières le rappelle en tête quand il est activé.
+// page des prières le rappelle en tête quand il est activé. Chaque seuil
+// compte ses dizaines ; les réglages, communs aux deux, n'en disent pas le
+// nombre (validé par le porteur du projet, 2026-10-09).
+const aideEssentiel = (dizaines: string) =>
+  insecables(
+    `Le signe de croix, puis ${dizaines} : l’annonce du mystère, un Notre Père, dix Je vous salue Marie, un Gloire au Père.`,
+  )
+
 export const ESSENTIEL = {
   libelle: 'L’essentiel seulement',
-  aide: insecables(
-    'Le signe de croix, puis les cinq dizaines : l’annonce du mystère, un Notre Père, dix Je vous salue Marie, un Gloire au Père.',
-  ),
+  aide: {
+    chapelet: aideEssentiel('les cinq dizaines'),
+    rosaire: aideEssentiel('les vingt dizaines'),
+    commune: aideEssentiel('les dizaines'),
+  },
   active: 'L’essentiel seulement est activé.',
 } as const
 

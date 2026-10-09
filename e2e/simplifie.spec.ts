@@ -177,10 +177,18 @@ test.describe('« L’essentiel seulement »', () => {
     await essentiel(page).click()
     await expect(essentiel(page)).toHaveAttribute('aria-checked', 'true')
     await expect(duree(page)).toHaveText(/^~15 min, environ quinze minutes$/)
-    // Le seuil du Rosaire raccourcit de même.
+    // Le seuil du Rosaire raccourcit de même, et l'aide y compte ses vingt
+    // dizaines ; Réglages › Chapelet, commun aux deux, ne dit pas le nombre.
     await page.goto('/rosaire')
     await expect(duree(page)).toHaveText(/^~1 h 15, environ une heure quinze$/)
-    await page.goBack()
+    await expect(essentiel(page)).toHaveAccessibleDescription(
+      /^Le signe de croix, puis les vingt dizaines\s:/,
+    )
+    await page.goto('/reglages/chapelet')
+    await expect(essentiel(page)).toHaveAccessibleDescription(
+      /^Le signe de croix, puis les dizaines\s:/,
+    )
+    await page.goto('/chapelet')
 
     await page.getByRole('button', { name: 'Commencer le chapelet' }).click()
     await expect(titre(page)).toHaveText('Signe de croix')
