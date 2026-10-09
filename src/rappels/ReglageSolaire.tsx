@@ -10,7 +10,8 @@ import {
 } from '../office/heuresSolaires'
 import { leverEtCoucher } from '../office/soleil'
 import { dansLeLieu, ecrireDecalage, ecrireHeureRappel, SOUS_TITRES_SOLAIRES } from './textes'
-import { lireChamp, versChamp } from './basculer'
+import { Interrupteur } from '../composants/Interrupteur'
+import { ChampHeure } from './ChampHeure'
 import { decaler } from './solaire'
 import './ReglageSolaire.css'
 
@@ -118,32 +119,19 @@ function ChoixLimite({
 }) {
   return (
     <div className="volet-limite" data-active={limite.active ? 'oui' : 'non'}>
-      <label className="volet-limite-heure">
-        <span aria-hidden="true">
-          {libelle} {ecrireHeureRappel(limite.heure)}
-        </span>
-        <input
-          type="time"
-          aria-label={`${libelle}, heure`}
-          value={versChamp(limite.heure)}
-          onChange={(e) => {
-            const heure = lireChamp(e.target.value)
-            if (heure) onChanger({ heure })
-          }}
-        />
-      </label>
-      <button
-        className="rappel-bascule"
-        type="button"
-        role="switch"
-        aria-checked={limite.active}
-        aria-label={`${libelle}, limite`}
-        onClick={() => onChanger({ active: !limite.active })}
-      >
-        <span className="interrupteur-piste" aria-hidden="true">
-          <span className="interrupteur-curseur" />
-        </span>
-      </button>
+      <ChampHeure
+        className="volet-limite-heure"
+        nom={`${libelle}, heure`}
+        heure={limite.heure}
+        texte={`${libelle} ${ecrireHeureRappel(limite.heure)}`}
+        onChoisir={(heure) => onChanger({ heure })}
+      />
+      <Interrupteur
+        libelle={`${libelle}, limite`}
+        libelleCache
+        actif={limite.active}
+        onBasculer={(active) => onChanger({ active })}
+      />
     </div>
   )
 }

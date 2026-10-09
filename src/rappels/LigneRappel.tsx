@@ -2,7 +2,9 @@ import { useRef } from 'react'
 import { Link, useLocation } from 'react-router'
 import type { DepuisParente } from '../composants/retour'
 import type { Heure } from '../office/heure'
-import { basculerRappel, lireChamp, versChamp } from './basculer'
+import { Interrupteur } from '../composants/Interrupteur'
+import { basculerRappel } from './basculer'
+import { ChampHeure } from './ChampHeure'
 import type { Priere, Rappel } from './reglages'
 import { ecrireHeureRappel, nomDuSon } from './textes'
 
@@ -64,32 +66,20 @@ export function LigneRappel({
             {solaire.heure ? ecrireHeureRappel(solaire.heure) : '—'}
           </Link>
         ) : (
-          <label className="rappel-heure">
-            <span aria-hidden="true">{heure ? ecrireHeureRappel(heure) : '—'}</span>
-            <input
-              ref={champ}
-              type="time"
-              aria-label={`${nom}, heure`}
-              value={versChamp(heure)}
-              onChange={(e) => {
-                const choisie = lireChamp(e.target.value)
-                if (choisie) onChanger({ heure: choisie })
-              }}
-            />
-          </label>
+          <ChampHeure
+            ref={champ}
+            className="rappel-heure"
+            nom={`${nom}, heure`}
+            heure={heure}
+            onChoisir={(choisie) => onChanger({ heure: choisie })}
+          />
         )}
-        <button
-          className="rappel-bascule"
-          type="button"
-          role="switch"
-          aria-checked={actif}
-          aria-label={`${nom}, rappel`}
-          onClick={() => basculerRappel(rappel, onChanger, onActiver, champ.current)}
-        >
-          <span className="interrupteur-piste" aria-hidden="true">
-            <span className="interrupteur-curseur" />
-          </span>
-        </button>
+        <Interrupteur
+          libelle={`${nom}, rappel`}
+          libelleCache
+          actif={actif}
+          onBasculer={() => basculerRappel(rappel, onChanger, onActiver, champ.current)}
+        />
       </div>
     </li>
   )

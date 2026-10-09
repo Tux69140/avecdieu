@@ -3,7 +3,8 @@ import { Navigate, useParams } from 'react-router'
 import { Interrupteur } from '../composants/Interrupteur'
 import { useLieu } from '../lieu/useLieu'
 import { estOfficeSolaire } from '../office/heuresSolaires'
-import { basculerRappel, lireChamp, versChamp } from '../rappels/basculer'
+import { basculerRappel } from '../rappels/basculer'
+import { ChampHeure } from '../rappels/ChampHeure'
 import { ChoixSon } from '../rappels/ChoixSon'
 import { ReglageSolaire, SousTitreSolaire } from '../rappels/ReglageSolaire'
 import {
@@ -14,7 +15,7 @@ import {
   type Rappel,
 } from '../rappels/reglages'
 import { lireSolaire, modifierSolaire } from '../rappels/solaire'
-import { ecrireHeureRappel, NOMS_PRIERES } from '../rappels/textes'
+import { NOMS_PRIERES } from '../rappels/textes'
 import { useAutorisations } from '../rappels/useAutorisations'
 import { useEtatAndroid } from '../rappels/useEtatAndroid'
 import { PageReglages } from '../reglages/PageReglages'
@@ -59,20 +60,15 @@ function PageRappel({ priere }: { priere: Priere }) {
           onBasculer={() => basculerRappel(rappel, changer, activer, champ.current)}
         />
         {!office && (
-          <label className="rappel-page-heure" data-actif={rappel.actif ? 'oui' : 'non'}>
-            <span className="rappel-page-libelle">Heure</span>
-            <span aria-hidden="true">{rappel.heure ? ecrireHeureRappel(rappel.heure) : '—'}</span>
-            <input
-              ref={champ}
-              type="time"
-              aria-label={`${nom}, heure`}
-              value={versChamp(rappel.heure)}
-              onChange={(e) => {
-                const heure = lireChamp(e.target.value)
-                if (heure) changer({ heure })
-              }}
-            />
-          </label>
+          <ChampHeure
+            ref={champ}
+            className="rappel-page-heure"
+            nom={`${nom}, heure`}
+            heure={rappel.heure}
+            actif={rappel.actif}
+            avant={<span className="rappel-page-libelle">Heure</span>}
+            onChoisir={(heure) => changer({ heure })}
+          />
         )}
       </div>
       {office && lieu && (

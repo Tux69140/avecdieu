@@ -1,0 +1,21 @@
+/* L'heure lisible ; le champ d'heure, invisible par-dessus toute la ligne,
+   ouvre l'horloge d'Android. */
+.champ-heure {
+  position: relative;
+  cursor: pointer;
+}
+
+.champ-heure input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.champ-heure:focus-within {
+  outline: 2px solid var(--or);
+  outline-offset: 2px;
+}

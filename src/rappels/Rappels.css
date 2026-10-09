@@ -54,9 +54,8 @@
   color: var(--sepia);
 }
 
-/* L'heure lisible ; le champ d'heure, invisible par-dessus, ouvre l'horloge. */
+/* L'heure lisible ; le champ d'heure (ChampHeure), invisible par-dessus, ouvre l'horloge. */
 .rappel-heure {
-  position: relative;
   display: grid;
   place-items: center end;
   min-width: 76px;
@@ -65,37 +64,10 @@
   font-size: 17px;
   font-variant-numeric: tabular-nums;
   color: var(--encre);
-  cursor: pointer;
 }
 
 .rappel[data-actif='non'] .rappel-heure {
   color: var(--sepia);
-}
-
-.rappel-heure input {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  opacity: 0;
-  cursor: pointer;
-}
-
-.rappel-heure:focus-within {
-  outline: 2px solid var(--or);
-  outline-offset: 2px;
-}
-
-.rappel-bascule {
-  display: grid;
-  place-items: center end;
-  min-width: 56px;
-  min-height: 48px;
-  padding: 0;
-  border: none;
-  background: none;
-  cursor: pointer;
 }
 
 /* Le choix du son, sur la page de la prière : une option par ligne. */
@@ -187,10 +159,8 @@ a.rappel-heure {
   margin-left: calc(-1 * var(--esp-sm));
 }
 
-/* La page d'une prière : l'heure se lit à droite ; le champ d'heure,
-   invisible par-dessus toute la ligne, ouvre l'horloge d'Android. */
+/* La page d'une prière : l'heure se lit à droite. */
 .rappel-page-heure {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -199,7 +169,6 @@ a.rappel-heure {
   border-bottom: 1px solid var(--filet);
   font-size: 17px;
   font-variant-numeric: tabular-nums;
-  cursor: pointer;
 }
 
 .rappel-page-libelle {
@@ -208,21 +177,6 @@ a.rappel-heure {
 
 .rappel-page-heure[data-actif='non'] > span:not(.rappel-page-libelle) {
   color: var(--sepia);
-}
-
-.rappel-page-heure input {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  opacity: 0;
-  cursor: pointer;
-}
-
-.rappel-page-heure:focus-within {
-  outline: 2px solid var(--or);
-  outline-offset: 2px;
 }
 
 /* Sous le titre d'un office solaire, son repère, centré comme lui. */
