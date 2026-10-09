@@ -114,7 +114,7 @@ for (const [nom, chemin] of [
   })
 }
 
-test('accueil, rappels bloqués : l’alerte, sur la ligne du ☰, reste sous la barre du haut', async ({
+test('accueil, rappels bloqués : l’alerte, sur sa propre ligne, reste sous la barre du haut', async ({
   page,
 }) => {
   await servirAelf(page)
@@ -264,19 +264,18 @@ test('rappels : la fenêtre d’autorisation s’écarte des barres d’Android'
   expect(boite.y + boite.height).toBeLessThanOrEqual(page.viewportSize()!.height - BAS)
 })
 
-// Objectif validé : à 360 × 780, l'accueil tenait en un écran jusqu'au bas de
-// la liste. Depuis la phase 18, le Chapelet et le Rosaire l'ouvrent : la
-// liste a une ligne de plus, et tout tient jusqu'aux vêpres ; les complies
-// demandent un léger défilement (16 px un jour au titre d'une ligne, 45 px
-// au titre de deux lignes), signalé au porteur du projet le 2026-10-09.
+// Objectif validé : à 360 × 780, l'accueil tient en un écran jusqu'au bas de
+// la liste, complies comprises. Depuis la phase 18, le Chapelet et le Rosaire
+// l'ouvrent ; la navigation des jours est montée sur la ligne du ☰ pour
+// regagner la place (choix du porteur du projet, 2026-10-09).
 for (const [nom, jour, titreDuJour, lignesDuTitre, derniere] of [
-  ['titre d’une ligne', new Date(2026, 9, 6, 12, 15), 'S. Bruno', 1, /^Vêpres/],
+  ['titre d’une ligne', new Date(2026, 9, 6, 12, 15), 'S. Bruno', 1, /^Complies/],
   [
     'saint sur deux lignes',
     new Date(2026, 9, 15, 12, 15),
     'Ste Thérèse de Jésus (d’Avila)',
     2,
-    /^Vêpres/,
+    /^Complies/,
   ],
 ] as const) {
   test(`accueil, ${nom} : tout tient jusqu’à la ligne ${derniere.source.slice(1)}, barres comprises`, async ({

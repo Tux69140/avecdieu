@@ -25,7 +25,8 @@
 
 /* Brun brique, la couleur des erreurs : le rouge reste aux rubriques. */
 .accueil-alerte {
-  display: inline-flex;
+  display: flex;
+  justify-content: flex-end;
   align-items: center;
   min-height: 48px;
   margin-right: calc(-1 * var(--esp-xs));
@@ -54,6 +55,8 @@
 /* Le jour d'avant, aujourd'hui, le jour d'après, en petites capitales. */
 .accueil-jours {
   display: flex;
+  flex: 1;
+  min-width: 0;
   justify-content: space-between;
   align-items: center;
   /* Collé au cadran : la perle la plus haute garde 12 px d'écart avec ses
@@ -67,6 +70,7 @@
 
 .accueil-jours a {
   display: inline-flex;
+  white-space: nowrap;
   align-items: center;
   min-height: 48px;
   padding: 0 var(--esp-xs);

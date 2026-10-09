@@ -77,31 +77,38 @@ function Accueil({ date, aujourdhui, maintenant }: Props) {
             <path d="M3 5h14M3 10h14M3 15h14" />
           </svg>
         </Link>
-        <AlerteRappels />
-      </div>
-      <nav className="accueil-jours" aria-label="Autres jours">
-        <Link
-          to={routeDuJour(veille, aujourdhui)}
-          replace
-          aria-label={`Jour précédent, ${dateLisible(veille)}`}
-        >
-          ‹ {avecExposants(dateCourte(veille))}
-        </Link>
-        {estAujourdhui ? (
-          <span className="accueil-aujourdhui">Aujourd’hui</span>
-        ) : (
-          <Link to="/" replace>
-            Revenir à aujourd’hui
+        {/* Les jours sur la ligne du ☰ : une ligne de gagnée, pour que les
+            complies tiennent dans le premier écran (2026-10-09). */}
+        <nav className="accueil-jours" aria-label="Autres jours">
+          <Link
+            to={routeDuJour(veille, aujourdhui)}
+            replace
+            aria-label={`Jour précédent, ${dateLisible(veille)}`}
+          >
+            ‹ {avecExposants(dateCourte(veille))}
           </Link>
-        )}
-        <Link
-          to={routeDuJour(lendemain, aujourdhui)}
-          replace
-          aria-label={`Jour suivant, ${dateLisible(lendemain)}`}
-        >
-          {avecExposants(dateCourte(lendemain))} ›
-        </Link>
-      </nav>
+          {estAujourdhui ? (
+            <span className="accueil-aujourdhui">Aujourd’hui</span>
+          ) : (
+            // Un autre jour, « Aujourd’hui » souligné d'or y ramène : « Revenir à
+            // aujourd’hui » ne tient plus sur la ligne du ☰ ; le lecteur
+            // d'écran, lui, l'entend en entier.
+            <Link to="/" replace aria-label="Revenir à aujourd’hui">
+              Aujourd’hui
+            </Link>
+          )}
+          <Link
+            to={routeDuJour(lendemain, aujourdhui)}
+            replace
+            aria-label={`Jour suivant, ${dateLisible(lendemain)}`}
+          >
+            {avecExposants(dateCourte(lendemain))} ›
+          </Link>
+        </nav>
+      </div>
+      {/* L'alerte, rare, prend sa propre ligne les jours où le téléphone
+          bloque les rappels. */}
+      <AlerteRappels />
       <div className="accueil-cadran" {...glisser}>
         <Cadran
           date={date}
