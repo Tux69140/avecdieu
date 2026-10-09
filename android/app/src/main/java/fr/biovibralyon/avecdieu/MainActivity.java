@@ -11,5 +11,7 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(Vibreur.class);
         registerPlugin(Sonnerie.class);
         super.onCreate(savedInstanceState);
+        // Avant onStart : ses demandes d'autorisation doivent s'inscrire ici.
+        getBridge().getWebView().setWebChromeClient(new ClientPosition(getBridge()));
     }
 }

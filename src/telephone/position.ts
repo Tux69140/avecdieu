@@ -1,8 +1,8 @@
 import type { Lieu } from '../office/soleil'
 
-// La position du téléphone, par la géolocalisation de la WebView : Capacitor
-// relaie la demande d'autorisation d'Android (position approximative, bien
-// assez pour les heures du soleil). Elle ne quitte jamais le téléphone et
+// La position du téléphone, par la géolocalisation de la WebView : l'app
+// demande à Android la position approximative seule (ClientPosition.java), bien
+// assez pour les heures du soleil. Elle ne quitte jamais le téléphone et
 // n'est jamais écrite dans un journal (.claude/rules/securite.md).
 
 export type Localisation =

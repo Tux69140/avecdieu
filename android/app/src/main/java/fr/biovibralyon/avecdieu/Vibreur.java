@@ -35,7 +35,7 @@ public class Vibreur extends Plugin {
                 new VibrationAttributes.Builder().setUsage(VibrationAttributes.USAGE_MEDIA).build()
             );
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrerAncien(vibreur, VibrationEffect.createOneShot(duree, VibrationEffect.DEFAULT_AMPLITUDE));
+            vibrerAncien(vibreur, duree);
         } else {
             vibrerTresAncien(vibreur, duree);
         }
@@ -52,10 +52,13 @@ public class Vibreur extends Plugin {
         call.resolve(reponse);
     }
 
+    // Aucune classe venue après Android 7 dans la signature d'une méthode :
+    // Capacitor les lit toutes au démarrage, et Android 7 s'arrêtait net sur
+    // VibrationEffect (tablette du porteur du projet, 2026-10-09).
     @SuppressWarnings("deprecation")
-    private void vibrerAncien(Vibrator vibreur, VibrationEffect effet) {
+    private void vibrerAncien(Vibrator vibreur, int duree) {
         AudioAttributes usage = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).build();
-        vibreur.vibrate(effet, usage);
+        vibreur.vibrate(VibrationEffect.createOneShot(duree, VibrationEffect.DEFAULT_AMPLITUDE), usage);
     }
 
     @SuppressWarnings("deprecation")
