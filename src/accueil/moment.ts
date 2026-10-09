@@ -1,4 +1,4 @@
-import type { Heure } from '../office/heures'
+import { enMinutes, type Heure } from '../office/heure'
 import { PRIERES_RAPPELEES, type Priere } from '../rappels/reglages'
 
 // Où en est la journée de prière, chapelet compris (à son heure, il est la
@@ -18,8 +18,6 @@ export interface Journee {
 // loin. Hors de ces créneaux, aucune.
 const AVANCE = 30
 const HEURE_DE_GRACE = 60
-
-const enMinutes = ({ heures, minutes }: Heure) => heures * 60 + minutes
 
 // La prière du moment : celle dont le créneau contient l'heure qu'il est ; si
 // deux créneaux se chevauchent, la plus proche de son heure (à égalité, celle

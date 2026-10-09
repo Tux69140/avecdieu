@@ -1,8 +1,8 @@
 import { useRef } from 'react'
 import { Link, useLocation } from 'react-router'
 import type { DepuisParente } from '../composants/retour'
-import type { Heure } from '../office/heures'
-import { basculerRappel, versChamp, versHeure } from './basculer'
+import type { Heure } from '../office/heure'
+import { basculerRappel, lireChamp, versChamp } from './basculer'
 import type { Priere, Rappel } from './reglages'
 import { ecrireHeureRappel, nomDuSon } from './textes'
 
@@ -72,7 +72,7 @@ export function LigneRappel({
               aria-label={`${nom}, heure`}
               value={versChamp(heure)}
               onChange={(e) => {
-                const choisie = versHeure(e.target.value)
+                const choisie = lireChamp(e.target.value)
                 if (choisie) onChanger({ heure: choisie })
               }}
             />

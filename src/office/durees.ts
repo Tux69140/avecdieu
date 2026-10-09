@@ -1,3 +1,4 @@
+import { ecrireHeure, versHeure } from './heure'
 import type { NomOffice } from './modele'
 
 // Combien de temps prendre pour chaque prière, affiché sur le seuil du
@@ -39,10 +40,8 @@ const dureeDe = (priere: PriereMinutee, essentiel: boolean) =>
 // « 20 min », « ~20 min », « ~1 h 45 » : court, pour tenir sur la ligne.
 export function ecrireDuree(priere: PriereMinutee, essentiel = false): string {
   const { minutes, environ } = dureeDe(priere, essentiel)
-  const h = Math.floor(minutes / 60)
-  const min = minutes % 60
-  const texte =
-    h === 0 ? `${min} min` : min === 0 ? `${h} h` : `${h} h ${String(min).padStart(2, '0')}`
+  const duree = versHeure(minutes)
+  const texte = duree.heures === 0 ? `${duree.minutes} min` : ecrireHeure(duree)
   return environ ? `~${texte}` : texte
 }
 
@@ -50,8 +49,7 @@ export function ecrireDuree(priere: PriereMinutee, essentiel = false): string {
 // « environ vingt minutes », « environ une heure quarante-cinq ».
 export function direDuree(priere: PriereMinutee, essentiel = false): string {
   const { minutes, environ } = dureeDe(priere, essentiel)
-  const h = Math.floor(minutes / 60)
-  const min = minutes % 60
+  const { heures: h, minutes: min } = versHeure(minutes)
   const enLettres = (n: number) => (n === 1 ? 'une' : nombreEnLettres(n))
   const texte =
     h === 0

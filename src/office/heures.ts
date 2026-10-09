@@ -2,14 +2,17 @@ import { lireLieu } from '../lieu/lieu'
 import { lireRappels, PRIERES_RAPPELEES, type Priere, type Rappels } from '../rappels/reglages'
 import { lireSolaire } from '../rappels/solaire'
 import { enDate } from './dates'
+import type { Heure } from './heure'
 import { heuresSolaires, type ReglagesSolaires } from './heuresSolaires'
 import { OFFICES, type NomOffice } from './modele'
 import type { Lieu } from './soleil'
 
-export interface Heure {
-  heures: number
-  minutes: number
-}
+// Les heures fixes, réglées avec les rappels : les mêmes chaque jour.
+export const heuresReglees = (rappels: Rappels) =>
+  Object.fromEntries(PRIERES_RAPPELEES.map((priere) => [priere, rappels[priere].heure])) as Record<
+    Priere,
+    Heure | undefined
+  >
 
 // L'heure de chaque prière un jour donné : celle réglée avec les rappels, même
 // rappel coupé (une seule heure partout, décision du porteur du projet,
@@ -21,9 +24,7 @@ export function calculerHeures(
   solaire: ReglagesSolaires,
   lieu: Lieu | undefined,
 ): Record<Priere, Heure | undefined> {
-  const heures = Object.fromEntries(
-    PRIERES_RAPPELEES.map((priere) => [priere, rappels[priere].heure]),
-  ) as Record<Priere, Heure | undefined>
+  const heures = heuresReglees(rappels)
   if (!solaire.actives || !lieu) return heures
   return { ...heures, ...heuresSolaires(enDate(date), lieu, solaire) }
 }
@@ -43,9 +44,4 @@ export function heuresDesOffices(date: string): Record<NomOffice, Heure | undefi
     NomOffice,
     Heure | undefined
   >
-}
-
-// « 7 h », « 18 h 30 ».
-export function ecrireHeure({ heures, minutes }: Heure): string {
-  return minutes === 0 ? `${heures} h` : `${heures} h ${String(minutes).padStart(2, '0')}`
 }

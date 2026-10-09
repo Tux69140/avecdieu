@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router'
-import { ecrireHeure, type Heure } from '../office/heures'
+import { ecrireHeure, enMinutes, type Heure } from '../office/heure'
 import { NOMS_OFFICES, OFFICES, type NomOffice } from '../office/modele'
 import {
   cheminDeLArc,
@@ -41,7 +41,6 @@ interface Props {
   children: ReactNode
 }
 
-const enMinutes = ({ heures, minutes }: Heure) => heures * 60 + minutes
 const enLargeur = (unites: number) => `${(unites / LARGEUR) * 100}%`
 const pourcents = ({ x, y }: Point) => ({ left: enLargeur(x), top: `${(y / HAUTEUR) * 100}%` })
 

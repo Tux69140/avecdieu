@@ -1,7 +1,7 @@
 import { TEXTES_OFFICE } from '../recueil/office'
 import { PRIERES } from '../recueil/prieres'
 import type { LieuChoisi } from '../lieu/lieu'
-import type { Heure } from '../office/heures'
+import type { Heure } from '../office/heure'
 import type { OfficeSolaire } from '../office/heuresSolaires'
 import type { Fabricant } from '../telephone/sonnerie'
 import { NOMS_OFFICES } from '../office/modele'

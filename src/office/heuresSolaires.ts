@@ -1,4 +1,4 @@
-import type { Heure } from './heures'
+import { arrondirALaMinute, enMinutes, minutesDe, versHeure, type Heure } from './heure'
 import { leverEtCoucher, type Lieu } from './soleil'
 
 // Les heures temporaires (PRD, « Mode solaire ») : le jour, du lever au
@@ -52,17 +52,6 @@ export const HEURES_SOLAIRES_PAR_DEFAUT: ReglagesSolaires = {
 }
 
 const MINUTE = 60_000
-const enMinutes = ({ heures, minutes }: Heure) => heures * 60 + minutes
-const versHeure = (minutes: number): Heure => ({
-  heures: Math.floor(minutes / 60),
-  minutes: minutes % 60,
-})
-
-// Minutes depuis minuit, à l'heure du téléphone (heure d'été comprise).
-const minutesDuJour = (date: Date) => {
-  const arrondie = new Date(Math.round(date.getTime() / MINUTE) * MINUTE)
-  return arrondie.getHours() * 60 + arrondie.getMinutes()
-}
 
 // L'heure de chaque office solaire ce jour-là, en ce lieu. Rien là où le
 // soleil ne se lève ou ne se couche pas (cercles polaires) : l'app garde alors
@@ -78,7 +67,8 @@ export function heuresSolaires(
   const heures = {} as Record<OfficeSolaire, Heure>
   for (const office of OFFICES_SOLAIRES) {
     const instant = lever.getTime() + PART_DU_JOUR[office] * duree
-    let minutes = minutesDuJour(new Date(instant + reglages.decalages[office] * MINUTE))
+    const decale = new Date(instant + reglages.decalages[office] * MINUTE)
+    let minutes = minutesDe(arrondirALaMinute(decale))
     if (office === 'laudes' && reglages.pasAvant.active)
       minutes = Math.max(minutes, enMinutes(reglages.pasAvant.heure))
     if (office === 'vepres' && reglages.pasApres.active)

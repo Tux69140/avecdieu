@@ -1,6 +1,6 @@
-import type { Heure } from '../office/heures'
+import { lireHeure, type Heure } from '../office/heure'
 import { OFFICES, type NomOffice } from '../office/modele'
-import { ecrire, lireObjet } from '../reglages/stockage'
+import { ecrire, estObjet, lireObjet } from '../reglages/stockage'
 
 // Les rappels du priant (phase 11) : pour chaque office et pour le chapelet,
 // s'il est rappelé, à quelle heure, avec quel son. Décisions du porteur du
@@ -73,17 +73,6 @@ export const RAPPELS_PAR_DEFAUT: Rappels = {
 export const HEURE_PROPOSEE_LECTURES: Heure = { heures: 6, minutes: 30 }
 
 const CLE = 'avec-dieu.rappels'
-
-const estObjet = (v: unknown): v is Record<string, unknown> =>
-  typeof v === 'object' && v !== null && !Array.isArray(v)
-
-const lireHeure = (v: unknown): Heure | undefined => {
-  if (!estObjet(v)) return undefined
-  const { heures, minutes } = v
-  const valide = (n: unknown, max: number): n is number =>
-    typeof n === 'number' && Number.isInteger(n) && n >= 0 && n < max
-  return valide(heures, 24) && valide(minutes, 60) ? { heures, minutes } : undefined
-}
 
 const lireSon = (v: unknown): Son | undefined => {
   if (!estObjet(v)) return undefined

@@ -27,7 +27,7 @@ export const versChamp = (heure?: { heures: number; minutes: number }) =>
   heure ? `${String(heure.heures).padStart(2, '0')}:${String(heure.minutes).padStart(2, '0')}` : ''
 
 // L'heure choisie dans l'horloge d'Android, ou rien si le champ est vide.
-export function versHeure(valeur: string) {
+export function lireChamp(valeur: string) {
   const [heures, minutes] = valeur.split(':').map(Number)
   return Number.isInteger(heures) && Number.isInteger(minutes) ? { heures, minutes } : undefined
 }

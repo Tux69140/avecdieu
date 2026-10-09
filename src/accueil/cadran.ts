@@ -1,4 +1,4 @@
-import { ecrireHeure } from '../office/heures'
+import { ecrireHeure, versHeure } from '../office/heure'
 
 // La géométrie du cadran de l'accueil : un arc elliptique ouvert vers le bas
 // (docs/DESIGN.md, maquette du porteur du projet). Coordonnées dans une boîte
@@ -221,10 +221,7 @@ interface RepereSolaire {
   part: number
 }
 
-const enHeure = (minutes: number) => ({
-  heures: Math.floor(minutes / 60),
-  minutes: Math.round(minutes % 60),
-})
+const enHeure = (minutes: number) => versHeure(Math.round(minutes))
 
 // « LEVER 7 H 52 · MIDI · COUCHER 18 H 40 » (petites capitales du cadran).
 export function reperesSolaires(soleil: { lever: number; coucher: number }): RepereSolaire[] {

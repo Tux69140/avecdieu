@@ -1,9 +1,7 @@
 import { dateDuJour, decaler, enDate } from '../office/dates'
-import type { Heure } from '../office/heures'
+import { enMinutes, type Heure } from '../office/heure'
+import { heuresReglees } from '../office/heures'
 import { PRIERES_RAPPELEES, type Priere, type Rappel, type Rappels, type Son } from './reglages'
-
-// L'heure de chaque prière un jour donné : fixe, ou selon le soleil (phase 12).
-export type HeuresDuJour = (date: string) => Record<Priere, Heure | undefined>
 import {
   nomDuSon,
   OUVERTURE_DES_HEURES,
@@ -11,6 +9,9 @@ import {
   OUVERTURE_DU_JOUR,
   TITRES_NOTIFICATIONS,
 } from './textes'
+
+// L'heure de chaque prière un jour donné : fixe, ou selon le soleil (phase 12).
+export type HeuresDuJour = (date: string) => Record<Priere, Heure | undefined>
 
 // Les notifications des semaines à venir, calculées d'après les rappels :
 // Android les garde et les déclenche même si l'app n'est pas ouverte (US-46).
@@ -63,15 +64,11 @@ export function canalDe({ son, vibreur }: Rappel): Canal {
   }
 }
 
-const enMinutes = ({ heures, minutes }: Heure) => heures * 60 + minutes
-
 // Les heures réglées avec les rappels, les mêmes chaque jour.
 const heuresFixes =
   (rappels: Rappels): HeuresDuJour =>
   () =>
-    Object.fromEntries(
-      PRIERES_RAPPELEES.map((p) => [p, rappels[p].heure]),
-    ) as ReturnType<HeuresDuJour>
+    heuresReglees(rappels)
 
 // R1 : le premier office du matin s'ouvre par « Seigneur, ouvre mes lèvres ».
 // Les rappels étant prêts un mois d'avance, c'est le plus matinal des rappels

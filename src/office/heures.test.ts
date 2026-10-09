@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { ecrireHeure, heuresDesOffices, heuresDuJour } from './heures'
+import { heuresDesOffices, heuresDuJour } from './heures'
 import { choisirLieu } from '../lieu/lieu'
 import { modifierSolaire } from '../rappels/solaire'
 import { modifierRappel } from '../rappels/reglages'
@@ -15,12 +15,6 @@ describe('heures des offices', () => {
       vepres: { heures: 18, minutes: 30 },
       complies: { heures: 21, minutes: 30 },
     })
-  })
-
-  it('s’écrivent à la française', () => {
-    expect(ecrireHeure({ heures: 7, minutes: 0 })).toBe('7 h')
-    expect(ecrireHeure({ heures: 18, minutes: 30 })).toBe('18 h 30')
-    expect(ecrireHeure({ heures: 21, minutes: 5 })).toBe('21 h 05')
   })
 })
 

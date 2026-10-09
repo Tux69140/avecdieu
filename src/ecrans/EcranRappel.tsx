@@ -3,7 +3,7 @@ import { Navigate, useParams } from 'react-router'
 import { Interrupteur } from '../composants/Interrupteur'
 import { useLieu } from '../lieu/useLieu'
 import { OFFICES_SOLAIRES, type OfficeSolaire } from '../office/heuresSolaires'
-import { basculerRappel, versChamp, versHeure } from '../rappels/basculer'
+import { basculerRappel, lireChamp, versChamp } from '../rappels/basculer'
 import { ChoixSon } from '../rappels/ChoixSon'
 import { ReglageSolaire, SousTitreSolaire } from '../rappels/ReglageSolaire'
 import {
@@ -70,7 +70,7 @@ function PageRappel({ priere }: { priere: Priere }) {
               aria-label={`${nom}, heure`}
               value={versChamp(rappel.heure)}
               onChange={(e) => {
-                const heure = versHeure(e.target.value)
+                const heure = lireChamp(e.target.value)
                 if (heure) changer({ heure })
               }}
             />

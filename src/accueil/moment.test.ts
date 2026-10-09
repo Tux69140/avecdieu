@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { Heure } from '../office/heures'
+import type { Heure } from '../office/heure'
 import { OFFICES, type NomOffice } from '../office/modele'
 import { RAPPELS_PAR_DEFAUT } from '../rappels/reglages'
 import { situerOffices } from './moment'

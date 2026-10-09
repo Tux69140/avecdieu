@@ -16,6 +16,3 @@ export function useMaintenant(): Date {
   }, [])
   return maintenant
 }
-
-// Minutes écoulées depuis minuit, à l'heure du téléphone.
-export const minutesDe = (date: Date) => date.getHours() * 60 + date.getMinutes()

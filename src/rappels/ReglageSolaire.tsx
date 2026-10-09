@@ -1,5 +1,5 @@
 import type { LieuChoisi } from '../lieu/lieu'
-import { ecrireHeure } from '../office/heures'
+import { arrondirALaMinute, ecrireHeure, minutesDe, versHeure } from '../office/heure'
 import {
   DECALAGE_MAX,
   heuresSolaires,
@@ -10,7 +10,7 @@ import {
 } from '../office/heuresSolaires'
 import { leverEtCoucher } from '../office/soleil'
 import { dansLeLieu, ecrireDecalage, ecrireHeureRappel, SOUS_TITRES_SOLAIRES } from './textes'
-import { versChamp, versHeure } from './basculer'
+import { lireChamp, versChamp } from './basculer'
 import { decaler } from './solaire'
 import './ReglageSolaire.css'
 
@@ -22,10 +22,7 @@ interface Props {
   onChanger: (changement: Partial<ReglagesSolaires>) => void
 }
 
-const arrondie = (date: Date) => {
-  const minute = new Date(Math.round(date.getTime() / 60_000) * 60_000)
-  return { heures: minute.getHours(), minutes: minute.getMinutes() }
-}
+const arrondie = (date: Date) => versHeure(minutesDe(arrondirALaMinute(date)))
 
 // L'heure d'un office solaire, sur la page de sa prière (textes validés par
 // le porteur du projet, 2026-10-07) : le décalage, la limite pour les laudes
@@ -130,7 +127,7 @@ function ChoixLimite({
           aria-label={`${libelle}, heure`}
           value={versChamp(limite.heure)}
           onChange={(e) => {
-            const heure = versHeure(e.target.value)
+            const heure = lireChamp(e.target.value)
             if (heure) onChanger({ heure })
           }}
         />

@@ -9,15 +9,11 @@ import { avecExposants } from '../composants/Exposants'
 import { astre } from '../accueil/cadran'
 import { Cadran } from '../accueil/Cadran'
 import { useGlisserLesJours } from '../accueil/glisserLesJours'
-import { minutesDe, useMaintenant } from '../accueil/maintenant'
+import { useMaintenant } from '../accueil/maintenant'
 import { situerOffices, type Journee } from '../accueil/moment'
 import { dateCourte, dateDuJour, dateLisible, decaler, enDate, estDate } from '../office/dates'
-import {
-  ecrireHeure,
-  heuresDesOffices,
-  heuresDuJour,
-  heuresSolairesEnService,
-} from '../office/heures'
+import { ecrireHeure, minutesDe } from '../office/heure'
+import { heuresDesOffices, heuresDuJour, heuresSolairesEnService } from '../office/heures'
 import { NOMS_OFFICES, OFFICES } from '../office/modele'
 import { lieuDuSoleil } from '../lieu/lieu'
 import { useLieu } from '../lieu/useLieu'
