@@ -7,7 +7,7 @@ import type { Reglages } from '../reglages/reglages'
 import { Annonce } from './Annonce'
 import type { Pas } from './deroule'
 import type { IntentionDuMois } from './intentionsDuPape'
-import { passageDeSerie } from './libelles'
+import { finDe, passageDeSerie } from './libelles'
 import { MystereEnCours } from './MystereEnCours'
 import { Priere } from './Priere'
 
@@ -63,7 +63,7 @@ export function PasEnCours({ pas, index, serie, passages, reglages, rosaire, ...
       {!pas ? (
         // La fin comme celle de l'office.
         <FinDePriere
-          libelle={rosaire ? 'Fin du Rosaire' : 'Fin du chapelet'}
+          libelle={finDe(rosaire ? 'rosaire' : 'chapelet')}
           className="fin"
           testId="fin-chapelet"
           onAccueil={props.onAccueil}

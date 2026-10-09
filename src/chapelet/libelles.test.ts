@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
 import {
-  AIDE_VIBRATIONS,
   AUX_INTENTIONS,
   CHAPELET_OU_ROSAIRE,
   ESSENTIEL,
@@ -8,12 +7,13 @@ import {
   passageDeSerie,
   PRIERE_SAINT_PERE,
   repereSerie,
+  VIBRATIONS,
 } from './libelles'
 
-describe('AIDE_VIBRATIONS', () => {
+describe('VIBRATIONS', () => {
   // Un mot composé ne se coupe pas en fin de ligne (2026-10-08).
   it('« Coupez-les » ne se coupe pas à son trait d’union', () => {
-    expect(AIDE_VIBRATIONS).toContain('Coupez-\u2060les')
+    expect(VIBRATIONS.aide).toContain('Coupez-\u2060les')
   })
 })
 

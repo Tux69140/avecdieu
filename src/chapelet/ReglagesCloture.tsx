@@ -1,7 +1,7 @@
 import { Interrupteur } from '../composants/Interrupteur'
 import type { Reglages } from '../reglages/reglages'
 import { ChoixFrequence } from './ChoixFrequence'
-import { PRIERE_SAINT_PERE } from './libelles'
+import { finDe, PRIERE_SAINT_PERE } from './libelles'
 
 interface Props {
   reglages: Reglages
@@ -16,7 +16,7 @@ interface Props {
 export function ReglagesCloture({ reglages, onModifier, rosaire = false }: Props) {
   return (
     <>
-      <h2>{rosaire ? 'Fin du Rosaire' : 'Fin du chapelet'}</h2>
+      <h2>{finDe(rosaire ? 'rosaire' : 'chapelet')}</h2>
       <Interrupteur
         libelle={PRIERE_SAINT_PERE}
         actif={reglages.saintPere}

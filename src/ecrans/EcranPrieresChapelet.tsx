@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router'
-import { ESSENTIEL } from '../chapelet/libelles'
+import { ESSENTIEL, prieresDe } from '../chapelet/libelles'
 import { ReglagesCloture } from '../chapelet/ReglagesCloture'
 import { Interrupteur } from '../composants/Interrupteur'
 import type { DepuisParente } from '../composants/retour'
@@ -30,7 +30,7 @@ const CHAQUE_DIZAINE: [OptionPriere, string, string?][] = [
 export function EcranPrieresChapelet() {
   const [reglages, modifier] = useReglages()
   const depuis = useLocation().state as DepuisParente | null
-  const titre = depuis?.rosaire ? 'Prières du Rosaire' : 'Prières du chapelet'
+  const titre = prieresDe(depuis?.rosaire ? 'rosaire' : 'chapelet')
   const interrupteurs = (liste: [OptionPriere, string, string?][]) =>
     liste.map(([cle, libelle, aide]) => (
       <Interrupteur

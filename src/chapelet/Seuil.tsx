@@ -1,20 +1,18 @@
-import { useState } from 'react'
 import { Link } from 'react-router'
 import { Duree } from '../composants/Duree'
 import { avecExposants } from '../composants/Exposants'
 import { IndiceSuite } from '../composants/IndiceSuite'
-import { Interrupteur } from '../composants/Interrupteur'
 import { LigneFermer } from '../composants/LigneFermer'
 import { LignePage } from '../composants/LignePage'
 import { useRetour, type DepuisParente } from '../composants/retour'
 import { useSuiteCachee } from '../composants/suiteCachee'
 import { dateDuJour, dateLisible } from '../office/dates'
-import { lireReglages, modifierReglages, type Reglages } from '../reglages/reglages'
-import { usePeutVibrer } from '../telephone/retours'
+import { useReglages } from '../reglages/useReglages'
 import { SERIES, type SerieId } from '../recueil/mysteres'
 import { ChoixAffichage } from './ChoixAffichage'
 import type { Forme } from './definition'
-import { AIDE_PLUSIEURS, AIDE_VIBRATIONS, CHAPELET_OU_ROSAIRE, ESSENTIEL } from './libelles'
+import { InterrupteursPriere } from './InterrupteursPriere'
+import { CHAPELET_OU_ROSAIRE, prieresDe } from './libelles'
 import { libelleReprise, type ChapeletEnCours } from './reprise'
 import { joursDeLaSerie } from './serieDuJour'
 import './Seuil.css'
@@ -39,12 +37,9 @@ const TOUTES = Object.keys(SERIES) as SerieId[]
 // distincts, sans commutateur : on a déjà choisi le Chapelet ou le Rosaire
 // sur l'accueil ou dans le menu (révisé le 2026-10-09).
 export function Seuil({ forme, serie, duJour, date, enCours, onCommencer, onRecommencer }: Props) {
-  const [reglages, setReglages] = useState(lireReglages)
+  const [reglages, modifier] = useReglages()
   const retour = useRetour()
-  // Sans vibreur (tablette), le réglage n'a pas lieu d'être.
-  const vibreur = usePeutVibrer()
   const { fin, cachee } = useSuiteCachee()
-  const modifier = (changement: Partial<Reglages>) => setReglages(modifierReglages(changement))
   const rosaire = forme === 'rosaire'
 
   return (
@@ -104,26 +99,11 @@ export function Seuil({ forme, serie, duJour, date, enCours, onCommencer, onReco
         {/* Seul ou en groupe se décide au moment de prier : le même réglage
             que dans les réglages (choix du porteur du projet, 2026-10-08). */}
         <div className="seuil-interrupteurs">
-          {/* Le cœur seul, sans les prières d'usage (phase 18). */}
-          <Interrupteur
-            libelle={ESSENTIEL.libelle}
-            aide={ESSENTIEL.aide}
-            actif={reglages.essentiel}
-            onBasculer={(essentiel) => modifier({ essentiel })}
-          />
-          {vibreur && (
-            <Interrupteur
-              libelle="Vibrations"
-              aide={AIDE_VIBRATIONS}
-              actif={reglages.vibrations}
-              onBasculer={(vibrations) => modifier({ vibrations })}
-            />
-          )}
-          <Interrupteur
-            libelle="Prier à plusieurs"
-            aide={AIDE_PLUSIEURS}
-            actif={reglages.plusieurs}
-            onBasculer={(plusieurs) => modifier({ plusieurs })}
+          {/* Le cœur seul, sans les prières d'usage (phase 18), en tête. */}
+          <InterrupteursPriere
+            choix={['essentiel', 'vibrations', 'plusieurs']}
+            reglages={reglages}
+            onModifier={modifier}
           />
         </div>
       </section>
@@ -160,7 +140,7 @@ export function Seuil({ forme, serie, duJour, date, enCours, onCommencer, onReco
           to="/reglages/chapelet/prieres"
           state={{ revenir: true, rosaire } satisfies DepuisParente}
         >
-          {rosaire ? 'Prières du Rosaire' : 'Prières du chapelet'}
+          {prieresDe(forme)}
           <span aria-hidden="true">{'\u00a0›'}</span>
         </Link>
       </p>

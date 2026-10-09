@@ -1,14 +1,17 @@
 import type { SerieId } from '../recueil/mysteres'
-import { ROSAIRE } from './definition'
+import { ROSAIRE, type Forme } from './definition'
 import { insecables } from './typographie'
 
 // « Premier mystère », « Deuxième mystère »… : rang de la dizaine, de 1 à 5.
 export const ORDINAUX = ['Premier', 'Deuxième', 'Troisième', 'Quatrième', 'Cinquième']
 
-// Partagée entre le seuil et l'écran des réglages ; dit ce que l'écran montre
-// à plusieurs (texte validé par le porteur du projet, 2026-10-08).
-export const AIDE_PLUSIEURS =
-  '℣ celui qui mène, ℟ ceux qui répondent ; en gras, ce que disent tous.'
+// Les réglages du seuil repris dans Réglages › Chapelet. L'aide de « Prier à
+// plusieurs » dit ce que l'écran montre à plusieurs (texte validé par le
+// porteur du projet, 2026-10-08).
+export const PLUSIEURS = {
+  libelle: 'Prier à plusieurs',
+  aide: '℣ celui qui mène, ℟ ceux qui répondent ; en gras, ce que disent tous.',
+} as const
 
 // La page « Chapelet ou Rosaire ? », ouverte du seuil : pour le novice, ce qui
 // les distingue, puis l'histoire et le sens. Texte validé mot à mot par le
@@ -32,11 +35,19 @@ export const CHAPELET_OU_ROSAIRE = {
   ].map(insecables),
 } as const
 
-// Partagée entre le seuil et l'écran des réglages ; « Coupez-les » ne se
-// coupe pas en fin de ligne.
-export const AIDE_VIBRATIONS = insecables(
-  'Une courte à chaque grain, une plus marquée à chaque dizaine. Coupez-les pour prier en silence.',
-)
+// « Coupez-les » ne se coupe pas en fin de ligne.
+export const VIBRATIONS = {
+  libelle: 'Vibrations',
+  aide: insecables(
+    'Une courte à chaque grain, une plus marquée à chaque dizaine. Coupez-les pour prier en silence.',
+  ),
+} as const
+
+// Au Rosaire, la page des prières et sa fin en prennent le nom (phase 18,
+// 2026-10-09) ; les réglages sont les mêmes.
+export const prieresDe = (forme: Forme) =>
+  forme === 'rosaire' ? 'Prières du Rosaire' : 'Prières du chapelet'
+export const finDe = (forme: Forme) => (forme === 'rosaire' ? 'Fin du Rosaire' : 'Fin du chapelet')
 
 // Au Rosaire, le rang de la série dans l'ordre joyeux, lumineux, douloureux,
 // glorieux, de 1 à 4.
