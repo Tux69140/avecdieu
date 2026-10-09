@@ -9,7 +9,8 @@
 .chapelet-ou-rosaire h1 {
   font-family: var(--display);
   font-weight: 400;
-  font-size: 34px;
+  /* « Chapelet ou Rosaire ? » sur une ligne à 360 px (2026-10-09). */
+  font-size: 26px;
   line-height: 1.1;
 }
 

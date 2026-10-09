@@ -97,3 +97,17 @@ test('une prière inconnue ramène à la page des rappels', async ({ page }) => 
   await expect(page).toHaveURL('/reglages/rappels')
   await expect(titre(page)).toHaveText('Heures et rappels')
 })
+
+// Un titre de page des réglages tient sur une ligne au plus petit téléphone
+// visé (2026-10-09).
+test('à 360 px, le titre de chaque page tient sur une ligne', async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 740 })
+  for (const [, chemin, nom] of ARBORESCENCE) {
+    await page.goto(chemin)
+    await expect(titre(page)).toHaveText(nom)
+    const lignes = await titre(page).evaluate(
+      (t) => t.getBoundingClientRect().height / parseFloat(getComputedStyle(t).lineHeight),
+    )
+    expect(Math.round(lignes), nom).toBe(1)
+  }
+})

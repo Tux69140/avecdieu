@@ -8,7 +8,9 @@
 .reglages h1 {
   font-family: var(--display);
   font-weight: 400;
-  font-size: 34px;
+  /* Plus petit que le menu (34 px) : « Chapelet et Rosaire » tient sur une
+     ligne à 360 px (2026-10-09). */
+  font-size: 28px;
   line-height: 1.1;
 }
 
