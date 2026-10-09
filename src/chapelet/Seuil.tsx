@@ -162,10 +162,14 @@ export function Seuil({ forme, serie, duJour, date, enCours, onCommencer, onReco
       )}
 
       {/* Les prières dites (ouverture, dizaines, fin) : la page des réglages,
-          dont la croix ramène ici. */}
-      <div className="seuil-liste seuil-prieres">
-        <LignePage vers="/reglages/chapelet/prieres" nom="Prières du chapelet" revenir />
-      </div>
+          dont la croix ramène ici. Un lien discret, comme l'aide du haut :
+          une ligne à filets de plus faisait une bande vide sous la liste. */}
+      <p className="seuil-aide seuil-prieres">
+        <Link className="lien-discret" to="/reglages/chapelet/prieres" state={{ revenir: true }}>
+          Prières du chapelet
+          <span aria-hidden="true">{'\u00a0›'}</span>
+        </Link>
+      </p>
 
       <div ref={fin} className="fin-ecran" />
       <IndiceSuite visible={cachee} />

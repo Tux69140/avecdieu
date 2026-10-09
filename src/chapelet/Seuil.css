@@ -149,6 +149,10 @@
   margin-top: var(--esp-xl);
 }
 
+.seuil-prieres .lien-discret {
+  min-height: 48px;
+}
+
 .fin-ecran {
   height: 1px;
 }
