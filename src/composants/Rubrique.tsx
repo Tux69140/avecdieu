@@ -9,7 +9,7 @@ interface Props {
   children: ReactNode
 }
 
-// Une rubrique en accordéon (réglages, seuil du chapelet, menu) : le titre et
+// Une rubrique en accordéon (menu et « A propos ») : le titre et
 // son résumé se touchent en entier, la flèche se retourne à l'ouverture.
 export function Rubrique({ titre, resume, ouverte, onBasculer, children }: Props) {
   const id = useId()

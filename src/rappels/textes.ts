@@ -49,8 +49,8 @@ export function nomDuSon(son: Son): string {
   return son.nom
 }
 
-// « Laudes, vêpres, complies » ou « Aucun rappel » : le résumé de la rubrique,
-// précédé en mode solaire de « Heures solaires · ».
+// « Laudes, vêpres, complies » ou « Aucun rappel » : le résumé de la ligne
+// Rappels des réglages, précédé en mode solaire de « Heures solaires · ».
 export function resumerRappels(rappels: Rappels, solaires = false): string {
   const actives = PRIERES_RAPPELEES.filter((priere) => rappels[priere].actif).map((priere, i) => {
     const nom = NOMS_PRIERES[priere]
@@ -60,8 +60,8 @@ export function resumerRappels(rappels: Rappels, solaires = false): string {
   return solaires ? `Heures solaires · ${resume}` : resume
 }
 
-// Le téléphone empêchera les rappels d'arriver : le résumé de la rubrique et
-// la ligne de l'accueil le disent, précédés de ⚠ (validé le 2026-10-08).
+// Le téléphone empêchera les rappels d'arriver : le résumé de la ligne Rappels
+// et la ligne de l'accueil le disent, précédés de ⚠ (validé le 2026-10-08).
 export const RAPPELS_BLOQUES = 'Rappels bloqués par le téléphone'
 
 // Heures solaires (phase 12), libellés validés le 2026-10-07.

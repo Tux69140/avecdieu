@@ -9,7 +9,7 @@ import { ecrireEtSignaler, estObjet, lireObjet, RACINE } from '../reglages/stock
 
 export type Priere = NomOffice | 'chapelet'
 
-// Dans l'ordre du jour, comme la rubrique les présente.
+// Dans l'ordre du jour, comme la page Réglages › Rappels les présente.
 export const PRIERES_RAPPELEES: readonly Priere[] = [...OFFICES, 'chapelet']
 
 // Mêmes noms que les sons de res/raw dans l'APK.

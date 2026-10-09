@@ -37,9 +37,9 @@ function Avis({
 
 const PARAMETRES = 'Ouvrir les Paramètres du téléphone'
 
-// Les avis de la rubrique quand un rappel est activé mais qu'Android, ou la
-// surcouche du fabricant, l'empêchera d'arriver (textes validés par le porteur
-// du projet, 2026-10-07). Chacun se relit au retour des réglages.
+// Les avis de la page Réglages › Rappels quand un rappel est activé mais
+// qu'Android, ou la surcouche du fabricant, l'empêchera d'arriver (textes
+// validés par le porteur du projet, 2026-10-07). Chacun se relit au retour des réglages.
 export function AvisRappels({ avis, onMinuteOuverte }: Props) {
   const textes: Record<NomAvis, [string, string, () => void]> = {
     notifications: [

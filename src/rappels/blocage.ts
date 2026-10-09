@@ -10,7 +10,7 @@ export interface EtatAndroid {
   bloque: Blocages
 }
 
-// Les avis de la rubrique Rappels, dans leur ordre d'affichage. Tous disent
+// Les avis de la page Réglages › Rappels, dans leur ordre d'affichage. Tous disent
 // qu'un rappel ne viendra pas, sauf « minute » : sans « Alarmes et rappels »,
 // il viendra, peut-être en retard.
 export type Avis = 'notifications' | 'minute' | 'arrierePlan' | 'demarrage' | 'batterie'
@@ -33,8 +33,8 @@ export function avisDesRappels(rappels: Rappels, android: EtatAndroid | undefine
   return avis
 }
 
-// « Rappels bloqués par le téléphone » : la rubrique fermée et l'accueil le
-// disent dès qu'un avis de blocage s'affiche (décision du porteur du projet,
-// 2026-10-08). Un même calcul pour les trois, qui ne divergent jamais.
+// « Rappels bloqués par le téléphone » : la ligne Rappels des réglages et
+// l'accueil le disent dès qu'un avis de blocage s'affiche (décision du porteur
+// du projet, 2026-10-08). Un même calcul pour les trois, qui ne divergent jamais.
 export const rappelsBloques = (rappels: Rappels, android: EtatAndroid | undefined) =>
   avisDesRappels(rappels, android).some((avis) => avis !== 'minute')

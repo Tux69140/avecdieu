@@ -34,7 +34,7 @@ export interface Limite {
 }
 
 export interface ReglagesSolaires {
-  // Le commutateur « Fixes | Solaires » de la rubrique Rappels.
+  // Le commutateur « Fixes | Solaires » de la page Réglages › Rappels.
   actives: boolean
   // En minutes, de −60 à +60, par 5.
   decalages: Record<OfficeSolaire, number>

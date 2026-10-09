@@ -20,7 +20,7 @@ import { insecables } from './typographie'
 interface Props {
   pas: Pas & { priere: PriereId | 'litanies' }
   compact: boolean
-  // À plusieurs : V/ et R/ marquent la part de chacun, le demi-gras celle de tous.
+  // À plusieurs : ℣ et ℟ marquent la part de chacun, le demi-gras celle de tous.
   plusieurs: boolean
   // Passage du mystère, en compact, quand l'annonce est active.
   annonce: boolean

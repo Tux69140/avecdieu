@@ -6,8 +6,8 @@ import { lireDemandes } from './reglages'
 // l'accord pour les notifications, « Alarmes et rappels », puis le guide de
 // batterie sur Xiaomi et Samsung et le démarrage automatique sur Xiaomi. Chaque
 // fenêtre ne vient qu'au besoin, et les trois dernières une seule fois :
-// refusées, elles laissent un avis dans la rubrique (textes validés par le
-// porteur du projet, 2026-10-07).
+// refusées, elles laissent un avis dans la page Réglages › Rappels (textes
+// validés par le porteur du projet, 2026-10-07).
 export type Etape = 'accord' | 'minute' | 'batterie' | 'demarrage'
 
 const ORDRE: readonly ('activation' | Etape)[] = [

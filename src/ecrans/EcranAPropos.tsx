@@ -8,8 +8,7 @@ type NomRubrique = 'textes' | 'chapelet' | 'cloches' | 'solaire'
 
 // Texte validé par le porteur du projet (2026-10-06). La mention AELF est
 // celle que l'AELF demande pour ses traductions. L'en-tête reste ouvert ;
-// dessous, quatre rubriques repliées comme les réglages, pour rester lisible
-// (2026-10-08).
+// dessous, quatre rubriques repliées, pour rester lisible (2026-10-08).
 export function EcranAPropos() {
   const retour = useRetour()
   const version = __VERSION__.split('.').slice(0, 2).join('.')
