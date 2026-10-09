@@ -17,9 +17,6 @@ export function EcranReglagesChapelet() {
     <PageReglages titre="Chapelet">
       <div className="reglages-liste">
         <LignePage vers="/reglages/chapelet/prieres" nom={prieresDe('chapelet')} />
-        {/* Le cœur seul : il l'emporte sur les prières réglées au-dessus,
-            sans les changer (phase 18). */}
-        <InterrupteursPriere choix={['essentiel']} reglages={reglages} onModifier={modifier} />
       </div>
       <h2 className="petit-titre" id="reglages-affichage">
         Affichage des prières
@@ -29,9 +26,12 @@ export function EcranReglagesChapelet() {
         affichage={reglages.affichage}
         onChoisir={(affichage) => modifier({ affichage })}
       />
+      {/* Dans l'ordre du seuil : ce qui change la prière, puis le confort
+          (2026-10-09). « L’essentiel seulement » l'emporte sur les prières
+          réglées dans leur page, sans les changer (phase 18). */}
       <div className="reglages-liste reglages-gestes">
         <InterrupteursPriere
-          choix={['plusieurs', 'vibrations']}
+          choix={['essentiel', 'plusieurs', 'vibrations']}
           reglages={reglages}
           onModifier={modifier}
         />

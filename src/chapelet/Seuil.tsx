@@ -98,9 +98,11 @@ export function Seuil({ forme, serie, duJour, date, enCours, onCommencer, onReco
         {/* Seul ou en groupe se décide au moment de prier : le même réglage
             que dans les réglages (choix du porteur du projet, 2026-10-08). */}
         <div className="seuil-interrupteurs">
-          {/* Le cœur seul, sans les prières d'usage (phase 18), en tête. */}
+          {/* Le cœur seul, sans les prières d'usage (phase 18), en tête ; ce
+              qui change la prière avant le confort, comme dans Réglages ›
+              Chapelet (2026-10-09). */}
           <InterrupteursPriere
-            choix={['essentiel', 'vibrations', 'plusieurs']}
+            choix={['essentiel', 'plusieurs', 'vibrations']}
             forme={forme}
             reglages={reglages}
             onModifier={modifier}

@@ -84,6 +84,32 @@ test('de haut en bas, dans l’ordre validé', async ({ page }) => {
   expect(positions).toEqual([...positions].sort((a, b) => a - b))
 })
 
+// Le même ordre au seuil et dans Réglages › Chapelet : ce qui change la
+// prière, puis le confort (décision du porteur du projet, 2026-10-09).
+test('les interrupteurs dans le même ordre au seuil et dans les réglages', async ({ page }) => {
+  await preparer(page)
+  const interrupteurs = () => page.getByRole('switch').allTextContents()
+  const nom = (texte: string) =>
+    ['L’essentiel seulement', 'Prier à plusieurs', 'Vibrations', 'Aide aux gestes'].find((n) =>
+      texte.startsWith(n),
+    )
+  await page.goto('/chapelet')
+  await expect(titre(page)).toHaveText('Mystères lumineux')
+  expect((await interrupteurs()).map(nom)).toEqual([
+    'L’essentiel seulement',
+    'Prier à plusieurs',
+    'Vibrations',
+  ])
+  await page.goto('/reglages/chapelet')
+  await expect(page.getByRole('switch').first()).toBeVisible()
+  expect((await interrupteurs()).map(nom)).toEqual([
+    'L’essentiel seulement',
+    'Prier à plusieurs',
+    'Vibrations',
+    'Aide aux gestes',
+  ])
+})
+
 test('« Chapelet ou Rosaire ? » ouvre sa page, que la croix referme', async ({ page }) => {
   await preparer(page)
   await page.goto('/chapelet')
