@@ -1,3 +1,4 @@
+import { dateDuJour } from '../office/dates'
 import { SERIES, type SerieId } from '../recueil/mysteres'
 import { CHAPELET_MARIAL, type Moment } from './definition'
 import type { Deroule, Pas } from './deroule'
@@ -30,21 +31,16 @@ const CLES: Record<Forme, string> = {
   rosaire: 'avec-dieu.rosaire-en-cours',
 }
 
-export function jourDe(date: Date): string {
-  const deux = (n: number) => String(n).padStart(2, '0')
-  return `${date.getFullYear()}-${deux(date.getMonth() + 1)}-${deux(date.getDate())}`
-}
-
 // Au Rosaire, la série retenue est celle de la dizaine, ou à défaut (ouverture,
 // clôture) celle que l'écran montre.
 export function retenirEnCours(
   date: Date,
   serie: SerieId,
   { dizaine, priere, rang, serie: serieDuPas, fin }: Pas,
-  forme: Forme = 'chapelet',
+  forme: Forme,
 ) {
   const enCours: ChapeletEnCours = {
-    jour: jourDe(date),
+    jour: dateDuJour(date),
     forme,
     serie: serieDuPas ?? serie,
     dizaine,
@@ -55,13 +51,13 @@ export function retenirEnCours(
   ecrire(CLES[forme], JSON.stringify(enCours))
 }
 
-export function effacerEnCours(forme: Forme = 'chapelet') {
+export function effacerEnCours(forme: Forme) {
   effacer(CLES[forme])
 }
 
 // Le chapelet (ou le Rosaire) en cours s'il a été commencé ce jour-là, sinon
 // rien. Un chapelet retenu avant le Rosaire n'a pas de forme : c'en est un.
-export function lireEnCours(date: Date, forme: Forme = 'chapelet'): ChapeletEnCours | null {
+export function lireEnCours(date: Date, forme: Forme): ChapeletEnCours | null {
   const {
     jour,
     forme: retenue = 'chapelet',
@@ -71,7 +67,7 @@ export function lireEnCours(date: Date, forme: Forme = 'chapelet'): ChapeletEnCo
     rang,
     fin,
   } = lireObjet(CLES[forme])
-  if (jour !== jourDe(date) || retenue !== forme) return null
+  if (jour !== dateDuJour(date) || retenue !== forme) return null
   if (typeof serie !== 'string' || !(serie in SERIES)) return null
   if (typeof priere !== 'string' || typeof rang !== 'number') return null
   if (dizaine !== undefined && typeof dizaine !== 'number') return null

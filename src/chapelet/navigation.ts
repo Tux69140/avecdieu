@@ -12,7 +12,7 @@ export function reculer(index: number): number {
 const TOUCHER_MAX = 12
 const GLISSER_MIN = 50
 
-export type Geste = 'avancer' | 'reculer' | 'rien'
+type Geste = 'avancer' | 'reculer' | 'rien'
 
 // Classe un geste d'après le déplacement du doigt entre l'appui et le relâchement.
 export function classerGeste({ dx, dy }: { dx: number; dy: number }): Geste {

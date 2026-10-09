@@ -5,7 +5,7 @@ import { PRIERES_RAPPELEES, type Priere } from '../rappels/reglages'
 // prière du moment comme un office : choix du porteur du projet, 2026-10-08).
 // « libre » : une prière sans heure, comme l'office des lectures, qui se dit à
 // toute heure et n'est jamais du moment.
-export type EtatOffice = 'passe' | 'moment' | 'a-venir' | 'libre'
+type EtatOffice = 'passe' | 'moment' | 'a-venir' | 'libre'
 
 export interface Journee {
   moment?: Priere
@@ -16,8 +16,8 @@ export interface Journee {
 // après (choix du porteur du projet, 2026-10-06 et 2026-10-08) : à 18 h 40, on
 // veut encore dire les vêpres de 18 h 30 ; à 10 h, sexte de midi est encore
 // loin. Hors de ces créneaux, aucune.
-export const AVANCE = 30
-export const HEURE_DE_GRACE = 60
+const AVANCE = 30
+const HEURE_DE_GRACE = 60
 
 const enMinutes = ({ heures, minutes }: Heure) => heures * 60 + minutes
 

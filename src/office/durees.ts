@@ -28,7 +28,7 @@ export const DUREES: Record<PriereMinutee, Duree> = {
 
 // Avec « L’essentiel seulement », le chapelet et le Rosaire sans les prières
 // d'usage (phase 18, 2026-10-09).
-export const DUREES_ESSENTIEL: Partial<Record<PriereMinutee, Duree>> = {
+const DUREES_ESSENTIEL: Partial<Record<PriereMinutee, Duree>> = {
   chapelet: environ(15),
   rosaire: environ(75),
 }

@@ -53,7 +53,7 @@ export interface Point {
 
 // Où tombe une heure (minutes depuis minuit) sur l'arc, de 0 (bout gauche) à
 // 1 (bout droit).
-export type Echelle = (minutes: number) => number
+type Echelle = (minutes: number) => number
 
 const borner = (part: number) => Math.min(1, Math.max(0, part))
 
@@ -135,7 +135,7 @@ export interface Boite {
   bas: number
 }
 
-export interface Etiquette {
+interface Etiquette {
   lignes: string[]
   // Le milieu du texte et la ligne de pied de sa première ligne.
   x: number
@@ -216,7 +216,7 @@ export function ciblesDesPerles(points: Point[]): number[] {
   )
 }
 
-export interface RepereSolaire {
+interface RepereSolaire {
   lignes: string[]
   part: number
 }

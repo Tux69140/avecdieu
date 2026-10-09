@@ -14,7 +14,7 @@ export function IndiceSuite({ visible, variante = 'flottant' }: Props) {
   if (!visible) return null
   return (
     <button
-      className={`indice-suite indice-suite-${variante}`}
+      className={variante === 'flottant' ? 'indice-suite indice-suite-flottant' : 'indice-suite'}
       type="button"
       onClick={() => window.scrollBy({ top: window.innerHeight * 0.7, behavior: glissement() })}
     >

@@ -47,7 +47,7 @@ function separerEnvoi(strophes: Strophe[]): [Strophe[], Strophe[] | undefined] {
   return [strophes, undefined]
 }
 
-export interface OraisonConclue {
+interface OraisonConclue {
   oraison: Partie
   // L'envoi donné par l'AELF, qui suit l'oraison et tient lieu de fin de l'office.
   envoi?: Strophe[]

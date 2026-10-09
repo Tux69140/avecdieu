@@ -18,7 +18,7 @@ const ORDRE: readonly ('activation' | Etape)[] = [
   'demarrage',
 ]
 
-export const guideDeBatterie = async () => {
+const guideDeBatterie = async () => {
   const marque = await fabricant()
   return marque === 'xiaomi' || marque === 'samsung'
 }

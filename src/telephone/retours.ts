@@ -10,7 +10,7 @@ import type { Vibration } from '../chapelet/vibration'
 // chaque échec est ignoré.
 
 // En millisecondes ; la marquée doit se distinguer sans regarder l'écran.
-export const DUREES: Record<Vibration, number> = { courte: 40, marquee: 250 }
+const DUREES: Record<Vibration, number> = { courte: 40, marquee: 250 }
 
 // Greffon propre à l'app (android/…/Vibreur.java) : il vibre même quand la
 // vibration au toucher est coupée dans les réglages d'Android.
@@ -34,7 +34,7 @@ export function vibrer(vibration: Vibration) {
 
 // L'appareil a-t-il un vibreur ? Demandé une fois ; dans le doute, oui.
 let reponseVibreur: Promise<boolean> | undefined
-export function peutVibrer(): Promise<boolean> {
+function peutVibrer(): Promise<boolean> {
   reponseVibreur ??= Vibreur.peutVibrer()
     .then(({ oui }) => oui)
     .catch(() => true)

@@ -19,6 +19,7 @@ import {
   pointDuCadran,
   RAYON_HALO_SOLEIL,
   RAYON_LUNE,
+  RAYON_SOLEIL,
   REPERES,
   reperesSolaires,
   type Astre,
@@ -159,8 +160,8 @@ function Soleil({ centre: { x, y } }: { centre: Point }) {
             key={i}
             x1={x + 10 * Math.cos(angle)}
             y1={y + 10 * Math.sin(angle)}
-            x2={x + 15 * Math.cos(angle)}
-            y2={y + 15 * Math.sin(angle)}
+            x2={x + RAYON_SOLEIL * Math.cos(angle)}
+            y2={y + RAYON_SOLEIL * Math.sin(angle)}
           />
         )
       })}

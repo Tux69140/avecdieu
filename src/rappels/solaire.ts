@@ -66,7 +66,12 @@ export function modifierSolaire(changement: Partial<ReglagesSolaires>): Reglages
   return reglages
 }
 
-export function decaler(office: OfficeSolaire, decalage: number): ReglagesSolaires {
+// Le nouveau décalage d'un office, borné à une heure de part et d'autre.
+export function decaler(
+  decalages: Record<OfficeSolaire, number>,
+  office: OfficeSolaire,
+  decalage: number,
+): Record<OfficeSolaire, number> {
   const borne = Math.max(-DECALAGE_MAX, Math.min(DECALAGE_MAX, decalage))
-  return modifierSolaire({ decalages: { ...lireSolaire().decalages, [office]: borne } })
+  return { ...decalages, [office]: borne }
 }

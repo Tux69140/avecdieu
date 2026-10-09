@@ -221,16 +221,11 @@ test('« Prières du Rosaire » sur le seuil du Rosaire ; « Prières du chapele
 })
 
 // Le Rosaire n'a pas d'heure, donc pas de rappel : celui du chapelet ouvre
-// toujours le chapelet, même si l'ancien commutateur avait retenu le Rosaire
-// (révisé le 2026-10-09). La croix de la prière ramène là où la notification
-// a été touchée.
-test('le rappel du chapelet ouvre toujours le chapelet, même un Rosaire retenu autrefois', async ({
-  page,
-}) => {
+// toujours le chapelet (révisé le 2026-10-09 ; un ancien choix du Rosaire
+// retenu est ignoré, vérifié par les tests unitaires). La croix de la prière
+// ramène là où la notification a été touchée.
+test('le rappel du chapelet ouvre toujours le chapelet', async ({ page }) => {
   await simulerTelephone(page, { accord: 'granted' })
-  await page.addInitScript(() =>
-    localStorage.setItem('avec-dieu.reglages', JSON.stringify({ forme: 'rosaire' })),
-  )
   await preparer(page, { rappels: ['chapelet'] })
   await page.goto('/')
   await expect

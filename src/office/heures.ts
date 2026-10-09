@@ -1,11 +1,5 @@
 import { lireLieu } from '../lieu/lieu'
-import {
-  lireRappels,
-  PRIERES_RAPPELEES,
-  RAPPELS_PAR_DEFAUT,
-  type Priere,
-  type Rappels,
-} from '../rappels/reglages'
+import { lireRappels, PRIERES_RAPPELEES, type Priere, type Rappels } from '../rappels/reglages'
 import { lireSolaire } from '../rappels/solaire'
 import { enDate } from './dates'
 import { heuresSolaires, type ReglagesSolaires } from './heuresSolaires'
@@ -16,16 +10,6 @@ export interface Heure {
   heures: number
   minutes: number
 }
-
-const heuresDe = (rappels: typeof RAPPELS_PAR_DEFAUT) =>
-  Object.fromEntries(OFFICES.map((nom) => [nom, rappels[nom].heure])) as Record<
-    NomOffice,
-    Heure | undefined
-  >
-
-// Heures fixes par défaut (PRD, « Rappels ») ; l'office des lectures n'a pas
-// d'heure tant que le priant n'en a pas choisi une.
-export const HEURES_PAR_DEFAUT = heuresDe(RAPPELS_PAR_DEFAUT)
 
 // L'heure de chaque prière un jour donné : celle réglée avec les rappels, même
 // rappel coupé (une seule heure partout, décision du porteur du projet,

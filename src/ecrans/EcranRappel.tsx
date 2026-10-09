@@ -54,7 +54,7 @@ function PageRappel({ priere }: { priere: Priere }) {
   return (
     <PageReglages titre={nom} parente={PARENTE}>
       {office && <SousTitreSolaire office={office} />}
-      <div className="reglages-liste rappel-page">
+      <div className="reglages-liste">
         <Interrupteur
           libelle="Rappel"
           actif={rappel.actif}

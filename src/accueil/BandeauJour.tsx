@@ -61,7 +61,7 @@ export function BandeauJour({
 
   const bandeau = etat.sorte === 'pret' ? etat.bandeau : {}
   return (
-    <div className="bandeau-jour" data-testid="bandeau">
+    <div data-testid="bandeau">
       <h1 className="bandeau-date">{avecExposants(majuscule(dateLisible(date)))}</h1>
       {bandeau.temps && <p className="bandeau-temps">{avecExposants(bandeau.temps)}</p>}
       {bandeau.titre && <p className="bandeau-titre">{avecExposants(bandeau.titre)}</p>}

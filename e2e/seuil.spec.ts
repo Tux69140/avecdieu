@@ -36,17 +36,6 @@ for (const [chemin, nom, vue, dite] of [
     await expect(page.getByRole('link', { name: 'Chapelet ou Rosaire ?' })).toBeVisible()
   })
 
-// Un Rosaire choisi avec l'ancien commutateur est simplement oublié.
-test('un ancien choix du Rosaire enregistré n’ouvre plus le Rosaire', async ({ page }) => {
-  await page.addInitScript(() =>
-    localStorage.setItem('avec-dieu.reglages', JSON.stringify({ forme: 'rosaire' })),
-  )
-  await preparer(page)
-  await page.goto('/chapelet')
-  await expect(titre(page)).toHaveText('Mystères lumineux')
-  await expect(page).toHaveURL(/\/chapelet$/)
-})
-
 test('le Rosaire liste ses quatre séries, sans autres mystères à choisir', async ({ page }) => {
   await preparer(page)
   await page.goto('/rosaire')

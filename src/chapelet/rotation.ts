@@ -3,7 +3,7 @@ import type { Deroule, Pas } from './deroule'
 // Chaque mystère a plusieurs passages, qui tournent : le même passage revient
 // six lectures de suite, pour laisser le temps de le méditer (choix du porteur
 // du projet, 2026-10-06), puis cède la place au suivant.
-export const LECTURES_PAR_PASSAGE = 6
+const LECTURES_PAR_PASSAGE = 6
 
 // Rang (à partir de 0) du passage à lire, d'après le nombre de lectures déjà faites.
 export function rangDuPassage(lectures: number, nombreDePassages: number): number {
@@ -26,4 +26,4 @@ export function dizaineCommencee(
 }
 
 // Deux pas de la même dizaine : même rang et, au Rosaire, même série.
-export const memePartie = (a: Pas, b: Pas) => a.dizaine === b.dizaine && a.serie === b.serie
+const memePartie = (a: Pas, b: Pas) => a.dizaine === b.dizaine && a.serie === b.serie

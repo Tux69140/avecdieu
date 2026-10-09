@@ -47,7 +47,7 @@ export function Seuil({ forme, serie, duJour, date, enCours, onCommencer, onReco
   const rosaire = forme === 'rosaire'
 
   return (
-    <main className="seuil" data-forme={forme}>
+    <main className="seuil">
       <header className="seuil-entete">
         <LigneFermer onFermer={retour}>
           <p className="ligne-date">{avecExposants(dateLisible(dateDuJour(date)))}</p>

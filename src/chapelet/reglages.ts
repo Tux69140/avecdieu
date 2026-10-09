@@ -148,7 +148,7 @@ export function modifierReglages(changement: Partial<Reglages>): Reglages {
 
 // « En octobre » : du 1er au 31 octobre, selon la date du téléphone le jour du
 // chapelet.
-export const ditCeJour = (frequence: Frequence, jour: Date) =>
+const ditCeJour = (frequence: Frequence, jour: Date) =>
   frequence === 'toujours' || (frequence === 'octobre' && jour.getMonth() === 9)
 
 // En mode compact, l'annonce n'a pas d'écran à part : le Notre Père la porte.

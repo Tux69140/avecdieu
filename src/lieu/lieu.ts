@@ -77,7 +77,7 @@ export function distanceEnKm(a: Lieu, b: Lieu): number {
 
 // Au-delà de 50 km, le lever se décale de quelques minutes : on recalcule
 // (PRD). En deçà, rien ne change.
-export const DISTANCE_DE_VOYAGE = 50
+const DISTANCE_DE_VOYAGE = 50
 
 export const deplacementNotable = (avant: Lieu, apres: Lieu) =>
   distanceEnKm(avant, apres) > DISTANCE_DE_VOYAGE

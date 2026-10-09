@@ -23,8 +23,8 @@ beforeEach(() => localStorage.clear())
 
 describe('chapelet en cours', () => {
   it('se retrouve le jour même, jusqu’à minuit', () => {
-    retenirEnCours(LUNDI, 'joyeux', COMPLET.pas[AVE_3_4])
-    expect(lireEnCours(LUNDI_SOIR)).toEqual({
+    retenirEnCours(LUNDI, 'joyeux', COMPLET.pas[AVE_3_4], 'chapelet')
+    expect(lireEnCours(LUNDI_SOIR, 'chapelet')).toEqual({
       jour: '2026-10-05',
       forme: 'chapelet',
       serie: 'joyeux',
@@ -35,16 +35,16 @@ describe('chapelet en cours', () => {
   })
 
   it('est abandonné passé minuit', () => {
-    retenirEnCours(LUNDI, 'joyeux', COMPLET.pas[AVE_3_4])
-    expect(lireEnCours(MARDI)).toBeNull()
+    retenirEnCours(LUNDI, 'joyeux', COMPLET.pas[AVE_3_4], 'chapelet')
+    expect(lireEnCours(MARDI, 'chapelet')).toBeNull()
   })
 
   it('s’oublie quand on l’efface, ou si la mémoire est illisible', () => {
-    retenirEnCours(LUNDI, 'joyeux', COMPLET.pas[0])
-    effacerEnCours()
-    expect(lireEnCours(LUNDI)).toBeNull()
+    retenirEnCours(LUNDI, 'joyeux', COMPLET.pas[0], 'chapelet')
+    effacerEnCours('chapelet')
+    expect(lireEnCours(LUNDI, 'chapelet')).toBeNull()
     localStorage.setItem('avec-dieu.en-cours', '{"jour":"2026-10-05","serie":"inconnue"}')
-    expect(lireEnCours(LUNDI)).toBeNull()
+    expect(lireEnCours(LUNDI, 'chapelet')).toBeNull()
   })
 })
 
@@ -130,12 +130,12 @@ describe('Rosaire en cours', () => {
 
   it('ne se confond pas avec un chapelet en cours : chacun garde le sien', () => {
     retenirEnCours(LUNDI, 'joyeux', ROSAIRE_COMPLET.pas[ROSAIRE_2_3_4], 'rosaire')
-    expect(lireEnCours(LUNDI)).toBeNull()
-    retenirEnCours(LUNDI, 'douloureux', COMPLET.pas[AVE_3_4])
-    expect(lireEnCours(LUNDI)).toMatchObject({ forme: 'chapelet', serie: 'douloureux' })
+    expect(lireEnCours(LUNDI, 'chapelet')).toBeNull()
+    retenirEnCours(LUNDI, 'douloureux', COMPLET.pas[AVE_3_4], 'chapelet')
+    expect(lireEnCours(LUNDI, 'chapelet')).toMatchObject({ forme: 'chapelet', serie: 'douloureux' })
     expect(lireEnCours(LUNDI, 'rosaire')).toMatchObject({ forme: 'rosaire', serie: 'lumineux' })
-    effacerEnCours()
-    expect(lireEnCours(LUNDI)).toBeNull()
+    effacerEnCours('chapelet')
+    expect(lireEnCours(LUNDI, 'chapelet')).toBeNull()
     expect(lireEnCours(LUNDI, 'rosaire')).not.toBeNull()
     effacerEnCours('rosaire')
     expect(lireEnCours(LUNDI, 'rosaire')).toBeNull()
@@ -182,16 +182,16 @@ describe('reprise dans la prière aux intentions du Saint-Père', () => {
   const fin = COMPLET.pas.findIndex((p) => p.fin)
 
   it('reprend sur son Notre Père, pas sur celui de l’ouverture', () => {
-    retenirEnCours(LUNDI, 'joyeux', COMPLET.pas[fin])
-    const enCours = lireEnCours(LUNDI)!
+    retenirEnCours(LUNDI, 'joyeux', COMPLET.pas[fin], 'chapelet')
+    const enCours = lireEnCours(LUNDI, 'chapelet')!
     expect(enCours).toMatchObject({ priere: 'notre-pere', fin: true })
     expect(retrouver(COMPLET, enCours)).toBe(fin)
   })
 
   it('retirée entre-temps, cède la place au Salve Regina', () => {
-    retenirEnCours(LUNDI, 'joyeux', COMPLET.pas[fin + 1])
+    retenirEnCours(LUNDI, 'joyeux', COMPLET.pas[fin + 1], 'chapelet')
     const sans = derouler(CHAPELET_MARIAL, { saintPere: false })
-    expect(sans.pas[retrouver(sans, lireEnCours(LUNDI)!)].priere).toBe('salve-regina')
+    expect(sans.pas[retrouver(sans, lireEnCours(LUNDI, 'chapelet')!)].priere).toBe('salve-regina')
   })
 
   it('un Salve Regina retenu avant la phase 18 reste dans la fin', () => {
@@ -199,13 +199,13 @@ describe('reprise dans la prière aux intentions du Saint-Père', () => {
       'avec-dieu.en-cours',
       '{"jour":"2026-10-05","serie":"joyeux","priere":"salve-regina","rang":1}',
     )
-    const i = retrouver(COMPLET, lireEnCours(LUNDI)!)
+    const i = retrouver(COMPLET, lireEnCours(LUNDI, 'chapelet')!)
     expect(COMPLET.pas[i]).toMatchObject({ priere: 'salve-regina', fin: true })
   })
 
   it('« L’essentiel seulement » activé entre-temps : la fin retirée mène à la fin', () => {
-    retenirEnCours(LUNDI, 'joyeux', COMPLET.pas[fin])
+    retenirEnCours(LUNDI, 'joyeux', COMPLET.pas[fin], 'chapelet')
     const essentiel = derouler(CHAPELET_MARIAL, { essentiel: true })
-    expect(retrouver(essentiel, lireEnCours(LUNDI)!)).toBe(essentiel.pas.length)
+    expect(retrouver(essentiel, lireEnCours(LUNDI, 'chapelet')!)).toBe(essentiel.pas.length)
   })
 })

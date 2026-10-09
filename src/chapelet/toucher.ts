@@ -28,8 +28,7 @@ export interface EtatPage {
   ligne: number
 }
 
-export type Toucher =
-  { sorte: 'ignorer' } | { sorte: 'avancer' } | { sorte: 'descendre'; de: number }
+type Toucher = { sorte: 'ignorer' } | { sorte: 'avancer' } | { sorte: 'descendre'; de: number }
 
 export function deciderToucher(page: EtatPage): Toucher {
   if (page.depuisDefilement < DEFILEMENT_RECENT) return { sorte: 'ignorer' }

@@ -11,6 +11,7 @@ import {
 import { leverEtCoucher } from '../office/soleil'
 import { dansLeLieu, ecrireDecalage, ecrireHeureRappel, SOUS_TITRES_SOLAIRES } from './textes'
 import { versChamp, versHeure } from './basculer'
+import { decaler } from './solaire'
 import './ReglageSolaire.css'
 
 interface Props {
@@ -41,18 +42,18 @@ export function ReglageSolaire({ office, reglages, lieu, maintenant, onChanger }
   }[office as 'laudes' | 'sexte' | 'vepres'] as { nom: string; quand: Date } | undefined
   const limite = office === 'laudes' ? 'pasAvant' : office === 'vepres' ? 'pasApres' : undefined
 
-  const decaler = (pas: number) =>
-    onChanger({ decalages: { ...reglages.decalages, [office]: decalage + pas } })
+  const decalerDe = (pas: number) =>
+    onChanger({ decalages: decaler(reglages.decalages, office, decalage + pas) })
 
   return (
-    <div className="volet-solaire">
+    <div>
       <h2>Décalage</h2>
       <div className="volet-decalage">
         <button
           type="button"
           aria-label="Plus tôt de 5 minutes"
           disabled={decalage <= -DECALAGE_MAX}
-          onClick={() => decaler(-PAS_DU_DECALAGE)}
+          onClick={() => decalerDe(-PAS_DU_DECALAGE)}
         >
           −
         </button>
@@ -63,7 +64,7 @@ export function ReglageSolaire({ office, reglages, lieu, maintenant, onChanger }
           type="button"
           aria-label="Plus tard de 5 minutes"
           disabled={decalage >= DECALAGE_MAX}
-          onClick={() => decaler(PAS_DU_DECALAGE)}
+          onClick={() => decalerDe(PAS_DU_DECALAGE)}
         >
           +
         </button>

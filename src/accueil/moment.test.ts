@@ -1,8 +1,15 @@
 import { describe, expect, it } from 'vitest'
-import { HEURES_PAR_DEFAUT } from '../office/heures'
+import type { Heure } from '../office/heures'
+import { OFFICES, type NomOffice } from '../office/modele'
+import { RAPPELS_PAR_DEFAUT } from '../rappels/reglages'
 import { situerOffices } from './moment'
 
 const a = (heures: number, minutes = 0) => heures * 60 + minutes
+// Les heures fixes par défaut des offices (PRD, « Rappels ») ; l'office des
+// lectures n'en a pas.
+const HEURES_PAR_DEFAUT = Object.fromEntries(
+  OFFICES.map((nom) => [nom, RAPPELS_PAR_DEFAUT[nom].heure]),
+) as Record<NomOffice, Heure | undefined>
 // Les heures fixes par défaut, et le chapelet à 20 h comme son rappel par défaut.
 const HEURES = { ...HEURES_PAR_DEFAUT, chapelet: { heures: 20, minutes: 0 } }
 const situer = (maintenant: number) => situerOffices(HEURES, maintenant)

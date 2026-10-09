@@ -3,7 +3,7 @@ import type { Priere } from '../recueil/prieres'
 // V/ : celui qui mène ou le verset ; R/ : la réponse des autres.
 export type Marque = 'V' | 'R'
 
-export interface Vers {
+interface Vers {
   texte: string
   marque?: Marque
 }
