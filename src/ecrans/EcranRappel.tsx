@@ -9,6 +9,7 @@ import { ChampHeure } from '../rappels/ChampHeure'
 import { ReglageSolaire, SousTitreSolaire } from '../rappels/ReglageSolaire'
 import {
   estPriere,
+  heureParDefaut,
   lireRappels,
   modifierRappel,
   type Priere,
@@ -63,6 +64,7 @@ function PageRappel({ priere }: { priere: Priere }) {
             className="rappel-page-heure"
             nom={`${nom}, heure`}
             heure={rappel.heure}
+            parDefaut={heureParDefaut(priere)}
             actif={rappel.actif}
             avant={<span className="rappel-page-libelle">Heure</span>}
             onChoisir={(heure) => changer({ heure })}

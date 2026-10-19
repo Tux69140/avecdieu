@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   aucunRappelActif,
+  heureParDefaut,
   lireDemandes,
   lireRappels,
   modifierRappel,
@@ -21,6 +22,12 @@ describe('réglages des rappels', () => {
     expect(rappels.complies.heure).toEqual({ heures: 21, minutes: 30 })
     expect(rappels.chapelet.heure).toEqual({ heures: 20, minutes: 0 })
     expect(rappels).toEqual(RAPPELS_PAR_DEFAUT)
+  })
+
+  it('« Effacer » rend l’heure du PRD, 6 h 30 pour l’office des lectures', () => {
+    expect(heureParDefaut('vepres')).toEqual({ heures: 18, minutes: 30 })
+    expect(heureParDefaut('chapelet')).toEqual({ heures: 20, minutes: 0 })
+    expect(heureParDefaut('lectures')).toEqual({ heures: 6, minutes: 30 })
   })
 
   it('par défaut : une cloche selon l’heure, vibreur activé', () => {

@@ -138,6 +138,22 @@ test('une heure changée se reprogramme et déplace l’office sur l’accueil',
   await expect(offices.getByRole('link', { name: /Vêpres/ })).toContainText('19 h 15')
 })
 
+// « Effacer », dans l'horloge d'Android, vide le champ : l'heure revient à
+// celle par défaut (6 h 30 proposée pour l'office des lectures).
+test('« Effacer » remet l’heure par défaut', async ({ page }) => {
+  await ouvrirRappels(page)
+  const heure = (n: number) => page.locator('.rappel').nth(n).locator('.rappel-heure span')
+  await page.getByLabel('Vêpres, heure').fill('19:15')
+  await expect(heure(5)).toHaveText('19 h 15')
+  await page.getByLabel('Vêpres, heure').fill('')
+  await expect(heure(5)).toHaveText('18 h 30')
+  await page.getByLabel('Office des lectures, heure').fill('05:00')
+  await page.getByLabel('Office des lectures, heure').fill('')
+  await expect(heure(0)).toHaveText('6 h 30')
+  await page.reload()
+  await expect(heure(5)).toHaveText('18 h 30')
+})
+
 test('les rappels sont refaits à l’ouverture de l’app', async ({ page }) => {
   await simulerTelephone(page, { accord: 'granted' })
   await page.addInitScript(() =>

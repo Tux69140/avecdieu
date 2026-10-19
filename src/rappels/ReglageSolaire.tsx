@@ -1,8 +1,9 @@
 import type { LieuChoisi } from '../lieu/lieu'
-import { arrondirALaMinute, ecrireHeure, minutesDe, versHeure } from '../office/heure'
+import { arrondirALaMinute, ecrireHeure, minutesDe, versHeure, type Heure } from '../office/heure'
 import {
   DECALAGE_MAX,
   heuresSolaires,
+  HEURES_SOLAIRES_PAR_DEFAUT,
   PAS_DU_DECALAGE,
   type Limite,
   type OfficeSolaire,
@@ -72,6 +73,7 @@ export function ReglageSolaire({ office, reglages, lieu, maintenant, onChanger }
         <ChoixLimite
           libelle={limite === 'pasAvant' ? 'Pas avant' : 'Pas après'}
           limite={reglages[limite]}
+          parDefaut={HEURES_SOLAIRES_PAR_DEFAUT[limite].heure}
           onChanger={(changement) =>
             onChanger({ [limite]: { ...reglages[limite], ...changement } })
           }
@@ -111,10 +113,12 @@ export function SousTitreSolaire({ office }: { office: OfficeSolaire }) {
 function ChoixLimite({
   libelle,
   limite,
+  parDefaut,
   onChanger,
 }: {
   libelle: string
   limite: Limite
+  parDefaut: Heure
   onChanger: (changement: Partial<Limite>) => void
 }) {
   return (
@@ -123,6 +127,7 @@ function ChoixLimite({
         className="volet-limite-heure"
         nom={`${libelle}, heure`}
         heure={limite.heure}
+        parDefaut={parDefaut}
         texte={`${libelle} ${ecrireHeureRappel(limite.heure)}`}
         onChoisir={(heure) => onChanger({ heure })}
       />

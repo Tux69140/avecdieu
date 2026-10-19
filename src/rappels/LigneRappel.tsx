@@ -5,7 +5,7 @@ import type { Heure } from '../office/heure'
 import { Interrupteur } from '../composants/Interrupteur'
 import { basculerRappel } from './basculer'
 import { ChampHeure } from './ChampHeure'
-import type { Priere, Rappel } from './reglages'
+import { heureParDefaut, type Priere, type Rappel } from './reglages'
 import { ecrireHeureRappel, nomDuSon } from './textes'
 
 interface Props {
@@ -71,6 +71,7 @@ export function LigneRappel({
             className="rappel-heure"
             nom={`${nom}, heure`}
             heure={heure}
+            parDefaut={heureParDefaut(priere)}
             onChoisir={(choisie) => onChanger({ heure: choisie })}
           />
         )}

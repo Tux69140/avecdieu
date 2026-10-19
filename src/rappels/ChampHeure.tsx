@@ -10,6 +10,8 @@ interface Props {
   // Le nom du champ pour le lecteur d'écran : « Laudes, heure ».
   nom: string
   heure: Heure | undefined
+  // L'heure d'origine, reprise quand « Effacer » vide le champ.
+  parDefaut: Heure
   onChoisir: (heure: Heure) => void
   ref?: Ref<HTMLInputElement>
   // Le rappel éteint, l'heure s'atténue.
@@ -21,8 +23,19 @@ interface Props {
 }
 
 // Une heure de rappel : on lit l'heure, et le champ d'heure, invisible
-// par-dessus, ouvre l'horloge d'Android.
-export function ChampHeure({ className, nom, heure, onChoisir, ref, actif, avant, texte }: Props) {
+// par-dessus, ouvre l'horloge d'Android. Son bouton « Effacer » vide le
+// champ : l'heure revient alors à celle d'origine.
+export function ChampHeure({
+  className,
+  nom,
+  heure,
+  parDefaut,
+  onChoisir,
+  ref,
+  actif,
+  avant,
+  texte,
+}: Props) {
   return (
     <label
       className={`champ-heure ${className}`}
@@ -35,10 +48,7 @@ export function ChampHeure({ className, nom, heure, onChoisir, ref, actif, avant
         type="time"
         aria-label={nom}
         value={versChamp(heure)}
-        onChange={(e) => {
-          const choisie = lireChamp(e.target.value)
-          if (choisie) onChoisir(choisie)
-        }}
+        onChange={(e) => onChoisir(lireChamp(e.target.value) ?? parDefaut)}
       />
     </label>
   )

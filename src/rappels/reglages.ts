@@ -76,6 +76,11 @@ export const RAPPELS_PAR_DEFAUT: Rappels = {
 // L'heure que l'office des lectures propose quand on active son rappel.
 export const HEURE_PROPOSEE_LECTURES: Heure = { heures: 6, minutes: 30 }
 
+// L'heure que « Effacer » rend à une prière : celle du PRD, ou 6 h 30 pour
+// l'office des lectures, qui n'en a pas.
+export const heureParDefaut = (priere: Priere): Heure =>
+  RAPPELS_PAR_DEFAUT[priere].heure ?? HEURE_PROPOSEE_LECTURES
+
 const CLE = `${RACINE}rappels`
 
 const lireSon = (v: unknown): Son | undefined => {

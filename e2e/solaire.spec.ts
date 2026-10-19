@@ -222,6 +222,9 @@ test('la page d’un office solaire : décalage, limite, et l’heure du jour', 
   )
   await volet.getByLabel('Pas avant, heure').fill('08:30')
   await expect(aujourdhui).toHaveText('Aujourd’hui : 8 h 30')
+  // « Effacer » dans l'horloge d'Android remet la limite d'origine.
+  await volet.getByLabel('Pas avant, heure').fill('')
+  await expect(volet.locator('.volet-limite-heure span')).toHaveText('Pas avant 7 h 00')
   await volet.getByRole('switch', { name: 'Pas avant, limite' }).click()
   await expect(aujourdhui).not.toHaveText('Aujourd’hui : 8 h 30')
   // Le son se choisit depuis la même page, par sa ligne.
