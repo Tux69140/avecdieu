@@ -50,15 +50,17 @@
   --bord-bas: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
   --bord-gauche: var(--safe-area-inset-left, env(safe-area-inset-left, 0px));
   --bord-droit: var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
-  --parchemin: #ebe0cb;
-  --velin: #f6efe2;
-  --filet: #d6c7ab;
+  /* Fond ocre : sépia, rubrique et or foncé assombris pour garder 4,5:1 (3:1
+     pour l'or foncé) jusque sur les bords dorés du papier (2026-10-19). */
+  --parchemin: #e9d3a3;
+  --velin: #f6ead2;
+  --filet: #cdb68c;
   --encre: #2b2118;
-  --sepia: #6b5a48;
+  --sepia: #5d4e3f;
   --sepia-pale: #a39280;
-  --rubrique: #9e2a1f;
+  --rubrique: #96281d;
   --or: #b08a3e;
-  --or-fonce: #8a6a2a;
+  --or-fonce: #846528;
   /* Cercle des perles à venir : or foncé de jour pour se détacher du parchemin. */
   --cercle-perle: var(--or-fonce);
   --soleil: #d9a441;
@@ -67,8 +69,8 @@
      diluée (choix du porteur du projet, 2026-10-07). */
   --halo-perle: rgba(158, 42, 31, 0.3);
   /* Interrupteur allumé : rail plein, au moins 3:1 sur le parchemin (WCAG 1.4.11). */
-  --interrupteur-actif: #8a6a2a;
-  --interrupteur-curseur: #f6efe2;
+  --interrupteur-actif: #846528;
+  --interrupteur-curseur: #f6ead2;
   /* Relief des perles du chapelet : reflet et ombre de chaque matière. */
   --or-reflet: #e9cf8e;
   --soleil-reflet: #fbe6a6;
@@ -82,7 +84,15 @@
   --attention: #9a6a12;
   --erreur: #7a3b1e;
   --info: #3e5c76;
-  --grain-opacite: 0.07;
+  /* Le papier sous la page, de jour (choix du porteur du projet, 2026-10-19) :
+     bords dorés, fibres, grain fin et nuages d'ocre, alpha compris dans chaque
+     motif pour que les bandeaux qui couvrent le texte le reprennent tel quel.
+     Le centre reste calme sous le texte à prier. */
+  --papier:
+    radial-gradient(ellipse 85% 75% at 50% 45%, transparent 55%, rgba(150, 95, 25, 0.16)),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><filter id='f' x='0' y='0' width='100%' height='100%'><feTurbulence type='fractalNoise' baseFrequency='.012 .045' numOctaves='4' seed='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .55 0 0 0 0 .36 0 0 0 0 .1 0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23f)'/></svg>"),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n' x='0' y='0' width='100%' height='100%'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .45 0 0 0 0 .3 0 0 0 0 .1 0 0 0 .08 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600'><filter id='t' x='0' y='0' width='100%' height='100%'><feTurbulence type='fractalNoise' baseFrequency='.004' numOctaves='4' seed='9' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .66 0 0 0 0 .42 0 0 0 0 .12 0 0 0 .8 -.32'/></filter><rect width='100%' height='100%' filter='url(%23t)'/></svg>");
   /* Couleurs liturgiques : en pastilles seulement, identiques jour et nuit. */
   --liturgique-blanc: #f4efe4;
   --liturgique-vert: #3e6a3f;
@@ -159,7 +169,8 @@
   --attention: #d8a94a;
   --erreur: #d98a5e;
   --info: #8fb0cc;
-  --grain-opacite: 0.05;
+  /* La nuit, le seul grain de papier, très léger. */
+  --papier: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n' x='0' y='0' width='100%' height='100%'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .35 0 0 0 0 .25 0 0 0 0 .12 0 0 0 .05 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
   --priere-lettres: 0.01em;
   --priere-mots: 0.06em;
   --priere-graisse: 380;
@@ -197,15 +208,14 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Grain de papier très léger. */
+/* Le papier, fixe sous ce qui défile. */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  opacity: var(--grain-opacite);
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .35 0 0 0 0 .25 0 0 0 0 .12 0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-image: var(--papier);
 }
 
 :focus-visible {

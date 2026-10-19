@@ -6,7 +6,10 @@
   left: var(--bord-gauche);
   right: var(--bord-droit);
   z-index: 50;
-  background: var(--parchemin);
+  /* Le papier de la page, aligné sur l'écran : aucun aplat ne se voit. */
+  background-color: var(--parchemin);
+  background-image: var(--papier);
+  background-attachment: fixed;
   border-bottom: 1px solid var(--filet);
   transform: translateY(0);
   transition:

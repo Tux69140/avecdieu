@@ -9,7 +9,7 @@
 
 ## Aesthetic Direction
 - **Direction** : Livre d'heures — le livre liturgique raffiné (parchemin, encre, rubriques rouges, or), avec des titres géométriques décalés assumés.
-- **Décoration** : intentionnelle — grain de papier très léger, filets fins, perles. Aucune illustration ni photo : le texte sacré est l'ornement.
+- **Décoration** : intentionnelle — papier ocre (de jour : bords dorés, fibres, grain fin, nuages ; la nuit : grain très léger), filets fins, perles. Aucune illustration ni photo : le texte sacré est l'ornement.
 - **Mood** : un objet de prière qu'on ouvre, calme et chaleureux ; une voix d'aujourd'hui (les titres) posée sur une voix séculaire (les rubriques et le texte).
 - **Signatures** :
   - **Rubriques rouges** : tout ce qui est *indication* est en rouge, comme dans un missel — V/ et R/, libellés « Antienne », numéros de versets, astérisques de médiante, lettrines, et les ajouts de l'app (antienne répétée, Gloire au Père), signalés par un filet rouge à gauche et la mention « Ajouté selon les rubriques ». Le rouge n'est jamais utilisé pour les erreurs.
@@ -30,9 +30,9 @@
 ## Color
 - **Approche** : restrained — parchemin et encre ; le rouge des rubriques et l'or sont les seuls accents ; les couleurs liturgiques n'existent qu'en pastilles.
 - **Thème jour** :
-  - Parchemin (fond) `#EBE0CB` · Vélin (cartes, champs) `#F6EFE2` · Filet `#D6C7AB`
-  - Encre (texte) `#2B2118` · Sépia (texte secondaire) `#6B5A48` · Sépia pâle `#A39280`
-  - Rubrique `#9E2A1F` · Or `#B08A3E` · Or foncé `#8A6A2A` · Soleil `#D9A441` · Halo `rgba(217,164,65,.28)`
+  - Parchemin (fond) `#E9D3A3`, sous le papier ocre · Vélin (cartes, champs) `#F6EAD2` · Filet `#CDB68C`
+  - Encre (texte) `#2B2118` · Sépia (texte secondaire) `#5D4E3F` · Sépia pâle `#A39280`
+  - Rubrique `#96281D` · Or `#B08A3E` · Or foncé `#846528` · Soleil `#D9A441` · Halo `rgba(217,164,65,.28)`
 - **Primary** : Encre `#2B2118` — bouton principal (fond encre, texte vélin ; survol rubrique).
 - **Secondary** : Or `#B08A3E` — bouton secondaire (contour or), perles, arc du cadran, focus des champs (halo).
 - **Neutrals** : `#F6EFE2` → `#EBE0CB` → `#D6C7AB` → `#A39280` → `#6B5A48` → `#2B2118`
@@ -113,3 +113,4 @@
 | 2026-10-08 | Pendant le chapelet, la série n'est qu'une indication | Choix du porteur du projet après la seconde critique du chapelet : « Mystères lumineux » passe en petites capitales sépia (Cormorant SC 15 px, comme la date) sous la ligne de la croix ; le nom de la prière est le seul titre en Baumans. Au seuil, le titre de la série passe de 34 à 32 px, comme celui de l'office |
 | 2026-10-08 | Seuil : les choix avant les autres séries, repliées | Choix du porteur du projet : sous « Commencer le chapelet », l'affichage, les vibrations et « Prier à plusieurs » (le même réglage que dans les réglages), puis « Prier d’autres mystères » en accordéon, replié, résumé par les noms des séries (« Lumineux, douloureux, glorieux »). Les cinq mystères sous le titre ne sont qu'une indication : Literata 16 px sépia, numéros rouges à 15 px, pour que les choix restent à l'écran |
 | 2026-10-08 | Menu : offices et prières repliés, deux prières en accès direct | Choix du porteur du projet : Aujourd’hui ; Chapelet, Je vous salue Marie, Notre Père ; « Offices du jour » (la date en petites capitales sous le nom) et « Prières » (Je crois en Dieu, Gloire au Père, Salve Regina, Je confesse à Dieu) en accordéon, sur une ligne du menu avec la flèche vers le bas, dépliés les offices quand le menu vient d'un office ; Réglages, A propos. Chaque prière a sa page, comme une prière du chapelet (titre Baumans 32 px, texte centré, ℣ ℟ à plusieurs), close comme un office (perle d'or, « Revenir à l’accueil ») |
+| 2026-10-19 | Fond ocre, papier de parchemin, de jour | Choix du porteur du projet entre trois intensités (« moyenne ») : parchemin `#EBE0CB` → `#E9D3A3`, vélin `#F6EAD2`, filet `#CDB68C` ; bords dorés, fibres, grain fin et nuages d'ocre dessinés par l'app (aucune image). Les bandeaux fixes et les fondus reprennent le même papier, aligné sur l'écran. Pour rester lisibles jusque sur les bords dorés, sépia `#6B5A48` → `#5D4E3F`, rubrique `#9E2A1F` → `#96281D`, or foncé `#8A6A2A` → `#846528`. La nuit ne change pas |

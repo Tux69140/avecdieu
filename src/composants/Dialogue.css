@@ -7,7 +7,10 @@
   padding: var(--esp-lg) var(--esp-lg) var(--esp-md);
   border: 1px solid var(--filet);
   border-radius: var(--r-lg);
-  background: var(--parchemin);
+  /* Le papier de la page, aligné sur l'écran : aucun aplat ne se voit. */
+  background-color: var(--parchemin);
+  background-image: var(--papier);
+  background-attachment: fixed;
   color: var(--encre);
   font-family: var(--texte);
 }

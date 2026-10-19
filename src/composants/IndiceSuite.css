@@ -22,7 +22,20 @@
   right: 0;
   bottom: 0;
   padding: var(--esp-lg) 0 var(--bord-bas);
-  background: linear-gradient(to bottom, transparent, var(--parchemin) 60%);
+}
+
+/* Le fondu reprend le papier de la page : un dégradé vers l'ocre uni ferait
+   une bande plate sur les bords dorés. */
+.indice-suite-flottant::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--parchemin);
+  background-image: var(--papier);
+  background-attachment: fixed;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 60%);
+  mask-image: linear-gradient(to bottom, transparent, #000 60%);
 }
 
 .indice-suite svg {

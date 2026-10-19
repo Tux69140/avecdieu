@@ -37,7 +37,10 @@
   min-height: 0;
   padding-left: var(--bord-gauche);
   padding-right: var(--bord-droit);
-  background: var(--parchemin);
+  /* Le papier de la page, aligné sur l'écran : aucun aplat ne se voit. */
+  background-color: var(--parchemin);
+  background-image: var(--papier);
+  background-attachment: fixed;
   border-bottom: 1px solid var(--filet);
   border-radius: 0 0 var(--r-lg) var(--r-lg);
 }
