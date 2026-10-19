@@ -97,7 +97,7 @@ test('seuil du chapelet : la croix sur la ligne de la date, le titre dessous', a
   // La date seule, sur une ligne, en sépia, comme dans l'office (2026-10-08).
   const date = page.locator('.seuil-entete .ligne-date')
   await expect(date).toHaveText('lundi 5 octobre')
-  await expect(date).toHaveCSS('color', 'rgb(107, 90, 72)')
+  await expect(date).toHaveCSS('color', 'rgb(93, 78, 63)')
   expect((await date.boundingBox())!.height).toBeLessThan(30)
 })
 

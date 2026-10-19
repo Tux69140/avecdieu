@@ -5,7 +5,7 @@ import { preparer, servirAelf, test } from './outils.ts'
 // porteur du projet (R1 à R11, src/recueil/office.ts).
 
 const MARDI = new Date(2026, 9, 6, 10, 0)
-const ROUGE_RUBRIQUE = 'rgb(158, 42, 31)'
+const ROUGE_RUBRIQUE = 'rgb(150, 40, 29)'
 
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(MARDI)

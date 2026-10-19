@@ -10,7 +10,7 @@ const lie = (texte: string) => texte.replace(/(?<=\p{L})-(?=\p{L})/gu, '-\u2060'
 // e2e/rubriques.spec.ts.
 
 const MARDI = new Date(2026, 9, 6, 10, 0)
-const ROUGE_RUBRIQUE = 'rgb(158, 42, 31)'
+const ROUGE_RUBRIQUE = 'rgb(150, 40, 29)'
 
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(MARDI)

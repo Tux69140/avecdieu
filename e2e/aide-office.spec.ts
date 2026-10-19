@@ -6,7 +6,7 @@ import { preparer, servirAelf, test } from './outils.ts'
 // « Lire un office ».
 
 const MARDI = new Date(2026, 9, 6, 10, 0)
-const ROUGE_RUBRIQUE = 'rgb(158, 42, 31)'
+const ROUGE_RUBRIQUE = 'rgb(150, 40, 29)'
 
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(MARDI)

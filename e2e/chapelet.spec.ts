@@ -162,7 +162,7 @@ test('le lecteur d’écran suit la progression', async ({ page }) => {
 // De jour, le cercle des perles à venir est d'or foncé pour se détacher du
 // parchemin ; la nuit, l'or suffit (choix du porteur du projet, 2026-10-08).
 for (const [theme, cercle] of [
-  ['jour', 'rgb(138, 106, 42)'],
+  ['jour', 'rgb(132, 101, 40)'],
   ['nuit', 'rgb(201, 164, 92)'],
 ] as const) {
   test(`les perles à venir, cerclées pour se voir (${theme})`, async ({ page }) => {
