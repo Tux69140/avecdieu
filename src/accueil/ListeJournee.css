@@ -85,7 +85,9 @@
    du texte, pour ne pas le confondre avec lui (2026-10-20). */
 .accueil-en-cours {
   display: inline-flex;
-  align-items: center;
+  /* Les barres, vides, ont leur pied pour ligne de base : posées sur celle
+     du texte, elles montent jusqu'au haut du « E », comme une capitale. */
+  align-items: baseline;
   gap: 3px;
   border-color: var(--encre);
   color: var(--encre);
@@ -98,7 +100,7 @@
   content: '';
   box-sizing: border-box;
   width: 6px;
-  height: 7px;
+  height: 0.7em;
   border-inline: 2px solid currentColor;
 }
 
