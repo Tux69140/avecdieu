@@ -26,6 +26,7 @@ test.describe('la page des réglages', () => {
     await page.goto('/reglages')
     await expect(page.locator('.ligne-page-nom')).toHaveText([
       'Heures et rappels',
+      'Accueil',
       'Chapelet et Rosaire',
       'Offices',
       'Affichage',
@@ -33,6 +34,7 @@ test.describe('la page des réglages', () => {
     ])
     for (const [nom, resume] of [
       ['Heures et rappels', 'Aucun rappel'],
+      ['Accueil', 'Prières affichées'],
       ['Chapelet et Rosaire', 'Annonce, prières, vibrations'],
       ['Offices', 'Zone, accents, textes hors connexion'],
       ['Affichage', 'Taille du texte, thème'],

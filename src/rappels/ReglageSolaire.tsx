@@ -6,7 +6,9 @@ import {
   HEURES_SOLAIRES_PAR_DEFAUT,
   PAS_DU_DECALAGE,
   type Limite,
-  type OfficeSolaire,
+  estPasAvant,
+  LIMITES,
+  type PriereSolaire,
   type ReglagesSolaires,
 } from '../office/heuresSolaires'
 import { leverEtCoucher } from '../office/soleil'
@@ -17,7 +19,7 @@ import { decaler } from './solaire'
 import './ReglageSolaire.css'
 
 interface Props {
-  office: OfficeSolaire
+  office: PriereSolaire
   reglages: ReglagesSolaires
   lieu: LieuChoisi
   maintenant: Date
@@ -26,20 +28,27 @@ interface Props {
 
 const arrondie = (date: Date) => versHeure(minutesDe(arrondirALaMinute(date)))
 
-// L'heure d'un office solaire, sur la page de sa prière (textes validés par
-// le porteur du projet, 2026-10-07) : le décalage, la limite pour les laudes
-// et les vêpres, et l'heure que cela donne aujourd'hui.
+// L'heure d'une prière solaire, sur sa page (textes validés par le porteur du
+// projet, 2026-10-07) : le décalage, la limite pour les laudes, les vêpres et
+// l'Angélus du matin et du soir, et l'heure que cela donne aujourd'hui.
 export function ReglageSolaire({ office, reglages, lieu, maintenant, onChanger }: Props) {
   const decalage = reglages.decalages[office]
   const aujourdhui = heuresSolaires(maintenant, lieu, reglages)?.[office]
   const soleil = leverEtCoucher(maintenant, lieu)
   const midi = new Date((soleil.lever.getTime() + soleil.coucher.getTime()) / 2)
-  const astre = {
-    laudes: { nom: 'Lever du soleil', quand: soleil.lever },
-    sexte: { nom: 'Midi solaire', quand: midi },
-    vepres: { nom: 'Coucher du soleil', quand: soleil.coucher },
-  }[office as 'laudes' | 'sexte' | 'vepres'] as { nom: string; quand: Date } | undefined
-  const limite = office === 'laudes' ? 'pasAvant' : office === 'vepres' ? 'pasApres' : undefined
+  const lever = { nom: 'Lever du soleil', quand: soleil.lever }
+  const midiSolaire = { nom: 'Midi solaire', quand: midi }
+  const coucher = { nom: 'Coucher du soleil', quand: soleil.coucher }
+  const astres: Partial<Record<PriereSolaire, { nom: string; quand: Date }>> = {
+    laudes: lever,
+    sexte: midiSolaire,
+    vepres: coucher,
+    'angelus-matin': lever,
+    'angelus-midi': midiSolaire,
+    'angelus-soir': coucher,
+  }
+  const astre = astres[office]
+  const limite = LIMITES[office]
 
   const decalerDe = (pas: number) =>
     onChanger({ decalages: decaler(reglages.decalages, office, decalage + pas) })
@@ -71,7 +80,7 @@ export function ReglageSolaire({ office, reglages, lieu, maintenant, onChanger }
 
       {limite && (
         <ChoixLimite
-          libelle={limite === 'pasAvant' ? 'Pas avant' : 'Pas après'}
+          libelle={estPasAvant(limite) ? 'Pas avant' : 'Pas après'}
           limite={reglages[limite]}
           parDefaut={HEURES_SOLAIRES_PAR_DEFAUT[limite].heure}
           onChanger={(changement) =>
@@ -93,7 +102,7 @@ export function ReglageSolaire({ office, reglages, lieu, maintenant, onChanger }
 }
 
 // Sous le nom de l'office : « Au lever du soleil », « Fin de la 3e heure du jour ».
-export function SousTitreSolaire({ office }: { office: OfficeSolaire }) {
+export function SousTitreSolaire({ office }: { office: PriereSolaire }) {
   const [debut, exposant] = SOUS_TITRES_SOLAIRES[office]
   return (
     <p className="volet-sous-titre">

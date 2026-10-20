@@ -46,6 +46,9 @@ describe('réglages des rappels', () => {
       vepres: 'bourdon_notre_dame',
       complies: 'bourdon_notre_dame',
       chapelet: 'angelus_village',
+      'angelus-matin': 'angelus_village',
+      'angelus-midi': 'angelus_village',
+      'angelus-soir': 'angelus_village',
     })
   })
 

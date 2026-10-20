@@ -23,13 +23,13 @@ const ligneAlerte = (page: Page) =>
   page.getByRole('link', { name: 'Rappels bloqués par le téléphone' })
 
 // Un Xiaomi au démarrage automatique coupé, laudes activées.
-async function xiaomiBloque(page: Page) {
+async function xiaomiBloque(page: Page, masquees?: string[]) {
   await simulerTelephone(page, {
     accord: 'granted',
     fabricant: 'xiaomi',
     blocages: { batterie: false, arrierePlan: false, demarrage: true },
   })
-  await preparer(page, { rappels: ['laudes'] })
+  await preparer(page, { rappels: ['laudes'], masquees })
 }
 
 test('bloqués : le résumé le dit en brun brique, et le lecteur d’écran l’entend', async ({
@@ -97,13 +97,15 @@ test('l’accueil le signale, sans cacher les complies ; un toucher ouvre les Ra
   page,
 }) => {
   await page.setViewportSize({ width: 360, height: 780 })
-  await xiaomiBloque(page)
+  // Les Angélus, affichés d'origine, repoussent les complies plus bas : masqués,
+  // l'accueil tient en un écran (phase 19, 2026-10-20).
+  await xiaomiBloque(page, ['angelus-matin', 'angelus-midi', 'angelus-soir'])
   await page.goto('/')
   const ligne = ligneAlerte(page)
   await expect(ligne).toHaveText(ALERTE)
   await expect(ligne).toHaveCSS('color', BRUN_BRIQUE)
   await expect(ligne).toBeInViewport()
-  // L'accueil montre toujours tout jusqu'aux complies sans défiler.
+  // Sans les Angélus, l'accueil montre tout jusqu'aux complies sans défiler.
   const complies = page
     .getByRole('list', { name: 'Offices du jour' })
     .getByRole('link', { name: /^Complies/ })

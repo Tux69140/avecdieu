@@ -77,6 +77,13 @@ Avec Dieu accompagne la prière de toute la journée sur un téléphone Android.
 - **US-63** En tant que novice, je veux voir « Facultatif » sur chaque prière d'usage, afin d'apprendre en priant ce qui est essentiel et ce qui ne l'est pas.
 - **US-64** En tant que priant, je veux voir sur l'accueil le Chapelet et le Rosaire, afin de savoir que les deux existent sans passer par le seuil.
 
+**Angélus et accueil choisi** *(ajouté le 2026-10-20)*
+
+- **US-65** En tant que priant, je veux dire l'Angélus depuis le menu des prières, et le Regina Caeli de Pâques à la Pentecôte, afin de sanctifier le matin, le midi et le soir.
+- **US-66** En tant que priant, je veux l'Angélus du matin, de midi et du soir sur l'accueil à leur heure, chacun avec son rappel facultatif, afin de ne pas l'oublier.
+- **US-67** En tant que priant en mode solaire, je veux l'Angélus au lever, au midi solaire et au coucher, avec un décalage et une limite réglables comme les offices, afin de prier au rythme du jour.
+- **US-68** En tant que priant, je veux choisir les prières affichées sur l'accueil (offices, Chapelet, Rosaire, Angélus), toutes affichées au départ, afin de n'y garder que celles que je prie.
+
 **Offices**
 
 - **US-24** En tant que priant, je veux lire l'office complet (antienne répétée avant et après le psaume, Gloire au Père sauf exceptions, Notre Père en entier, conclusion de l'oraison complète), afin de prier correctement sans connaître les rubriques.
@@ -146,7 +153,7 @@ Avec Dieu accompagne la prière de toute la journée sur un téléphone Android.
 13. L'iPhone dans la première version *(plus tard)*.
 14. Toute autre langue que le français.
 15. Le choix entre plusieurs traductions des prières.
-16. L'Angélus et l'offrande du matin (décision du porteur du projet, 2026-10-06).
+16. L'offrande du matin (décision du porteur du projet, 2026-10-06). ~~L'Angélus~~ *entré dans le périmètre le 2026-10-20 (US-65).*
 17. Une carte « Chapelet du jour » sur l'accueil (décision du porteur du projet, 2026-10-06 ; une simple ligne « Chapelet » l'a remplacée le 2026-10-07).
 20. Un calendrier pour sauter à une date lointaine : la navigation se fait jour par jour *(plus tard, si le besoin se fait sentir)*.
 21. Suivre la taille de police choisie dans Android : l'app a sa propre taille du texte et le pincement, et ses écrans dessinés (cadran) déborderaient (décision du porteur du projet, 2026-10-07).

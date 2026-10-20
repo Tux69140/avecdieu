@@ -553,6 +553,34 @@ Décisions du porteur du projet (2026-10-09). Référence de la composition : Je
 
 ---
 
+## Phase 19 : Angélus et accueil choisi
+
+**User stories** : US-65, US-66, US-67, US-68
+
+Décisions du porteur du projet (2026-10-20), textes et libellés validés ce jour-là.
+- **Textes** : l'Angélus (trois versets suivis chacun du Je vous salue Marie, le verset marial du chapelet, l'oraison « Que ta grâce, Seigneur notre Père… ») et le Regina Caeli (antienne, verset, oraison), au recueil, Marie au vous, Dieu au tu. Chaque Je vous salue Marie se replie sur sa première ligne et se déplie en entier, comme les prières courantes des offices.
+- **Temps pascal** : du dimanche de Pâques au dimanche de la Pentecôte inclus, le Regina Caeli remplace l'Angélus sur l'accueil, dans les rappels et leurs notifications.
+- **Menu › Prières** : « Angélus » et « Regina Caeli », après le Salve Regina, toute l'année.
+- **Trois Angélus** : « Angélus du matin » (6 h 00), « Angélus de midi » (12 h 00), « Angélus du soir » (18 h 00), chacun avec son rappel (coupé d'origine), son son et son vibreur, dans Heures et rappels. Notification « C’est l’heure de l’Angélus » / « L’ange du Seigneur apporta l’annonce à Marie. » ; en temps pascal « C’est l’heure du Regina Caeli » / « Reine du ciel, réjouissez-vous, alléluia. » ; le toucher ouvre la prière.
+- **Heures solaires** : l'Angélus suit le soleil (« · lever », « · midi solaire », « · coucher »), avec son décalage, « Pas avant 7 h 00 » le matin et « Pas après 19 h 30 » le soir, réglables à part de ceux des laudes et des vêpres.
+- **Accueil** : une ligne « Angélus » (ou « Regina Caeli ») à son heure, « ~3 min », dans l'ordre : Angélus du matin, office des lectures, laudes, tierce, Angélus de midi, sexte, none, Angélus du soir, vêpres, complies. L'Angélus peut être la prière du moment ; à égalité avec un office, l'office garde le badge.
+- **Réglages › Accueil** (résumé « Prières affichées ») : un interrupteur par prière (Chapelet, Rosaire, les trois Angélus, les sept offices), tout affiché au départ. Un office masqué perd aussi sa perle du cadran.
+- Ensuite (noté le 2026-10-20) : les prières à Marie de saint Louis-Marie Grignion de Montfort, en prières seules du menu, textes vérifiés sur une édition de référence puis validés.
+
+### Critères d'acceptation
+
+- [ ] Les deux textes sont figés par le test d'empreinte ; le Je vous salue Marie se déplie en entier.
+- [ ] Angélus ou Regina Caeli selon la date, Pâques et Pentecôte comprises (tests unitaires sur plusieurs années).
+- [ ] Rappels des trois Angélus programmés à leur heure, fixe ou solaire, limites comprises ; les notifications ouvrent la bonne prière.
+- [ ] Accueil : seules les prières affichées apparaissent, dans l'ordre validé ; perles du cadran retirées avec leur office.
+- [ ] Captures validées par le porteur ; parcours Playwright et axe verts.
+
+## Bloquée par
+
+- Phase 18
+
+---
+
 ## Phase 13 : Recette en conditions réelles
 
 **User stories** : aucune nouvelle. Valide les critères de succès 4, 6 et 8 du PRD.

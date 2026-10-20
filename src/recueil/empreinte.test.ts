@@ -4,6 +4,7 @@ import { FRUITS, SERIES } from './mysteres'
 import { CONCLUSIONS, CONSIGNES, REGLES_RUBRIQUES, RUBRIQUE_EXAMEN, TEXTES_OFFICE } from './office'
 import { PASSAGES } from './passages'
 import { LITANIES } from './litanies'
+import { PRIERES_MARIALES } from './angelus'
 import { INTENTIONS, PRIERES, VERSET_MARIAL } from './prieres'
 
 // Les textes sacrés sont validés ligne par ligne par le porteur du projet.
@@ -24,6 +25,8 @@ import { INTENTIONS, PRIERES, VERSET_MARIAL } from './prieres'
 // Marie, Litanies de la Sainte Vierge, oraison du Rosaire (précédée du verset
 // du Salve Regina, inchangé), Sous l’abri de votre miséricorde et prière à
 // saint Joseph, validés par le porteur du projet le 2026-10-08.
+// Angélus et Regina Caeli (phase 19), validés par le porteur du projet le
+// 2026-10-20.
 const empreinte = (donnees: unknown) =>
   createHash('sha256').update(JSON.stringify(donnees)).digest('hex')
 
@@ -37,6 +40,12 @@ describe('recueil de textes figés', () => {
   it('les intentions, le verset marial et les Litanies sont ceux validés par le porteur du projet', () => {
     expect(empreinte({ INTENTIONS, VERSET_MARIAL, LITANIES })).toBe(
       'cae2952245139a8ea4fc2d628495941c68fd0b563b8e90af5d5537e8df7bbc72',
+    )
+  })
+
+  it('l’Angélus et le Regina Caeli sont ceux validés par le porteur du projet', () => {
+    expect(empreinte(PRIERES_MARIALES)).toBe(
+      '51360e1532f8ae8b815d0e5a7e49bdb8aa3114369bad7d82eba8f798d671b81d',
     )
   })
 

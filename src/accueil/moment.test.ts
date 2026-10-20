@@ -68,7 +68,29 @@ describe('situerOffices', () => {
       vepres: 'moment',
       complies: 'a-venir',
       chapelet: 'a-venir',
+      // Sans heure donnée.
+      'angelus-matin': 'libre',
+      'angelus-midi': 'libre',
+      'angelus-soir': 'libre',
     })
+  })
+
+  it('l’Angélus est du moment comme un office, mais l’office de la même heure garde le badge', () => {
+    const heures = {
+      ...HEURES,
+      'angelus-matin': { heures: 6, minutes: 0 },
+      'angelus-midi': { heures: 12, minutes: 0 },
+      'angelus-soir': { heures: 18, minutes: 0 },
+    }
+    expect(situerOffices(heures, a(6, 5)).moment).toBe('angelus-matin')
+    // Laudes à 7 h : à 6 h 50, les laudes sont plus proches.
+    expect(situerOffices(heures, a(6, 50)).moment).toBe('laudes')
+    // Sexte et l'Angélus de midi à la même heure : sexte.
+    expect(situerOffices(heures, a(12, 0)).moment).toBe('sexte')
+    expect(situerOffices(heures, a(12, 0)).etats['angelus-midi']).toBe('passe')
+    expect(situerOffices(heures, a(11, 50)).etats['angelus-midi']).toBe('a-venir')
+    // Vêpres à 18 h 30 : à 18 h 10, l'Angélus du soir.
+    expect(situerOffices(heures, a(18, 10)).moment).toBe('angelus-soir')
   })
 
   it('de minuit aux laudes, tout est à venir, sans prière du moment', () => {

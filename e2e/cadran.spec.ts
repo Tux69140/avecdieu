@@ -158,7 +158,7 @@ for (const theme of ['jour', 'nuit'] as const)
 test('la flèche « › » des lignes ne s’entend pas dans leur nom', async ({ page }) => {
   await ouvrir(page, JEUDI(10))
   await expect(
-    page.getByRole('list', { name: 'Offices du jour' }).getByRole('link').nth(1),
+    page.getByRole('list', { name: 'Offices du jour' }).getByRole('link').nth(2),
   ).toHaveAccessibleName(/^Laudes\s*7 h\s*, environ vingt minutes$/)
   const chapelet = page.getByRole('list', { name: 'Chapelet et Rosaire' }).getByRole('link')
   await expect(chapelet.first()).toHaveAccessibleName(/^Chapelet\s*vers 20 h\s*, vingt minutes$/)

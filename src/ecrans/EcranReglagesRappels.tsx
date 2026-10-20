@@ -6,7 +6,7 @@ import { useDepuisIci } from '../composants/retour'
 import { nommerLieu } from '../lieu/lieu'
 import { useLieu } from '../lieu/useLieu'
 import { calculerHeures } from '../office/heures'
-import { estOfficeSolaire } from '../office/heuresSolaires'
+import { estPriereSolaire } from '../office/heuresSolaires'
 import { dateDuJour } from '../office/dates'
 import { AvisRappels } from '../rappels/AvisRappels'
 import { avisDesRappels } from '../rappels/blocage'
@@ -102,7 +102,7 @@ export function EcranReglagesRappels() {
             onChanger={(changement) => setRappels(modifierRappel(priere, changement))}
             onActiver={activer}
             solaire={
-              solaires && estOfficeSolaire(priere)
+              solaires && estPriereSolaire(priere)
                 ? { heure: heures[priere], repere: REPERES_SOLAIRES[priere] }
                 : undefined
             }

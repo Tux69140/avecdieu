@@ -2,9 +2,18 @@ import { dateDuJour, decaler, enDate } from '../office/dates'
 import { enMinutes, type Heure } from '../office/heure'
 import { heuresReglees } from '../office/heures'
 import { cheminOffice } from '../office/modele'
-import { PRIERES_RAPPELEES, type Priere, type Rappel, type Rappels, type Son } from './reglages'
+import { priereMarialeDu } from '../prieres/angelus'
+import {
+  estAngelus,
+  PRIERES_RAPPELEES,
+  type Priere,
+  type Rappel,
+  type Rappels,
+  type Son,
+} from './reglages'
 import {
   nomDuSon,
+  NOTIFICATIONS_MARIALES,
   OUVERTURE_DES_HEURES,
   OUVERTURE_DU_CHAPELET,
   OUVERTURE_DU_JOUR,
@@ -85,9 +94,12 @@ export function officeDuMatin(
   return candidats.sort((a, b) => enMinutes(heures[a]!) - enMinutes(heures[b]!))[0]
 }
 
-function texteDe(priere: Priere, matin: Priere | undefined) {
-  if (priere === 'chapelet') return OUVERTURE_DU_CHAPELET
-  return priere === matin ? OUVERTURE_DU_JOUR : OUVERTURE_DES_HEURES
+// Le titre et les premiers mots ; l'Angélus devient le Regina Caeli au temps pascal.
+function contenuDe(priere: Priere, date: string, matin: Priere | undefined) {
+  if (estAngelus(priere)) return NOTIFICATIONS_MARIALES[priereMarialeDu(date)]
+  const titre = TITRES_NOTIFICATIONS[priere]
+  if (priere === 'chapelet') return { titre, texte: OUVERTURE_DU_CHAPELET }
+  return { titre, texte: priere === matin ? OUVERTURE_DU_JOUR : OUVERTURE_DES_HEURES }
 }
 
 // Jours écoulés depuis le 1er janvier 1970 : la base des identifiants.
@@ -97,9 +109,16 @@ const numeroDuJour = (date: string) => {
 }
 
 // Le rappel du chapelet ouvre toujours son seuil : le Rosaire n'a pas d'heure,
-// donc pas de rappel (révisé le 2026-10-09).
-const routeDe = (priere: Priere, date: string) =>
-  priere === 'chapelet' ? '/chapelet' : cheminOffice(priere, date)
+// donc pas de rappel (révisé le 2026-10-09). Celui de l'Angélus ouvre la
+// prière du jour.
+function routeDe(priere: Priere, date: string) {
+  if (estAngelus(priere)) return `/priere/${priereMarialeDu(date)}`
+  return priere === 'chapelet' ? '/chapelet' : cheminOffice(priere, date)
+}
+
+// Plus de prières rappelées qu'il n'y a de rangs : deux identifiants se
+// confondraient.
+const RANGS_PAR_JOUR = 16
 
 // Toutes les notifications à venir, de maintenant à JOURS_PROGRAMMES jours,
 // à l'heure locale de chaque jour (heure d'été comprise).
@@ -124,12 +143,11 @@ export function programmer(
       quand.setHours(heure.heures, heure.minutes, 0, 0)
       if (quand <= maintenant) return
       prevues.push({
-        id: numeroDuJour(date) * 10 + rang,
+        id: numeroDuJour(date) * RANGS_PAR_JOUR + rang,
         priere,
         date,
         quand,
-        titre: TITRES_NOTIFICATIONS[priere],
-        texte: texteDe(priere, matin),
+        ...contenuDe(priere, date, matin),
         route: routeDe(priere, date),
         canal: canalDe(rappel).id,
       })

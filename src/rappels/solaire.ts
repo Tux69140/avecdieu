@@ -2,10 +2,10 @@ import { lireHeure } from '../office/heure'
 import {
   DECALAGE_MAX,
   HEURES_SOLAIRES_PAR_DEFAUT,
-  OFFICES_SOLAIRES,
+  PRIERES_SOLAIRES,
   PAS_DU_DECALAGE,
   type Limite,
-  type OfficeSolaire,
+  type PriereSolaire,
   type ReglagesSolaires,
 } from '../office/heuresSolaires'
 import { ecrireEtSignaler, estObjet, lireObjet, RACINE } from '../reglages/stockage'
@@ -40,10 +40,12 @@ export function lireSolaire(): ReglagesSolaires {
   return {
     actives: lu.actives === true,
     decalages: Object.fromEntries(
-      OFFICES_SOLAIRES.map((office) => [office, lireDecalage(decalages[office])]),
-    ) as Record<OfficeSolaire, number>,
+      PRIERES_SOLAIRES.map((priere) => [priere, lireDecalage(decalages[priere])]),
+    ) as Record<PriereSolaire, number>,
     pasAvant: lireLimite(lu.pasAvant, defaut.pasAvant),
     pasApres: lireLimite(lu.pasApres, defaut.pasApres),
+    angelusPasAvant: lireLimite(lu.angelusPasAvant, defaut.angelusPasAvant),
+    angelusPasApres: lireLimite(lu.angelusPasApres, defaut.angelusPasApres),
   }
 }
 
@@ -54,12 +56,12 @@ export function modifierSolaire(changement: Partial<ReglagesSolaires>): Reglages
   return reglages
 }
 
-// Le nouveau décalage d'un office, borné à une heure de part et d'autre.
+// Le nouveau décalage d’une prière, borné à une heure de part et d'autre.
 export function decaler(
-  decalages: Record<OfficeSolaire, number>,
-  office: OfficeSolaire,
+  decalages: Record<PriereSolaire, number>,
+  priere: PriereSolaire,
   decalage: number,
-): Record<OfficeSolaire, number> {
+): Record<PriereSolaire, number> {
   const borne = Math.max(-DECALAGE_MAX, Math.min(DECALAGE_MAX, decalage))
-  return { ...decalages, [office]: borne }
+  return { ...decalages, [priere]: borne }
 }

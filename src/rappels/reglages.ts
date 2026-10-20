@@ -1,16 +1,34 @@
 import { lireHeure, type Heure } from '../office/heure'
-import { OFFICES, type NomOffice } from '../office/modele'
+import type { NomOffice } from '../office/modele'
 import { ecrireEtSignaler, estObjet, lireObjet, RACINE } from '../reglages/stockage'
 
-// Les rappels du priant (phase 11) : pour chaque office et pour le chapelet,
-// s'il est rappelé, à quelle heure, avec quel son. Décisions du porteur du
-// projet (2026-10-07) : app muette par défaut, heures du PRD, une cloche
-// d'origine selon l'heure, vibreur activé.
+// Les rappels du priant (phase 11) : pour chaque office, pour le chapelet et
+// pour les trois Angélus (phase 19), s'il est rappelé, à quelle heure, avec
+// quel son. Décisions du porteur du projet (2026-10-07) : app muette par
+// défaut, heures du PRD, une cloche d'origine selon l'heure, vibreur activé.
 
-export type Priere = NomOffice | 'chapelet'
+export type Angelus = 'angelus-matin' | 'angelus-midi' | 'angelus-soir'
+export const ANGELUS: readonly Angelus[] = ['angelus-matin', 'angelus-midi', 'angelus-soir']
+export const estAngelus = (priere: string): priere is Angelus =>
+  (ANGELUS as readonly string[]).includes(priere)
 
-// Dans l'ordre du jour, comme la page Réglages › Rappels les présente.
-export const PRIERES_RAPPELEES: readonly Priere[] = [...OFFICES, 'chapelet']
+export type Priere = NomOffice | 'chapelet' | Angelus
+
+// Dans l'ordre du jour, comme la page Réglages › Rappels les présente : chaque
+// Angélus avant l'office de la même heure (validé le 2026-10-20).
+export const PRIERES_RAPPELEES: readonly Priere[] = [
+  'angelus-matin',
+  'lectures',
+  'laudes',
+  'tierce',
+  'angelus-midi',
+  'sexte',
+  'none',
+  'angelus-soir',
+  'vepres',
+  'complies',
+  'chapelet',
+]
 
 // Une adresse /reglages/rappels/<prière> qui nomme bien une prière rappelée.
 export const estPriere = (valeur?: string): valeur is Priere =>
@@ -71,6 +89,10 @@ export const RAPPELS_PAR_DEFAUT: Rappels = {
   vepres: rappel({ heures: 18, minutes: 30 }, 'bourdon_notre_dame'),
   complies: rappel({ heures: 21, minutes: 30 }, 'bourdon_notre_dame'),
   chapelet: rappel({ heures: 20, minutes: 0 }, 'angelus_village'),
+  // L'Angélus de village sonne l'Angélus (2026-10-20).
+  'angelus-matin': rappel({ heures: 6, minutes: 0 }, 'angelus_village'),
+  'angelus-midi': rappel({ heures: 12, minutes: 0 }, 'angelus_village'),
+  'angelus-soir': rappel({ heures: 18, minutes: 0 }, 'angelus_village'),
 }
 
 // L'heure que l'office des lectures propose quand on active son rappel.

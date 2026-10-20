@@ -53,7 +53,8 @@ for (const [heure, minutes, office, horaire, astre] of [
   [7, 30, 'Laudes', '7 h', 'lune'],
   [8, 40, 'Tierce', '9 h', 'soleil'],
   [12, 10, 'Sexte', '12 h', 'soleil'],
-  [18, 10, 'Vêpres', '18 h 30', 'soleil'],
+  // L'Angélus du soir, à 18 h, est plus proche que les vêpres (phase 19).
+  [18, 10, 'Angélus', '18 h', 'soleil'],
   [18, 40, 'Vêpres', '18 h 30', 'soleil'],
   [21, 15, 'Complies', '21 h 30', 'lune'],
   [22, 15, 'Complies', '21 h 30', 'lune'],
@@ -83,16 +84,20 @@ test('à 18 h 40, chaque perle et chaque ligne a son état', async ({ page }) =>
   await expect(perle(page, 'lectures')).toHaveCount(0)
   const liste = page.getByRole('list', { name: 'Offices du jour' })
   await expect(liste.getByRole('listitem')).toHaveText([
+    /Angélus\s*6 h/,
     /Office des lectures\s*à toute heure/,
     /Laudes\s*7 h/,
     /Tierce\s*9 h/,
+    /Angélus\s*12 h/,
     /Sexte\s*12 h/,
     /None\s*15 h/,
+    /Angélus\s*18 h/,
     /Vêpres\s*18 h 30/,
     /Complies\s*21 h 30/,
   ])
-  await expect(liste.getByRole('listitem').nth(1)).toHaveAttribute('data-etat', 'passe')
-  await expect(liste.getByRole('listitem').nth(5)).toHaveAttribute('data-etat', 'moment')
+  await expect(liste.getByRole('listitem').nth(2)).toHaveAttribute('data-etat', 'passe')
+  await expect(liste.getByRole('listitem').nth(7)).toHaveAttribute('data-etat', 'passe')
+  await expect(liste.getByRole('listitem').nth(8)).toHaveAttribute('data-etat', 'moment')
 })
 
 test('la prière du moment change d’elle-même, sans rouvrir l’app', async ({ page }) => {
@@ -131,7 +136,7 @@ test('une perle, même passée, ouvre son office', async ({ page }) => {
 })
 
 test('une ligne de la liste et la prière du moment ouvrent leur office', async ({ page }) => {
-  await ouvrir(page, MARDI(18, 10))
+  await ouvrir(page, MARDI(18, 40))
   await page
     .getByRole('list', { name: 'Offices du jour' })
     .getByRole('link', { name: /Laudes/ })
@@ -186,7 +191,7 @@ test('une adresse de jour invalide ou d’aujourd’hui mène à l’accueil', a
 })
 
 test('premier lancement sans réseau : la date reste, le chapelet est proposé', async ({ page }) => {
-  await page.clock.setFixedTime(MARDI(18, 10))
+  await page.clock.setFixedTime(MARDI(18, 40))
   await preparer(page)
   let panne = true
   await page.route('https://api.aelf.org/**', (route) => {
@@ -210,7 +215,10 @@ test('premier lancement sans réseau : la date reste, le chapelet est proposé',
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mardi 6 octobre')
   // Aucun office ne peut s'ouvrir : tous atténués, aucun badge (il serait
   // trompeur), le chapelet seul en pleine couleur.
-  const offices = page.getByRole('list', { name: 'Offices du jour' }).getByRole('listitem')
+  const offices = page
+    .getByRole('list', { name: 'Offices du jour' })
+    .getByRole('listitem')
+    .filter({ hasNotText: 'Angélus' })
   await expect(offices).toHaveCount(7)
   for (const office of await offices.all())
     await expect(office).toHaveAttribute('data-etat', 'passe')

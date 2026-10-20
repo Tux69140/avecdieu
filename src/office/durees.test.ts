@@ -13,6 +13,7 @@ describe('durées affichées (PRD, 2026-10-08)', () => {
       none: { minutes: 10, environ: true },
       vepres: { minutes: 20, environ: true },
       complies: { minutes: 15, environ: true },
+      angelus: { minutes: 3, environ: true },
     })
   })
 
@@ -26,6 +27,7 @@ describe('durées affichées (PRD, 2026-10-08)', () => {
     expect(ecrireDuree('sexte')).toBe('~10 min')
     expect(ecrireDuree('none')).toBe('~10 min')
     expect(ecrireDuree('complies')).toBe('~15 min')
+    expect(ecrireDuree('angelus')).toBe('~3 min')
   })
 
   it('se dit en toutes lettres au lecteur d’écran', () => {
@@ -34,6 +36,7 @@ describe('durées affichées (PRD, 2026-10-08)', () => {
     expect(direDuree('laudes')).toBe('environ vingt minutes')
     expect(direDuree('tierce')).toBe('environ dix minutes')
     expect(direDuree('complies')).toBe('environ quinze minutes')
+    expect(direDuree('angelus')).toBe('environ trois minutes')
   })
 })
 

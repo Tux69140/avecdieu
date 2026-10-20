@@ -93,6 +93,8 @@ for (const [nom, chemin] of [
   ['réglages · page d’une prière', '/reglages/rappels/laudes'],
   ['réglages · son d’une prière', '/reglages/rappels/laudes/son'],
   ['réglages · batterie', '/reglages/rappels/batterie'],
+  ['réglages · accueil', '/reglages/accueil'],
+  ['réglages · page de l’Angélus', '/reglages/rappels/angelus-midi'],
   ['réglages · chapelet', '/reglages/chapelet'],
   ['réglages · prières du chapelet', '/reglages/chapelet/prieres'],
   ['réglages · offices', '/reglages/offices'],
@@ -105,6 +107,7 @@ for (const [nom, chemin] of [
   ['accueil d’un autre jour', '/jour/2026-10-11'],
   ['office', '/office/lectures/2026-10-06'],
   ['prière seule', '/priere/credo'],
+  ['Angélus', '/priere/angelus'],
 ]) {
   test(`${nom} : rien sous les barres d’Android`, async ({ page }) => {
     await servirAelf(page)
@@ -270,7 +273,9 @@ test('rappels : la fenêtre d’autorisation s’écarte des barres d’Android'
 // Objectif validé : à 360 × 780, l'accueil tient en un écran jusqu'au bas de
 // la liste, complies comprises. Depuis la phase 18, le Chapelet et le Rosaire
 // l'ouvrent ; la navigation des jours est montée sur la ligne du ☰ pour
-// regagner la place (choix du porteur du projet, 2026-10-09).
+// regagner la place (choix du porteur du projet, 2026-10-09). Depuis la phase
+// 19, les trois Angélus, affichés d'origine, poussent les complies plus bas
+// (choix du porteur du projet, 2026-10-20) : l'objectif vaut Angélus masqués.
 for (const [nom, jour, titreDuJour, lignesDuTitre, derniere] of [
   ['titre d’une ligne', new Date(2026, 9, 6, 12, 15), 'S. Bruno', 1, /^Complies/],
   [
@@ -287,7 +292,7 @@ for (const [nom, jour, titreDuJour, lignesDuTitre, derniere] of [
     await page.setViewportSize({ width: 360, height: 780 })
     await page.clock.setFixedTime(jour)
     await servirAelf(page)
-    await preparer(page)
+    await preparer(page, { masquees: ['angelus-matin', 'angelus-midi', 'angelus-soir'] })
     await page.goto('/')
     const titre = page.getByTestId('bandeau').locator('.bandeau-titre')
     await expect(titre).toHaveText(titreDuJour)

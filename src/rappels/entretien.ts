@@ -59,10 +59,11 @@ export function entretenirRappels(): () => void {
   }
 }
 
-// Seules les routes des prières s'ouvrent depuis une notification. /rosaire
-// reste pour un rappel du Rosaire programmé avant les deux seuils (2026-10-09)
-// et encore affiché.
-const ROUTE_DE_PRIERE = /^\/(office\/[a-z]+\/\d{4}-\d{2}-\d{2}|chapelet|rosaire)$/
+// Seules les routes des prières s'ouvrent depuis une notification, l'Angélus
+// et le Regina Caeli compris (phase 19). /rosaire reste pour un rappel du
+// Rosaire programmé avant les deux seuils (2026-10-09) et encore affiché.
+const ROUTE_DE_PRIERE =
+  /^\/(office\/[a-z]+\/\d{4}-\d{2}-\d{2}|chapelet|rosaire|priere\/(angelus|regina-caeli))$/
 
 // Installé avant le premier affichage : une notification touchée app fermée
 // ouvre directement sa prière.

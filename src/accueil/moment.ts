@@ -1,5 +1,5 @@
 import { enMinutes, type Heure } from '../office/heure'
-import { PRIERES_RAPPELEES, type Priere } from '../rappels/reglages'
+import { estAngelus, PRIERES_RAPPELEES, type Priere } from '../rappels/reglages'
 
 // Où en est la journée de prière, chapelet compris (à son heure, il est la
 // prière du moment comme un office : choix du porteur du projet, 2026-10-08).
@@ -21,7 +21,8 @@ const HEURE_DE_GRACE = 60
 
 // La prière du moment : celle dont le créneau contient l'heure qu'il est ; si
 // deux créneaux se chevauchent, la plus proche de son heure (à égalité, celle
-// déjà commencée). « maintenant » : minutes écoulées depuis minuit.
+// déjà commencée ; à la même heure, l'office plutôt que l'Angélus, 2026-10-20).
+// « maintenant » : minutes écoulées depuis minuit.
 // « candidates » : les prières qui peuvent l'être ; sans aucun texte des
 // offices (premier lancement sans réseau), aucune : un badge y serait
 // trompeur (2026-10-08).
@@ -37,7 +38,12 @@ export function situerOffices(
       return heure ? [{ nom, debut: enMinutes(heure) }] : []
     })
     .filter(({ debut }) => maintenant >= debut - AVANCE && maintenant < debut + HEURE_DE_GRACE)
-    .sort((x, y) => ecart(x.debut) - ecart(y.debut) || x.debut - y.debut)[0]
+    .sort(
+      (x, y) =>
+        ecart(x.debut) - ecart(y.debut) ||
+        x.debut - y.debut ||
+        Number(estAngelus(x.nom)) - Number(estAngelus(y.nom)),
+    )[0]
 
   const etats = {} as Record<Priere, EtatOffice>
   for (const nom of PRIERES_RAPPELEES) {

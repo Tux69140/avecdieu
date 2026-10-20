@@ -41,21 +41,27 @@ test('par défaut : aucun rappel, les heures du PRD, l’office des lectures san
   await expect(page).toHaveURL('/reglages/rappels')
   const lignes = page.locator('.rappel')
   await expect(lignes.locator('.rappel-priere')).toHaveText([
+    'Angélus du matin',
     'Office des lectures',
     'Laudes',
     'Tierce',
+    'Angélus de midi',
     'Sexte',
     'None',
+    'Angélus du soir',
     'Vêpres',
     'Complies',
     'Chapelet',
   ])
   await expect(lignes.locator('.rappel-heure span')).toHaveText([
+    '6 h 00',
     '—',
     '7 h 00',
     '9 h 00',
     '12 h 00',
+    '12 h 00',
     '15 h 00',
+    '18 h 00',
     '18 h 30',
     '21 h 30',
     '20 h 00',
@@ -97,7 +103,7 @@ test('activer les laudes : l’accord, la minute près, puis un mois de rappels'
     'demande d’accord',
     'page « Alarmes et rappels »',
   ])
-  await expect(page.locator('.rappel').nth(1)).toContainText('Cloche Marcel · vibreur')
+  await expect(page.locator('.rappel').nth(2)).toContainText('Cloche Marcel · vibreur')
   // Ouverte directement, la page Rappels remonte aux Réglages, qui la résument.
   await fermer(page)
   await expect(page).toHaveURL('/reglages')
@@ -112,7 +118,7 @@ test('l’office des lectures, activé, propose 6 h 30 et ouvre la journée avan
   await interrupteur(page, 'Laudes').click()
   await interrupteur(page, 'Office des lectures').click()
   await expect(interrupteur(page, 'Office des lectures')).toHaveAttribute('aria-checked', 'true')
-  await expect(page.locator('.rappel').first().locator('.rappel-heure span')).toHaveText('6 h 30')
+  await expect(page.locator('.rappel').nth(1).locator('.rappel-heure span')).toHaveText('6 h 30')
   await expect
     .poll(async () => (await programmees(page)).slice(0, 2).map((n) => [n.route, n.texte]))
     .toEqual([
@@ -126,7 +132,7 @@ test('une heure changée se reprogramme et déplace l’office sur l’accueil',
   await ouvrirRappels(page)
   await interrupteur(page, 'Vêpres').click()
   await page.getByLabel('Vêpres, heure').fill('19:15')
-  await expect(page.locator('.rappel').nth(5).locator('.rappel-heure span')).toHaveText('19 h 15')
+  await expect(page.locator('.rappel').nth(8).locator('.rappel-heure span')).toHaveText('19 h 15')
   await expect
     .poll(async () => new Date((await programmees(page))[0].quand))
     .toEqual(new Date(2026, 9, 7, 19, 15))
@@ -144,14 +150,14 @@ test('« Effacer » remet l’heure par défaut', async ({ page }) => {
   await ouvrirRappels(page)
   const heure = (n: number) => page.locator('.rappel').nth(n).locator('.rappel-heure span')
   await page.getByLabel('Vêpres, heure').fill('19:15')
-  await expect(heure(5)).toHaveText('19 h 15')
+  await expect(heure(8)).toHaveText('19 h 15')
   await page.getByLabel('Vêpres, heure').fill('')
-  await expect(heure(5)).toHaveText('18 h 30')
+  await expect(heure(8)).toHaveText('18 h 30')
   await page.getByLabel('Office des lectures, heure').fill('05:00')
   await page.getByLabel('Office des lectures, heure').fill('')
-  await expect(heure(0)).toHaveText('6 h 30')
+  await expect(heure(1)).toHaveText('6 h 30')
   await page.reload()
-  await expect(heure(5)).toHaveText('18 h 30')
+  await expect(heure(8)).toHaveText('18 h 30')
 })
 
 test('les rappels sont refaits à l’ouverture de l’app', async ({ page }) => {

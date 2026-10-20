@@ -23,12 +23,15 @@ describe('réglages des heures solaires', () => {
     const { decalages } = HEURES_SOLAIRES_PAR_DEFAUT
     expect(decaler(decalages, 'laudes', 65).laudes).toBe(60)
     expect(decaler(decalages, 'vepres', -70).vepres).toBe(-60)
-    expect(decaler(decaler(decalages, 'laudes', 65), 'tierce', 15)).toEqual({
+    expect(decaler(decaler(decalages, 'laudes', 65), 'angelus-soir', 15)).toEqual({
       laudes: 60,
-      tierce: 15,
+      tierce: 0,
       sexte: 0,
       none: 0,
       vepres: 0,
+      'angelus-matin': 0,
+      'angelus-midi': 0,
+      'angelus-soir': 15,
     })
   })
 

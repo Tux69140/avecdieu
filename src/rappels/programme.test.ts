@@ -27,6 +27,43 @@ describe('premiers mots des notifications', () => {
   })
 })
 
+describe('rappels de l’Angélus (phase 19)', () => {
+  it('ouvrent l’Angélus, et le Regina Caeli de Pâques à la Pentecôte', () => {
+    const rappels = avec({ 'angelus-midi': { actif: true } })
+    const octobre = programmer(rappels, MAINTENANT, 2)
+    expect(octobre[0]).toMatchObject({
+      priere: 'angelus-midi',
+      date: '2026-10-07',
+      titre: 'C’est l’heure de l’Angélus',
+      texte: 'L’ange du Seigneur apporta l’annonce à Marie.',
+      route: '/priere/angelus',
+    })
+    expect(octobre[0].quand).toEqual(new Date(2026, 9, 7, 12, 0))
+    // Pentecôte 2026 : le 24 mai ; le lendemain, l'Angélus revient.
+    const [pentecote, lendemain] = programmer(rappels, new Date(2026, 4, 24, 8, 0), 2)
+    expect(pentecote).toMatchObject({
+      titre: 'C’est l’heure du Regina Caeli',
+      texte: 'Reine du ciel, réjouissez-vous, alléluia.',
+      route: '/priere/regina-caeli',
+    })
+    expect(lendemain.route).toBe('/priere/angelus')
+  })
+
+  it('trois Angélus et tous les offices le même jour gardent chacun leur identifiant', () => {
+    const tout = Object.fromEntries(
+      Object.keys(RAPPELS_PAR_DEFAUT).map((priere) => [
+        priere,
+        { actif: true, heure: { heures: 23, minutes: 0 } },
+      ]),
+    )
+    const prevues = programmer(avec(tout), MAINTENANT)
+    expect(prevues).toHaveLength(31 * 11)
+    expect(new Set(prevues.map(({ id }) => id)).size).toBe(prevues.length)
+    // Sous la limite de 500 alarmes que Samsung impose à chaque app.
+    expect(prevues.length).toBeLessThan(500)
+  })
+})
+
 describe('programmation des rappels', () => {
   it('rien à programmer quand l’app est muette', () => {
     expect(programmer(RAPPELS_PAR_DEFAUT, MAINTENANT)).toEqual([])

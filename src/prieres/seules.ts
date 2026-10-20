@@ -1,20 +1,37 @@
+import { PRIERES_MARIALES, type PriereComposee } from '../recueil/angelus'
 import { TEXTES_OFFICE } from '../recueil/office'
 import { PRIERES, type Priere } from '../recueil/prieres'
 
 // Les prières qui s'ouvrent seules depuis le menu (choix du porteur du projet,
-// 2026-10-08) : deux en accès direct, quatre sous « Prières ». Leurs textes
-// sont ceux du recueil, déjà validés ; aucun texte nouveau.
+// 2026-10-08) : deux en accès direct, les autres sous « Prières ». Leurs
+// textes sont ceux du recueil, déjà validés ; l'Angélus et le Regina Caeli
+// s'y ajoutent après le Salve Regina (2026-10-20).
 export type PriereSeuleId =
-  'je-vous-salue-marie' | 'notre-pere' | 'credo' | 'gloire-au-pere' | 'salve-regina' | 'je-confesse'
+  | 'je-vous-salue-marie'
+  | 'notre-pere'
+  | 'credo'
+  | 'gloire-au-pere'
+  | 'salve-regina'
+  | 'angelus'
+  | 'regina-caeli'
+  | 'je-confesse'
 
-export const PRIERES_SEULES: Record<PriereSeuleId, Priere> = {
-  'je-vous-salue-marie': PRIERES['je-vous-salue-marie'],
-  'notre-pere': PRIERES['notre-pere'],
-  credo: PRIERES.credo,
-  'gloire-au-pere': PRIERES['gloire-au-pere'],
-  'salve-regina': PRIERES['salve-regina'],
+// Une prière d'un seul tenant, vue comme une prière faite de morceaux.
+const dUnTenant = ({ titre, lignes, reponse }: Priere): PriereComposee => ({
+  titre,
+  morceaux: [{ lignes, reponse }],
+})
+
+export const PRIERES_SEULES: Record<PriereSeuleId, PriereComposee> = {
+  'je-vous-salue-marie': dUnTenant(PRIERES['je-vous-salue-marie']),
+  'notre-pere': dUnTenant(PRIERES['notre-pere']),
+  credo: dUnTenant(PRIERES.credo),
+  'gloire-au-pere': dUnTenant(PRIERES['gloire-au-pere']),
+  'salve-regina': dUnTenant(PRIERES['salve-regina']),
+  angelus: PRIERES_MARIALES.angelus,
+  'regina-caeli': PRIERES_MARIALES['regina-caeli'],
   // Le Je confesse des complies, dit ensemble : sans réponse.
-  'je-confesse': { titre: 'Je confesse à Dieu', lignes: TEXTES_OFFICE['je-confesse'] },
+  'je-confesse': dUnTenant({ titre: 'Je confesse à Dieu', lignes: TEXTES_OFFICE['je-confesse'] }),
 }
 
 // Dans l'ordre du menu.
@@ -23,6 +40,8 @@ export const AUTRES_PRIERES: PriereSeuleId[] = [
   'credo',
   'gloire-au-pere',
   'salve-regina',
+  'angelus',
+  'regina-caeli',
   'je-confesse',
 ]
 

@@ -43,6 +43,7 @@ export function EcranReglages() {
             resumeCache
           />
         </div>
+        <LignePage vers="/reglages/accueil" nom="Accueil" resume="Prières affichées" resumeCache />
         <LignePage
           vers="/reglages/chapelet"
           nom="Chapelet et Rosaire"

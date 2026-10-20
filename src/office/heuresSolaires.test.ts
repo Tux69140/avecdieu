@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
-  estOfficeSolaire,
+  estPriereSolaire,
   HEURES_SOLAIRES_PAR_DEFAUT,
   heuresSolaires,
   type ReglagesSolaires,
@@ -12,6 +12,8 @@ const SANS_LIMITE: ReglagesSolaires = {
   ...HEURES_SOLAIRES_PAR_DEFAUT,
   pasAvant: { ...HEURES_SOLAIRES_PAR_DEFAUT.pasAvant, active: false },
   pasApres: { ...HEURES_SOLAIRES_PAR_DEFAUT.pasApres, active: false },
+  angelusPasAvant: { ...HEURES_SOLAIRES_PAR_DEFAUT.angelusPasAvant, active: false },
+  angelusPasApres: { ...HEURES_SOLAIRES_PAR_DEFAUT.angelusPasApres, active: false },
 }
 
 const minutes = ({ heures, minutes }: { heures: number; minutes: number }) => heures * 60 + minutes
@@ -40,7 +42,7 @@ describe('heures solaires', () => {
     const sans = heuresSolaires(octobre, LYON, SANS_LIMITE)!
     const avec = heuresSolaires(octobre, LYON, {
       ...SANS_LIMITE,
-      decalages: { laudes: 30, tierce: -15, sexte: 0, none: 60, vepres: -60 },
+      decalages: { ...SANS_LIMITE.decalages, laudes: 30, tierce: -15, none: 60, vepres: -60 },
     })!
     expect(minutes(avec.laudes) - minutes(sans.laudes)).toBe(30)
     expect(minutes(avec.tierce) - minutes(sans.tierce)).toBe(-15)
@@ -78,6 +80,36 @@ describe('heures solaires', () => {
     expect(minutes(ete.sexte)).toBeLessThan(14 * 60)
   })
 
+  it('l’Angélus au lever, au midi solaire et au coucher, avec son propre décalage', () => {
+    const sans = heuresSolaires(octobre, LYON, SANS_LIMITE)!
+    expect(sans['angelus-matin']).toEqual(sans.laudes)
+    expect(sans['angelus-midi']).toEqual(sans.sexte)
+    expect(sans['angelus-soir']).toEqual(sans.vepres)
+    const decale = heuresSolaires(octobre, LYON, {
+      ...SANS_LIMITE,
+      decalages: { ...SANS_LIMITE.decalages, 'angelus-midi': -15 },
+    })!
+    expect(minutes(decale['angelus-midi']) - minutes(sans.sexte)).toBe(-15)
+    expect(decale.sexte).toEqual(sans.sexte)
+  })
+
+  it('d’origine, l’Angélus pas avant 7 h et pas après 19 h 30, réglables à part des offices', () => {
+    const juin = new Date(2026, 5, 25)
+    const origine = heuresSolaires(juin, LYON, HEURES_SOLAIRES_PAR_DEFAUT)!
+    expect(origine['angelus-matin']).toEqual({ heures: 7, minutes: 0 })
+    expect(origine['angelus-soir']).toEqual({ heures: 19, minutes: 30 })
+    const regle = heuresSolaires(juin, LYON, {
+      ...HEURES_SOLAIRES_PAR_DEFAUT,
+      angelusPasAvant: { active: true, heure: { heures: 6, minutes: 30 } },
+      angelusPasApres: { active: false, heure: { heures: 19, minutes: 30 } },
+    })!
+    expect(regle['angelus-matin']).toEqual({ heures: 6, minutes: 30 })
+    expect(minutes(regle['angelus-soir'])).toBeGreaterThan(21 * 60)
+    // Les offices gardent leurs limites.
+    expect(regle.laudes).toEqual({ heures: 7, minutes: 0 })
+    expect(regle.vepres).toEqual({ heures: 19, minutes: 30 })
+  })
+
   it('renonce là où le soleil ne se lève pas (nuit polaire)', () => {
     expect(
       heuresSolaires(new Date(2026, 11, 21), { latitude: 78, longitude: 15 }, SANS_LIMITE),
@@ -85,11 +117,20 @@ describe('heures solaires', () => {
   })
 })
 
-describe('estOfficeSolaire', () => {
-  it('laudes, tierce, sexte, none et vêpres suivent le soleil ; les autres prières non', () => {
-    for (const office of ['laudes', 'tierce', 'sexte', 'none', 'vepres'])
-      expect(estOfficeSolaire(office)).toBe(true)
+describe('estPriereSolaire', () => {
+  it('laudes, tierce, sexte, none, vêpres et les trois Angélus suivent le soleil ; les autres prières non', () => {
+    for (const priere of [
+      'laudes',
+      'tierce',
+      'sexte',
+      'none',
+      'vepres',
+      'angelus-matin',
+      'angelus-midi',
+      'angelus-soir',
+    ])
+      expect(estPriereSolaire(priere)).toBe(true)
     for (const autre of ['lectures', 'complies', 'chapelet', 'toString'])
-      expect(estOfficeSolaire(autre)).toBe(false)
+      expect(estPriereSolaire(autre)).toBe(false)
   })
 })

@@ -314,6 +314,8 @@ for (const chemin of [
   '/reglages/rappels/laudes',
   '/reglages/rappels/laudes/son',
   '/reglages/rappels/batterie',
+  '/reglages/accueil',
+  '/reglages/rappels/angelus-matin',
   '/reglages/chapelet',
   '/reglages/chapelet/prieres',
   '/reglages/offices',
@@ -375,7 +377,7 @@ async function fenetresDesRappels(page: Page) {
   }
   await expect(page.locator('.rappels-avis')).toHaveCount(4)
   expect(await violationsGraves(page)).toEqual([])
-  await page.locator('.rappel-nom').nth(1).click()
+  await page.locator('.rappel-nom').nth(2).click()
   await page.getByRole('link', { name: /^Son/ }).click()
   await expect(page.getByRole('radiogroup', { name: 'Son, Laudes' })).toBeVisible()
   expect(await violationsGraves(page)).toEqual([])
@@ -465,6 +467,16 @@ test.describe('de nuit', () => {
     await preparer(page)
     await page.goto('/priere/je-vous-salue-marie')
     await expect(page.getByTestId('strophe').first()).toBeVisible()
+    expect(await violationsGraves(page)).toEqual([])
+  })
+
+  // Phase 19 : l'Angélus, ses Je vous salue Marie repliés puis l'un déplié.
+  test('Angélus', async ({ page }) => {
+    await preparer(page)
+    await page.goto('/priere/angelus')
+    await expect(page.getByTestId('priere-courante')).toHaveCount(3)
+    expect(await violationsGraves(page)).toEqual([])
+    await page.getByTestId('priere-courante').first().locator('summary').click()
     expect(await violationsGraves(page)).toEqual([])
   })
 })

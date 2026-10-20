@@ -1,17 +1,32 @@
+import { PRIERES_MARIALES, type PriereMariale } from '../recueil/angelus'
 import { TEXTES_OFFICE } from '../recueil/office'
 import { PRIERES } from '../recueil/prieres'
 import type { LieuChoisi } from '../lieu/lieu'
 import type { Heure } from '../office/heure'
-import type { OfficeSolaire } from '../office/heuresSolaires'
+import type { PriereSolaire } from '../office/heuresSolaires'
 import type { Fabricant } from '../telephone/sonnerie'
 import { NOMS_OFFICES } from '../office/modele'
-import { NOMS_CLOCHES, PRIERES_RAPPELEES, type Priere, type Rappels, type Son } from './reglages'
+import {
+  NOMS_CLOCHES,
+  PRIERES_RAPPELEES,
+  type Angelus,
+  type Priere,
+  type Rappels,
+  type Son,
+} from './reglages'
 
 // Libellés des rappels, validés par le porteur du projet (2026-10-07).
 
-export const NOMS_PRIERES: Record<Priere, string> = { ...NOMS_OFFICES, chapelet: 'Chapelet' }
+export const NOMS_PRIERES: Record<Priere, string> = {
+  ...NOMS_OFFICES,
+  chapelet: 'Chapelet',
+  // Validés le 2026-10-20.
+  'angelus-matin': 'Angélus du matin',
+  'angelus-midi': 'Angélus de midi',
+  'angelus-soir': 'Angélus du soir',
+}
 
-export const TITRES_NOTIFICATIONS: Record<Priere, string> = {
+export const TITRES_NOTIFICATIONS: Record<Exclude<Priere, Angelus>, string> = {
   lectures: 'C’est l’heure de l’office des lectures',
   laudes: 'C’est l’heure des laudes',
   tierce: 'C’est l’heure de tierce',
@@ -38,6 +53,20 @@ export const OUVERTURE_DES_HEURES = premiersMots(TEXTES_OFFICE.introduction[0])
 export const OUVERTURE_DU_CHAPELET = premiersMots(
   ...PRIERES['je-vous-salue-marie'].lignes.slice(0, 2),
 )
+
+// La première ligne de l'Angélus ou du Regina Caeli.
+const premiereLigne = (priere: PriereMariale) => {
+  const [morceau] = PRIERES_MARIALES[priere].morceaux
+  return 'lignes' in morceau ? premiersMots(morceau.lignes[0]) : ''
+}
+
+// L'Angélus, ou de Pâques à la Pentecôte le Regina Caeli (validés le 2026-10-20).
+export const NOTIFICATIONS_MARIALES: Record<PriereMariale, { titre: string; texte: string }> = {
+  // « L’ange du Seigneur apporta l’annonce à Marie. »
+  angelus: { titre: 'C’est l’heure de l’Angélus', texte: premiereLigne('angelus') },
+  // « Reine du ciel, réjouissez-vous, alléluia. »
+  'regina-caeli': { titre: 'C’est l’heure du Regina Caeli', texte: premiereLigne('regina-caeli') },
+}
 
 // « 7 h 00 », « 18 h 30 » : l'heure d'un rappel, comme sur une horloge.
 export const ecrireHeureRappel = ({ heures, minutes }: Heure) =>
@@ -67,19 +96,25 @@ export const RAPPELS_BLOQUES = 'Rappels bloqués par le téléphone'
 // Heures solaires (phase 12), libellés validés le 2026-10-07.
 
 // Ce qui suit le nom de l'office sur sa ligne : « Laudes · lever ».
-export const REPERES_SOLAIRES: Partial<Record<OfficeSolaire, string>> = {
+export const REPERES_SOLAIRES: Partial<Record<PriereSolaire, string>> = {
   laudes: 'lever',
   sexte: 'midi solaire',
   vepres: 'coucher',
+  'angelus-matin': 'lever',
+  'angelus-midi': 'midi solaire',
+  'angelus-soir': 'coucher',
 }
 
-// Le sous-titre de chaque office solaire, sur la page de sa prière ; « e » se met en exposant.
-export const SOUS_TITRES_SOLAIRES: Record<OfficeSolaire, [string, string?]> = {
+// Le sous-titre de chaque prière solaire, sur sa page ; « e » se met en exposant.
+export const SOUS_TITRES_SOLAIRES: Record<PriereSolaire, [string, string?]> = {
   laudes: ['Au lever du soleil'],
   tierce: ['Fin de la 3', 'e heure du jour'],
   sexte: ['Au midi solaire'],
   none: ['Fin de la 9', 'e heure du jour'],
   vepres: ['Au coucher du soleil'],
+  'angelus-matin': ['Au lever du soleil'],
+  'angelus-midi': ['Au midi solaire'],
+  'angelus-soir': ['Au coucher du soleil'],
 }
 
 // « 0 min », « +5 min », « −10 min », « +1 h » (le vrai signe moins).

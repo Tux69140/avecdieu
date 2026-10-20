@@ -22,6 +22,7 @@ import { EcranPrieresChapelet } from './ecrans/EcranPrieresChapelet'
 import { EcranRappel } from './ecrans/EcranRappel'
 import { EcranSonRappel } from './ecrans/EcranSonRappel'
 import { EcranReglages } from './ecrans/EcranReglages'
+import { EcranReglagesAccueil } from './ecrans/EcranReglagesAccueil'
 import { EcranReglagesAffichage } from './ecrans/EcranReglagesAffichage'
 import { EcranReglagesChapelet } from './ecrans/EcranReglagesChapelet'
 import { EcranReglagesOffices } from './ecrans/EcranReglagesOffices'
@@ -52,6 +53,7 @@ const routeur = createBrowserRouter([
       { path: '/reglages/rappels/batterie', element: <EcranBatterie /> },
       { path: '/reglages/rappels/:priere', element: <EcranRappel /> },
       { path: '/reglages/rappels/:priere/son', element: <EcranSonRappel /> },
+      { path: '/reglages/accueil', element: <EcranReglagesAccueil /> },
       { path: '/reglages/chapelet', element: <EcranReglagesChapelet /> },
       { path: '/reglages/chapelet/prieres', element: <EcranPrieresChapelet /> },
       { path: '/reglages/offices', element: <EcranReglagesOffices /> },

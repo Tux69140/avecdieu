@@ -5,7 +5,7 @@ import type { NomOffice } from './modele'
 // chapelet, l'accueil et le menu (US-59). Des durées fixes et approximatives,
 // pas un calcul : elles seront affinées à l'usage (PRD, « Durées affichées »,
 // 2026-10-08).
-export type PriereMinutee = NomOffice | 'chapelet' | 'rosaire'
+export type PriereMinutee = NomOffice | 'chapelet' | 'rosaire' | 'angelus'
 
 export interface Duree {
   minutes: number
@@ -25,6 +25,8 @@ export const DUREES: Record<PriereMinutee, Duree> = {
   none: environ(10),
   vepres: environ(20),
   complies: environ(15),
+  // L'Angélus comme le Regina Caeli (2026-10-20).
+  angelus: environ(3),
 }
 
 // Avec « L’essentiel seulement », le chapelet et le Rosaire sans les prières

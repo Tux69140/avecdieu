@@ -94,6 +94,8 @@ interface Ouverture {
   rosaireEnCours?: Record<string, unknown>
   // Un chapelet commencé, de même.
   enCours?: Record<string, unknown>
+  // Les prières masquées dans Réglages › Accueil (phase 19).
+  masquees?: string[]
 }
 
 // Prépare la mémoire du téléphone avant le premier chargement de la page.
@@ -107,11 +109,12 @@ export async function preparer(
     rappels,
     rosaireEnCours,
     enCours,
+    masquees,
   }: Ouverture = {},
 ) {
   const tous = affichage ? { ...reglages, affichage } : reglages
   await page.addInitScript(
-    ({ aide, tous, lectures, rappels, rosaireEnCours, enCours }) => {
+    ({ aide, tous, lectures, rappels, rosaireEnCours, enCours, masquees }) => {
       // Seulement au premier chargement : un rechargement garde ce que l'app a retenu.
       if (sessionStorage.getItem('parcours-prepare')) return
       sessionStorage.setItem('parcours-prepare', 'oui')
@@ -130,8 +133,13 @@ export async function preparer(
       if (rosaireEnCours)
         localStorage.setItem('avec-dieu.rosaire-en-cours', JSON.stringify(rosaireEnCours))
       if (enCours) localStorage.setItem('avec-dieu.en-cours', JSON.stringify(enCours))
+      if (masquees)
+        localStorage.setItem(
+          'avec-dieu.accueil',
+          JSON.stringify(Object.fromEntries(masquees.map((priere) => [priere, false]))),
+        )
     },
-    { aide, tous, lectures, rappels, rosaireEnCours, enCours },
+    { aide, tous, lectures, rappels, rosaireEnCours, enCours, masquees },
   )
 }
 

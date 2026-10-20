@@ -3,7 +3,7 @@ import { Navigate, useParams } from 'react-router'
 import { Interrupteur } from '../composants/Interrupteur'
 import { LignePage } from '../composants/LignePage'
 import { useLieu } from '../lieu/useLieu'
-import { estOfficeSolaire } from '../office/heuresSolaires'
+import { estPriereSolaire } from '../office/heuresSolaires'
 import { basculerRappel } from '../rappels/basculer'
 import { ChampHeure } from '../rappels/ChampHeure'
 import { ReglageSolaire, SousTitreSolaire } from '../rappels/ReglageSolaire'
@@ -45,7 +45,7 @@ function PageRappel({ priere }: { priere: Priere }) {
   const { lieu } = useLieu()
   const [android, relire] = useEtatAndroid()
   const { activer, fenetre } = useAutorisations(android, relire)
-  const office = solaire.actives && lieu && estOfficeSolaire(priere) ? priere : undefined
+  const office = solaire.actives && lieu && estPriereSolaire(priere) ? priere : undefined
   const changer = (changement: Partial<Rappel>) =>
     setRappel(modifierRappel(priere, changement)[priere])
 

@@ -40,7 +40,8 @@ async function verifierLignes(offices: Locator, chapelet: Locator) {
 
 async function verifierOffices(offices: Locator) {
   for (const [i, [nom, vue, dite]] of DUREES.entries()) {
-    const lien = offices.getByRole('link').nth(i)
+    // Les Angélus de l'accueil (phase 19) ont leur parcours.
+    const lien = offices.getByRole('link').filter({ hasNotText: 'Angélus' }).nth(i)
     await expect(lien.getByTestId('duree')).toHaveText(new RegExp(`^${vue}`))
     await expect(lien).toHaveAccessibleName(new RegExp(`^${nom}.*, ${dite}`))
     await surUneLigne(lien)
@@ -65,7 +66,8 @@ test('l’accueil donne la durée de chaque office et du chapelet', async ({ pag
     page.getByRole('list', { name: 'Offices du jour' }),
     page.getByRole('list', { name: 'Chapelet et Rosaire' }).getByRole('link').first(),
   )
-  await expect(page.getByTestId('duree')).toHaveCount(9)
+  // Sept offices, le Chapelet, le Rosaire et les trois Angélus.
+  await expect(page.getByTestId('duree')).toHaveCount(12)
 })
 
 test('le menu donne la durée des offices et du chapelet, et tient en un écran', async ({

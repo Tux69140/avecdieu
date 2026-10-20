@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router'
+import { lireAffichees, PRIERES_AFFICHABLES, type Affichees } from '../accueil/affichees'
 import { AlerteRappels } from '../accueil/AlerteRappels'
 import { BandeauJour } from '../accueil/BandeauJour'
 import type { Forme } from '../chapelet/definition'
@@ -12,12 +13,15 @@ import { useGlisserLesJours } from '../accueil/glisserLesJours'
 import { useMaintenant } from '../accueil/maintenant'
 import { situerOffices, type Journee } from '../accueil/moment'
 import { dateCourte, dateDuJour, dateLisible, decaler, enDate, estDate } from '../office/dates'
-import { ecrireHeure, minutesDe } from '../office/heure'
+import { ecrireHeure, minutesDe, type Heure } from '../office/heure'
 import { heuresDesOffices, heuresDuJour, heuresSolairesEnService } from '../office/heures'
-import { cheminOffice, NOMS_OFFICES, OFFICES } from '../office/modele'
+import { cheminOffice, NOMS_OFFICES, OFFICES, type NomOffice } from '../office/modele'
 import { lieuDuSoleil } from '../lieu/lieu'
 import { useLieu } from '../lieu/useLieu'
 import { leverEtCoucher } from '../office/soleil'
+import { priereMarialeDu } from '../prieres/angelus'
+import { estAngelus, PRIERES_RAPPELEES, type Angelus } from '../rappels/reglages'
+import { PRIERES_MARIALES } from '../recueil/angelus'
 import { lireReglages } from '../reglages/reglages'
 import './EcranAccueil.css'
 
@@ -46,13 +50,15 @@ function Accueil({ date, aujourdhui, maintenant }: Props) {
   // Un lieu changé en voyage redessine le cadran sans attendre la minute.
   useLieu()
   const estAujourdhui = date === aujourdhui
-  const heures = heuresDesOffices(date)
+  // Les prières masquées dans Réglages › Accueil n'y paraissent pas, ni sur le
+  // cadran, et ne sont jamais la prière du moment (2026-10-20).
+  const [affichees] = useState(lireAffichees)
+  const heures = officesAffiches(heuresDesOffices(date), affichees)
   const minutes = minutesDe(maintenant)
   // Premier lancement sans réseau : aucun office ne peut s'ouvrir.
   const [sansTextes, setSansTextes] = useState(false)
-  const journee = estAujourdhui
-    ? situerOffices(heuresDuJour(date), minutes, sansTextes ? [] : undefined)
-    : undefined
+  const candidates = sansTextes ? [] : PRIERES_RAPPELEES.filter((priere) => affichees[priere])
+  const journee = estAujourdhui ? situerOffices(heuresDuJour(date), minutes, candidates) : undefined
   const { lever, coucher } = leverEtCoucher(enDate(date), lieuDuSoleil())
   const soleil = { lever: minutesDe(lever), coucher: minutesDe(coucher) }
   // En heures solaires, l'arc va du lever au coucher (hors des cercles polaires).
@@ -113,11 +119,34 @@ function Accueil({ date, aujourdhui, maintenant }: Props) {
           <BandeauJour date={date} onSansTextes={setSansTextes} />
         </Cadran>
       </div>
-      <ListeChapeletRosaire date={date} journee={sansTextes ? undefined : journee} />
-      <ListeOffices date={date} journee={journee} indisponibles={sansTextes} />
+      <ListeChapeletRosaire
+        date={date}
+        journee={sansTextes ? undefined : journee}
+        affichees={affichees}
+      />
+      <ListeOffices
+        date={date}
+        journee={journee}
+        indisponibles={sansTextes}
+        affichees={affichees}
+      />
     </main>
   )
 }
+
+// Les heures des offices affichés ; un office masqué n'a pas de perle.
+const officesAffiches = (
+  heures: Record<NomOffice, Heure | undefined>,
+  affichees: Affichees,
+): Record<NomOffice, Heure | undefined> =>
+  Object.fromEntries(
+    OFFICES.map((nom) => [nom, affichees[nom] ? heures[nom] : undefined]),
+  ) as Record<NomOffice, Heure | undefined>
+
+// Les lignes de la journée, dans l'ordre de Réglages › Accueil.
+const JOURNEE = PRIERES_AFFICHABLES.filter(
+  (priere): priere is NomOffice | Angelus => priere !== 'chapelet' && priere !== 'rosaire',
+)
 
 // Les sept offices ; l'office des lectures, sans heure, se dit à toute heure.
 // Sous l'heure, la durée, pour choisir ce qu'on a le temps de prier (US-59).
@@ -125,32 +154,41 @@ function Accueil({ date, aujourdhui, maintenant }: Props) {
 // moment porte le badge « Prière du moment » (il remplace l'encadré
 // d'origine, à la demande du porteur du projet, 2026-10-07). Sans aucun texte
 // (premier lancement sans réseau), tous sont atténués : le chapelet, seul en
-// pleine couleur, est ce qui se prie (2026-10-08).
+// pleine couleur, est ce qui se prie (2026-10-08). Chaque Angélus vient avant
+// l'office de la même heure, et devient le Regina Caeli au temps pascal ; il
+// se prie sans réseau (phase 19, 2026-10-20).
 function ListeOffices({
   date,
   journee,
   indisponibles,
+  affichees,
 }: {
   date: string
   journee?: Journee
   indisponibles: boolean
+  affichees: Affichees
 }) {
-  const heures = heuresDesOffices(date)
+  const heures = heuresDuJour(date)
+  const mariale = PRIERES_MARIALES[priereMarialeDu(date)]
   return (
     <ul className="accueil-offices" aria-label="Offices du jour">
-      {OFFICES.map((office) => {
-        const heure = heures[office]
-        const duMoment = journee?.moment === office && heure !== undefined
+      {JOURNEE.filter((priere) => affichees[priere]).map((priere) => {
+        const heure = heures[priere]
+        const duMoment = journee?.moment === priere && heure !== undefined
+        const angelus = estAngelus(priere)
+        const etat = indisponibles && !angelus ? 'passe' : journee?.etats[priere]
         return (
-          <li key={office} data-etat={indisponibles ? 'passe' : journee?.etats[office]}>
+          <li key={priere} data-etat={etat}>
             <Link
               className="avec-chevron"
-              to={cheminOffice(office, date)}
+              to={angelus ? `/priere/${priereMarialeDu(date)}` : cheminOffice(priere, date)}
               data-testid={duMoment ? 'moment' : undefined}
             >
-              <span className="accueil-office-nom">{NOMS_OFFICES[office]}</span>
+              <span className="accueil-office-nom">
+                {angelus ? mariale.titre : NOMS_OFFICES[priere]}
+              </span>
               <QuandPriere
-                priere={office}
+                priere={angelus ? 'angelus' : priere}
                 heure={heure ? ecrireHeure(heure) : 'à toute heure'}
                 className="accueil-office-quand"
               />
@@ -169,7 +207,15 @@ function ListeOffices({
 // heure, celle de son rappel, approximative : du moment pendant l'heure qui
 // suit, comme un office, puis atténué (2026-10-07 et 2026-10-08). Le Rosaire,
 // souvent prié en plusieurs fois, n'a pas d'heure.
-function ListeChapeletRosaire({ date, journee }: { date: string; journee?: Journee }) {
+function ListeChapeletRosaire({
+  date,
+  journee,
+  affichees,
+}: {
+  date: string
+  journee?: Journee
+  affichees: Affichees
+}) {
   const heure = heuresDuJour(date).chapelet
   const duMoment = journee?.moment === 'chapelet'
   const [essentiel] = useState(() => lireReglages().essentiel)
@@ -192,15 +238,18 @@ function ListeChapeletRosaire({ date, journee }: { date: string; journee?: Journ
       </Link>
     </li>
   )
+  // Les deux masqués, la liste disparaît avec eux.
+  if (!affichees.chapelet && !affichees.rosaire) return null
   return (
     <ul className="accueil-offices accueil-chapelet" aria-label="Chapelet et Rosaire">
-      {ligne(
-        'chapelet',
-        'Chapelet',
-        heure && ecrireHeure(heure),
-        duMoment ? 'moment' : journee?.etats.chapelet,
-      )}
-      {ligne('rosaire', 'Rosaire', undefined)}
+      {affichees.chapelet &&
+        ligne(
+          'chapelet',
+          'Chapelet',
+          heure && ecrireHeure(heure),
+          duMoment ? 'moment' : journee?.etats.chapelet,
+        )}
+      {affichees.rosaire && ligne('rosaire', 'Rosaire', undefined)}
     </ul>
   )
 }

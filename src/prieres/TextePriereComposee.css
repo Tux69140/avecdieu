@@ -1,0 +1,28 @@
+/* Le Je vous salue Marie de l'Angélus, replié sur sa première ligne comme les
+   prières courantes des offices ; « … » en sépia dit qu'il se déplie. */
+.priere-repliable summary {
+  position: relative;
+  list-style: none;
+  cursor: pointer;
+}
+
+/* La zone à toucher déborde dessus et dessous, sans rien déplacer. */
+.priere-repliable summary::before {
+  content: '';
+  position: absolute;
+  inset: -9px 0;
+}
+
+.priere-repliable summary::-webkit-details-marker {
+  display: none;
+}
+
+.priere-repliable:not([open]) summary span::after {
+  content: ' …';
+  color: var(--sepia);
+}
+
+/* Déplié, la suite reprend comme la strophe suivante d'une prière. */
+.priere-repliable[open] summary + .priere-texte {
+  margin-top: 0;
+}
