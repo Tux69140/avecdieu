@@ -145,11 +145,13 @@ interface Etiquette {
 
 const ECHANTILLONS = Array.from({ length: 121 }, (_, i) => pointDeLaPart(i / 120))
 
-const distanceALArc = (b: Boite) =>
-  Math.min(
-    ...ECHANTILLONS.map(({ x, y }) =>
-      Math.hypot(Math.max(b.gauche - x, 0, x - b.droite), Math.max(b.haut - y, 0, y - b.bas)),
-    ),
+// Aucun point de l'arc à moins du dégagement. On s'arrête au premier trop
+// proche : la recherche en spirale essaie des milliers de places au démarrage.
+const loinDeLArc = (b: Boite) =>
+  ECHANTILLONS.every(
+    ({ x, y }) =>
+      Math.hypot(Math.max(b.gauche - x, 0, x - b.droite), Math.max(b.haut - y, 0, y - b.bas)) >=
+      DEGAGEMENT,
   )
 
 const dansLeBandeau = (b: Boite) =>
@@ -165,7 +167,7 @@ const convient = (b: Boite) =>
   b.haut >= -DEBORD_EN_HAUT &&
   b.bas <= HAUTEUR &&
   !dansLeBandeau(b) &&
-  distanceALArc(b) >= DEGAGEMENT
+  loinDeLArc(b)
 
 function boiteAutourDe({ x, y }: Point, largeur: number, hauteur: number): Boite {
   return {

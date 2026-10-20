@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router'
 import { entretenirReserve } from './aelf/reserve'
 import { suivreApparence } from './affichage/apparence'
+import { apresPremierAffichage, ouvrirSansFondu } from './telephone/demarrage'
 import { ouvrirLesRaccourcis } from './telephone/raccourcis'
 import { retenirDefilement } from './composants/defilement'
 import { Racine } from './composants/Racine'
@@ -67,19 +68,21 @@ const routeur = createBrowserRouter([
   },
 ])
 retenirDefilement(routeur)
+const quitterLOuverture = ouvrirSansFondu(routeur.state.location.key)
+routeur.subscribe(({ location }) => quitterLOuverture(location.key))
 
 // Thème et taille du texte posés avant le premier affichage : pas d'éclair clair la nuit.
 suivreApparence()
 // Sept jours de textes d'avance, pour prier sans réseau (phase 9).
-entretenirReserve()
+apresPremierAffichage(entretenirReserve)
 // Une notification touchée ouvre sa prière, même app fermée ; les rappels du
 // mois à venir sont refaits à chaque ouverture (phase 11).
 ouvrirLesNotifications((route) => routeur.navigate(route))
-entretenirRappels()
+apresPremierAffichage(entretenirRappels)
 // Un raccourci de l'icône de l'app ouvre son écran (appui long sur l'icône).
 ouvrirLesRaccourcis((route) => routeur.navigate(route))
 // En voyage, avec l'option, le lieu des heures solaires suit le téléphone (phase 12).
-suivreLesVoyages()
+apresPremierAffichage(suivreLesVoyages)
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

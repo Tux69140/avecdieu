@@ -224,9 +224,15 @@ body::before {
   outline-offset: 2px;
 }
 
-/* Chaque écran entre en fondu, bref et sobre (docs/DESIGN.md, Motion). */
+/* Chaque écran entre en fondu, bref et sobre (docs/DESIGN.md, Motion), sauf
+   le premier à l'ouverture de l'app : il succède sans attendre à l'écran de
+   démarrage (src/telephone/demarrage.ts). */
 #root > main {
   animation: ecran-fondu 0.25s ease-out;
+}
+
+:root[data-ouverture] #root > main {
+  animation: none;
 }
 
 @keyframes ecran-fondu {

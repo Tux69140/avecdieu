@@ -311,3 +311,12 @@ test('le chapelet : du moment l’heure qui suit son heure, puis atténué', asy
   await chapelet.getByRole('link').click()
   await expect(page).toHaveURL(/\/chapelet$/)
 })
+
+// À l'ouverture de l'app, le premier écran succède sans fondu à l'écran de
+// démarrage d'Android ; les écrans suivants entrent en fondu (2026-10-20).
+test('le premier écran paraît sans fondu, le suivant en fondu', async ({ page }) => {
+  await ouvrir(page, MARDI(10))
+  await expect(page.locator('#root > main')).toHaveCSS('animation-name', 'none')
+  await page.getByRole('link', { name: /^Chapelet/ }).click()
+  await expect(page.locator('#root > main')).toHaveCSS('animation-name', 'ecran-fondu')
+})
