@@ -36,7 +36,7 @@ Les règles détaillées vivent dans `.claude/rules/` :
 
 ## Organisation du code
 
-- `src/recueil/` : textes sacrés figés (prières, mystères, fruits, passages par traduction dans `passages-aelf/`, textes ajoutés aux offices et règles de rubriques R1 à R11 dans `office.ts`, Angélus et Regina Caeli dans `angelus.ts`) et leur test d'empreinte.
+- `src/recueil/` : textes sacrés figés (prières, mystères, fruits, passages par traduction dans `passages-aelf/`, textes ajoutés aux offices et règles de rubriques R1 à R11 dans `office.ts`, Angélus et Regina Caeli dans `angelus.ts`, prières de Montfort dans `montfort.ts`) et leur test d'empreinte.
 - `src/chapelet/` : définition déclarative du chapelet, déroulé, série du jour, gestes, dessin, seuil, annonce, rotation des passages et mémoire locale (lectures, affichage, aide).
 - `src/aelf/` : la frontière AELF, seul module qui parle au réseau, avec la réserve des jours à venir gardée sur le téléphone par zone (`cache.ts`, `reserve.ts`) ; lit les fragments HTML en texte pur (aucune balise ne passe) et les transforme en `Office` et `JourLiturgique`. Réponses réelles enregistrées dans `src/aelf/exemples/`, servies aux parcours Playwright à la place du réseau.
 - `src/office/` : modèle de l'office, dates, heures des offices, lever et coucher du soleil (`soleil.ts`), reconstitution selon les rubriques (`rubriques.ts`, conclusion de l'oraison dans `oraison.ts`, office qui porte l'invitatoire dans `journee.ts`), et affichage des parties (repères liturgiques en rouge rubrique, perle de la couleur du jour entre les parties, filet rouge des ajouts, prières courantes repliées).

@@ -555,7 +555,7 @@ Décisions du porteur du projet (2026-10-09). Référence de la composition : Je
 
 ## Phase 19 : Angélus et accueil choisi
 
-**User stories** : US-65, US-66, US-67, US-68
+**User stories** : US-65, US-66, US-67, US-68, US-69
 
 Décisions du porteur du projet (2026-10-20), textes et libellés validés ce jour-là.
 - **Textes** : l'Angélus (trois versets suivis chacun du Je vous salue Marie, le verset marial du chapelet, l'oraison « Que ta grâce, Seigneur notre Père… ») et le Regina Caeli (antienne, verset, oraison), au recueil, Marie au vous, Dieu au tu. Chaque Je vous salue Marie se replie sur sa première ligne et se déplie en entier, comme les prières courantes des offices.
@@ -565,7 +565,7 @@ Décisions du porteur du projet (2026-10-20), textes et libellés validés ce jo
 - **Heures solaires** : l'Angélus suit le soleil (« · lever », « · midi solaire », « · coucher »), avec son décalage, « Pas avant 7 h 00 » le matin et « Pas après 19 h 30 » le soir, réglables à part de ceux des laudes et des vêpres.
 - **Accueil** : une ligne « Angélus » (ou « Regina Caeli ») à son heure, « ~3 min », dans l'ordre : Angélus du matin, office des lectures, laudes, tierce, Angélus de midi, sexte, none, Angélus du soir, vêpres, complies. L'Angélus peut être la prière du moment ; à égalité avec un office, l'office garde le badge.
 - **Réglages › Accueil** (résumé « Prières affichées ») : un interrupteur par prière (Chapelet, Rosaire, les trois Angélus, les sept offices), tout affiché au départ. Un office masqué perd aussi sa perle du cadran.
-- Ensuite (noté le 2026-10-20) : les prières à Marie de saint Louis-Marie Grignion de Montfort, en prières seules du menu, textes vérifiés sur une édition de référence puis validés.
+- **Prières de Montfort** (US-69, textes validés le 2026-10-20) : « Prière à Marie » (*Le Secret de Marie*, n° 68-69), « Consécration à Jésus par Marie » (*L'Amour de la Sagesse éternelle*, n° 223-227) et « Je suis tout à vous » (*Traité de la vraie dévotion*, n° 233), dans Menu › Prières après le Regina Caeli. Textes des éditions montfortaines (montfort.org, montfortian.info), la formule courte de l'édition Gaume (1859) ; seule la typographie est retouchée.
 
 ### Critères d'acceptation
 

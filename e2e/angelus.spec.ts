@@ -37,6 +37,9 @@ test('Menu › Prières : l’Angélus, ses Je vous salue Marie repliés qui se 
     'Salve Regina',
     'Angélus',
     'Regina Caeli',
+    'Prière à Marie',
+    'Consécration à Jésus par Marie',
+    'Je suis tout à vous',
     'Je confesse à Dieu',
   ])
   await page.getByRole('link', { name: 'Angélus' }).click()
@@ -186,3 +189,32 @@ test('en heures solaires, l’Angélus du matin au lever, avec sa limite à lui'
   await expect(page.getByTestId('volet-aujourdhui')).toHaveText(/Aujourd’hui : 7 h 4\d/)
   await expect(page.getByText(/^Lever du soleil à Lyon : 7 h 4\d$/)).toBeVisible()
 })
+
+// Les trois prières de saint Louis-Marie de Montfort (2026-10-20). Des extraits
+// sans ponctuation ni trait d'union : l'app y pose des signes invisibles.
+for (const [titre, chemin, debut, fin] of [
+  ['Prière à Marie', '/priere/priere-a-marie', 'Fille bien', 'à glorifier pleinement Jésus en moi'],
+  [
+    'Consécration à Jésus par Marie',
+    '/priere/consecration',
+    'Ô Sagesse éternelle et incarnée,',
+    'en toutes choses un si parfait disciple',
+  ],
+  [
+    'Je suis tout à vous',
+    '/priere/tout-a-vous',
+    'Je suis tout à vous, et tout ce que j’ai vous appartient,',
+    'ô mon aimable Jésus, par Marie votre sainte Mère.',
+  ],
+] as const) {
+  test(`Menu › Prières : ${titre}, de Montfort`, async ({ page }) => {
+    await page.clock.setFixedTime(MAINTENANT)
+    await preparer(page)
+    await page.goto('/menu/prieres')
+    await page.getByRole('link', { name: titre, exact: true }).click()
+    await expect(page).toHaveURL(chemin)
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(titre)
+    await expect(page.getByText(debut)).toBeVisible()
+    await expect(page.getByText(fin)).toBeAttached()
+  })
+}

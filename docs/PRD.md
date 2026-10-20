@@ -83,6 +83,7 @@ Avec Dieu accompagne la prière de toute la journée sur un téléphone Android.
 - **US-66** En tant que priant, je veux l'Angélus du matin, de midi et du soir sur l'accueil à leur heure, chacun avec son rappel facultatif, afin de ne pas l'oublier.
 - **US-67** En tant que priant en mode solaire, je veux l'Angélus au lever, au midi solaire et au coucher, avec un décalage et une limite réglables comme les offices, afin de prier au rythme du jour.
 - **US-68** En tant que priant, je veux choisir les prières affichées sur l'accueil (offices, Chapelet, Rosaire, Angélus), toutes affichées au départ, afin de n'y garder que celles que je prie.
+- **US-69** En tant que priant, je veux dire depuis le menu des prières la prière à Marie, l'acte de consécration et « Je suis tout à vous » de saint Louis-Marie Grignion de Montfort, afin de vivre ma consécration à Jésus par Marie.
 
 **Offices**
 

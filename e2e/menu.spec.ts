@@ -56,6 +56,9 @@ test('présente, dans l’ordre, le Chapelet, le Rosaire, deux prières, puis le
     'Salve Regina',
     'Angélus',
     'Regina Caeli',
+    'Prière à Marie',
+    'Consécration à Jésus par Marie',
+    'Je suis tout à vous',
     'Je confesse à Dieu',
   ])
 })

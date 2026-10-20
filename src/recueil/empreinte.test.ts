@@ -5,6 +5,7 @@ import { CONCLUSIONS, CONSIGNES, REGLES_RUBRIQUES, RUBRIQUE_EXAMEN, TEXTES_OFFIC
 import { PASSAGES } from './passages'
 import { LITANIES } from './litanies'
 import { PRIERES_MARIALES } from './angelus'
+import { PRIERES_MONTFORT } from './montfort'
 import { INTENTIONS, PRIERES, VERSET_MARIAL } from './prieres'
 
 // Les textes sacrés sont validés ligne par ligne par le porteur du projet.
@@ -26,6 +27,8 @@ import { INTENTIONS, PRIERES, VERSET_MARIAL } from './prieres'
 // du Salve Regina, inchangé), Sous l’abri de votre miséricorde et prière à
 // saint Joseph, validés par le porteur du projet le 2026-10-08.
 // Angélus et Regina Caeli (phase 19), validés par le porteur du projet le
+// 2026-10-20. Prière à Marie, consécration et « Je suis tout à vous » de saint
+// Louis-Marie Grignion de Montfort, validés par le porteur du projet le
 // 2026-10-20.
 const empreinte = (donnees: unknown) =>
   createHash('sha256').update(JSON.stringify(donnees)).digest('hex')
@@ -46,6 +49,12 @@ describe('recueil de textes figés', () => {
   it('l’Angélus et le Regina Caeli sont ceux validés par le porteur du projet', () => {
     expect(empreinte(PRIERES_MARIALES)).toBe(
       '51360e1532f8ae8b815d0e5a7e49bdb8aa3114369bad7d82eba8f798d671b81d',
+    )
+  })
+
+  it('les prières de saint Louis-Marie de Montfort sont celles validées par le porteur du projet', () => {
+    expect(empreinte(PRIERES_MONTFORT)).toBe(
+      'a569462b57f7f1d0f65b58b21da3df91d77907a98a253bae485b5a2671c635f5',
     )
   })
 
