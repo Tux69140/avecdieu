@@ -9,7 +9,7 @@ import { ecrireHeure } from '../office/heure'
 import { heuresDuJour } from '../office/heures'
 import { PRIERES_DIRECTES } from '../prieres/seules'
 import { lireReglages } from '../reglages/reglages'
-import { LienPriere, OfficesDuMenu } from './MenuListes'
+import { LienPriere } from './MenuListes'
 import './EcranMenu.css'
 
 // Le menu de l'app, ouvert par ☰ depuis l'accueil ou un office. C'est une page
@@ -72,36 +72,32 @@ export function EcranMenu() {
           ))}
         </ul>
         {/* Offices du jour et autres prières sur leur page, plus en repli
-            (arborescence validée par le porteur du projet, 2026-10-09).
-            Ouvert depuis un office, les offices sont là, sans un geste de
-            plus : on voit où l'on est et l'on passe au suivant. */}
-        {office ? (
-          <OfficesDuMenu date={date} office={office} />
-        ) : (
-          <ul className="menu-liste">
-            <li>
-              <Link
-                className="avec-chevron"
-                to="/menu/offices"
-                state={{ parente: '/menu', depuis: date } satisfies DepuisParente}
-              >
-                <span className="menu-ligne">
-                  Offices du jour
-                  <span className="menu-ligne-resume">{avecExposants(dateLisible(date))}</span>
-                </span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                className="avec-chevron"
-                to="/menu/prieres"
-                state={{ parente: '/menu' } satisfies DepuisParente}
-              >
-                Prières
-              </Link>
-            </li>
-          </ul>
-        )}
+            (arborescence validée par le porteur du projet, 2026-10-09). Le
+            menu est le même d'où qu'on l'ouvre ; depuis un office, celui-ci
+            est marqué « En cours » sur la page des offices (2026-10-20). */}
+        <ul className="menu-liste">
+          <li>
+            <Link
+              className="avec-chevron"
+              to="/menu/offices"
+              state={{ parente: '/menu', depuis: date, office } satisfies DepuisParente}
+            >
+              <span className="menu-ligne">
+                Offices du jour
+                <span className="menu-ligne-resume">{avecExposants(dateLisible(date))}</span>
+              </span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              className="avec-chevron"
+              to="/menu/prieres"
+              state={{ parente: '/menu' } satisfies DepuisParente}
+            >
+              Prières
+            </Link>
+          </li>
+        </ul>
         <ul className="menu-liste">
           <li>
             <Link className="avec-chevron" to="/reglages" replace>

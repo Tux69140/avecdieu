@@ -96,8 +96,3 @@
   align-items: center;
   gap: var(--esp-sm);
 }
-
-/* L'office d'où l'on vient : la perle en cours, comme dans le fil. */
-.menu-prieres [aria-current='page'] {
-  font-weight: 600;
-}

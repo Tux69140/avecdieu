@@ -34,7 +34,7 @@ Décisions durables qui s'appliquent à toutes les phases :
   - **Chapelet pendant la prière** (révisé le 2026-10-09) : la même croix, sur la ligne de la date, pendant la prière et sur l'écran de fin ; elle ramène là d'où le seuil a été ouvert (accueil, menu, notification), comme le retour d'Android : le seuil est un écran de passage, il ne reste pas derrière la prière. Rouvrir le chapelet ou le Rosaire repasse par son seuil, qui propose la reprise. La progression reste gardée ; un toucher sur la croix ne fait jamais avancer le chapelet.
   - **Titres centrés sur la ligne de la croix** (2026-10-08) : menu, réglages, « A propos » et lieu ; au seuil et au chapelet, la ligne de la croix porte la date (« Chapelet du jour · jeudi 8 octobre », coupée après le point sur un petit écran) et le titre de la série vient dessous.
   - **Chevrons** (2026-10-08) : › veut toujours dire « ouvre un autre écran » ; une rubrique des réglages qui se déplie sur place porte une flèche vers le bas, retournée vers le haut une fois ouverte.
-  - **Menu** (2026-10-08) : le chapelet forme son propre groupe sous les offices, séparé par un filet d'or comme sur l'accueil ; toutes les lignes à 48 px, noms en graisse normale (l'office d'où l'on vient reste marqué) ; à 360 × 780, le menu tient sur un seul écran ; › ne se lit pas dans le nom des lignes.
+  - **Menu** (2026-10-08) : le chapelet forme son propre groupe sous les offices, séparé par un filet d'or comme sur l'accueil ; toutes les lignes à 48 px, noms en graisse normale ; à 360 × 780, le menu tient sur un seul écran ; › ne se lit pas dans le nom des lignes.
 
 ---
 

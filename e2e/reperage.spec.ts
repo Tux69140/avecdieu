@@ -273,22 +273,27 @@ test('croix et ☰ du bandeau : le retour, et le menu des prières du jour', asy
   await amenerSousLeBandeau(titre(page, 'Psaume 66'))
   await bandeau(page).getByRole('link', { name: 'Menu' }).click()
 
+  // Le même menu que depuis l'accueil ; les offices sur leur page, où celui
+  // d'où l'on vient est « En cours » (2026-10-20).
+  await expect(page.getByRole('link', { name: /^Laudes/ })).toHaveCount(0)
+  await expect(page.getByRole('link', { name: 'Prières' })).toBeVisible()
+  await expect(
+    page.getByRole('list', { name: 'Chapelet et prières' }).getByRole('link').first(),
+  ).toHaveText(/^Chapelet\s*~vers 20 h\s*20 min, vingt minutes$/)
+  await page.getByRole('link', { name: /^Offices du jour/ }).click()
   const prieres = page.getByRole('list', { name: 'Offices du jour' })
   // L'heure, puis la durée (phase 15), vue et dite.
   await expect(prieres.getByRole('link')).toHaveText([
     /^Office des lectures\s*à toute heure\s*~20 min, environ vingt minutes$/,
-    /^Laudes\s*7 h\s*~20 min, environ vingt minutes$/,
+    /^Laudes\s*7 h\s*~20 min, environ vingt minutesEn cours$/,
     /^Tierce\s*9 h\s*~10 min, environ dix minutes$/,
     /^Sexte\s*12 h\s*~10 min, environ dix minutes$/,
     /^None\s*15 h\s*~10 min, environ dix minutes$/,
     /^Vêpres\s*18 h 30\s*~20 min, environ vingt minutes$/,
     /^Complies\s*21 h 30\s*~15 min, environ quinze minutes$/,
   ])
-  await expect(
-    page.getByRole('list', { name: 'Chapelet et prières' }).getByRole('link').first(),
-  ).toHaveText(/^Chapelet\s*~vers 20 h\s*20 min, vingt minutes$/)
-  // Ouvert depuis un office, les offices sont dépliés ; celui d'où l'on vient est marqué.
-  await expect(prieres.locator('[aria-current="page"]')).toHaveText(/Laudes/)
+  await expect(prieres.locator('[aria-current="page"]')).toHaveText(/^Laudes/)
+  await expect(page.getByText('En cours', { exact: true })).toHaveCount(1)
   await prieres.getByRole('link', { name: /^Vêpres/ }).click()
   await expect(page).toHaveURL('/office/vepres/2026-10-06')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Vêpres')

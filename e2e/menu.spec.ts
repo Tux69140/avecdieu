@@ -84,6 +84,32 @@ test('une prière ouverte par le menu se dit seule, puis ramène à l’accueil'
   await accueil(page)
 })
 
+// Les lignes de l'accueil, mais toujours les sept offices, même masqués sur
+// l'accueil, et eux seuls (2026-10-20).
+test('la page des offices reprend les lignes de l’accueil, avec les sept offices seulement', async ({
+  page,
+}) => {
+  await page.clock.setFixedTime(new Date(2026, 9, 5, 12, 10))
+  await page.evaluate(() =>
+    localStorage.setItem('avec-dieu.accueil', JSON.stringify({ sexte: false, none: false })),
+  )
+  await page.reload()
+  await page.getByRole('link', { name: /^Offices du jour/ }).click()
+  const offices = page.getByRole('list', { name: 'Offices du jour' })
+  await expect(offices.locator('.accueil-office-nom')).toHaveText([
+    'Office des lectures',
+    'Laudes',
+    'Tierce',
+    'Sexte',
+    'None',
+    'Vêpres',
+    'Complies',
+  ])
+  await expect(offices.getByTestId('moment')).toHaveText(/^Sexte.*Prière du moment$/)
+  await expect(offices.locator('li[data-etat="passe"]')).toHaveText([/^Laudes/, /^Tierce/])
+  await expect(page.getByText('En cours', { exact: true })).toHaveCount(0)
+})
+
 test('un office choisi dans la page des offices : le retour ramène à l’accueil', async ({
   page,
 }) => {

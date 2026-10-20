@@ -11,17 +11,16 @@ import { astre } from '../accueil/cadran'
 import { Cadran } from '../accueil/Cadran'
 import { useGlisserLesJours } from '../accueil/glisserLesJours'
 import { useMaintenant } from '../accueil/maintenant'
+import { ListeJournee } from '../accueil/ListeJournee'
 import { situerOffices, type Journee } from '../accueil/moment'
 import { dateCourte, dateDuJour, dateLisible, decaler, enDate, estDate } from '../office/dates'
 import { ecrireHeure, minutesDe, type Heure } from '../office/heure'
 import { heuresDesOffices, heuresDuJour, heuresSolairesEnService } from '../office/heures'
-import { cheminOffice, NOMS_OFFICES, OFFICES, type NomOffice } from '../office/modele'
+import { OFFICES, type NomOffice } from '../office/modele'
 import { lieuDuSoleil } from '../lieu/lieu'
 import { useLieu } from '../lieu/useLieu'
 import { leverEtCoucher } from '../office/soleil'
-import { priereMarialeDu } from '../prieres/angelus'
-import { estAngelus, PRIERES_RAPPELEES, type Angelus } from '../rappels/reglages'
-import { PRIERES_MARIALES } from '../recueil/angelus'
+import { PRIERES_RAPPELEES, type Angelus } from '../rappels/reglages'
 import { lireReglages } from '../reglages/reglages'
 import './EcranAccueil.css'
 
@@ -124,11 +123,14 @@ function Accueil({ date, aujourdhui, maintenant }: Props) {
         journee={sansTextes ? undefined : journee}
         affichees={affichees}
       />
-      <ListeOffices
+      {/* Sans aucun texte (premier lancement sans réseau), les offices sont
+          atténués : le chapelet, seul en pleine couleur, est ce qui se prie
+          (2026-10-08). */}
+      <ListeJournee
         date={date}
+        prieres={JOURNEE.filter((priere) => affichees[priere])}
         journee={journee}
         indisponibles={sansTextes}
-        affichees={affichees}
       />
     </main>
   )
@@ -147,59 +149,6 @@ const officesAffiches = (
 const JOURNEE = PRIERES_AFFICHABLES.filter(
   (priere): priere is NomOffice | Angelus => priere !== 'chapelet' && priere !== 'rosaire',
 )
-
-// Les sept offices ; l'office des lectures, sans heure, se dit à toute heure.
-// Sous l'heure, la durée, pour choisir ce qu'on a le temps de prier (US-59).
-// Un office passé est atténué, mais s'ouvre comme les autres. L'office du
-// moment porte le badge « Prière du moment » (il remplace l'encadré
-// d'origine, à la demande du porteur du projet, 2026-10-07). Sans aucun texte
-// (premier lancement sans réseau), tous sont atténués : le chapelet, seul en
-// pleine couleur, est ce qui se prie (2026-10-08). Chaque Angélus vient avant
-// l'office de la même heure, et devient le Regina Caeli au temps pascal ; il
-// se prie sans réseau (phase 19, 2026-10-20).
-function ListeOffices({
-  date,
-  journee,
-  indisponibles,
-  affichees,
-}: {
-  date: string
-  journee?: Journee
-  indisponibles: boolean
-  affichees: Affichees
-}) {
-  const heures = heuresDuJour(date)
-  const mariale = PRIERES_MARIALES[priereMarialeDu(date)]
-  return (
-    <ul className="accueil-offices" aria-label="Offices du jour">
-      {JOURNEE.filter((priere) => affichees[priere]).map((priere) => {
-        const heure = heures[priere]
-        const duMoment = journee?.moment === priere && heure !== undefined
-        const angelus = estAngelus(priere)
-        const etat = indisponibles && !angelus ? 'passe' : journee?.etats[priere]
-        return (
-          <li key={priere} data-etat={etat}>
-            <Link
-              className="avec-chevron"
-              to={angelus ? `/priere/${priereMarialeDu(date)}` : cheminOffice(priere, date)}
-              data-testid={duMoment ? 'moment' : undefined}
-            >
-              <span className="accueil-office-nom">
-                {angelus ? mariale.titre : NOMS_OFFICES[priere]}
-              </span>
-              <QuandPriere
-                priere={angelus ? 'angelus' : priere}
-                heure={heure ? ecrireHeure(heure) : 'à toute heure'}
-                className="accueil-office-quand"
-              />
-              {duMoment && <span className="accueil-moment">Prière du moment</span>}
-            </Link>
-          </li>
-        )
-      })}
-    </ul>
-  )
-}
 
 // Le Chapelet et le Rosaire en tête de liste, au-dessus des offices (phase
 // 18, décision du porteur du projet, 2026-10-09), chacun ouvrant son seuil,
