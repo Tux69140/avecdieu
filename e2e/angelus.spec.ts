@@ -73,7 +73,7 @@ test('Accueil : les trois Angélus à leur heure, chacun avant l’office de la 
   await page.goto('/')
   await expect(nomsDeLaJournee(page)).toHaveText([
     'Angélus',
-    'Office des lectures',
+    /^Off\. lectures/,
     'Laudes',
     'Tierce',
     'Angélus',
@@ -123,7 +123,7 @@ test('Réglages › Accueil : une prière masquée quitte l’accueil, et l’of
   await page.goto('/')
   await expect(nomsDeLaJournee(page)).toHaveText([
     'Angélus',
-    'Office des lectures',
+    /^Off\. lectures/,
     'Laudes',
     'Sexte',
     'None',
@@ -134,6 +134,100 @@ test('Réglages › Accueil : une prière masquée quitte l’accueil, et l’of
   await expect(page.getByRole('list', { name: 'Chapelet et Rosaire' })).toHaveText(/^Chapelet/)
   await expect(page.getByTestId('perle-tierce')).toHaveCount(0)
   await expect(page.getByTestId('perle-sexte')).toHaveCount(1)
+  await expect(page.getByTestId('losange-angelus-midi')).toHaveCount(0)
+  await expect(page.getByTestId('losange-angelus-soir')).toHaveCount(1)
+})
+
+// Chaque Angélus a son losange au-dessus de l'arc, qui s'ouvre comme une
+// perle (choix du porteur du projet, 2026-10-20).
+test('Cadran : un losange par Angélus, à son heure, qui ouvre la prière', async ({ page }) => {
+  await page.clock.setFixedTime(MAINTENANT)
+  await preparer(page)
+  await page.goto('/')
+  const losanges = page.locator('.cadran-losange')
+  await expect(losanges).toHaveCount(3)
+  await expect(page.getByTestId('losange-angelus-matin')).toHaveAccessibleName('Angélus, 6 h')
+  await expect(page.getByTestId('losange-angelus-matin')).toHaveAttribute('data-etat', 'passe')
+  await expect(page.getByTestId('losange-angelus-midi')).toHaveAttribute('data-etat', 'a-venir')
+  // Au-dessus de l'arc : plus haut que la perle de sexte, de la même heure.
+  const haut = async (id: string) => (await page.getByTestId(id).boundingBox())!.y
+  expect(await haut('losange-angelus-midi')).toBeLessThan((await haut('perle-sexte')) - 20)
+  await page.getByTestId('losange-angelus-midi').click()
+  await expect(page).toHaveURL('/priere/angelus')
+})
+
+test('Cadran : au temps pascal, les losanges ouvrent le Regina Caeli', async ({ page }) => {
+  await page.clock.setFixedTime(TEMPS_PASCAL)
+  await preparer(page)
+  await page.goto('/')
+  await expect(page.getByTestId('losange-angelus-soir')).toHaveAccessibleName('Regina Caeli, 18 h')
+  await page.getByTestId('losange-angelus-soir').click()
+  await expect(page).toHaveURL('/priere/regina-caeli')
+})
+
+// La liste sert de légende au cadran : devant chaque ligne, la marque de la
+// prière, perle ou losange, dans le même état (2026-10-20).
+test('Accueil : devant chaque ligne, la marque de la prière sur le cadran, dans son état', async ({
+  page,
+}) => {
+  await page.clock.setFixedTime(new Date(2026, 9, 7, 12, 10))
+  await preparer(page)
+  await page.goto('/')
+  const lignes = journee(page).locator('li')
+  await expect(lignes.locator('.accueil-marque')).toHaveCount(10)
+  const formes = await lignes
+    .locator('.accueil-marque')
+    .evaluateAll((marques) => marques.map((m) => m.getAttribute('data-forme')))
+  expect(formes).toEqual([
+    'losange',
+    null,
+    'perle',
+    'perle',
+    'losange',
+    'perle',
+    'perle',
+    'losange',
+    'perle',
+    'perle',
+  ])
+  // Chaque ligne a l'état de sa marque sur le cadran : à 12 h 10, sexte est
+  // du moment, l'Angélus de midi passé.
+  const marques = [
+    'losange-angelus-matin',
+    'lectures',
+    'perle-laudes',
+    'perle-tierce',
+    'losange-angelus-midi',
+    'perle-sexte',
+    'perle-none',
+    'losange-angelus-soir',
+    'perle-vepres',
+    'perle-complies',
+  ]
+  for (const [i, marque] of marques.entries()) {
+    if (marque === 'lectures') continue
+    const etat = await page.getByTestId(marque).getAttribute('data-etat')
+    await expect(lignes.nth(i), marque).toHaveAttribute('data-etat', etat!)
+  }
+  await expect(page.getByTestId('perle-sexte')).toHaveAttribute('data-etat', 'moment')
+  await expect(page.getByTestId('losange-angelus-midi')).toHaveAttribute('data-etat', 'passe')
+  // Le Chapelet et le Rosaire, au-dessus du filet d'or, s'en passent.
+  await expect(
+    page.getByRole('list', { name: 'Chapelet et Rosaire' }).locator('.accueil-marque'),
+  ).toHaveCount(0)
+})
+
+test('Accueil : « Off. lectures » à l’œil, le nom entier au lecteur d’écran', async ({ page }) => {
+  await page.clock.setFixedTime(MAINTENANT)
+  await preparer(page)
+  await page.goto('/')
+  const lectures = journee(page).getByRole('link', { name: /^Office des lectures/ })
+  await expect(lectures).toHaveAccessibleName(/^Office des lectures\s*à toute heure/)
+  await expect(lectures.getByText('Off. lectures', { exact: true })).toBeVisible()
+  await expect(lectures.getByText('Office des lectures', { exact: true })).toHaveCSS(
+    'clip-path',
+    'inset(50%)',
+  )
 })
 
 test('le rappel de l’Angélus de midi, puis son toucher qui ouvre la prière', async ({ page }) => {

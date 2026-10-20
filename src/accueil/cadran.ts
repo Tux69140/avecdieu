@@ -24,6 +24,12 @@ const UNITES_PAR_PX = LARGEUR / 344
 // Une perle de 12 px ; celle du moment, 14 px et un halo de 5 px.
 export const RAYON_PERLE = Math.ceil(6 * UNITES_PAR_PX)
 export const RAYON_HALO_PERLE = Math.ceil(12 * UNITES_PAR_PX)
+// Le losange d'un Angélus se tient au-dessus de l'arc, assez loin de la perle
+// de l'office de la même heure (sexte à midi) pour que chacun ait sa cible
+// (choix du porteur du projet, 2026-10-20) : 24 px au moins, la cible minimale
+// (WCAG 2.5.8). Puis sa demi-diagonale, halo compris.
+export const ECART_LOSANGE = 26
+export const RAYON_LOSANGE = Math.ceil(10 * UNITES_PAR_PX)
 // Le soleil, dessiné dans la boîte (Cadran.tsx) : ses rayons, puis son halo pâle.
 export const RAYON_SOLEIL = 15
 export const RAYON_HALO_SOLEIL = 18
@@ -143,16 +149,15 @@ interface Etiquette {
   boite: Boite
 }
 
+// La distance d'une boîte à un point (nulle s'il est dedans).
+const distance = (b: Boite, { x, y }: Point) =>
+  Math.hypot(Math.max(b.gauche - x, 0, x - b.droite), Math.max(b.haut - y, 0, y - b.bas))
+
 const ECHANTILLONS = Array.from({ length: 121 }, (_, i) => pointDeLaPart(i / 120))
 
 // Aucun point de l'arc à moins du dégagement. On s'arrête au premier trop
 // proche : la recherche en spirale essaie des milliers de places au démarrage.
-const loinDeLArc = (b: Boite) =>
-  ECHANTILLONS.every(
-    ({ x, y }) =>
-      Math.hypot(Math.max(b.gauche - x, 0, x - b.droite), Math.max(b.haut - y, 0, y - b.bas)) >=
-      DEGAGEMENT,
-  )
+const loinDeLArc = (b: Boite) => ECHANTILLONS.every((point) => distance(b, point) >= DEGAGEMENT)
 
 const dansLeBandeau = (b: Boite) =>
   b.bas > HAUT_DU_BANDEAU && b.droite > MARGE_DU_BANDEAU && b.gauche < LARGEUR - MARGE_DU_BANDEAU
@@ -161,12 +166,13 @@ const dansLeBandeau = (b: Boite) =>
 // y déborder un peu, à sa place d'origine, au bout de l'arc.
 const DEBORD_SUR_LE_COTE = 8
 
-const convient = (b: Boite) =>
+const convient = (b: Boite, losanges: Point[]) =>
   b.gauche >= -DEBORD_SUR_LE_COTE &&
   b.droite <= LARGEUR + DEBORD_SUR_LE_COTE &&
   b.haut >= -DEBORD_EN_HAUT &&
   b.bas <= HAUTEUR &&
   !dansLeBandeau(b) &&
+  losanges.every((losange) => distance(b, losange) >= RAYON_LOSANGE) &&
   loinDeLArc(b)
 
 function boiteAutourDe({ x, y }: Point, largeur: number, hauteur: number): Boite {
@@ -181,9 +187,14 @@ function boiteAutourDe({ x, y }: Point, largeur: number, hauteur: number): Boite
 const etiquettes = new Map<string, Etiquette>()
 
 // Cherche en spirale, autour du point posé au-dessus du trait, la place libre
-// la plus proche. Le résultat ne dépend que du texte et de la part : retenu.
-export function etiquetteDuRepere(lignes: string[], part: number): Etiquette {
-  const cle = `${lignes.join('|')}@${part}`
+// la plus proche, à l'écart des losanges des Angélus. Le résultat ne dépend que
+// du texte, de la part et des losanges : retenu.
+export function etiquetteDuRepere(
+  lignes: string[],
+  part: number,
+  losanges: Point[] = [],
+): Etiquette {
+  const cle = `${lignes.join('|')}@${part}@${losanges.map(({ x, y }) => `${x},${y}`).join(';')}`
   const connue = etiquettes.get(cle)
   if (connue) return connue
   const largeur = Math.max(...lignes.map((l) => l.length)) * LARGEUR_LETTRE
@@ -197,7 +208,7 @@ export function etiquetteDuRepere(lignes: string[], part: number): Etiquette {
         x: origine.x + rayon * Math.cos(angle),
         y: origine.y - rayon * Math.sin(angle),
       }
-      if (convient(boiteAutourDe(essai, largeur, hauteur))) {
+      if (convient(boiteAutourDe(essai, largeur, hauteur), losanges)) {
         centre = essai
         break recherche
       }

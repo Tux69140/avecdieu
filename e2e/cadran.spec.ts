@@ -116,15 +116,20 @@ test('aucune cible tactile ne chevauche sa voisine, et aucune ne dépasse 48 px'
 }) => {
   await ouvrir(page, JEUDI(10))
   const { cibles } = await mesurer(page)
+  // Les losanges des Angélus ont leur cible, comme les perles (2026-10-20).
+  expect(cibles.filter((c) => c.nom.startsWith('losange-'))).toHaveLength(3)
   for (const [i, a] of cibles.entries()) {
     expect(a.r * 2).toBeLessThanOrEqual(48)
+    // 24 px au moins, la cible minimale (WCAG 2.5.8), même à midi, où sexte
+    // partage son écart avec le losange de l'Angélus.
+    expect(a.r * 2, a.nom).toBeGreaterThanOrEqual(24)
     for (const b of cibles.slice(i + 1))
       expect(Math.hypot(a.x - b.x, a.y - b.y), `${a.nom} et ${b.nom}`).toBeGreaterThanOrEqual(
         a.r + b.r - 0.5,
       )
   }
-  // Laudes et tierce se partagent leur écart ; les autres gardent 48 px.
-  expect(cibles.find((c) => c.nom === 'perle-sexte')!.r * 2).toBeCloseTo(48, 0)
+  // None, loin de tout, garde 48 px.
+  expect(cibles.find((c) => c.nom === 'perle-none')!.r * 2).toBeCloseTo(48, 0)
 })
 
 // Luminance relative d'une couleur CSS « rgb(r, g, b) » (WCAG 2).

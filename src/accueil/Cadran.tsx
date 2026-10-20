@@ -2,9 +2,13 @@ import type { ReactNode } from 'react'
 import { Link } from 'react-router'
 import { ecrireHeure, enMinutes, type Heure } from '../office/heure'
 import { cheminOffice, type NomOffice, NOMS_OFFICES, OFFICES } from '../office/modele'
+import { priereMarialeDu } from '../prieres/angelus'
+import type { Angelus } from '../rappels/reglages'
+import { PRIERES_MARIALES } from '../recueil/angelus'
 import {
   cheminDeLArc,
   ciblesDesPerles,
+  ECART_LOSANGE,
   ECHELLE_FIXE,
   echelleSolaire,
   etiquetteDuRepere,
@@ -31,6 +35,8 @@ import './Cadran.css'
 interface Props {
   date: string
   heures: Record<NomOffice, Heure | undefined>
+  // Les Angélus affichés sur l'accueil, à leur heure.
+  angelus?: { nom: Angelus; heure: Heure }[]
   // Aujourd'hui seulement : l'état de chaque office et l'astre à l'heure qu'il
   // est. Un autre jour, les perles ont toutes le même aspect, sans astre.
   journee?: Journee
@@ -50,9 +56,11 @@ const SOUS_L_ARC = {
   padding: `${enLargeur(HAUT_DU_BANDEAU)} ${enLargeur(MARGE_DU_BANDEAU)} 0`,
 }
 
-// Le cadran de l'accueil : l'arc du jour, ses repères, le soleil ou la lune, et
-// chaque office comme une perle qui l'ouvre d'un toucher (passé compris).
-export function Cadran({ date, heures, journee, astre, soleil, children }: Props) {
+// Le cadran de l'accueil : l'arc du jour, ses repères, le soleil ou la lune,
+// chaque office comme une perle qui l'ouvre d'un toucher (passé compris), et
+// chaque Angélus comme un losange au-dessus de l'arc, qui s'ouvre de même
+// (choix du porteur du projet, 2026-10-20).
+export function Cadran({ date, heures, angelus = [], journee, astre, soleil, children }: Props) {
   const offices = OFFICES.flatMap((nom) => {
     const heure = heures[nom]
     return heure ? [{ nom, heure }] : []
@@ -64,12 +72,21 @@ export function Cadran({ date, heures, journee, astre, soleil, children }: Props
       )
     : ECHELLE_FIXE
   const points = offices.map(({ heure }) => pointDuCadran(enMinutes(heure), 0, echelle))
-  const cibles = ciblesDesPerles(points)
+  const losanges = angelus.map(({ heure }) =>
+    pointDuCadran(enMinutes(heure), ECART_LOSANGE, echelle),
+  )
+  // Perles et losanges se partagent l'écart à leur plus proche voisin.
+  const cibles = ciblesDesPerles([...points, ...losanges])
+  const mariale = priereMarialeDu(date)
   return (
     <div className="cadran">
       <div className="cadran-zone">
         <svg viewBox={`0 0 ${LARGEUR} ${HAUTEUR}`} aria-hidden="true">
-          {soleil ? <ArcSolaire soleil={soleil} /> : <ArcFixe />}
+          {soleil ? (
+            <ArcSolaire soleil={soleil} losanges={losanges} />
+          ) : (
+            <ArcFixe losanges={losanges} />
+          )}
           {astre?.sorte === 'soleil' && (
             <Soleil centre={pointDuCadran(astre.minutes, 0, echelle)} />
           )}
@@ -89,6 +106,22 @@ export function Cadran({ date, heures, journee, astre, soleil, children }: Props
             <span />
           </Link>
         ))}
+        {angelus.map(({ nom, heure }, i) => (
+          <Link
+            key={nom}
+            className="cadran-perle cadran-losange"
+            to={`/priere/${mariale}`}
+            style={{
+              ...pourcents(losanges[i]),
+              width: `min(48px, ${enLargeur(cibles[points.length + i])})`,
+            }}
+            aria-label={`${PRIERES_MARIALES[mariale].titre}, ${ecrireHeure(heure)}`}
+            data-etat={journee?.etats[nom] ?? 'a-venir'}
+            data-testid={`losange-${nom}`}
+          >
+            <span />
+          </Link>
+        ))}
       </div>
       <div className="cadran-centre" style={SOUS_L_ARC}>
         {children}
@@ -104,12 +137,12 @@ function Trait({ part }: { part: number }) {
 }
 
 // Heures fixes : l'arc entier, de 6 h à 22 h, et ses repères d'heure.
-function ArcFixe() {
+function ArcFixe({ losanges }: { losanges: Point[] }) {
   return (
     <>
       <path className="cadran-arc" d={cheminDeLArc()} />
       {REPERES.map(({ texte, minutes }) => (
-        <Repere key={texte} lignes={[texte]} part={ECHELLE_FIXE(minutes)} />
+        <Repere key={texte} lignes={[texte]} part={ECHELLE_FIXE(minutes)} losanges={losanges} />
       ))}
     </>
   )
@@ -117,7 +150,13 @@ function ArcFixe() {
 
 // Heures solaires : l'arc doré du lever au coucher, les pointillés de la
 // nuit aux deux bouts.
-function ArcSolaire({ soleil }: { soleil: { lever: number; coucher: number } }) {
+function ArcSolaire({
+  soleil,
+  losanges,
+}: {
+  soleil: { lever: number; coucher: number }
+  losanges: Point[]
+}) {
   const { debut, fin } = JOUR_SOLAIRE
   return (
     <>
@@ -125,15 +164,16 @@ function ArcSolaire({ soleil }: { soleil: { lever: number; coucher: number } }) 
       <path className="cadran-arc" d={cheminDeLArc(debut, fin)} />
       <path className="cadran-arc cadran-nuit" d={cheminDeLArc(fin, 1)} />
       {reperesSolaires(soleil).map(({ lignes, part }) => (
-        <Repere key={lignes[0]} lignes={lignes} part={part} />
+        <Repere key={lignes[0]} lignes={lignes} part={part} losanges={losanges} />
       ))}
     </>
   )
 }
 
-// Un trait sur l'arc et son étiquette, posée à l'écart des perles et du soleil.
-function Repere({ lignes, part }: { lignes: string[]; part: number }) {
-  const { x, y } = etiquetteDuRepere(lignes, part)
+// Un trait sur l'arc et son étiquette, posée à l'écart des perles, des
+// losanges et du soleil.
+function Repere({ lignes, part, losanges }: { lignes: string[]; part: number; losanges: Point[] }) {
+  const { x, y } = etiquetteDuRepere(lignes, part, losanges)
   return (
     <g>
       <Trait part={part} />

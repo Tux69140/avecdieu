@@ -87,3 +87,42 @@
   border-color: var(--encre);
   color: var(--encre);
 }
+
+/* Devant le nom, la marque de la prière sur le cadran, perle d'un office ou
+   losange d'un Angélus, dans son état (Cadran.css) : la liste lui sert de
+   légende. L'office des lectures, sans heure ni marque, garde sa place pour
+   s'aligner sur les autres offices ; le Chapelet et le Rosaire, au-dessus du
+   filet d'or, s'en passent (choix du porteur du projet, 2026-10-20). */
+.accueil-office-nom {
+  display: flex;
+  align-items: center;
+}
+
+.accueil-marque {
+  flex: none;
+  box-sizing: border-box;
+  width: 11px;
+  height: 11px;
+  margin-right: 10px;
+}
+
+.accueil-marque[data-forme] {
+  border: 1.5px solid var(--or-fonce);
+  background: var(--parchemin);
+}
+
+.accueil-marque[data-forme='perle'] {
+  border-radius: 9999px;
+}
+
+.accueil-marque[data-forme='losange'] {
+  transform: rotate(45deg) scale(0.92);
+}
+
+.accueil-offices [data-etat='passe'] .accueil-marque[data-forme] {
+  background: var(--or-fonce);
+}
+
+.accueil-offices [data-etat='moment'] .accueil-marque[data-forme] {
+  border: 2px solid var(--rubrique);
+}

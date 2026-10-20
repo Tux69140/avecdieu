@@ -97,7 +97,7 @@ test('la page des offices reprend les lignes de l’accueil, avec les sept offic
   await page.getByRole('link', { name: /^Offices du jour/ }).click()
   const offices = page.getByRole('list', { name: 'Offices du jour' })
   await expect(offices.locator('.accueil-office-nom')).toHaveText([
-    'Office des lectures',
+    /^Off\. lectures/,
     'Laudes',
     'Tierce',
     'Sexte',

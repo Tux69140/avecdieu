@@ -284,7 +284,7 @@ test('croix et ☰ du bandeau : le retour, et le menu des prières du jour', asy
   const prieres = page.getByRole('list', { name: 'Offices du jour' })
   // L'heure, puis la durée (phase 15), vue et dite.
   await expect(prieres.getByRole('link')).toHaveText([
-    /^Office des lectures\s*à toute heure\s*~20 min, environ vingt minutes$/,
+    /^Off\. lectures.*à toute heure\s*~20 min, environ vingt minutes$/,
     /^Laudes\s*7 h\s*~20 min, environ vingt minutesEn cours$/,
     /^Tierce\s*9 h\s*~10 min, environ dix minutes$/,
     /^Sexte\s*12 h\s*~10 min, environ dix minutes$/,

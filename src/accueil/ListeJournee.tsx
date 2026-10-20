@@ -24,6 +24,22 @@ interface Props {
   ouvrir?: (chemin: string) => void
 }
 
+// « Office des lectures » ne tient pas sur sa ligne, derrière sa place de
+// marque, à 360 px : abrégé à l'œil, il reste entier pour le lecteur d'écran
+// (choix du porteur du projet, 2026-10-20).
+const NOMS_COURTS: Partial<Record<NomOffice, string>> = { lectures: 'Off. lectures' }
+
+function NomDOffice({ nom }: { nom: NomOffice }) {
+  const court = NOMS_COURTS[nom]
+  if (!court) return NOMS_OFFICES[nom]
+  return (
+    <>
+      <span aria-hidden="true">{court}</span>
+      <span className="lecteur-seul">{NOMS_OFFICES[nom]}</span>
+    </>
+  )
+}
+
 // Les prières de la journée, une ligne chacune, la même sur l'accueil et sur
 // la page « Offices du jour » (demande du porteur du projet, 2026-10-20).
 // Sous l'heure, la durée, pour choisir ce qu'on a le temps de prier (US-59).
@@ -32,7 +48,9 @@ interface Props {
 // d'origine, 2026-10-07) ; l'office d'où l'on vient, à la même place, le
 // badge « En cours », qui l'emporte (2026-10-20). Chaque Angélus vient avant
 // l'office de la même heure, et devient le Regina Caeli au temps pascal ; il
-// se prie sans réseau (phase 19).
+// se prie sans réseau (phase 19). Devant le nom, la marque de la prière sur
+// le cadran, perle ou losange, dans son état : la liste lui sert de légende
+// (2026-10-20).
 export function ListeJournee({ date, prieres, journee, indisponibles, enCours, ouvrir }: Props) {
   const heures = heuresDuJour(date)
   const mariale = PRIERES_MARIALES[priereMarialeDu(date)]
@@ -62,7 +80,13 @@ export function ListeJournee({ date, prieres, journee, indisponibles, enCours, o
               data-testid={duMoment ? 'moment' : undefined}
             >
               <span className="accueil-office-nom">
-                {angelus ? mariale.titre : NOMS_OFFICES[priere]}
+                {/* La marque de la prière sur le cadran, dans son état. */}
+                <span
+                  className="accueil-marque"
+                  data-forme={heure && (angelus ? 'losange' : 'perle')}
+                  aria-hidden="true"
+                />
+                {angelus ? mariale.titre : <NomDOffice nom={priere} />}
               </span>
               <QuandPriere
                 priere={angelus ? 'angelus' : priere}

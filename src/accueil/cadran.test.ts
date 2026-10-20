@@ -4,6 +4,7 @@ import {
   ciblesDesPerles,
   DATE,
   DEBORD_EN_HAUT,
+  ECART_LOSANGE,
   ECHELLE_FIXE,
   echelleSolaire,
   etiquetteDuRepere,
@@ -16,6 +17,7 @@ import {
   pointDeLaPart,
   pointDuCadran,
   RAYON_HALO_PERLE,
+  RAYON_LOSANGE,
   RAYON_LUNE,
   RAYON_PERLE,
   RAYON_SOLEIL,
@@ -172,6 +174,44 @@ describe('rien ne se touche dans le cadran', () => {
     }
     // Le halo pâle du soleil peut effleurer le bord d'une très longue date.
     expect(auPlusPres(date)).toBeGreaterThan(Math.max(RAYON_HALO_PERLE, RAYON_SOLEIL) + 1)
+  })
+})
+
+// Les losanges des Angélus, au-dessus de l'arc (2026-10-20) : les repères
+// s'en écartent, et ils gardent assez d'écart à la perle de la même heure.
+describe('losanges des Angélus', () => {
+  const distance = (b: Boite, { x, y }: Point) =>
+    Math.hypot(Math.max(b.gauche - x, 0, x - b.droite), Math.max(b.haut - y, 0, y - b.bas))
+
+  it('en heures fixes, « 6 h », « midi » et « 18 h » s’écartent de leur losange', () => {
+    const losanges = [a(6), a(12), a(18)].map((m) => pointDuCadran(m, ECART_LOSANGE))
+    for (const { texte, minutes } of REPERES) {
+      const { boite } = etiquetteDuRepere([texte], ECHELLE_FIXE(minutes), losanges)
+      for (const losange of losanges)
+        expect(distance(boite, losange), texte).toBeGreaterThanOrEqual(RAYON_LOSANGE)
+    }
+  })
+
+  it('en heures solaires, lever, midi et coucher s’écartent des losanges', () => {
+    const soleil = { lever: a(7, 46), coucher: a(19, 9) }
+    const echelle = echelleSolaire(soleil, [a(7, 46), a(10, 37), a(13, 28), a(19, 9), a(21, 30)])
+    const losanges = [a(7, 46), a(13, 28), a(19, 9)].map((m) =>
+      pointDuCadran(m, ECART_LOSANGE, echelle),
+    )
+    for (const { lignes, part } of reperesSolaires(soleil)) {
+      const { boite } = etiquetteDuRepere(lignes, part, losanges)
+      for (const losange of losanges)
+        expect(distance(boite, losange), lignes[0]).toBeGreaterThanOrEqual(RAYON_LOSANGE)
+    }
+  })
+
+  it('le losange de midi et la perle de sexte ont chacun 24 px de cible au moins', () => {
+    const [sexte, losange] = ciblesDesPerles([
+      pointDuCadran(a(12)),
+      pointDuCadran(a(12), ECART_LOSANGE),
+    ])
+    // Unités du cadran, un peu plus grandes que le pixel à 360 px de large.
+    expect(Math.min(sexte, losange) * (344 / LARGEUR)).toBeGreaterThanOrEqual(24)
   })
 })
 

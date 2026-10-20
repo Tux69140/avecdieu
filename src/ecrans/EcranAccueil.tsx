@@ -20,7 +20,7 @@ import { OFFICES, type NomOffice } from '../office/modele'
 import { lieuDuSoleil } from '../lieu/lieu'
 import { useLieu } from '../lieu/useLieu'
 import { leverEtCoucher } from '../office/soleil'
-import { PRIERES_RAPPELEES, type Angelus } from '../rappels/reglages'
+import { ANGELUS, PRIERES_RAPPELEES, type Angelus } from '../rappels/reglages'
 import { lireReglages } from '../reglages/reglages'
 import './EcranAccueil.css'
 
@@ -53,6 +53,7 @@ function Accueil({ date, aujourdhui, maintenant }: Props) {
   // cadran, et ne sont jamais la prière du moment (2026-10-20).
   const [affichees] = useState(lireAffichees)
   const heures = officesAffiches(heuresDesOffices(date), affichees)
+  const angelus = angelusAffiches(heuresDuJour(date), affichees)
   const minutes = minutesDe(maintenant)
   // Premier lancement sans réseau : aucun office ne peut s'ouvrir.
   const [sansTextes, setSansTextes] = useState(false)
@@ -111,6 +112,7 @@ function Accueil({ date, aujourdhui, maintenant }: Props) {
         <Cadran
           date={date}
           heures={heures}
+          angelus={angelus}
           journee={journee}
           astre={estAujourdhui ? astre(minutes, soleil) : undefined}
           soleil={arcSolaire}
@@ -144,6 +146,13 @@ const officesAffiches = (
   Object.fromEntries(
     OFFICES.map((nom) => [nom, affichees[nom] ? heures[nom] : undefined]),
   ) as Record<NomOffice, Heure | undefined>
+
+// Les Angélus affichés et leur heure, pour leurs losanges.
+const angelusAffiches = (heures: Partial<Record<Angelus, Heure>>, affichees: Affichees) =>
+  ANGELUS.flatMap((nom) => {
+    const heure = heures[nom]
+    return affichees[nom] && heure ? [{ nom, heure }] : []
+  })
 
 // Les lignes de la journée, dans l'ordre de Réglages › Accueil.
 const JOURNEE = PRIERES_AFFICHABLES.filter(

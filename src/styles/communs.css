@@ -173,3 +173,14 @@
   line-height: 1.45;
   color: var(--sepia);
 }
+
+/* Lu par le lecteur d'écran, invisible à l'œil (le nom entier d'un libellé
+   abrégé). */
+.lecteur-seul {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

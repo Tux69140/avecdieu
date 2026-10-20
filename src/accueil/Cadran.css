@@ -101,6 +101,24 @@
   transform: scale(0.94);
 }
 
+/* Un Angélus : la perle devient un losange, au même contour et aux mêmes
+   états, un peu plus grand pour qu'on le distingue (2026-10-20). */
+.cadran-losange span {
+  width: 10px;
+  height: 10px;
+  border-radius: 0;
+  transform: rotate(45deg);
+}
+
+.cadran-losange[data-etat='moment'] span {
+  width: 11px;
+  height: 11px;
+}
+
+.cadran-losange:active span {
+  transform: rotate(45deg) scale(0.94);
+}
+
 .cadran-centre {
   /* Sa marge, posée par Cadran.tsx, loge la date entre les deux branches de l'arc. */
   text-align: center;
