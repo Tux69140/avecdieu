@@ -569,11 +569,11 @@ Décisions du porteur du projet (2026-10-20), textes et libellés validés ce jo
 
 ### Critères d'acceptation
 
-- [ ] Les deux textes sont figés par le test d'empreinte ; le Je vous salue Marie se déplie en entier.
-- [ ] Angélus ou Regina Caeli selon la date, Pâques et Pentecôte comprises (tests unitaires sur plusieurs années).
-- [ ] Rappels des trois Angélus programmés à leur heure, fixe ou solaire, limites comprises ; les notifications ouvrent la bonne prière.
-- [ ] Accueil : seules les prières affichées apparaissent, dans l'ordre validé ; perles du cadran retirées avec leur office.
-- [ ] Captures validées par le porteur ; parcours Playwright et axe verts.
+- [x] Les deux textes sont figés par le test d'empreinte ; le Je vous salue Marie se déplie en entier.
+- [x] Angélus ou Regina Caeli selon la date, Pâques et Pentecôte comprises (tests unitaires sur plusieurs années).
+- [x] Rappels des trois Angélus programmés à leur heure, fixe ou solaire, limites comprises ; les notifications ouvrent la bonne prière.
+- [x] Accueil : seules les prières affichées apparaissent, dans l'ordre validé ; perles du cadran retirées avec leur office.
+- [x] Captures validées par le porteur ; parcours Playwright et axe verts.
 
 ## Bloquée par
 
