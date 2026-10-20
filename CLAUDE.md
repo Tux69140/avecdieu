@@ -49,7 +49,7 @@ Les règles détaillées vivent dans `.claude/rules/` :
 - `src/ecrans/` : un écran par route ; routes déclarées dans `src/main.tsx`.
 - `src/telephone/` : ce qui passe par les greffons Capacitor (vibrations, écran allumé, notifications, sonnerie) et la position (approximative seule, par le greffon `Position.java` ; la géolocalisation du navigateur hors de l’APK) ; dans le navigateur, ils retombent sur les API web, espionnées par `e2e/telephone.spec.ts`.
 - `android/` : projet Android généré par Capacitor puis retouché (icône, démarrage, signature, sauvegarde Google coupée) ; empreinte de la clé épinglée dans `android/empreinte-cle.txt`.
-- `src/styles/jetons.css` : jetons de `docs/DESIGN.md`, polices auto-hébergées (paquets `@fontsource`) et base de la page ; `communs.css` : classes communes (boutons, liens discrets, icônes, petit titre, chevron d'or, aide d'un choix) ; `perle-liturgique.css` : la perle de la couleur du jour.
+- `src/styles/jetons.css` : jetons de `docs/DESIGN.md`, polices auto-hébergées (paquets `@fontsource`) et base de la page, dont le papier de jour (motifs en images dans `papier/`, peints par `scripts/generer-papier.mjs` : jamais de `feTurbulence` calculé dans la page, trop lent au téléphone) ; `communs.css` : classes communes (boutons, liens discrets, icônes, petit titre, chevron d'or, aide d'un choix) ; `perle-liturgique.css` : la perle de la couleur du jour.
 - `e2e/` : parcours Playwright, un par phase au moins.
 - `scripts/` : contrôles lancés par les commandes ci-dessus.
 

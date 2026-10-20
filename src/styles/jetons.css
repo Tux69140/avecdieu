@@ -87,12 +87,13 @@
   /* Le papier sous la page, de jour (choix du porteur du projet, 2026-10-19) :
      bords dorés, fibres, grain fin et nuages d'ocre, alpha compris dans chaque
      motif pour que les bandeaux qui couvrent le texte le reprennent tel quel.
-     Le centre reste calme sous le texte à prier. */
+     Le centre reste calme sous le texte à prier. Les motifs sont des images
+     peintes une fois (scripts/generer-papier.mjs) : calculés dans la page, ils
+     figeaient l'app plusieurs secondes à l'ouverture sur le téléphone. */
   --papier:
     radial-gradient(ellipse 85% 75% at 50% 45%, transparent 55%, rgba(150, 95, 25, 0.16)),
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><filter id='f' x='0' y='0' width='100%' height='100%'><feTurbulence type='fractalNoise' baseFrequency='.012 .045' numOctaves='4' seed='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .55 0 0 0 0 .36 0 0 0 0 .1 0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23f)'/></svg>"),
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n' x='0' y='0' width='100%' height='100%'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .45 0 0 0 0 .3 0 0 0 0 .1 0 0 0 .08 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600'><filter id='t' x='0' y='0' width='100%' height='100%'><feTurbulence type='fractalNoise' baseFrequency='.004' numOctaves='4' seed='9' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .66 0 0 0 0 .42 0 0 0 0 .12 0 0 0 .8 -.32'/></filter><rect width='100%' height='100%' filter='url(%23t)'/></svg>");
+    image-set(url('./papier/fibres.webp') 1x), image-set(url('./papier/grain.webp') 2x),
+    image-set(url('./papier/nuages.webp') 1x);
   /* Couleurs liturgiques : en pastilles seulement, identiques jour et nuit. */
   --liturgique-blanc: #f4efe4;
   --liturgique-vert: #3e6a3f;
