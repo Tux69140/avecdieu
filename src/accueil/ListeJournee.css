@@ -84,8 +84,22 @@
 /* L'office d'où l'on vient, à la place du badge du moment : dans la couleur
    du texte, pour ne pas le confondre avec lui (2026-10-20). */
 .accueil-en-cours {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
   border-color: var(--encre);
   color: var(--encre);
+}
+
+/* Le signe pause, avant le texte : toucher la ligne reprend l'office où on
+   l'avait quitté (demande du porteur du projet, 2026-10-20). Dessiné, pour
+   ne dépendre d'aucune police. */
+.accueil-en-cours::before {
+  content: '';
+  box-sizing: border-box;
+  width: 6px;
+  height: 7px;
+  border-inline: 2px solid currentColor;
 }
 
 /* Devant le nom, la marque de la prière sur le cadran, perle d'un office ou

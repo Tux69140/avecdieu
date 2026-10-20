@@ -18,8 +18,10 @@ interface Props {
   journee?: Journee
   // Sans aucun texte (premier lancement sans réseau), les offices sont atténués.
   indisponibles?: boolean
-  // L'office d'où l'on vient, quand on a ouvert le menu depuis lui.
+  // L'office d'où l'on vient, quand on a ouvert le menu depuis lui, et ce qui
+  // y ramène à l'endroit quitté.
   enCours?: string
+  reprendre?: () => void
   // Depuis une page du menu, l'écran choisi remplace le menu et sa page.
   ouvrir?: (chemin: string) => void
 }
@@ -50,8 +52,18 @@ function NomDOffice({ nom }: { nom: NomOffice }) {
 // l'office de la même heure, et devient le Regina Caeli au temps pascal ; il
 // se prie sans réseau (phase 19). Devant le nom, la marque de la prière sur
 // le cadran, perle ou losange, dans son état : la liste lui sert de légende
-// (2026-10-20).
-export function ListeJournee({ date, prieres, journee, indisponibles, enCours, ouvrir }: Props) {
+// (2026-10-20). Le badge « En cours » porte le signe pause : toucher sa ligne
+// reprend l'office où on l'avait quitté, comme le retour d'Android ; les
+// autres lignes ouvrent leur prière au début (2026-10-20).
+export function ListeJournee({
+  date,
+  prieres,
+  journee,
+  indisponibles,
+  enCours,
+  reprendre,
+  ouvrir,
+}: Props) {
   const heures = heuresDuJour(date)
   const mariale = PRIERES_MARIALES[priereMarialeDu(date)]
   return (
@@ -63,10 +75,11 @@ export function ListeJournee({ date, prieres, journee, indisponibles, enCours, o
         const etat = indisponibles && !angelus ? 'passe' : journee?.etats[priere]
         const vers = angelus ? `/priere/${priereMarialeDu(date)}` : cheminOffice(priere, date)
         const ici = priere === enCours
-        const toucher = ouvrir
+        const aller = ici && reprendre ? reprendre : ouvrir && (() => ouvrir(vers))
+        const toucher = aller
           ? (e: MouseEvent) => {
               e.preventDefault()
-              ouvrir(vers)
+              aller()
             }
           : undefined
         return (

@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import { ListeJournee } from '../accueil/ListeJournee'
 import { useMaintenant } from '../accueil/maintenant'
 import { situerOffices } from '../accueil/moment'
@@ -15,12 +15,15 @@ import './EcranMenu.css'
 // (arborescence validée par le porteur du projet, 2026-10-09). La croix
 // remonte au menu ; un office choisi remplace le menu et cette page. Ses
 // lignes sont celles de l'accueil, mais elle donne toujours les sept offices,
-// même masqués sur l'accueil, et eux seuls (2026-10-20).
+// même masqués sur l'accueil, et eux seuls (2026-10-20). L'office d'où le
+// menu a été ouvert est deux pages plus tôt dans l'historique : y revenir
+// retrouve la lecture où on l'avait laissée.
 export function EcranMenuOffices() {
   const remonter = useRemonter()
   const ouvrir = useQuitterLeMenu()
   const maintenant = useMaintenant()
-  const { depuis, office } = (useLocation().state ?? {}) as DepuisParente
+  const naviguer = useNavigate()
+  const { depuis, office, parente } = (useLocation().state ?? {}) as DepuisParente
   const date = depuis && estDate(depuis) ? depuis : dateDuJour(maintenant)
   const journee =
     date === dateDuJour(maintenant)
@@ -38,6 +41,7 @@ export function EcranMenuOffices() {
           prieres={OFFICES}
           journee={journee}
           enCours={office}
+          reprendre={parente === '/menu' ? () => void naviguer(-2) : undefined}
           ouvrir={ouvrir}
         />
       </nav>

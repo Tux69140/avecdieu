@@ -328,3 +328,44 @@ test('« Plus bas » s’efface dès qu’on commence à lire, et ne revient pas
   await image(page)
   await expect(indice).toBeHidden()
 })
+
+// « En cours » porte le signe pause : sa ligne reprend l'office où on l'avait
+// quitté, comme le retour d'Android ; une autre ligne ouvre son office au
+// début (demande du porteur du projet, 2026-10-20).
+test('la ligne « En cours » reprend l’office où on l’avait quitté', async ({ page }) => {
+  await page.goto('/')
+  await page
+    .getByRole('list', { name: 'Offices du jour' })
+    .getByRole('link', { name: /^Laudes/ })
+    .click()
+  await expect(page.getByTestId('office')).toBeVisible()
+  await amenerSousLeBandeau(titre(page, 'Psaume 66'))
+  const quittee = await page.evaluate(() => scrollY)
+  expect(quittee).toBeGreaterThan(500)
+  await bandeau(page).getByRole('link', { name: 'Menu' }).click()
+  await page.getByRole('link', { name: /^Offices du jour/ }).click()
+  const enCours = page.getByText('En cours', { exact: true })
+  const pause = await enCours.evaluate((badge) => {
+    const signe = getComputedStyle(badge, '::before')
+    return [signe.borderLeftStyle, signe.borderRightStyle, signe.borderLeftWidth]
+  })
+  expect(pause).toEqual(['solid', 'solid', '2px'])
+  await page.getByRole('link', { name: /^Laudes/ }).click()
+  await expect(page).toHaveURL('/office/laudes/2026-10-06')
+  await expect.poll(() => page.evaluate(() => scrollY)).toBe(quittee)
+  // Le retour d'Android, de là, quitte l'office vers l'accueil.
+  await page.goBack()
+  await expect(page).toHaveURL('/')
+
+  // Une autre ligne ouvre son office au début.
+  await page
+    .getByRole('list', { name: 'Offices du jour' })
+    .getByRole('link', { name: /^Laudes/ })
+    .click()
+  await amenerSousLeBandeau(titre(page, 'Psaume 66'))
+  await bandeau(page).getByRole('link', { name: 'Menu' }).click()
+  await page.getByRole('link', { name: /^Offices du jour/ }).click()
+  await page.getByRole('link', { name: /^Tierce/ }).click()
+  await expect(page).toHaveURL('/office/tierce/2026-10-06')
+  await expect.poll(() => page.evaluate(() => scrollY)).toBe(0)
+})
